@@ -1,0 +1,115 @@
+{
+    "name": "my-inventory-app",
+    "private": true,
+    "scripts": {
+        "check:code-style": "npm run check:code-style:prettier && npm run check:code-style:lint",
+        "check:code-style:lint": "eslint . --ext .js,.ts,.tsx",
+        "check:code-style:prettier": "prettier --check .",
+        "pretest": "npm run check:code-style --silent",
+        "start": "meteor run",
+        "test": "meteor test --once --driver-package meteortesting:mocha",
+        "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+        "visualize": "meteor --production --extra-packages bundle-visualizer"
+    },
+    "dependencies": {
+        "@babel/runtime": "^7.17.9",
+        "meteor-node-stubs": "^1.2.1",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2"
+    },
+    "devDependencies": {
+        "@types/meteor": "^1.4.87",
+        "@types/mocha": "^8.2.3",
+        "@types/react": "^17.0.43",
+        "@types/react-dom": "^17.0.14",
+        "@typescript-eslint/eslint-plugin": "^5.40.1",
+        "@typescript-eslint/parser": "^5.40.1",
+        "@xch/prettier-config": "^0.0.2",
+        "eslint": "^8.26.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-config-standard-with-typescript": "^23.0.0",
+        "eslint-import-resolver-meteor": "^0.4.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-jsx-a11y": "^6.6.1",
+        "eslint-plugin-meteor": "^7.3.0",
+        "eslint-plugin-n": "^15.3.0",
+        "eslint-plugin-promise": "^6.1.1",
+        "eslint-plugin-react": "^7.31.10",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "prettier": "2.7.1",
+        "typescript": "^4.8.4"
+    },
+    "engines": {
+        "node": "^14",
+        "npm": "^8"
+    },
+    "eslintConfig": {
+        "env": {
+            "browser": true,
+            "es2021": true,
+            "node": true
+        },
+        "ignorePatterns": [
+            "*.html"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "parserOptions": {
+            "allowImportExportEverywhere": true,
+            "ecmaVersion": "latest",
+            "project": "./tsconfig.json",
+            "sourceType": "module"
+        },
+        "extends": [
+            "plugin:meteor/recommended",
+            "plugin:@typescript-eslint/recommended",
+            "plugin:react/recommended",
+            "plugin:react-hooks/recommended",
+            "standard-with-typescript",
+            "prettier"
+        ],
+        "settings": {
+            "import/resolver": "meteor",
+            "react": {
+                "version": "detect"
+            }
+        },
+        "overrides": [],
+        "plugins": [
+            "meteor",
+            "@typescript-eslint",
+            "react"
+        ],
+        "root": true,
+        "rules": {
+            "import/extensions": "off",
+            "import/no-absolute-path": "off",
+            "import/prefer-default-export": "off",
+            "react/jsx-filename-extension": "off",
+            "func-names": "off",
+            "no-underscore-dangle": [
+                "error",
+                {
+                    "allow": [
+                        "_id",
+                        "_ensureIndex"
+                    ]
+                }
+            ],
+            "object-shorthand": [
+                "error",
+                "always",
+                {
+                    "avoidQuotes": false
+                }
+            ],
+            "spaced-comment": "off"
+        }
+    },
+    "prettier": "@xch/prettier-config",
+    "meteor": {
+        "mainModule": {
+            "client": "client/main.tsx",
+            "server": "server/main.ts"
+        }
+    }
+}
