@@ -12,16 +12,19 @@
         "visualize": "meteor --production --extra-packages bundle-visualizer"
     },
     "dependencies": {
-        "@babel/runtime": "^7.17.9",
-        "meteor-node-stubs": "^1.2.1",
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2"
+        "@babel/runtime": "^7.19.4",
+        "meteor-node-stubs": "^1.2.5",
+        "polished": "^4.2.2",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "styled-components": "^5.3.6"
     },
     "devDependencies": {
-        "@types/meteor": "^1.4.87",
-        "@types/mocha": "^8.2.3",
-        "@types/react": "^17.0.43",
-        "@types/react-dom": "^17.0.14",
+        "@types/meteor": "^2.7.1",
+        "@types/mocha": "^10.0.0",
+        "@types/react": "^18.0.21",
+        "@types/react-dom": "^18.0.6",
+        "@types/styled-components": "^5.1.26",
         "@typescript-eslint/eslint-plugin": "^5.40.1",
         "@typescript-eslint/parser": "^5.40.1",
         "@xch/prettier-config": "^0.0.2",
