@@ -1,6 +1,7 @@
 import { useTracker } from 'meteor/react-meteor-data';
 import React, { ComponentProps, ReactElement, useCallback, useState } from 'react';
 import styled from 'styled-components';
+import StyledButton from './StyledButton';
 import TagsCollection, { TagRecord } from '/imports/api/tags';
 
 interface TagListProps {
@@ -10,7 +11,19 @@ interface TagListProps {
 const TagList = styled(({ tag, ...rootElementProps }: TagListProps & ComponentProps<'div'>): ReactElement => {
     const tagId = tag?._id ?? '';
     const tagName = tag?.name ?? 'All Tags';
-    const childTags = useTracker(() => TagsCollection.find({ parentTagId: tagId }).fetch(), [tagId]);
+    const childTags = useTracker(
+        () =>
+            TagsCollection.find(
+                { parentTagId: tagId },
+                {
+                    sort: [
+                        ['name', 'asc'],
+                        ['createdAt', 'asc'],
+                    ],
+                }
+            ).fetch(),
+        [tagId]
+    );
 
     const onClickAddChildButton = useCallback(() => {
         const newTagName = window.prompt(`Name of new tag:`);
@@ -94,15 +107,15 @@ const TagList = styled(({ tag, ...rootElementProps }: TagListProps & ComponentPr
             <div className="tag-body" data-tag-id={tagId}>
                 <label className="tag-name-label">{tagName}</label>
                 <span className="tag-actions-container">
-                    <button className="new-child-action" onClick={onClickAddChildButton}>
+                    <StyledButton className="new-child-action" onClick={onClickAddChildButton}>
                         +
-                    </button>
-                    <button className="rename-tag-action" onClick={onClickRenameButton}>
+                    </StyledButton>
+                    <StyledButton className="rename-tag-action" onClick={onClickRenameButton}>
                         Rename
-                    </button>
-                    <button className="remove-tag-action" onClick={onClickDeleteButton}>
+                    </StyledButton>
+                    <StyledButton className="remove-tag-action" onClick={onClickDeleteButton}>
                         Delete
-                    </button>
+                    </StyledButton>
                 </span>
             </div>
 
@@ -227,12 +240,12 @@ const DetachedTagsView = styled((rootElementProps: ComponentProps<'div'>): React
                       } detached tags out of ${totalTagsCount} (updated ${lastUpdated.toLocaleString()})`}
             </div>
             <div>
-                <button disabled={updating} onClick={onClickCheckButton}>
+                <StyledButton disabled={updating} onClick={onClickCheckButton}>
                     Check
-                </button>
-                <button disabled={updating || tagIds.length === 0} onClick={onClickRemoveAllButton}>
+                </StyledButton>
+                <StyledButton disabled={updating || tagIds.length === 0} onClick={onClickRemoveAllButton}>
                     Removal All
-                </button>
+                </StyledButton>
             </div>
         </div>
     );
