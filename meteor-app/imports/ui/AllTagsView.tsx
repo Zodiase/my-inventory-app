@@ -104,7 +104,7 @@ const TagList = styled(({ tag, ...rootElementProps }: TagListProps & ComponentPr
 
     return (
         <div {...rootElementProps} data-tag-id={tagId}>
-            <div className="tag-body" data-tag-id={tagId}>
+            <div className="tag-body" data-tag-id={tagId} data-tag-path={tag?.path?.map(({ name }) => name)?.join(',')}>
                 <label className="tag-name-label">{tagName}</label>
                 <span className="tag-actions-container">
                     <StyledButton className="new-child-action" onClick={onClickAddChildButton}>
@@ -250,7 +250,17 @@ const DetachedTagsView = styled((rootElementProps: ComponentProps<'div'>): React
         </div>
     );
 })`
-    border: 1px solid gray;
+    display: inline-block;
+    width: 30em;
+    padding: 1em;
+`;
+
+const TagsWithoutPathView = styled((rootElementProps: ComponentProps<'div'>): ReactElement => {
+    const tagsWithoutPath = useTracker(() => TagsCollection.find({ path: { $exists: false } }).fetch(), []);
+
+    return <div {...rootElementProps}>{tagsWithoutPath.length} tags missing path.</div>;
+})`
+    display: inline-block;
     padding: 1em;
 `;
 
@@ -258,6 +268,7 @@ export const AllTagsView = styled((rootElementProps: ComponentProps<'div'>): Rea
     return (
         <div {...rootElementProps}>
             <DetachedTagsView />
+            <TagsWithoutPathView />
             <TagList />
         </div>
     );

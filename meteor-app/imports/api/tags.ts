@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import asMeteorMethods from '/imports/utility/asMeteorMethods';
 import NoId from '/imports/utility/NoId';
@@ -10,16 +11,46 @@ export { TagRecord } from '/imports/model/TagRecord';
 
 export const TagsCollection = new Mongo.Collection<TagRecord>('tags');
 
-export const assertParentTag = async (parentTagId: string): Promise<void> => {
-    if (parentTagId === '') {
-        return;
-    }
-
+export const assertParentTag = async (parentTagId: string): Promise<TagRecord> => {
     const parentTagSelector = { _id: parentTagId };
 
-    if ((await TagsCollection.find(parentTagSelector).countAsync()) <= 0) {
+    const parentTag = await TagsCollection.findOneAsync(parentTagSelector);
+
+    if (typeof parentTag === 'undefined') {
         throw new RecordNotFoundException('Parent Tag not found', parentTagSelector);
     }
+
+    return parentTag;
+};
+
+export const getTagPath = async (
+    tag: Pick<TagRecord, '_id' | 'name' | 'parentTagId'> & Partial<Pick<TagRecord, 'path'>>,
+    fix = false
+): Promise<TagRecord['path']> => {
+    if (!fix && typeof tag.path !== 'undefined') {
+        return tag.path;
+    }
+
+    const leafNode = { _id: tag._id, name: tag.name };
+    if (tag.parentTagId === '') {
+        return [leafNode];
+    }
+
+    const parentTag = await assertParentTag(tag.parentTagId);
+    const parentTagPath = await getTagPath(parentTag, fix);
+
+    if (fix && JSON.stringify(parentTag.path) !== JSON.stringify(parentTagPath)) {
+        console.log(`Fixing path for tag "${parentTag.name}" (${parentTag._id}).`);
+
+        const selector = strictSelector(parentTag, ['name', 'parentTagId']);
+        await TagsCollection.updateAsync(selector, {
+            $set: {
+                path: parentTagPath,
+            },
+        });
+    }
+
+    return [...parentTagPath, leafNode];
 };
 
 export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<string> => {
@@ -29,7 +60,9 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
         throw new Error('Tag must have a name.');
     }
 
-    await assertParentTag(parentTagId);
+    if (parentTagId !== '') {
+        await assertParentTag(parentTagId);
+    }
 
     const now = new Date();
     const newTag: NoId<TagRecord> = {
@@ -37,6 +70,7 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
         parentTagId,
         createdAt: now,
         modifiedAt: now,
+        path: await getTagPath({ _id: '', name, parentTagId }, Meteor.settings.fixPath),
     };
 
     const tagId = await TagsCollection.insertAsync(newTag);

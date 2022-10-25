@@ -13,6 +13,7 @@ describe('TagRecord', function () {
                 modifiedAt: new Date(),
                 parentTagId: '',
                 name: '',
+                path: [{ _id: '', name: '' }],
             });
         });
     });
