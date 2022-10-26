@@ -1,7 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import asMeteorMethods from '/imports/utility/asMeteorMethods';
+import extend from 'lodash/extend';
 import NoId from '/imports/utility/NoId';
+import printable from '/imports/utility/printable';
 import RecordInput from '/imports/utility/RecordInput';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import strictSelector from '/imports/utility/strictSelector';
@@ -79,19 +81,50 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
 };
 
 export const renameTag = async (tag: TagRecord, newName: string): Promise<boolean> => {
-    console.log('renameTag <=', { tag, newName });
+    console.log('renameTag <=', { tag: printable(tag), newName });
 
-    const selector = strictSelector(tag, ['name']);
-    const updateCount = await TagsCollection.updateAsync(selector, {
-        $set: {
-            name: newName,
+    const selector = extend(strictSelector(tag, ['name']), {
+        'path._id': {
+            $in: ['', tag._id],
         },
     });
 
-    console.log('renameTag =>', { tag, newName, updateCount });
+    console.log('selector', printable(selector));
 
-    return updateCount > 0;
-};
+    let tagsUpdated = await TagsCollection.updateAsync(selector, {
+        $set: {
+            name: newName,
+            'path.$.name': newName,
+        },
+    });
+
+    const tagIsUpdated = tagsUpdated > 0;
+
+    if (tagIsUpdated) {
+        // Update all tags has this tag in their paths. (i.e. descendants.)
+        tagsUpdated += await TagsCollection.updateAsync(
+            {
+                _id: {
+                    $ne: tag._id,
+                },
+                'path._id': tag._id,
+                'path.name': {
+                    $ne: newName,
+                },
+            },
+            {
+                $set: {
+                    'path.$.name': newName,
+                },
+            },
+            { multi: true }
+        );
+    }
+
+    console.log('renameTag =>', { tag: printable(tag), newName, tagsUpdated });
+
+    return tagIsUpdated;
+};;
 
 export const setTagParent = async (tag: TagRecord, newParentTagId: string): Promise<boolean> => {
     return (
