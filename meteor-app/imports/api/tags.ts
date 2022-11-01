@@ -82,6 +82,12 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
     return tagId;
 };
 
+/**
+ * TODO: make atomic operation.
+ * @param tag
+ * @param newName
+ * @returns
+ */
 export const renameTag = async (tag: TagRecord, newName: string): Promise<boolean> => {
     logger.log('renameTag <=', { tag, newName });
 
@@ -136,15 +142,66 @@ export const renameTag = async (tag: TagRecord, newName: string): Promise<boolea
     return tagIsUpdated;
 };
 
-//! Update path.
-export const setTagParent = async (tag: TagRecord, newParentTagId: string): Promise<boolean> => {
-    return (
-        (await TagsCollection.updateAsync(strictSelector(tag, ['parentTagId']), {
-            $set: {
-                parentTagId: newParentTagId,
-            },
-        })) > 0
-    );
+export const getAllDescendants = async (tag: TagRecord): Promise<TagRecord[]> => {
+    let tagsToCheck = [tag];
+    let resultTags: TagRecord[] = [];
+    let thisTag: undefined | TagRecord;
+
+    while (typeof (thisTag = tagsToCheck.shift()) !== 'undefined') {
+        const immediateChildren = await TagsCollection.find({ parentTagId: thisTag._id }).fetchAsync();
+
+        tagsToCheck = tagsToCheck.concat(immediateChildren);
+        resultTags = resultTags.concat(immediateChildren);
+    }
+
+    return resultTags;
+};
+
+/**
+ * A potentially more efficient way (only 1 query instead of log(N)) to find descendants.
+ * This assumes all tag paths are complete and correct.
+ * A descendant's path must include this tag.
+ * @param tag
+ * @returns
+ */
+export const getAllDescendantsByPath = async (tag: TagRecord): Promise<TagRecord[]> => {
+    return await TagsCollection.find({
+        _id: {
+            $ne: tag._id,
+        },
+        'path._id': tag._id,
+        'path.name': tag.name,
+    }).fetchAsync();
+};
+
+/**
+ * TODO: make atomic operation.
+ * @param tag
+ * @param newParentTagId
+ * @returns
+ */
+export const setTagParent = async (tag: TagRecord, newParentTagId: string): Promise<number> => {
+    logger.log('setTagParent <=', { tag, newParentTagId });
+
+    let tagsUpdated = await TagsCollection.updateAsync(strictSelector(tag, ['parentTagId']), {
+        $set: {
+            parentTagId: newParentTagId,
+            path: await getTagPath({ _id: tag._id, name: tag.name, parentTagId: newParentTagId }),
+        },
+    });
+
+    const tagIsUpdated = tagsUpdated > 0;
+
+    if (tagIsUpdated) {
+        // Update path of all descendants.
+        for (const thisTag of await getAllDescendantsByPath(tag)) {
+            tagsUpdated += await fixPath(thisTag);
+        }
+    }
+
+    logger.log('setTagParent =>', { tag, newParentTagId, tagsUpdated });
+
+    return tagsUpdated;
 };
 
 //! Remove child tags.
