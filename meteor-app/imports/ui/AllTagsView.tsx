@@ -1,8 +1,10 @@
 import { useTracker } from 'meteor/react-meteor-data';
 import React, { ComponentProps, ReactElement, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import StyledButton from './StyledButton';
+
 import TagsCollection, { TagRecord } from '/imports/api/tags';
+
+import StyledButton from './StyledButton';
 
 interface TagListProps {
     tag?: TagRecord;

@@ -1,5 +1,7 @@
 import assert from 'assert';
+
 import NoOp from '/imports/utility/NoOp';
+
 import TagRecord from './TagRecord';
 
 describe('TagRecord', function () {

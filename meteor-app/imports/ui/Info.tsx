@@ -1,5 +1,6 @@
-import React, { ReactElement } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
+import React, { ReactElement } from 'react';
+
 import { LinksCollection, Link } from '../api/links';
 
 export const Info = (): ReactElement => {

@@ -1,13 +1,14 @@
-import { Meteor } from 'meteor/meteor';
-import { NamedCollection } from '/imports/utility/NamedCollection';
-import asMeteorMethods from '/imports/utility/MeteorMethods';
-import createLogger from '/imports/utility/Logger';
 import extend from 'lodash/extend';
+import { Meteor } from 'meteor/meteor';
+
+import RecordNotFoundException from '/imports/model/RecordNotFoundException';
+import TagRecord from '/imports/model/TagRecord';
+import createLogger from '/imports/utility/Logger';
+import asMeteorMethods from '/imports/utility/MeteorMethods';
+import { NamedCollection } from '/imports/utility/NamedCollection';
 import NoId from '/imports/utility/NoId';
 import RecordInput from '/imports/utility/RecordInput';
-import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import strictSelector from '/imports/utility/strictSelector';
-import TagRecord from '/imports/model/TagRecord';
 
 export { TagRecord } from '/imports/model/TagRecord';
 

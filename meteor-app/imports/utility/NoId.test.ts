@@ -1,4 +1,5 @@
 import NoOp from '/imports/utility/NoOp';
+
 import NoId from './NoId';
 
 describe('NoId', function () {

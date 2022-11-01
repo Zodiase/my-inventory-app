@@ -1,4 +1,5 @@
 import assert from 'assert';
+
 import printable from './printable';
 
 describe('printable', function () {

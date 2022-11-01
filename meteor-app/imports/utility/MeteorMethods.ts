@@ -1,6 +1,7 @@
-import { Defaults, OptionalDefaults } from './Defaults';
 import { Meteor } from 'meteor/meteor';
+
 import AnyAny from './AnyAny';
+import { Defaults, OptionalDefaults } from './Defaults';
 import createLogger from './Logger';
 import NamedCollection from './NamedCollection';
 

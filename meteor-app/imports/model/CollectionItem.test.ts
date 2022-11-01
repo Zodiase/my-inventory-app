@@ -1,5 +1,7 @@
 import assert from 'assert';
+
 import NoOp from '/imports/utility/NoOp';
+
 import { CollectionItem } from './CollectionItem';
 
 describe('CollectionItem', function () {

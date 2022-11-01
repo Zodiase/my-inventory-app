@@ -1,5 +1,5 @@
-import * as MongoNpmModule from 'mongodb';
 import { Mongo } from 'meteor/mongo';
+import * as MongoNpmModule from 'mongodb';
 export class NamedCollection<T extends MongoNpmModule.Document, U = T> extends Mongo.Collection<T, U> {
     readonly name: string;
 

@@ -1,7 +1,8 @@
-import { LinksCollection } from '/imports/api/links';
 import { Meteor } from 'meteor/meteor';
-import createLogger from '/imports/utility/Logger';
+
+import { LinksCollection } from '/imports/api/links';
 import TagsCollection, { createTag } from '/imports/api/tags';
+import createLogger from '/imports/utility/Logger';
 
 const logger = createLogger(module);
 

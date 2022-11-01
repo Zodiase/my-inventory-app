@@ -1,4 +1,5 @@
 import assert from 'assert';
+
 import NamedCollection from './NamedCollection';
 
 describe('NamedCollection', function () {
