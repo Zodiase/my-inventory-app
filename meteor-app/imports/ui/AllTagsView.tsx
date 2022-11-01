@@ -258,7 +258,11 @@ const DetachedTagsView = styled((rootElementProps: ComponentProps<'div'>): React
 const TagsWithoutPathView = styled((rootElementProps: ComponentProps<'div'>): ReactElement => {
     const tagsWithoutPath = useTracker(() => TagsCollection.find({ path: { $exists: false } }).fetch(), []);
 
-    return <div {...rootElementProps}>{tagsWithoutPath.length} tags missing path.</div>;
+    return (
+        <div {...rootElementProps} title={tagsWithoutPath.map(({ name }) => name).join(',')}>
+            {tagsWithoutPath.length} tags missing path.
+        </div>
+    );
 })`
     display: inline-block;
     padding: 1em;

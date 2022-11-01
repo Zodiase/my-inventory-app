@@ -1,6 +1,9 @@
-import { Meteor } from 'meteor/meteor';
 import { LinksCollection } from '/imports/api/links';
-import { TagsCollection, createTag } from '/imports/api/tags';
+import { Meteor } from 'meteor/meteor';
+import createLogger from '/imports/utility/Logger';
+import TagsCollection, { createTag } from '/imports/api/tags';
+
+const logger = createLogger(module);
 
 async function insertLink({ title, url }): void {
     await LinksCollection.insertAsync({ title, url, createdAt: new Date() });
@@ -40,4 +43,8 @@ Meteor.startup(async () => {
         await createTag({ name: 'Sample child tag 2-1', parentTagId: tag2Id });
         await createTag({ name: 'Sample child tag 2-2', parentTagId: tag2Id });
     }
+
+    TagsCollection.watchAndFixMissingPath().catch((reason) => {
+        logger.warn('Error starting watching for tags without path.', reason);
+    });
 });

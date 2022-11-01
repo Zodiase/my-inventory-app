@@ -86,9 +86,19 @@ export const renameTag = async (tag: TagRecord, newName: string): Promise<boolea
     logger.log('renameTag <=', { tag, newName });
 
     const selector = extend(strictSelector(tag, ['name']), {
-        'path._id': {
-            $in: ['', tag._id],
-        },
+        $or: [
+            {
+                'path._id': {
+                    $exists: false,
+                },
+            },
+            {
+                'path._id': {
+                    $exists: true,
+                    $in: ['', tag._id],
+                },
+            },
+        ],
     });
 
     let tagsUpdated = await TagsCollection.updateAsync(selector, {
@@ -223,11 +233,34 @@ export const getDetachedTags = async (): Promise<string[]> => {
     return [...detachedTags.values()];
 };
 
-// export const patchTagPath = async () => {
-//     const checkedTags = new Set<string>();
+export const fixPath = async (tag: TagRecord): Promise<number> => {
+    return await TagsCollection.updateAsync(strictSelector(tag, ['name']), {
+        $set: {
+            path: await getTagPath(tag, Meteor.settings.fixPath),
+        },
+    });
+};
 
-//     const tagsWithoutPath = TagsCollection.find({ path: { $exists: false } });
-// };
+export const watchAndFixMissingPath = async (): Promise<true> => {
+    logger.log('watching for tags without path...');
+
+    TagsCollection.find({
+        'path._id': {
+            $exists: false,
+        },
+    }).observe({
+        added(tag) {
+            (async () => {
+                logger.log('Found tag without path:', { tag });
+                await fixPath(tag);
+            })().catch((reason) => {
+                logger.warn('Path fixing failed.', reason);
+            });
+        },
+    });
+
+    return true;
+};
 
 export default asMeteorMethods(TagsCollection, {
     createTag,
@@ -235,4 +268,6 @@ export default asMeteorMethods(TagsCollection, {
     setTagParent,
     removeTag,
     getDetachedTags,
+    fixPath,
+    watchAndFixMissingPath,
 });
