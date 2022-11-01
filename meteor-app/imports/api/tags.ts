@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
-import asMeteorMethods from '/imports/utility/asMeteorMethods';
+import { NamedCollection } from '/imports/utility/NamedCollection';
+import asMeteorMethods from '/imports/utility/MeteorMethods';
+import createLogger from '/imports/utility/Logger';
 import extend from 'lodash/extend';
 import NoId from '/imports/utility/NoId';
-import printable from '/imports/utility/printable';
 import RecordInput from '/imports/utility/RecordInput';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import strictSelector from '/imports/utility/strictSelector';
@@ -11,7 +11,9 @@ import TagRecord from '/imports/model/TagRecord';
 
 export { TagRecord } from '/imports/model/TagRecord';
 
-export const TagsCollection = new Mongo.Collection<TagRecord>('tags');
+const logger = createLogger(module);
+
+export const TagsCollection = new NamedCollection<TagRecord>('tags');
 
 export const assertParentTag = async (parentTagId: string): Promise<TagRecord> => {
     const parentTagSelector = { _id: parentTagId };
@@ -42,7 +44,7 @@ export const getTagPath = async (
     const parentTagPath = await getTagPath(parentTag, fix);
 
     if (fix && JSON.stringify(parentTag.path) !== JSON.stringify(parentTagPath)) {
-        console.log(`Fixing path for tag "${parentTag.name}" (${parentTag._id}).`);
+        logger.log(`Fixing path for tag "${parentTag.name}" (${parentTag._id}).`);
 
         const selector = strictSelector(parentTag, ['name', 'parentTagId']);
         await TagsCollection.updateAsync(selector, {
@@ -81,15 +83,13 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
 };
 
 export const renameTag = async (tag: TagRecord, newName: string): Promise<boolean> => {
-    console.log('renameTag <=', { tag: printable(tag), newName });
+    logger.log('renameTag <=', { tag, newName });
 
     const selector = extend(strictSelector(tag, ['name']), {
         'path._id': {
             $in: ['', tag._id],
         },
     });
-
-    console.log('selector', printable(selector));
 
     let tagsUpdated = await TagsCollection.updateAsync(selector, {
         $set: {
@@ -121,11 +121,12 @@ export const renameTag = async (tag: TagRecord, newName: string): Promise<boolea
         );
     }
 
-    console.log('renameTag =>', { tag: printable(tag), newName, tagsUpdated });
+    logger.log('renameTag =>', { tag, newName, tagsUpdated });
 
     return tagIsUpdated;
-};;
+};
 
+//! Update path.
 export const setTagParent = async (tag: TagRecord, newParentTagId: string): Promise<boolean> => {
     return (
         (await TagsCollection.updateAsync(strictSelector(tag, ['parentTagId']), {
@@ -136,6 +137,7 @@ export const setTagParent = async (tag: TagRecord, newParentTagId: string): Prom
     );
 };
 
+//! Remove child tags.
 export const removeTag = async (tagId: string): Promise<boolean> => {
     return (await TagsCollection.removeAsync(tagId)) > 0;
 };
@@ -220,6 +222,12 @@ export const getDetachedTags = async (): Promise<string[]> => {
 
     return [...detachedTags.values()];
 };
+
+// export const patchTagPath = async () => {
+//     const checkedTags = new Set<string>();
+
+//     const tagsWithoutPath = TagsCollection.find({ path: { $exists: false } });
+// };
 
 export default asMeteorMethods(TagsCollection, {
     createTag,
