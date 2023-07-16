@@ -3,7 +3,7 @@
     "private": true,
     "scripts": {
         "check:code-style": "npm run check:code-style:prettier && npm run check:code-style:lint",
-        "check:code-style:lint": "eslint . --ext .js,.ts,.tsx",
+        "check:code-style:lint": "eslint . --debug --ext .js,.ts,.tsx",
         "check:code-style:prettier": "prettier --check .",
         "pretest": "npm run check:code-style --silent",
         "start": "meteor run",
