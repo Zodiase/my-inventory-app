@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import AnyAny from './AnyAny';
-import { Defaults, OptionalDefaults } from './Defaults';
+import { Defaults, OptionalDefaults } from './defaults';
 import createLogger from './Logger';
 import NamedCollection from './NamedCollection';
 
@@ -27,8 +27,9 @@ export function asMeteorMethods<
             return col;
         }
 
+        const collectionName: string = collection.name;
         const methodLogger = createLogger({
-            id: `Collection/${collection.name}/MeteorMethods/${funcName}`,
+            id: `Collection/${collectionName}/MeteorMethods/${funcName}`,
         });
 
         return Object.assign(col, {
