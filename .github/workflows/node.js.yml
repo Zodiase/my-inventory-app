@@ -23,6 +23,7 @@ jobs:
 
     defaults:
       run:
+        shell: bash -l {0}
         working-directory: meteor-app
 
     steps:
