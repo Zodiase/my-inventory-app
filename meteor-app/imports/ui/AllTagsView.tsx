@@ -64,7 +64,7 @@ const TagList = styled(({ tag, ...rootElementProps }: TagListProps & ComponentPr
         }
 
         TagsCollection.renameTag(tag, newTagName).then(
-            (succeeded) => {
+            (succeeded: boolean) => {
                 if (succeeded) {
                     console.log(`Name of tag "${tagName}" changed to "${newTagName}".`);
                 } else {
@@ -91,7 +91,7 @@ const TagList = styled(({ tag, ...rootElementProps }: TagListProps & ComponentPr
         }
 
         TagsCollection.removeTag(tag._id).then(
-            (succeeded) => {
+            (succeeded: boolean) => {
                 if (succeeded) {
                     console.log(`Tag "${tagName}" removed.`);
                 } else {
@@ -146,7 +146,7 @@ const DetachedTagsView = styled((rootElementProps: ComponentProps<'div'>): React
         removing: false,
         removedCount: 0,
     }));
-    const totalTagsCount = useTracker(() => TagsCollection.find({}).count(), []);
+    const totalTagsCount: number = useTracker(() => TagsCollection.find({}).count(), []);
 
     const onClickCheckButton = useCallback(() => {
         if (updating || removing) {
