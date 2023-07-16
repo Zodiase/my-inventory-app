@@ -37,13 +37,5 @@ jobs:
     - name: Use Meteor ${{ matrix.node-version }}
       run: npm install -g meteor@${{ matrix.meteor }}
     - run: meteor npm ci
-    - name: Log eslint config
-      run: mkdir -p ../.debug && meteor npm run check:code-style:lint:debug > ../.debug/remote-eslint.log
-    - name: Archive debugging logs
-      uses: actions/upload-artifact@v3
-      with:
-        name: debug-logs
-        path: |
-          .debug
     - run: meteor npm run build --if-present
     - run: meteor npm test
