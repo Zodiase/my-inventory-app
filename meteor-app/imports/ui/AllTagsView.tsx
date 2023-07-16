@@ -35,7 +35,7 @@ const TagList = styled(({ tag, ...rootElementProps }: TagListProps & ComponentPr
             return;
         }
 
-        (async () => await TagsCollection.createTag({ name: newTagName, parentTagId: tagId }))().then(
+        TagsCollection.createTag({ name: newTagName, parentTagId: tagId }).then(
             (newTagId) => {
                 console.log(`New tag "${newTagName}" created.`, newTagId);
             },
@@ -63,7 +63,7 @@ const TagList = styled(({ tag, ...rootElementProps }: TagListProps & ComponentPr
             return;
         }
 
-        (async () => await TagsCollection.renameTag(tag, newTagName))().then(
+        TagsCollection.renameTag(tag, newTagName).then(
             (succeeded) => {
                 if (succeeded) {
                     console.log(`Name of tag "${tagName}" changed to "${newTagName}".`);
@@ -90,7 +90,7 @@ const TagList = styled(({ tag, ...rootElementProps }: TagListProps & ComponentPr
             return;
         }
 
-        (async () => await TagsCollection.removeTag(tag._id))().then(
+        TagsCollection.removeTag(tag._id).then(
             (succeeded) => {
                 if (succeeded) {
                     console.log(`Tag "${tagName}" removed.`);
