@@ -36,5 +36,5 @@ jobs:
         cache-dependency-path: 'meteor-app'
     - run: npm install -g meteor
     - run: meteor npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    - run: meteor npm run build --if-present
+    - run: meteor npm test
