@@ -7,7 +7,7 @@ function isPrintablePrimitive(x: unknown): x is PrintablePrimitive {
     return primitiveTypes.has(typeof x);
 }
 
-const printableObjectTypes: Array<(x: null | object) => boolean> = [(x) => x === null, (x) => x instanceof Date];
+const printableObjectTypes: Array<(x: unknown) => boolean> = [(x) => x === null, (x) => x instanceof Date];
 function isPrintableObject(x: unknown): x is PrintableObject {
     return printableObjectTypes.some((predicate) => predicate(x));
 }
@@ -24,11 +24,29 @@ function printableRecursionHelper(path: Path, x: unknown): Array<{ path: Path; v
         ];
     }
 
+    if (typeof x === 'undefined') {
+        return [
+            {
+                path,
+                value: `[undefined]`,
+            },
+        ];
+    }
+
     if (typeof x !== 'object') {
         return [
             {
                 path,
-                value: `[unrecognized primitive]${String(x)}]`,
+                value: `[unrecognized primitive]${String(x)}`,
+            },
+        ];
+    }
+
+    if (x === null) {
+        return [
+            {
+                path,
+                value: `[null]`,
             },
         ];
     }
@@ -37,7 +55,7 @@ function printableRecursionHelper(path: Path, x: unknown): Array<{ path: Path; v
         return [
             {
                 path,
-                value: `[printable object]${String(x)}]`,
+                value: `[printable object]${String(x)}`,
             },
         ];
     }

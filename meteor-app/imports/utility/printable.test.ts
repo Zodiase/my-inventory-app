@@ -9,6 +9,11 @@ describe('printable', function () {
         assert.deepStrictEqual(printable(true), '[boolean]true');
     });
 
+    it('returns correct string for undefined and null', async function () {
+        assert.deepStrictEqual(printable(undefined), '[undefined]');
+        assert.deepStrictEqual(printable(null), '[null]');
+    });
+
     it('flattens complex values into a shallow object', async function () {
         assert.deepStrictEqual(printable([1, '2', true]), { '0': '[number]1', '1': '[string]2', '2': '[boolean]true' });
         assert.deepStrictEqual(printable([[1, '2', true]]), {
