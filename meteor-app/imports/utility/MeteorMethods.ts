@@ -27,8 +27,9 @@ export function asMeteorMethods<
             return col;
         }
 
+        const collectionName: string = collection.name;
         const methodLogger = createLogger({
-            id: `Collection/${collection.name}/MeteorMethods/${funcName}`,
+            id: `Collection/${collectionName}/MeteorMethods/${funcName}`,
         });
 
         return Object.assign(col, {
