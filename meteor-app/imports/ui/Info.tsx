@@ -1,7 +1,7 @@
 import { useTracker } from 'meteor/react-meteor-data';
-import React, { ReactElement } from 'react';
+import React, { type ReactElement } from 'react';
 
-import { LinksCollection, Link } from '../api/links';
+import { LinksCollection, type Link } from '../api/links';
 
 export const Info = (): ReactElement => {
     const links = useTracker(() => LinksCollection.find().fetch());

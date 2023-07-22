@@ -1,5 +1,5 @@
 import { useTracker } from 'meteor/react-meteor-data';
-import React, { ComponentProps, ReactElement } from 'react';
+import React, { type ComponentProps, type ReactElement } from 'react';
 import styled from 'styled-components';
 
 import { InventoryItemsCollection } from '/imports/api/items';

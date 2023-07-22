@@ -2,11 +2,13 @@ import assert from 'assert';
 
 import NoOp from '/imports/utility/NoOp';
 
-import TagRecord from './TagRecord';
+import type TagRecord from './TagRecord';
 
 describe('TagRecord', function () {
     it('Type casting', async function () {
-        const tester = (x: TagRecord): void => NoOp(x);
+        const tester = (x: TagRecord): void => {
+            NoOp(x);
+        };
 
         assert.doesNotThrow(() => {
             tester({

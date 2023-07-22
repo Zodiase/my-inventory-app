@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { type ReactElement } from 'react';
 
 import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';

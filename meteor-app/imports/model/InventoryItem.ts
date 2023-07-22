@@ -1,4 +1,4 @@
-import CollectionItem from './CollectionItem';
+import type CollectionItem from './CollectionItem';
 
 export interface InventoryItem extends CollectionItem {
     /**

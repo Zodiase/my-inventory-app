@@ -2,15 +2,15 @@ import extend from 'lodash/extend';
 import { Meteor } from 'meteor/meteor';
 
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
-import TagRecord from '/imports/model/TagRecord';
+import type TagRecord from '/imports/model/TagRecord';
 import createLogger from '/imports/utility/Logger';
 import asMeteorMethods from '/imports/utility/MeteorMethods';
 import { NamedCollection } from '/imports/utility/NamedCollection';
-import NoId from '/imports/utility/NoId';
-import RecordInput from '/imports/utility/RecordInput';
+import type NoId from '/imports/utility/NoId';
+import type RecordInput from '/imports/utility/RecordInput';
 import strictSelector from '/imports/utility/strictSelector';
 
-export { TagRecord } from '/imports/model/TagRecord';
+export type { TagRecord } from '/imports/model/TagRecord';
 
 const logger = createLogger(module);
 

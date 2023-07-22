@@ -1,10 +1,12 @@
 import NoOp from '/imports/utility/NoOp';
 
-import NoId from './NoId';
+import type NoId from './NoId';
 
 describe('NoId', function () {
     it('Type casting', async function () {
-        const tester = <T>(x: T, y: NoId<T>): void => NoOp(x, y);
+        const tester = <T>(x: T, y: NoId<T>): void => {
+            NoOp(x, y);
+        };
 
         tester(
             {
