@@ -13,6 +13,7 @@ on:
 
 jobs:
   type-check:
+    name: Check types
     runs-on: ubuntu-latest
 
     strategy:
@@ -35,6 +36,7 @@ jobs:
     - run: npm run check:type
 
   code-style-check:
+    name: Check coding styles
     runs-on: ubuntu-latest
 
     strategy:
@@ -57,7 +59,7 @@ jobs:
     - run: npm run check:code-style
 
   tests:
-
+    name: Unit tests
     runs-on: ubuntu-latest
 
     strategy:
