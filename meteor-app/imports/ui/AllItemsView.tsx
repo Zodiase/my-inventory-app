@@ -1,14 +1,13 @@
+import { Box, Grid } from 'grommet';
 import { useTracker } from 'meteor/react-meteor-data';
-import React, { type ComponentProps, type ReactElement } from 'react';
-import styled from 'styled-components';
+import React, { useState, type ComponentProps, type ReactElement } from 'react';
 
-import { InventoryItemsCollection } from '/imports/api/items';
+import { type InventoryItem, InventoryItemsCollection } from '/imports/api/items';
 
-interface ItemListProps {
-    //!
-}
+import ItemList from './ItemList';
+import ItemView from './ItemView';
 
-const ItemList = styled(({ ...rootElementProps }: ItemListProps & ComponentProps<'div'>): ReactElement => {
+const AllItemsView = (rootElementProps: ComponentProps<'div'>): ReactElement => {
     const items = useTracker(
         () =>
             InventoryItemsCollection.find(
@@ -24,31 +23,39 @@ const ItemList = styled(({ ...rootElementProps }: ItemListProps & ComponentProps
             ).fetch(),
         []
     );
+    const [selectedItem, setSelectedItem] = useState<null | InventoryItem>(() => null);
+    const onSelectItemFromList = (event: { datum: InventoryItem; index?: number }): void => {
+        setSelectedItem(event.datum);
+    };
 
     return (
-        <div {...rootElementProps}>
-            <div>All items</div>
-            <ul className="item-list" data-items-count={items.length}>
-                {items.map((item) => (
-                    <li key={item._id}>
-                        <div className="item-body" data-item-id={item._id}>
-                            <label className="item-name-label">{item.name}</label>
-                            <span className="tag-actions-container"></span>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <Grid
+            {...rootElementProps}
+            height="400px"
+            rows={['xxsmall', 'auto']}
+            columns={['medium', 'auto']}
+            gap="small"
+            areas={[
+                { name: 'header', start: [0, 0], end: [1, 0] },
+                { name: 'list', start: [0, 1], end: [0, 1] },
+                { name: 'view', start: [1, 1], end: [1, 1] },
+            ]}
+        >
+            <Box gridArea="header" background="brand">
+                All Items View
+            </Box>
+            <ItemList
+                gridArea="list"
+                background="light-5"
+                items={items}
+                selectedItem={selectedItem?._id}
+                onSelectItem={onSelectItemFromList}
+            />
+            <Box gridArea="view" background="light-2">
+                <ItemView item={selectedItem} />
+            </Box>
+        </Grid>
     );
-})``;
+};
 
-export const AllItemsView = styled((rootElementProps: ComponentProps<'div'>): ReactElement => {
-    return (
-        <div {...rootElementProps}>
-            <ItemList />
-        </div>
-    );
-})`
-    ${ItemList} {
-    }
-`;
+export default AllItemsView;

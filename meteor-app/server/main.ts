@@ -10,10 +10,9 @@ Meteor.startup(async () => {
     Meteor.settings.fixPath = true;
 
     if ((await InventoryItemsCollection.find().countAsync()) === 0) {
-        await InventoryItemsCollection.createItem({ name: 'Sample item 1' });
-        await InventoryItemsCollection.createItem({ name: 'Sample item 2' });
-        await InventoryItemsCollection.createItem({ name: 'Sample item 3' });
-        await InventoryItemsCollection.createItem({ name: 'Sample item 4' });
+        for (let i = 0; i < 100; i++) {
+            await InventoryItemsCollection.createItem({ name: `Sample item ${i + 1}` });
+        }
     }
 
     if ((await TagsCollection.find().countAsync()) === 0) {
