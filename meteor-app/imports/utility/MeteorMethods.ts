@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 
-import AnyAny from './AnyAny';
-import { Defaults, OptionalDefaults } from './defaults';
+import type AnyAny from './AnyAny';
+import { type Defaults, type OptionalDefaults } from './defaults';
 import createLogger from './Logger';
-import NamedCollection from './NamedCollection';
+import type NamedCollection from './NamedCollection';
 
 // const logger = createLogger(module);
 

@@ -6,7 +6,9 @@ import { CollectionItem } from './CollectionItem';
 
 describe('CollectionItem', function () {
     it('Type casting', async function () {
-        const tester = (x: CollectionItem): void => NoOp(x);
+        const tester = (x: CollectionItem): void => {
+            NoOp(x);
+        };
 
         assert.doesNotThrow(() => {
             tester({

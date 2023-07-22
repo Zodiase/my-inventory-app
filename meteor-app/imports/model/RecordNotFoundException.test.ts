@@ -6,7 +6,9 @@ import RecordNotFoundException from './RecordNotFoundException';
 
 describe('RecordNotFoundException', function () {
     it('Type casting', async function () {
-        const tester = (x: RecordNotFoundException): void => NoOp(x);
+        const tester = (x: RecordNotFoundException): void => {
+            NoOp(x);
+        };
 
         assert.doesNotThrow(() => {
             const exception = {

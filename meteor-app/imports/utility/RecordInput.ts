@@ -1,4 +1,4 @@
-import { CollectionItem } from '/imports/model/CollectionItem';
+import { type CollectionItem } from '/imports/model/CollectionItem';
 
 /**
  * Returns a type that is suitable for user input for creating a collection record.

@@ -1,6 +1,6 @@
-import { DDP } from 'meteor/ddp';
+import { type DDP } from 'meteor/ddp';
 import { Mongo } from 'meteor/mongo';
-import * as MongoNpmModule from 'mongodb';
+import type * as MongoNpmModule from 'mongodb';
 export class NamedCollection<T extends MongoNpmModule.Document, U = T> extends Mongo.Collection<T, U> {
     readonly name: string;
 

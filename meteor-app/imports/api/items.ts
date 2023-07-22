@@ -1,11 +1,11 @@
-import InventoryItem from '/imports/model/InventoryItem';
+import type InventoryItem from '/imports/model/InventoryItem';
 import createLogger from '/imports/utility/Logger';
 import asMeteorMethods from '/imports/utility/MeteorMethods';
 import { NamedCollection } from '/imports/utility/NamedCollection';
-import NoId from '/imports/utility/NoId';
-import RecordInput from '/imports/utility/RecordInput';
+import type NoId from '/imports/utility/NoId';
+import type RecordInput from '/imports/utility/RecordInput';
 
-export { InventoryItem } from '/imports/model/InventoryItem';
+export type { InventoryItem } from '/imports/model/InventoryItem';
 
 const logger = createLogger(module);
 
