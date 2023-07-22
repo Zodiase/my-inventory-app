@@ -31,5 +31,5 @@ export const createInventoryItem = async (itemInput: RecordInput<InventoryItem>)
 };
 
 export default asMeteorMethods(InventoryItemsCollection, {
-    createInventoryItem,
+    createItem: createInventoryItem,
 });

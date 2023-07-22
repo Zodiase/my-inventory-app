@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 
-import { InventoryItemsCollection, createInventoryItem } from '/imports/api/items';
+import InventoryItemsCollection from '/imports/api/items';
 import { LinksCollection } from '/imports/api/links';
-import { TagsCollection, createTag } from '/imports/api/tags';
+import TagsCollection from '/imports/api/tags';
 import createLogger from '/imports/utility/Logger';
 
 const logger = createLogger(module);
@@ -38,19 +38,19 @@ Meteor.startup(async () => {
     }
 
     if ((await InventoryItemsCollection.find().countAsync()) === 0) {
-        await createInventoryItem({ name: 'Sample item 1' });
-        await createInventoryItem({ name: 'Sample item 2' });
-        await createInventoryItem({ name: 'Sample item 3' });
-        await createInventoryItem({ name: 'Sample item 4' });
+        await InventoryItemsCollection.createItem({ name: 'Sample item 1' });
+        await InventoryItemsCollection.createItem({ name: 'Sample item 2' });
+        await InventoryItemsCollection.createItem({ name: 'Sample item 3' });
+        await InventoryItemsCollection.createItem({ name: 'Sample item 4' });
     }
 
     if ((await TagsCollection.find().countAsync()) === 0) {
-        const tag1Id = await createTag({ name: 'Sample tag 1' });
-        const tag2Id = await createTag({ name: 'Sample tag 2' });
-        await createTag({ name: 'Sample child tag 1-1', parentTagId: tag1Id });
-        await createTag({ name: 'Sample child tag 1-2', parentTagId: tag1Id });
-        await createTag({ name: 'Sample child tag 2-1', parentTagId: tag2Id });
-        await createTag({ name: 'Sample child tag 2-2', parentTagId: tag2Id });
+        const tag1Id = await TagsCollection.createTag({ name: 'Sample tag 1' });
+        const tag2Id = await TagsCollection.createTag({ name: 'Sample tag 2' });
+        await TagsCollection.createTag({ name: 'Sample child tag 1-1', parentTagId: tag1Id });
+        await TagsCollection.createTag({ name: 'Sample child tag 1-2', parentTagId: tag1Id });
+        await TagsCollection.createTag({ name: 'Sample child tag 2-1', parentTagId: tag2Id });
+        await TagsCollection.createTag({ name: 'Sample child tag 2-2', parentTagId: tag2Id });
     }
 
     TagsCollection.watchAndFixMissingPath().catch((reason) => {
