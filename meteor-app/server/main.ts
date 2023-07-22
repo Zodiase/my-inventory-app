@@ -6,7 +6,7 @@ import createLogger from '/imports/utility/Logger';
 
 const logger = createLogger(module);
 
-async function insertLink({ title, url }): void {
+async function insertLink({ title, url }: { title: string; url: string }): Promise<void> {
     await LinksCollection.insertAsync({ title, url, createdAt: new Date() });
 }
 

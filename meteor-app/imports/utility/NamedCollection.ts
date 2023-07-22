@@ -1,3 +1,4 @@
+import { DDP } from 'meteor/ddp';
 import { Mongo } from 'meteor/mongo';
 import * as MongoNpmModule from 'mongodb';
 export class NamedCollection<T extends MongoNpmModule.Document, U = T> extends Mongo.Collection<T, U> {
@@ -6,7 +7,7 @@ export class NamedCollection<T extends MongoNpmModule.Document, U = T> extends M
     constructor(
         name: string,
         options?: {
-            connection?: Record<string, unknown> | null | undefined;
+            connection?: DDP.DDPStatic | null | undefined;
             idGeneration?: string | undefined;
             transform?: (doc: T) => U;
             defineMutationMethods?: boolean | undefined;

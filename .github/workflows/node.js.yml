@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: NPM Test
+name: App Tests
 
 on:
   push:
@@ -12,7 +12,33 @@ on:
     - 'twig/**'
 
 jobs:
-  build:
+  type-check:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ '14.x' ]
+        meteor: [ '2.12' ]
+
+    defaults:
+      run:
+        shell: bash -l {0}
+        working-directory: meteor-app
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: 'meteor-app'
+    - name: Use Meteor ${{ matrix.node-version }}
+      run: npm install -g meteor@${{ matrix.meteor }}
+    - run: meteor npm install
+    - run: meteor npm run check:type
+
+  tests:
 
     runs-on: ubuntu-latest
 
