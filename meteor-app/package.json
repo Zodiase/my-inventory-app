@@ -6,7 +6,6 @@
         "check:code-style:lint": "eslint --ext .js,.ts,.tsx ./",
         "check:code-style:prettier": "prettier --check .",
         "check:type": "tsc --version && tsc --noEmit",
-        "pretest": "npm run check:code-style --silent",
         "start": "meteor run",
         "test": "meteor test --once --driver-package meteortesting:mocha",
         "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
