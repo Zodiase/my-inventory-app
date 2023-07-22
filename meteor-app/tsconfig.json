@@ -16,7 +16,7 @@
         "strictNullChecks": true,
 
         /* Additional Checks */
-        "noUnusedLocals": true,
+        "noUnusedLocals": false, // Leave this to the linters.
         "noUnusedParameters": true,
         "noImplicitReturns": false,
         "noFallthroughCasesInSwitch": false,
