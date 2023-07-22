@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 
+import { InventoryItemsCollection, createInventoryItem } from '/imports/api/items';
 import { LinksCollection } from '/imports/api/links';
-import TagsCollection, { createTag } from '/imports/api/tags';
+import { TagsCollection, createTag } from '/imports/api/tags';
 import createLogger from '/imports/utility/Logger';
 
 const logger = createLogger(module);
@@ -34,6 +35,13 @@ Meteor.startup(async () => {
             title: 'Discussions',
             url: 'https://forums.meteor.com',
         });
+    }
+
+    if ((await InventoryItemsCollection.find().countAsync()) === 0) {
+        await createInventoryItem({ name: 'Sample item 1' });
+        await createInventoryItem({ name: 'Sample item 2' });
+        await createInventoryItem({ name: 'Sample item 3' });
+        await createInventoryItem({ name: 'Sample item 4' });
     }
 
     if ((await TagsCollection.find().countAsync()) === 0) {
