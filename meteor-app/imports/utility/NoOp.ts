@@ -1,4 +1,4 @@
-export function NoOp(...args: unknown[]): void {
+export function NoOp(..._args: unknown[]): void {
     // NOOP.
 }
 
