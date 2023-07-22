@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         /* Basic Options */
-        "target": "es2018",
+        "target": "ES2020",
         "module": "esNext",
         "lib": ["esnext", "dom"],
         "allowJs": true,
@@ -27,7 +27,7 @@
             /* Support absolute /imports/* with a leading '/' */
             "/*": ["*"]
         },
-        "moduleResolution": "node",
+        "moduleResolution": "Bundler",
         "resolveJsonModule": true,
         "types": ["node", "mocha"],
         "esModuleInterop": true,
