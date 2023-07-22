@@ -18,11 +18,9 @@ jobs:
     strategy:
       matrix:
         node-version: [ '14.x' ]
-        meteor: [ '2.12' ]
 
     defaults:
       run:
-        shell: bash -l {0}
         working-directory: meteor-app
 
     steps:
@@ -33,10 +31,30 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: 'meteor-app'
-    - name: Use Meteor ${{ matrix.node-version }}
-      run: npm install -g meteor@${{ matrix.meteor }}
-    - run: meteor npm install
-    - run: meteor npm run check:type
+    - run: npm ci
+    - run: npm run check:type
+
+  code-style-check:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ '14.x' ]
+
+    defaults:
+      run:
+        working-directory: meteor-app
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: 'meteor-app'
+    - run: npm ci
+    - run: npm run check:code-style
 
   tests:
 
