@@ -14,6 +14,8 @@
     "dependencies": {
         "@babel/core": "^7.22.9",
         "@babel/runtime": "^7.22.6",
+        "grommet": "^2.31.0",
+        "grommet-icons": "^4.11.0",
         "lodash": "^4.17.21",
         "meteor-node-stubs": "^1.2.5",
         "polished": "^4.2.2",
@@ -32,6 +34,7 @@
         "@typescript-eslint/eslint-plugin": "^5.62.0",
         "@typescript-eslint/parser": "^5.62.0",
         "@xch/prettier-config": "^0.0.2",
+        "babel-plugin-styled-components": "^2.1.4",
         "eslint": "^8.26.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-config-standard-with-typescript": "^36.1.0",
