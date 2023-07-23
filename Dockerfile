@@ -18,6 +18,8 @@ FROM node:14.21.3-alpine
 ENV APP_BUNDLE_FOLDER /opt/bundle
 ENV SCRIPTS_FOLDER /docker
 
+RUN addgroup -S meteorg && adduser -S meteor -G meteorg
+
 # Install OS build dependencies, which stay with this intermediate image but don’t become part of the final published image
 RUN apk --no-cache add \
 	bash \
@@ -26,10 +28,12 @@ RUN apk --no-cache add \
 	python3
 
 # Copy in entrypoint
-COPY --from=0 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
+COPY --chown=meteor:meteorg --from=0 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
 
 # Copy in app bundle
-COPY --from=0 $APP_BUNDLE_FOLDER/bundle $APP_BUNDLE_FOLDER/bundle/
+COPY --chown=meteor:meteorg --from=0 $APP_BUNDLE_FOLDER/bundle $APP_BUNDLE_FOLDER/bundle/
+
+USER meteor
 
 RUN bash $SCRIPTS_FOLDER/build-meteor-npm-dependencies.sh --build-from-source
 
@@ -51,10 +55,10 @@ RUN apk --no-cache add \
 	ca-certificates
 
 # Copy in entrypoint with the built and installed dependencies from the previous image
-COPY --from=1 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
+COPY --chown=meteor:meteorg --from=1 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
 
 # Copy in app bundle with the built and installed dependencies from the previous image
-COPY --from=1 $APP_BUNDLE_FOLDER/bundle $APP_BUNDLE_FOLDER/bundle/
+COPY --chown=meteor:meteorg --from=1 $APP_BUNDLE_FOLDER/bundle $APP_BUNDLE_FOLDER/bundle/
 
 USER meteor
 
