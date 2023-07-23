@@ -43,6 +43,8 @@ FROM node:14.21.3-alpine
 ENV APP_BUNDLE_FOLDER /opt/bundle
 ENV SCRIPTS_FOLDER /docker
 
+RUN groupadd -r meteorg && useradd -r -g meteorg meteor
+
 # Install OS runtime dependencies
 RUN apk --no-cache add \
 	bash \
@@ -53,6 +55,8 @@ COPY --from=1 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
 
 # Copy in app bundle with the built and installed dependencies from the previous image
 COPY --from=1 $APP_BUNDLE_FOLDER/bundle $APP_BUNDLE_FOLDER/bundle/
+
+USER meteor
 
 # Start app
 ENTRYPOINT ["/docker/entrypoint.sh"]
