@@ -1,7 +1,8 @@
 import { Box, Button, DataTable } from 'grommet';
 import React, { type ReactElement, type ComponentProps, useMemo } from 'react';
 
-import type InventoryItem from '../model/InventoryItem';
+import type InventoryItem from '/imports/model/InventoryItem';
+
 import Toolbar from './Toolbar';
 
 interface ItemListProps {
@@ -14,7 +15,6 @@ const ItemList = ({
     items,
     selectedItem,
     onSelectItem,
-    ref,
     ...rootElementProps
 }: ItemListProps & ComponentProps<typeof Box>): ReactElement => {
     const rowProps = useMemo(() => {

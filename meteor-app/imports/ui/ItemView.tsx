@@ -1,7 +1,7 @@
 import { Box, Button, NameValueList, NameValuePair, TextInput } from 'grommet';
-import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
-import React, { type ReactElement, type ComponentProps, useMemo, useState, ChangeEventHandler } from 'react';
+import isEqual from 'lodash/isEqual';
+import React, { type ReactElement, type ComponentProps, useMemo, useState, type ChangeEventHandler } from 'react';
 
 import type InventoryItem from '/imports/model/InventoryItem';
 
@@ -65,9 +65,11 @@ interface ItemProp<T extends PropertyTypeNames> {
 /**
  * All possible kinds of types of item properties.
  */
-type ItemProps = {
-    [K in PropertyTypeNames]: ItemProp<K>;
-}[PropertyTypeNames][];
+type ItemProps = Array<
+    {
+        [K in PropertyTypeNames]: ItemProp<K>;
+    }[PropertyTypeNames]
+>;
 
 interface ItemReadViewProps {
     itemProps: ItemProps;
@@ -77,7 +79,6 @@ interface ItemReadViewProps {
 const ItemReadView = ({
     itemProps,
     onEnterEdit,
-    ref,
     ...rootElementProps
 }: ItemReadViewProps & ComponentProps<typeof Box>): ReactElement => {
     return (
@@ -89,7 +90,13 @@ const ItemReadView = ({
                 }}
             >
                 <Spacer />
-                <Button secondary={true} label="Edit" onClick={() => onEnterEdit()} />
+                <Button
+                    secondary={true}
+                    label="Edit"
+                    onClick={() => {
+                        onEnterEdit();
+                    }}
+                />
             </Toolbar>
             <NameValueList nameProps={{ align: 'end' }} valueProps={{ width: 'auto' }}>
                 {itemProps.map(({ name, type, value }) => {
@@ -108,7 +115,7 @@ const ItemReadView = ({
 
 interface ItemEditViewProps {
     itemProps: ItemProps;
-    onSaveEdit: (newItemProps: { [propName: string]: PropertyTypeByName[PropertyTypeNames] }) => Promise<boolean>;
+    onSaveEdit: (newItemProps: Record<string, PropertyTypeByName[PropertyTypeNames]>) => Promise<boolean>;
     onCancelEdit: () => void;
 }
 
@@ -116,17 +123,16 @@ const ItemEditView = ({
     itemProps,
     onSaveEdit,
     onCancelEdit,
-    ref,
     ...rootElementProps
 }: ItemEditViewProps & ComponentProps<typeof Box>): ReactElement => {
     const [itemPropValues, setItemPropValues] = useState(() => {
-        return itemProps.reduce(
+        return itemProps.reduce<Record<string, PropertyTypeByName[PropertyTypeNames]>>(
             (acc, { name, value }) => ({ ...acc, [name]: value }),
-            {} as { [propName: string]: PropertyTypeByName[PropertyTypeNames] }
+            {}
         );
     });
 
-    const onClickCancelButton = () => {
+    const onClickCancelButton = (): void => {
         const isDirty = itemProps.some(({ name, value }) => !isEqual(value, itemPropValues[name]));
 
         if (isDirty) {
@@ -148,12 +154,18 @@ const ItemEditView = ({
             >
                 <Spacer />
                 <Button secondary={true} label="Cancel" onClick={onClickCancelButton} />
-                <Button secondary={true} label="Save" onClick={() => onSaveEdit(itemPropValues)} />
+                <Button
+                    secondary={true}
+                    label="Save"
+                    onClick={() => {
+                        onSaveEdit(itemPropValues);
+                    }}
+                />
             </Toolbar>
             <NameValueList nameProps={{ align: 'end' }} valueProps={{ width: 'auto' }}>
-                {itemProps.map(({ name, type, value }: ItemProp<PropertyTypeNames>) => {
+                {itemProps.map(({ name, type }: ItemProp<PropertyTypeNames>) => {
                     const renderer = (renderersByPropertyType[type] as RendererSet<typeof type>).edit;
-                    const editorValue = itemPropValues[name] as typeof value;
+                    const editorValue = itemPropValues[name];
                     const onChangeValue: ChangeEventHandler<HTMLInputElement> = (event) => {
                         const propName = name;
                         const newValue = event.target.value;
@@ -185,13 +197,12 @@ interface ItemViewProps {
 const ItemView = ({
     item,
     onUpdateItem,
-    ref,
     ...rootElementProps
 }: ItemViewProps & ComponentProps<typeof Box>): ReactElement => {
     const [inEditMode, setInEditMode] = useState(() => false);
 
     const props = useMemo((): ItemProps => {
-        if (!item) {
+        if (item === null) {
             return [];
         }
 
@@ -241,11 +252,21 @@ const ItemView = ({
                         return false;
                     }
                 }}
-                onCancelEdit={() => setInEditMode(false)}
+                onCancelEdit={() => {
+                    setInEditMode(false);
+                }}
             />
         );
     } else {
-        return <ItemReadView {...rootElementProps} itemProps={props} onEnterEdit={() => setInEditMode(true)} />;
+        return (
+            <ItemReadView
+                {...rootElementProps}
+                itemProps={props}
+                onEnterEdit={() => {
+                    setInEditMode(true);
+                }}
+            />
+        );
     }
 };
 
