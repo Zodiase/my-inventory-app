@@ -4,6 +4,10 @@ IMG_TAG ?= $(shell date +%s)
 image:
 	docker build . --file Dockerfile --tag zodiase/my-inventory-app:${IMG_TAG}
 
+.PHONY: push-image
+push-image:
+	docker push zodiase/my-inventory-app:${IMG_TAG}
+
 .PHONY: up
 up:
 	docker-compose up -d meteorapp
