@@ -5,7 +5,11 @@ export interface SpacerProps {
     size?: ComponentProps<typeof Box>['basis'];
 }
 
-export const Spacer = ({ size, children, ...rootElementProps }: SpacerProps & ComponentProps<typeof Box>): ReactElement => {
+export const Spacer = ({
+    size,
+    children,
+    ...rootElementProps
+}: SpacerProps & ComponentProps<typeof Box>): ReactElement => {
     if (typeof size === 'undefined') {
         return <Box basis="0" flex={{ grow: 1, shrink: 1 }} alignSelf="stretch" {...rootElementProps} />;
     } else {
