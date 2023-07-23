@@ -3,6 +3,7 @@ import { useTracker } from 'meteor/react-meteor-data';
 import React, { useState, type ComponentProps, type ReactElement } from 'react';
 
 import { type InventoryItem, InventoryItemsCollection } from '/imports/api/items';
+import NotImplementedError from '/imports/model/NotImplementedError';
 
 import ItemList from './ItemList';
 import ItemView from './ItemView';
@@ -52,7 +53,14 @@ const AllItemsView = (rootElementProps: ComponentProps<'div'>): ReactElement => 
                 onSelectItem={onSelectItemFromList}
             />
             <Box gridArea="view" background="light-2">
-                <ItemView item={selectedItem} />
+                <ItemView
+                    item={selectedItem}
+                    onUpdateItem={async (newItem) => {
+                        // TODO: execute update.
+                        console.log('onUpdateItem', newItem);
+                        throw new NotImplementedError();
+                    }}
+                />
             </Box>
         </Grid>
     );
