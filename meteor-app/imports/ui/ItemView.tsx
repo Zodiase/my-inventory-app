@@ -1,28 +1,252 @@
-import { Box, NameValueList, NameValuePair } from 'grommet';
-import React, { type ReactElement, type ComponentProps } from 'react';
+import { Box, Button, NameValueList, NameValuePair, TextInput } from 'grommet';
+import isEqual from 'lodash/isEqual';
+import cloneDeep from 'lodash/cloneDeep';
+import React, { type ReactElement, type ComponentProps, useMemo, useState, ChangeEventHandler } from 'react';
 
-import type InventoryItem from '../model/InventoryItem';
+import type InventoryItem from '/imports/model/InventoryItem';
+
+import Toolbar, { Spacer } from './Toolbar';
+
+/**
+ * Map property type names to their data types.
+ */
+interface PropertyTypeByName {
+    text: string;
+    date: Date;
+}
+/**
+ * The collection of all property type names.
+ */
+type PropertyTypeNames = keyof PropertyTypeByName;
+
+/**
+ * Specify which of the default props are editable, and if so, has what type of data.
+ */
+const editableDefaultProps: { [propName in keyof InventoryItem]?: PropertyTypeNames } = {
+    name: 'text',
+};
+
+/**
+ * For each of supported property type, we need a set of renderers for different scenarios.
+ */
+interface RendererSet<T extends PropertyTypeNames> {
+    view: (name: string, value: PropertyTypeByName[T]) => string | ReactElement;
+    edit: (
+        name: string,
+        value: PropertyTypeByName[T],
+        onChange: ChangeEventHandler<HTMLInputElement>
+    ) => string | ReactElement;
+}
+const renderersByPropertyType: {
+    [T in PropertyTypeNames]: RendererSet<T>;
+} = {
+    text: {
+        view: (_name: string, value: string) => value,
+        edit: (name: string, value: string, onChange: ChangeEventHandler<HTMLInputElement>) => (
+            <TextInput placeholder={name} value={value} onChange={onChange} />
+        ),
+    },
+    date: {
+        view: (_name: string, value: Date) => value.toLocaleString(),
+        edit: (name: string, value: Date, onChange: ChangeEventHandler<HTMLInputElement>) => (
+            <TextInput placeholder={name} value={value.toLocaleString()} onChange={onChange} />
+        ),
+    },
+};
+
+/**
+ * For a particular property of an item, the type of the value must match the type name.
+ */
+interface ItemProp<T extends PropertyTypeNames> {
+    name: string;
+    type: T;
+    value: PropertyTypeByName[T];
+}
+/**
+ * All possible kinds of types of item properties.
+ */
+type ItemProps = {
+    [K in PropertyTypeNames]: ItemProp<K>;
+}[PropertyTypeNames][];
+
+interface ItemReadViewProps {
+    itemProps: ItemProps;
+    onEnterEdit: () => void;
+}
+
+const ItemReadView = ({
+    itemProps,
+    onEnterEdit,
+    ref,
+    ...rootElementProps
+}: ItemReadViewProps & ComponentProps<typeof Box>): ReactElement => {
+    return (
+        <Box pad="small" {...rootElementProps}>
+            <Toolbar
+                flex={{
+                    grow: 0,
+                    shrink: 0,
+                }}
+            >
+                <Spacer />
+                <Button secondary={true} label="Edit" onClick={() => onEnterEdit()} />
+            </Toolbar>
+            <NameValueList nameProps={{ align: 'end' }} valueProps={{ width: 'auto' }}>
+                {itemProps.map(({ name, type, value }) => {
+                    const renderer = (renderersByPropertyType[type] as RendererSet<typeof type>).view;
+
+                    return (
+                        <NameValuePair key={name} name={name}>
+                            {renderer(name, value)}
+                        </NameValuePair>
+                    );
+                })}
+            </NameValueList>
+        </Box>
+    );
+};
+
+interface ItemEditViewProps {
+    itemProps: ItemProps;
+    onSaveEdit: (newItemProps: { [propName: string]: PropertyTypeByName[PropertyTypeNames] }) => Promise<boolean>;
+    onCancelEdit: () => void;
+}
+
+const ItemEditView = ({
+    itemProps,
+    onSaveEdit,
+    onCancelEdit,
+    ref,
+    ...rootElementProps
+}: ItemEditViewProps & ComponentProps<typeof Box>): ReactElement => {
+    const [itemPropValues, setItemPropValues] = useState(() => {
+        return itemProps.reduce(
+            (acc, { name, value }) => ({ ...acc, [name]: value }),
+            {} as { [propName: string]: PropertyTypeByName[PropertyTypeNames] }
+        );
+    });
+
+    const onClickCancelButton = () => {
+        const isDirty = itemProps.some(({ name, value }) => !isEqual(value, itemPropValues[name]));
+
+        if (isDirty) {
+            if (!window.confirm('Discard your changes?')) {
+                return;
+            }
+        }
+
+        onCancelEdit();
+    };
+
+    return (
+        <Box pad="small" {...rootElementProps}>
+            <Toolbar
+                flex={{
+                    grow: 0,
+                    shrink: 0,
+                }}
+            >
+                <Spacer />
+                <Button secondary={true} label="Cancel" onClick={onClickCancelButton} />
+                <Button secondary={true} label="Save" onClick={() => onSaveEdit(itemPropValues)} />
+            </Toolbar>
+            <NameValueList nameProps={{ align: 'end' }} valueProps={{ width: 'auto' }}>
+                {itemProps.map(({ name, type, value }: ItemProp<PropertyTypeNames>) => {
+                    const renderer = (renderersByPropertyType[type] as RendererSet<typeof type>).edit;
+                    const editorValue = itemPropValues[name] as typeof value;
+                    const onChangeValue: ChangeEventHandler<HTMLInputElement> = (event) => {
+                        const propName = name;
+                        const newValue = event.target.value;
+                        console.log(`new ${propName}`, newValue);
+                        setItemPropValues((values) => {
+                            return {
+                                ...values,
+                                [propName]: newValue,
+                            };
+                        });
+                    };
+
+                    return (
+                        <NameValuePair key={name} name={name}>
+                            {renderer(name, editorValue, onChangeValue)}
+                        </NameValuePair>
+                    );
+                })}
+            </NameValueList>
+        </Box>
+    );
+};
 
 interface ItemViewProps {
     item: null | InventoryItem;
+    onUpdateItem: (newItem: InventoryItem) => Promise<boolean>;
 }
 
-const ItemView = ({ item, ref, ...rootElementProps }: ItemViewProps & ComponentProps<typeof Box>): ReactElement => {
+const ItemView = ({
+    item,
+    onUpdateItem,
+    ref,
+    ...rootElementProps
+}: ItemViewProps & ComponentProps<typeof Box>): ReactElement => {
+    const [inEditMode, setInEditMode] = useState(() => false);
+
+    const props = useMemo((): ItemProps => {
+        if (!item) {
+            return [];
+        }
+
+        return Object.entries(item)
+            .filter(([name]) => name in editableDefaultProps)
+            .map(([name, value]) => {
+                const nameTyped = name as keyof typeof editableDefaultProps;
+                const type = editableDefaultProps[nameTyped] as PropertyTypeNames;
+
+                return {
+                    name,
+                    type,
+                    value,
+                };
+            });
+    }, [item]);
+
     if (item === null) {
         return <Box {...rootElementProps}></Box>;
     }
 
-    return (
-        <Box pad="small" {...rootElementProps}>
-            <NameValueList valueProps={{ width: 'auto' }}>
-                {Object.entries(item).map(([name, value]) => (
-                    <NameValuePair key={name} name={name}>
-                        {String(value)}
-                    </NameValuePair>
-                ))}
-            </NameValueList>
-        </Box>
-    );
+    if (inEditMode) {
+        return (
+            <ItemEditView
+                {...rootElementProps}
+                itemProps={props}
+                onSaveEdit={async (newItemProps) => {
+                    console.log('newItemProps', newItemProps);
+
+                    const newItem = Object.entries(newItemProps).reduce((acc, [name, value]) => {
+                        if (name in editableDefaultProps) {
+                            const nameTyped = name as keyof typeof editableDefaultProps;
+                            acc[nameTyped] = value as any;
+                        } else {
+                            // TODO: update custom parameters.
+                        }
+
+                        return acc;
+                    }, cloneDeep(item));
+
+                    try {
+                        await onUpdateItem(newItem);
+                        setInEditMode(false);
+                        return true;
+                    } catch (e) {
+                        window.alert(`Save failed: ${String(e)}`);
+                        return false;
+                    }
+                }}
+                onCancelEdit={() => setInEditMode(false)}
+            />
+        );
+    } else {
+        return <ItemReadView {...rootElementProps} itemProps={props} onEnterEdit={() => setInEditMode(true)} />;
+    }
 };
 
 export default ItemView;
