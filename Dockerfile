@@ -43,7 +43,7 @@ FROM node:14.21.3-alpine
 ENV APP_BUNDLE_FOLDER /opt/bundle
 ENV SCRIPTS_FOLDER /docker
 
-RUN groupadd -r meteorg && useradd -r -g meteorg meteor
+RUN addgroup -S meteorg && adduser -S meteor -G meteorg
 
 # Install OS runtime dependencies
 RUN apk --no-cache add \
