@@ -1,8 +1,8 @@
 import { Box, Button, DataTable } from 'grommet';
-import { Toolbar } from 'grommet/components/Toolbar';
 import React, { type ReactElement, type ComponentProps, useMemo } from 'react';
 
 import type InventoryItem from '../model/InventoryItem';
+import Toolbar from './Toolbar';
 
 interface ItemListProps {
     items: InventoryItem[];
