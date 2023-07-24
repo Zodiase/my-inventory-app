@@ -81,7 +81,11 @@ const ItemReadView = ({
                     }}
                 />
             </Toolbar>
-            <NameValueList nameProps={{ align: 'end' }} valueProps={{ width: 'auto' }}>
+            <NameValueList
+                pairProps={{ direction: 'column' }}
+                nameProps={{ align: 'start' }}
+                valueProps={{ width: 'auto' }}
+            >
                 {itemProps.map(({ name, type, value }) => {
                     const renderer = (renderersByPropertyType[type] as RendererSet<typeof type>).view;
 
@@ -146,7 +150,11 @@ const ItemEditView = ({
                 <Button secondary={true} label="Cancel" onClick={onClickCancelButton} />
                 <Button secondary={true} label="Save" onClick={onClickSaveButton} />
             </Toolbar>
-            <NameValueList nameProps={{ align: 'end' }} valueProps={{ width: 'auto' }}>
+            <NameValueList
+                pairProps={{ direction: 'column' }}
+                nameProps={{ align: 'start' }}
+                valueProps={{ width: 'auto' }}
+            >
                 {itemProps.map(({ name, type }: ItemProp<PropertyTypeNames>) => {
                     const renderer = (renderersByPropertyType[type] as RendererSet<typeof type>).edit;
                     const editorValue = itemPropValues[name];
