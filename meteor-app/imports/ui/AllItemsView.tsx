@@ -60,6 +60,11 @@ const AllItemsView = (rootElementProps: ComponentProps<'div'>): ReactElement => 
                         console.log('onUpdateItem', newItem);
                         throw new NotImplementedError();
                     }}
+                    onDeleteItem={async (item) => {
+                        // TODO: execute deletion.
+                        console.log('onDeleteItem', item);
+                        throw new NotImplementedError();
+                    }}
                 />
             </Box>
         </Grid>
