@@ -7,7 +7,7 @@ import Toolbar from './Toolbar';
 interface ItemListProps {}
 
 const ItemList = ({ ...rootElementProps }: ItemListProps & ComponentProps<typeof Box>): ReactElement => {
-    const { items, selectedItem, setSelectedItem } = useItemsController();
+    const { items, selectedItem, setSelectedItem, inEditMode, inCreateMode, setInCreateMode } = useItemsController();
     const rowProps = useMemo(() => {
         if (typeof selectedItem === 'undefined') {
             return {};
@@ -19,6 +19,7 @@ const ItemList = ({ ...rootElementProps }: ItemListProps & ComponentProps<typeof
             },
         };
     }, [selectedItem]);
+    const canCreateNewItem = !inEditMode && !inCreateMode;
 
     return (
         <Box pad="xsmall" gap="small" {...rootElementProps}>
@@ -54,7 +55,14 @@ const ItemList = ({ ...rootElementProps }: ItemListProps & ComponentProps<typeof
                     shrink: 0,
                 }}
             >
-                <Button secondary={true} label="Create" />
+                <Button
+                    secondary={true}
+                    label="Create"
+                    disabled={!canCreateNewItem}
+                    onClick={() => {
+                        setInCreateMode(true);
+                    }}
+                />
             </Toolbar>
         </Box>
     );
