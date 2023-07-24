@@ -158,7 +158,14 @@ const ItemEditView = ({
                     secondary={true}
                     label="Save"
                     onClick={() => {
-                        onSaveEdit(itemPropValues);
+                        onSaveEdit(itemPropValues).then(
+                            (success) => {
+                                console.log('Saving successful', success);
+                            },
+                            (reason) => {
+                                console.error('Unexpected saving failure', reason);
+                            }
+                        );
                     }}
                 />
             </Toolbar>
