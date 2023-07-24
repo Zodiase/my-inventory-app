@@ -72,13 +72,17 @@ type ItemProps = Array<
 >;
 
 interface ItemReadViewProps {
+    itemId: string;
     itemProps: ItemProps;
     onEnterEdit: () => void;
+    onDeleteItem: (itemId: string) => void;
 }
 
 const ItemReadView = ({
+    itemId,
     itemProps,
     onEnterEdit,
+    onDeleteItem,
     ...rootElementProps
 }: ItemReadViewProps & ComponentProps<typeof Box>): ReactElement => {
     return (
@@ -95,6 +99,17 @@ const ItemReadView = ({
                     label="Edit"
                     onClick={() => {
                         onEnterEdit();
+                    }}
+                />
+                <Button
+                    secondary={true}
+                    label="Delete"
+                    onClick={() => {
+                        if (!window.confirm('Delete this item?')) {
+                            return;
+                        }
+
+                        onDeleteItem(itemId);
                     }}
                 />
             </Toolbar>
@@ -193,11 +208,13 @@ const ItemEditView = ({
 interface ItemViewProps {
     item: null | InventoryItem;
     onUpdateItem: (newItem: InventoryItem) => Promise<void>;
+    onDeleteItem: (item: InventoryItem) => Promise<void>;
 }
 
 const ItemView = ({
     item,
     onUpdateItem,
+    onDeleteItem,
     ...rootElementProps
 }: ItemViewProps & ComponentProps<typeof Box>): ReactElement => {
     const [inEditMode, setInEditMode] = useState(() => false);
@@ -265,9 +282,25 @@ const ItemView = ({
         return (
             <ItemReadView
                 {...rootElementProps}
+                itemId={item._id}
                 itemProps={props}
                 onEnterEdit={() => {
                     setInEditMode(true);
+                }}
+                onDeleteItem={(itemId) => {
+                    if (itemId === item._id) {
+                        onDeleteItem(item).then(
+                            () => {
+                                console.log('Deletion successful');
+                            },
+                            (reason) => {
+                                console.error('Deletion failed:', reason);
+                                window.alert(`Deletion failed: ${String(reason)}`);
+                            }
+                        );
+                    } else {
+                        console.warn('Unexpected error. Item ID mis-match.');
+                    }
                 }}
             />
         );
