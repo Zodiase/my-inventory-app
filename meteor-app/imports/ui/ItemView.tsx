@@ -131,7 +131,7 @@ const ItemEditView = ({
             {}
         );
     });
-    const isDirty = () => itemProps.some(({ name, value }) => !isEqual(value, itemPropValues[name]));
+    const isDirty = (): boolean => itemProps.some(({ name, value }) => !isEqual(value, itemPropValues[name]));
 
     const onClickCancelButton = (): void => {
         if (isDirty()) {
