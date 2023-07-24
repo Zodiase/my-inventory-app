@@ -115,7 +115,7 @@ const ItemReadView = ({
 
 interface ItemEditViewProps {
     itemProps: ItemProps;
-    onSaveEdit: (newItemProps: Record<string, PropertyTypeByName[PropertyTypeNames]>) => Promise<boolean>;
+    onSaveEdit: (newItemProps: Record<string, PropertyTypeByName[PropertyTypeNames]>) => void;
     onCancelEdit: () => void;
 }
 
@@ -131,17 +131,24 @@ const ItemEditView = ({
             {}
         );
     });
+    const isDirty = () => itemProps.some(({ name, value }) => !isEqual(value, itemPropValues[name]));
 
     const onClickCancelButton = (): void => {
-        const isDirty = itemProps.some(({ name, value }) => !isEqual(value, itemPropValues[name]));
-
-        if (isDirty) {
+        if (isDirty()) {
             if (!window.confirm('Discard your changes?')) {
                 return;
             }
         }
 
         onCancelEdit();
+    };
+
+    const onClickSaveButton = (): void => {
+        if (!isDirty()) {
+            onCancelEdit();
+        } else {
+            onSaveEdit(itemPropValues);
+        }
     };
 
     return (
@@ -154,20 +161,7 @@ const ItemEditView = ({
             >
                 <Spacer />
                 <Button secondary={true} label="Cancel" onClick={onClickCancelButton} />
-                <Button
-                    secondary={true}
-                    label="Save"
-                    onClick={() => {
-                        onSaveEdit(itemPropValues).then(
-                            (success) => {
-                                console.log('Saving successful', success);
-                            },
-                            (reason) => {
-                                console.error('Unexpected saving failure', reason);
-                            }
-                        );
-                    }}
-                />
+                <Button secondary={true} label="Save" onClick={onClickSaveButton} />
             </Toolbar>
             <NameValueList nameProps={{ align: 'end' }} valueProps={{ width: 'auto' }}>
                 {itemProps.map(({ name, type }: ItemProp<PropertyTypeNames>) => {
@@ -198,7 +192,7 @@ const ItemEditView = ({
 
 interface ItemViewProps {
     item: null | InventoryItem;
-    onUpdateItem: (newItem: InventoryItem) => Promise<boolean>;
+    onUpdateItem: (newItem: InventoryItem) => Promise<void>;
 }
 
 const ItemView = ({
@@ -236,7 +230,7 @@ const ItemView = ({
             <ItemEditView
                 {...rootElementProps}
                 itemProps={props}
-                onSaveEdit={async (newItemProps) => {
+                onSaveEdit={(newItemProps) => {
                     console.log('newItemProps', newItemProps);
 
                     const newItem = Object.entries(newItemProps).reduce((acc, [name, value]) => {
@@ -250,14 +244,17 @@ const ItemView = ({
                         return acc;
                     }, cloneDeep(item));
 
-                    try {
-                        await onUpdateItem(newItem);
-                        setInEditMode(false);
-                        return true;
-                    } catch (e) {
-                        window.alert(`Save failed: ${String(e)}`);
-                        return false;
-                    }
+                    onUpdateItem(newItem).then(
+                        () => {
+                            console.log('Saving successful');
+                            setInEditMode(false);
+                        },
+                        (reason) => {
+                            console.error('Saving failed:', reason);
+                            setInEditMode(true);
+                            window.alert(`Save failed: ${String(reason)}`);
+                        }
+                    );
                 }}
                 onCancelEdit={() => {
                     setInEditMode(false);
