@@ -1,30 +1,15 @@
 import { Box, Button, NameValueList, NameValuePair, TextInput } from 'grommet';
-import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
-import React, { type ReactElement, type ComponentProps, useMemo, useState, type ChangeEventHandler } from 'react';
+import React, { type ReactElement, type ComponentProps, useState, type ChangeEventHandler } from 'react';
 
-import type InventoryItem from '/imports/model/InventoryItem';
-
+import {
+    type ItemProp,
+    type ItemProps,
+    type PropertyTypeByName,
+    type PropertyTypeNames,
+    useItemsController,
+} from './ItemsViewController';
 import Toolbar, { Spacer } from './Toolbar';
-
-/**
- * Map property type names to their data types.
- */
-interface PropertyTypeByName {
-    text: string;
-    date: Date;
-}
-/**
- * The collection of all property type names.
- */
-type PropertyTypeNames = keyof PropertyTypeByName;
-
-/**
- * Specify which of the default props are editable, and if so, has what type of data.
- */
-const editableDefaultProps: { [propName in keyof InventoryItem]?: PropertyTypeNames } = {
-    name: 'text',
-};
 
 /**
  * For each of supported property type, we need a set of renderers for different scenarios.
@@ -53,23 +38,6 @@ const renderersByPropertyType: {
         ),
     },
 };
-
-/**
- * For a particular property of an item, the type of the value must match the type name.
- */
-interface ItemProp<T extends PropertyTypeNames> {
-    name: string;
-    type: T;
-    value: PropertyTypeByName[T];
-}
-/**
- * All possible kinds of types of item properties.
- */
-type ItemProps = Array<
-    {
-        [K in PropertyTypeNames]: ItemProp<K>;
-    }[PropertyTypeNames]
->;
 
 interface ItemReadViewProps {
     itemId: string;
@@ -206,39 +174,15 @@ const ItemEditView = ({
 };
 
 interface ItemViewProps {
-    item: null | InventoryItem;
-    onUpdateItem: (newItem: InventoryItem) => Promise<void>;
-    onDeleteItem: (item: InventoryItem) => Promise<void>;
+    //!
 }
 
-const ItemView = ({
-    item,
-    onUpdateItem,
-    onDeleteItem,
-    ...rootElementProps
-}: ItemViewProps & ComponentProps<typeof Box>): ReactElement => {
-    const [inEditMode, setInEditMode] = useState(() => false);
+const ItemView = ({ ...rootElementProps }: ItemViewProps & ComponentProps<typeof Box>): ReactElement => {
+    const { selectedItem, getPropertiesOfItem, updateItem, deleteItem, inEditMode, setInEditMode } =
+        useItemsController();
+    const itemProperties = getPropertiesOfItem(selectedItem);
 
-    const props = useMemo((): ItemProps => {
-        if (item === null) {
-            return [];
-        }
-
-        return Object.entries(item)
-            .filter(([name]) => name in editableDefaultProps)
-            .map(([name, value]) => {
-                const nameTyped = name as keyof typeof editableDefaultProps;
-                const type = editableDefaultProps[nameTyped] as PropertyTypeNames;
-
-                return {
-                    name,
-                    type,
-                    value,
-                };
-            });
-    }, [item]);
-
-    if (item === null) {
+    if (typeof selectedItem === 'undefined') {
         return <Box {...rootElementProps}></Box>;
     }
 
@@ -246,22 +190,11 @@ const ItemView = ({
         return (
             <ItemEditView
                 {...rootElementProps}
-                itemProps={props}
+                itemProps={itemProperties}
                 onSaveEdit={(newItemProps) => {
                     console.log('newItemProps', newItemProps);
 
-                    const newItem = Object.entries(newItemProps).reduce((acc, [name, value]) => {
-                        if (name in editableDefaultProps) {
-                            const nameTyped = name as keyof typeof editableDefaultProps;
-                            acc[nameTyped] = value as any;
-                        } else {
-                            // TODO: update custom parameters.
-                        }
-
-                        return acc;
-                    }, cloneDeep(item));
-
-                    onUpdateItem(newItem).then(
+                    updateItem(selectedItem, newItemProps).then(
                         () => {
                             console.log('Saving successful');
                             setInEditMode(false);
@@ -282,14 +215,14 @@ const ItemView = ({
         return (
             <ItemReadView
                 {...rootElementProps}
-                itemId={item._id}
-                itemProps={props}
+                itemId={selectedItem._id}
+                itemProps={itemProperties}
                 onEnterEdit={() => {
                     setInEditMode(true);
                 }}
                 onDeleteItem={(itemId) => {
-                    if (itemId === item._id) {
-                        onDeleteItem(item).then(
+                    if (itemId === selectedItem._id) {
+                        deleteItem(selectedItem).then(
                             () => {
                                 console.log('Deletion successful');
                             },

@@ -1,29 +1,20 @@
 import { Box, Button, DataTable } from 'grommet';
 import React, { type ReactElement, type ComponentProps, useMemo } from 'react';
 
-import type InventoryItem from '/imports/model/InventoryItem';
-
+import { useItemsController } from './ItemsViewController';
 import Toolbar from './Toolbar';
 
-interface ItemListProps {
-    items: InventoryItem[];
-    selectedItem: undefined | string;
-    onSelectItem: ComponentProps<typeof DataTable<InventoryItem>>['onClickRow'];
-}
+interface ItemListProps {}
 
-const ItemList = ({
-    items,
-    selectedItem,
-    onSelectItem,
-    ...rootElementProps
-}: ItemListProps & ComponentProps<typeof Box>): ReactElement => {
+const ItemList = ({ ...rootElementProps }: ItemListProps & ComponentProps<typeof Box>): ReactElement => {
+    const { items, selectedItem, setSelectedItem } = useItemsController();
     const rowProps = useMemo(() => {
         if (typeof selectedItem === 'undefined') {
             return {};
         }
 
         return {
-            [selectedItem]: {
+            [selectedItem._id]: {
                 background: 'dark-1',
             },
         };
@@ -52,7 +43,9 @@ const ItemList = ({
                     rowProps={rowProps}
                     data={items}
                     sortable={false}
-                    onClickRow={onSelectItem}
+                    onClickRow={(event) => {
+                        setSelectedItem(event.datum);
+                    }}
                 />
             </Box>
             <Toolbar
