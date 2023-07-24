@@ -54,6 +54,8 @@ interface ItemsController {
     deleteItem: (item: InventoryItem) => Promise<number>;
     inEditMode: boolean;
     setInEditMode: (inEditMode: boolean) => void;
+    inCreateMode: boolean;
+    setInCreateMode: (inCreateMode: boolean) => void;
 }
 
 const defaultItemsController: ItemsController = {
@@ -65,11 +67,13 @@ const defaultItemsController: ItemsController = {
     deleteItem: async () => 0,
     inEditMode: false,
     setInEditMode: NoOp,
+    inCreateMode: false,
+    setInCreateMode: NoOp,
 };
 
 const ItemsControllerReactContext = createContext<ItemsController>(defaultItemsController);
 
-const useNewItemsController = (): ItemsController => {
+export const useNewItemsController = (): ItemsController => {
     const items = useTracker(
         () =>
             InventoryItemsCollection.find(
@@ -87,6 +91,7 @@ const useNewItemsController = (): ItemsController => {
     );
     const [selectedItem, setSelectedItem] = useState<undefined | InventoryItem>();
     const [inEditMode, setInEditMode] = useState(() => false);
+    const [inCreateMode, setInCreateMode] = useState(() => false);
 
     const getPropertiesOfItem = (item: undefined | InventoryItem): ItemProps => {
         if (typeof item === 'undefined') {
@@ -125,18 +130,17 @@ const useNewItemsController = (): ItemsController => {
     };
 
     const updateItem = async (
-        item: InventoryItem,
-        newProps: Record<string, PropertyTypeByName[PropertyTypeNames]>
+        _item: InventoryItem,
+        _newProps: Record<string, PropertyTypeByName[PropertyTypeNames]>
     ): Promise<InventoryItem> => {
-        const newItem = getNewItemWithUpdatedProperties(item, newProps);
-
         // TODO: execute update.
         throw new NotImplementedError();
 
+        // const newItem = getNewItemWithUpdatedProperties(item, newProps);
         // return newItem;
     };
 
-    const deleteItem = async (item: InventoryItem): Promise<number> => {
+    const deleteItem = async (_item: InventoryItem): Promise<number> => {
         // TODO: execute deletion.
         throw new NotImplementedError();
 
@@ -152,17 +156,20 @@ const useNewItemsController = (): ItemsController => {
         deleteItem,
         inEditMode,
         setInEditMode,
+        inCreateMode,
+        setInCreateMode,
     };
 };
 
 interface ItemsProviderProps {
+    itemsController: ItemsController;
     children: ReactElement;
 }
 
-export const ItemsControllerProvider = ({ children }: ItemsProviderProps): ReactElement => {
-    const itemsContext = useNewItemsController();
-
-    return <ItemsControllerReactContext.Provider value={itemsContext}>{children}</ItemsControllerReactContext.Provider>;
+export const ItemsControllerProvider = ({ itemsController, children }: ItemsProviderProps): ReactElement => {
+    return (
+        <ItemsControllerReactContext.Provider value={itemsController}>{children}</ItemsControllerReactContext.Provider>
+    );
 };
 
 export const useItemsController = (): ItemsController => {
