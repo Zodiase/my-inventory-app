@@ -15,7 +15,7 @@
     "dependencies": {
         "@babel/core": "^7.22.9",
         "@babel/runtime": "^7.22.6",
-        "grommet": "^2.31.0",
+        "grommet": "2.31.0",
         "grommet-icons": "^4.11.0",
         "lodash": "^4.17.21",
         "meteor-node-stubs": "^1.2.5",
