@@ -14,6 +14,10 @@ describe('printable', function () {
         assert.deepStrictEqual(printable(null), '[null]');
     });
 
+    it('returns correct string for Dates', async function () {
+        assert.deepStrictEqual(printable(new Date('2023-08-06T04:32:37.448Z')), '[date]2023-08-06T04:32:37.448Z');
+    });
+
     it('flattens complex values into a shallow object', async function () {
         assert.deepStrictEqual(printable([1, '2', true]), { '0': '[number]1', '1': '[string]2', '2': '[boolean]true' });
         assert.deepStrictEqual(printable([[1, '2', true]]), {
