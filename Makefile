@@ -1,5 +1,9 @@
 IMG_TAG ?= $(shell date +%s)
 
+.PHONY: env
+env:
+	op inject -i env.tpl -o .env
+
 .PHONY: image
 image:
 	docker build . --file Dockerfile --tag zodiase/my-inventory-app:${IMG_TAG}
