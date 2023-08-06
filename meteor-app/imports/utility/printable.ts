@@ -7,11 +7,6 @@ function isPrintablePrimitive(x: unknown): x is PrintablePrimitive {
     return primitiveTypes.has(typeof x);
 }
 
-const printableObjectTypes: Array<(x: unknown) => boolean> = [(x) => x === null, (x) => x instanceof Date];
-function isPrintableObject(x: unknown): x is PrintableObject {
-    return printableObjectTypes.some((predicate) => predicate(x));
-}
-
 type Path = string[];
 
 function printableRecursionHelper(path: Path, x: unknown): Array<{ path: Path; value: Printable }> {
@@ -51,11 +46,11 @@ function printableRecursionHelper(path: Path, x: unknown): Array<{ path: Path; v
         ];
     }
 
-    if (isPrintableObject(x)) {
+    if (x instanceof Date) {
         return [
             {
                 path,
-                value: `[printable object]${String(x)}`,
+                value: `[date]${x.toISOString()}`,
             },
         ];
     }
