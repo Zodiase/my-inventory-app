@@ -50,8 +50,8 @@ function printableRecursionHelper(path: Path, x: unknown): Array<{ path: Path; v
         return [
             {
                 path,
-                value: `[date]${x.toISOString()}`
-            }
+                value: `[date]${x.toISOString()}`,
+            },
         ];
     }
 
