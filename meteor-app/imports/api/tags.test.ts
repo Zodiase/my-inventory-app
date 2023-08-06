@@ -117,14 +117,44 @@ describe('tags', function () {
         });
 
         it('calls insertAsync', async function () {
-            await assert.doesNotReject(tags.createTag({ name: '_test_col' }));
+            await assert.doesNotReject(tags.createTag({ name: '_test_tag' }));
 
             assert.strictEqual(true, insertAsyncStub.called);
+        });
+
+        it('creates a new tag', async function () {
+            const testTagId = await tags.createTag({ name: '_test_tag' });
+            const testTag = await tags.TagsCollection.findOneAsync({ _id: testTagId });
+
+            if (typeof testTag === 'undefined') {
+                assert.fail('Unable to find the newly created tag.');
+            }
+
+            assert.equal('_test_tag', testTag.name);
         });
     });
 
     describe('renameTag', function () {
-        //TODO
+        it('changes the name of a tag', async function () {
+            const testTagId = await tags.createTag({ name: '_test_tag' });
+            const testTag = await tags.TagsCollection.findOneAsync({ _id: testTagId });
+
+            if (typeof testTag === 'undefined') {
+                assert.fail('Unable to find the newly created tag.');
+            }
+
+            const response = await tags.renameTag(testTag, 'new name');
+
+            assert.equal(true, response);
+
+            const testTag2 = await tags.TagsCollection.findOneAsync({ _id: testTagId });
+
+            if (typeof testTag2 === 'undefined') {
+                assert.fail('Unable to find the renamed tag.');
+            }
+
+            assert.equal('new name', testTag2.name);
+        });
     });
 
     describe('getAllDescendants', function () {

@@ -25,10 +25,10 @@
         "styled-components": "^5.3.11"
     },
     "devDependencies": {
-        "@types/lodash": "^4.14.195",
+        "@types/lodash": "^4.14.196",
         "@types/meteor": "^2.9.2",
         "@types/mocha": "^10.0.1",
-        "@types/react": "^18.2.15",
+        "@types/react": "^18.2.18",
         "@types/react-dom": "^18.2.7",
         "@types/sinon": "^10.0.15",
         "@types/styled-components": "^5.1.26",
@@ -37,7 +37,7 @@
         "@xch/prettier-config": "^0.1.1",
         "babel-plugin-styled-components": "^2.1.4",
         "dotenv-cli": "^7.2.1",
-        "eslint": "^8.26.0",
+        "eslint": "^8.46.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-config-standard-with-typescript": "^37.0.0",
         "eslint-import-resolver-meteor": "^0.4.0",
