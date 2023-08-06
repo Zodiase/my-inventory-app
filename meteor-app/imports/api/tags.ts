@@ -93,19 +93,13 @@ export const renameTag = async (tag: TagRecord, newName: string): Promise<boolea
     logger.log('renameTag <=', { tag, newName });
 
     const selector = extend(strictSelector(tag, ['name']), {
-        $or: [
-            {
-                'path._id': {
-                    $exists: false,
-                },
-            },
-            {
-                'path._id': {
-                    $exists: true,
+        path: {
+            $elemMatch: {
+                _id: {
                     $in: ['', tag._id],
                 },
             },
-        ],
+        },
     });
 
     let tagsUpdated = await TagsCollection.updateAsync(selector, {

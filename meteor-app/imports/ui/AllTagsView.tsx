@@ -68,7 +68,7 @@ const TagList = styled(({ tag, ...rootElementProps }: TagListProps & ComponentPr
                 if (succeeded) {
                     console.log(`Name of tag "${tagName}" changed to "${newTagName}".`);
                 } else {
-                    console.warn(`Name of tag "${tagName}" not unchanged: No-match.`);
+                    console.warn(`Name of tag "${tagName}" not changed: No-match.`);
                 }
             },
             (reason) => {
