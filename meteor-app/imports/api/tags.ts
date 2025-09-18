@@ -210,7 +210,7 @@ export const getDetachedTags = async (): Promise<string[]> => {
     const checkedTags = new Set<string>();
 
     // Find tags the immediate parents of which are not found.
-    TagsCollection.find({ parentTagId: { $ne: '' } }).forEach((tag) => {
+    await TagsCollection.find({ parentTagId: { $ne: '' } }).forEachAsync(async (tag) => {
         const parentTagId = tag.parentTagId;
         const alreadyProcessed = tagsToCheck.has(parentTagId) || detachedTags.has(parentTagId);
 
@@ -218,7 +218,7 @@ export const getDetachedTags = async (): Promise<string[]> => {
             return;
         }
 
-        const tagIsDetached = TagsCollection.find({ _id: parentTagId }).count() === 0;
+        const tagIsDetached = (await TagsCollection.find({ _id: parentTagId }).countAsync()) === 0;
 
         if (tagIsDetached) {
             detachedTags.add(tag._id);
@@ -240,7 +240,7 @@ export const getDetachedTags = async (): Promise<string[]> => {
 
         checkedTags.add(thisTagId);
 
-        const thisTag = TagsCollection.findOne({ _id: thisTagId });
+        const thisTag = await TagsCollection.findOneAsync({ _id: thisTagId });
 
         if (typeof thisTag === 'undefined') {
             // This tag disappeared for some reason.
@@ -252,13 +252,13 @@ export const getDetachedTags = async (): Promise<string[]> => {
             continue;
         }
 
-        const tagIsDetached = TagsCollection.find({ _id: thisTag.parentTagId }).count() === 0;
+        const tagIsDetached = (await TagsCollection.find({ _id: thisTag.parentTagId }).countAsync()) === 0;
 
         if (tagIsDetached) {
             // Add this and all connected tags as detached.
             detachedTags.add(thisTagId);
 
-            let descendants: TagRecord[] = TagsCollection.find({ parentTagId: thisTagId }).fetch();
+            let descendants: TagRecord[] = await TagsCollection.find({ parentTagId: thisTagId }).fetchAsync();
             let thisDescendant: undefined | TagRecord;
 
             while (typeof (thisDescendant = descendants.shift()) !== 'undefined') {
@@ -271,7 +271,7 @@ export const getDetachedTags = async (): Promise<string[]> => {
                 checkedTags.add(thisDescendantId);
                 detachedTags.add(thisDescendantId);
 
-                const childTags = TagsCollection.find({ parentTagId: thisDescendantId }).fetch();
+                const childTags = await TagsCollection.find({ parentTagId: thisDescendantId }).fetchAsync();
 
                 if (childTags.length > 0) {
                     descendants = descendants.concat(childTags);

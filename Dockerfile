@@ -1,5 +1,5 @@
 # The tag here should match the Meteor version of your app, per .meteor/release
-FROM geoffreybooth/meteor-base:2.12
+FROM geoffreybooth/meteor-base:3.3.2
 
 # Copy app package.json and package-lock.json into container
 COPY ./meteor-app/package*.json $APP_SOURCE_FOLDER/
@@ -12,8 +12,8 @@ COPY ./meteor-app $APP_SOURCE_FOLDER/
 RUN bash $SCRIPTS_FOLDER/build-meteor-bundle.sh
 
 
-# Use the specific version of Node expected by your Meteor release, per https://docs.meteor.com/changelog.html; this is expected for Meteor 2.12
-FROM node:14.21.3-alpine
+# Use the specific version of Node expected by your Meteor release, per https://docs.meteor.com/changelog.html; this is expected for Meteor 3.x
+FROM node:22-alpine
 
 ENV APP_BUNDLE_FOLDER /opt/bundle
 ENV SCRIPTS_FOLDER /docker
@@ -42,7 +42,7 @@ RUN cd $APP_BUNDLE_FOLDER/bundle/programs/server/ && npm install fibers@4
 
 # Start another Docker stage, so that the final image doesn’t contain the layer with the build dependencies
 # See previous FROM line; this must match
-FROM node:14.21.3-alpine
+FROM node:22-alpine
 
 ENV APP_BUNDLE_FOLDER /opt/bundle
 ENV SCRIPTS_FOLDER /docker
