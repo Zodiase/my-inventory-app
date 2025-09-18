@@ -1,41 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 
 import InventoryItemsCollection from '/imports/api/items';
-import { LinksCollection } from '/imports/api/links';
 import TagsCollection from '/imports/api/tags';
 import createLogger from '/imports/utility/Logger';
 
 const logger = createLogger(module);
 
-async function insertLink({ title, url }: { title: string; url: string }): Promise<void> {
-    await LinksCollection.insertAsync({ title, url, createdAt: new Date() });
-}
-
 Meteor.startup(async () => {
     Meteor.settings.fixPath = true;
-
-    // If the Links collection is empty, add some data.
-    if ((await LinksCollection.find().countAsync()) === 0) {
-        await insertLink({
-            title: 'Do the Tutorial',
-            url: 'https://www.meteor.com/tutorials/react/creating-an-app',
-        });
-
-        await insertLink({
-            title: 'Follow the Guide',
-            url: 'https://guide.meteor.com',
-        });
-
-        await insertLink({
-            title: 'Read the Docs',
-            url: 'https://docs.meteor.com',
-        });
-
-        await insertLink({
-            title: 'Discussions',
-            url: 'https://forums.meteor.com',
-        });
-    }
 
     if ((await InventoryItemsCollection.find().countAsync()) === 0) {
         await InventoryItemsCollection.createItem({ name: 'Sample item 1' });
