@@ -37,7 +37,6 @@ USER meteor
 
 RUN bash $SCRIPTS_FOLDER/build-meteor-npm-dependencies.sh --build-from-source
 
-RUN cd $APP_BUNDLE_FOLDER/bundle/programs/server/ && npm install fibers@4
 
 
 # Start another Docker stage, so that the final image doesn’t contain the layer with the build dependencies
