@@ -38,6 +38,10 @@ npm run check:type
 
 See `docs/KNOWN_ISSUES.md` for a list of currently known non-blocking issues (e.g. expected deprecation warnings from upstream dependencies).
 
+## Development Notes
+
+See `docs/DEVELOPMENT_NOTES.md` for technical context on the Meteor 3 upgrade, CI/runtime environment choices, lint fixes, and Docker image adjustments.
+
 ## License
 
 Private project.
