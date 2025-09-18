@@ -15,15 +15,12 @@ jobs:
   type-check:
     name: Check types
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [ '14.x' ]
-
+        node-version: [ '22.x' ]
     defaults:
       run:
         working-directory: meteor-app
-
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
@@ -38,15 +35,12 @@ jobs:
   code-style-check:
     name: Check coding styles
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [ '14.x' ]
-
+        node-version: [ '22.x' ]
     defaults:
       run:
         working-directory: meteor-app
-
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
@@ -61,17 +55,13 @@ jobs:
   tests:
     name: Unit tests
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [ '14.x' ]
-        meteor: [ '2.12' ]
-
+        node-version: [ '22.x' ]
     defaults:
       run:
         shell: bash -l {0}
         working-directory: meteor-app
-
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
@@ -80,8 +70,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: 'meteor-app'
-    - name: Use Meteor ${{ matrix.node-version }}
-      run: npm install -g meteor@${{ matrix.meteor }}
+    - name: Install Meteor 3.3.2
+      run: npm install -g meteor@3.3.2
     - run: meteor npm ci
     - run: meteor npm run build --if-present
     - run: meteor npm test

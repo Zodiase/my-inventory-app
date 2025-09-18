@@ -26,9 +26,9 @@ describe('tags', function () {
     };
 
     this.beforeAll(
-        Meteor.bindEnvironment(() => {
+        Meteor.bindEnvironment(async () => {
             // Remove all documents from prior tests.
-            tags.TagsCollection.remove({
+            await tags.TagsCollection.removeAsync({
                 [TracerKey]: {
                     $exists: true,
                 },
@@ -43,11 +43,11 @@ describe('tags', function () {
     );
 
     this.afterAll(
-        Meteor.bindEnvironment(() => {
+        Meteor.bindEnvironment(async () => {
             insertAsyncStub.restore();
 
             // Remove all documents created during tests.
-            tags.TagsCollection.remove(tracer);
+            await tags.TagsCollection.removeAsync(tracer);
         })
     );
 
