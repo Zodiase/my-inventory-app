@@ -210,23 +210,20 @@ export const getDetachedTags = async (): Promise<string[]> => {
     const checkedTags = new Set<string>();
 
     // Find tags the immediate parents of which are not found.
-    await TagsCollection.find({ parentTagId: { $ne: '' } }).forEachAsync(async (tag) => {
+    const candidateTags = await TagsCollection.find({ parentTagId: { $ne: '' } }).fetchAsync();
+    for (const tag of candidateTags) {
         const parentTagId = tag.parentTagId;
         const alreadyProcessed = tagsToCheck.has(parentTagId) || detachedTags.has(parentTagId);
-
-        if (alreadyProcessed) {
-            return;
-        }
-
-        const tagIsDetached = (await TagsCollection.find({ _id: parentTagId }).countAsync()) === 0;
-
+        if (alreadyProcessed) continue;
+        const parentCount = await TagsCollection.find({ _id: parentTagId }).countAsync();
+        const tagIsDetached = parentCount === 0;
         if (tagIsDetached) {
             detachedTags.add(tag._id);
             checkedTags.add(tag._id);
         } else {
             tagsToCheck.add(parentTagId);
         }
-    });
+    }
 
     // Check to see if any ancestors of a tag are detached.
     while (tagsToCheck.size > 0) {
