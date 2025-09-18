@@ -6,8 +6,7 @@
         "check:code-style:lint": "eslint --ext .js,.ts,.tsx ./",
         "check:code-style:prettier": "prettier --check .",
         "check:type": "tsc --version && tsc --noEmit",
-        "start:nasdb:run": "export MONGO_URL=\"${NAS_MONGO_URL}\" && npm start",
-        "start:nasdb": "dotenv -e ../.env npm run start:nasdb:run",
+        "start:with-env": "dotenv -e ../.env meteor run",
         "start": "meteor run",
         "test": "meteor test --once --driver-package meteortesting:mocha",
         "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
@@ -16,6 +15,8 @@
     "dependencies": {
         "@babel/core": "^7.28.4",
         "@babel/runtime": "^7.28.4",
+        "grommet": "2.31.0",
+        "grommet-icons": "^4.11.0",
         "lodash": "^4.17.21",
         "meteor-node-stubs": "^1.2.24",
         "polished": "^4.3.1",

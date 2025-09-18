@@ -1,54 +1,46 @@
-import { useTracker } from 'meteor/react-meteor-data';
+import { Box, Grid, Layer } from 'grommet';
 import React, { type ComponentProps, type ReactElement } from 'react';
-import styled from 'styled-components';
 
-import { InventoryItemsCollection } from '/imports/api/items';
+import CreateNewItemView from './CreateNewItemView';
+import ItemList from './ItemList';
+import { ItemsControllerProvider, useNewItemsController } from './ItemsViewController';
+import ItemView from './ItemView';
 
-interface ItemListProps {
-    //!
-}
-
-const ItemList = styled(({ ...rootElementProps }: ItemListProps & ComponentProps<'div'>): ReactElement => {
-    const items = useTracker(
-        () =>
-            InventoryItemsCollection.find(
-                {
-                    //!
-                },
-                {
-                    sort: [
-                        ['name', 'asc'],
-                        ['createdAt', 'asc'],
-                    ],
-                }
-            ).fetch(),
-        []
-    );
+const AllItemsView = (rootElementProps: ComponentProps<'div'>): ReactElement => {
+    const itemsController = useNewItemsController();
+    const { inCreateMode } = itemsController;
 
     return (
-        <div {...rootElementProps}>
-            <div>All items</div>
-            <ul className="item-list" data-items-count={items.length}>
-                {items.map((item) => (
-                    <li key={item._id}>
-                        <div className="item-body" data-item-id={item._id}>
-                            <label className="item-name-label">{item.name}</label>
-                            <span className="tag-actions-container"></span>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <ItemsControllerProvider itemsController={itemsController}>
+            <>
+                <Grid
+                    {...rootElementProps}
+                    height="400px"
+                    rows={['xxsmall', 'auto']}
+                    columns={['medium', 'auto']}
+                    gap="small"
+                    areas={[
+                        { name: 'header', start: [0, 0], end: [1, 0] },
+                        { name: 'list', start: [0, 1], end: [0, 1] },
+                        { name: 'view', start: [1, 1], end: [1, 1] },
+                    ]}
+                >
+                    <Box gridArea="header" background="brand">
+                        All Items View
+                    </Box>
+                    <ItemList gridArea="list" background="light-5" />
+                    <Box gridArea="view" background="light-2">
+                        <ItemView />
+                    </Box>
+                </Grid>
+                {inCreateMode && (
+                    <Layer position="center" modal responsive background="transparent">
+                        <CreateNewItemView width="large" height="medium" background="light-1" />
+                    </Layer>
+                )}
+            </>
+        </ItemsControllerProvider>
     );
-})``;
+};
 
-export const AllItemsView = styled((rootElementProps: ComponentProps<'div'>): ReactElement => {
-    return (
-        <div {...rootElementProps}>
-            <ItemList />
-        </div>
-    );
-})`
-    ${ItemList} {
-    }
-`;
+export default AllItemsView;
