@@ -20,3 +20,4 @@ hot-module-replacement@0.5.4  # Update client in development without reloading t
 autopublish@1.0.8             # Publish all data to the clients (for prototyping)
 static-html@1.4.0             # Define static page content in .html files
 react-meteor-data       # React higher-order component for reactively tracking Meteor data
+zodern:types
