@@ -7,9 +7,10 @@ import sinon from 'sinon';
 import * as tags from './tags';
 
 describe('tags', function () {
+    const bindEnvironment = Meteor.bindEnvironment.bind(Meteor);
     const insertAsyncOriginal = tags.TagsCollection.insertAsync;
     const insertAsyncStub = sinon.stub(tags.TagsCollection, 'insertAsync').callsFake(
-        Meteor.bindEnvironment(async (doc): Promise<string> => {
+        bindEnvironment(async (doc): Promise<string> => {
             const spicedDoc = {
                 ...doc,
                 ...tracer,

@@ -74,6 +74,15 @@ export default (async () => {
                 // Custom rule overrides (less strict than love config for some rules)
                 '@typescript-eslint/no-empty-interface': 'warn', // Warn instead of error
                 '@typescript-eslint/no-unused-vars': 'warn', // Warn instead of error
+                '@typescript-eslint/no-magic-numbers': [
+                    'error',
+                    {
+                        ignore: [0, 1, -1], // Allow common numbers for comparisons and indexing
+                        ignoreArrayIndexes: true, // Allow arr[0], arr[1], etc.
+                        ignoreDefaultValues: true, // Allow default parameter values
+                        ignoreClassFieldInitialValues: true, // Allow class field defaults
+                    },
+                ],
 
                 // Import rules
                 'import/extensions': 'off', // Don't require file extensions
@@ -129,7 +138,15 @@ export default (async () => {
             },
         },
 
-        // 4. Prettier config - MUST be last to override conflicting formatting rules
+        // 4. Test file specific configuration - allow magic numbers in tests
+        {
+            files: ['**/*.test.{js,ts,tsx}', '**/tests/**/*.{js,ts,tsx}'],
+            rules: {
+                '@typescript-eslint/no-magic-numbers': 'off', // Allow magic numbers in test files
+            },
+        },
+
+        // 5. Prettier config - MUST be last to override conflicting formatting rules
         prettier,
 
         // 5. File ignore patterns (replaces old .eslintignore file)

@@ -5,7 +5,7 @@ export interface Logger {
     warn: (message: string, ...args: unknown[]) => void;
 }
 
-function createLogger(module: Pick<NodeModule, 'id'>): Logger {
+function createLogger(module: Pick<NodeJS.Module, 'id'>): Logger {
     const name = module.id.replace(/^\/imports\/(([^/]{1,}\/){0,}[^/]{1,})\.ts/, '$1');
 
     return {

@@ -1,20 +1,26 @@
 import NoOp from '/imports/utility/NoOp';
 
-import type NoId from './NoId';
+import NoId from './NoId';
 
-describe('NoId', function () {
-    it('Type casting', async function () {
-        const tester = <T>(x: T, y: NoId<T>): void => {
-            NoOp(x, y);
+// Test constants
+const TEST_PAYLOAD_VALUE = 1;
+
+describe('NoId', () => {
+    it('Type casting', () => {
+        const tester = (
+            input: { _id: string; payload: number },
+            output: NoId<{ _id: string; payload: number }>
+        ): void => {
+            expect(input as NoId<{ _id: string; payload: number }>).toStrictEqual(output);
         };
 
         tester(
             {
                 _id: '',
-                payload: 1,
+                payload: TEST_PAYLOAD_VALUE,
             },
             {
-                payload: 1,
+                payload: TEST_PAYLOAD_VALUE,
             }
         );
     });

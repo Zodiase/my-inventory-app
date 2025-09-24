@@ -2,11 +2,11 @@ import { useTracker } from 'meteor/react-meteor-data';
 import React, { type ComponentProps, type ReactElement } from 'react';
 import styled from 'styled-components';
 
-import { InventoryItemsCollection } from '/imports/api/items';
+import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 
-interface ItemListProps {
-    //!
-}
+// Empty props interface - component has no specific props currently
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface ItemListProps {}
 
 const ItemList = styled(({ ...rootElementProps }: ItemListProps & ComponentProps<'div'>): ReactElement => {
     const items = useTracker(
@@ -29,7 +29,7 @@ const ItemList = styled(({ ...rootElementProps }: ItemListProps & ComponentProps
         <div {...rootElementProps}>
             <div>All items</div>
             <ul className="item-list" data-items-count={items.length}>
-                {items.map((item) => (
+                {items.map((item: InventoryItem) => (
                     <li key={item._id}>
                         <div className="item-body" data-item-id={item._id}>
                             <label className="item-name-label">{item.name}</label>

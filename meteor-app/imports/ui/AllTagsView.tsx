@@ -3,6 +3,7 @@ import React, { type ComponentProps, type ReactElement, useCallback, useState } 
 import styled from 'styled-components';
 
 import TagsCollection, { type TagRecord } from '/imports/api/tags';
+import { SCROLL_DELAY_MS } from '/imports/utility/constants';
 
 import StyledButton from './StyledButton';
 
@@ -207,7 +208,7 @@ const DetachedTagsView = styled((rootElementProps: ComponentProps<'div'>): React
                 });
 
                 await new Promise((resolve) => {
-                    setTimeout(resolve, 3000);
+                    setTimeout(resolve, SCROLL_DELAY_MS);
                 });
             }, Promise.resolve())
             .then(

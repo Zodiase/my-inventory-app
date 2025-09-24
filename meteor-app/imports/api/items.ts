@@ -7,7 +7,7 @@ import type RecordInput from '/imports/utility/RecordInput';
 
 export type { InventoryItem } from '/imports/model/InventoryItem';
 
-const logger = createLogger(module);
+// const logger = createLogger(module);
 
 export const InventoryItemsCollection = new NamedCollection<InventoryItem>('items');
 
