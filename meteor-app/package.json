@@ -24,6 +24,7 @@
         "styled-components": "^5.3.11"
     },
     "devDependencies": {
+        "@types/chai": "^5.2.2",
         "@types/lodash": "^4.17.20",
         "@types/meteor": "^2.9.9",
         "@types/mocha": "^10.0.10",
@@ -37,6 +38,7 @@
         "@typescript-eslint/parser": "^8.44.0",
         "@xch/prettier-config": "^0.1.1",
         "babel-plugin-styled-components": "^2.1.4",
+        "chai": "^6.0.1",
         "dotenv-cli": "^7.4.4",
         "eslint": "^8.57.1",
         "eslint-config-love": "^84.1.1",

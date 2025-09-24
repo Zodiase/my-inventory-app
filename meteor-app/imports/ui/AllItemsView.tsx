@@ -1,8 +1,8 @@
-import { useTracker } from 'meteor/react-meteor-data';
 import React, { type ComponentProps, type ReactElement } from 'react';
 import styled from 'styled-components';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
+import { useTracker } from '/imports/utility/reactMeteorData';
 
 // Empty props interface - component has no specific props currently
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

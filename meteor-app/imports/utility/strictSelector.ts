@@ -2,17 +2,14 @@ import { CollectionItem } from '/imports/model/CollectionItem';
 
 export const strictSelector = <
     T extends CollectionItem,
-    F extends keyof T
+    F extends keyof T,
+    R = {
+        [K in F | keyof CollectionItem]: T[K];
+    }
 >(
     doc: T,
     extraFields: F[] = []
-): {
-    [K in F | keyof CollectionItem]: T[K];
-} => {
-    type R = {
-        [K in F | keyof CollectionItem]: T[K];
-    };
-    
+): R => {
     const allFields: Array<keyof T> = [
         CollectionItem._id,
         CollectionItem.createdAt,
