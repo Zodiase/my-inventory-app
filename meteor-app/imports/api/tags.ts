@@ -1,10 +1,10 @@
 import extend from 'lodash/extend';
-import { Meteor } from 'meteor/meteor';
 
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import type TagRecord from '/imports/model/TagRecord';
 import createLogger from '/imports/utility/Logger';
 import asMeteorMethods from '/imports/utility/MeteorMethods';
+import MeteorSettings from '/imports/utility/meteorSettings';
 import { NamedCollection } from '/imports/utility/NamedCollection';
 import type NoId from '/imports/utility/NoId';
 import type RecordInput from '/imports/utility/RecordInput';
@@ -75,7 +75,7 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
         parentTagId,
         createdAt: now,
         modifiedAt: now,
-        path: await getTagPath({ _id: '', name, parentTagId }, Meteor.settings.fixPath),
+        path: await getTagPath({ _id: '', name, parentTagId }, MeteorSettings.fixPath),
     };
 
     const tagId = await TagsCollection.insertAsync(newTag);
@@ -140,7 +140,7 @@ export const renameTag = async (tag: TagRecord, newName: string): Promise<boolea
 export const getAllDescendants = async (tag: TagRecord): Promise<TagRecord[]> => {
     let tagsToCheck = [tag];
     let resultTags: TagRecord[] = [];
-    let thisTag: undefined | TagRecord;
+    let thisTag: undefined | TagRecord = undefined;
 
     while (typeof (thisTag = tagsToCheck.shift()) !== 'undefined') {
         const immediateChildren = await TagsCollection.find({ parentTagId: thisTag._id }).fetchAsync();
@@ -256,7 +256,7 @@ export const getDetachedTags = async (): Promise<string[]> => {
             detachedTags.add(thisTagId);
 
             let descendants: TagRecord[] = await TagsCollection.find({ parentTagId: thisTagId }).fetchAsync();
-            let thisDescendant: undefined | TagRecord;
+            let thisDescendant: undefined | TagRecord = undefined;
 
             while (typeof (thisDescendant = descendants.shift()) !== 'undefined') {
                 const thisDescendantId = thisDescendant._id;
@@ -285,7 +285,7 @@ export const getDetachedTags = async (): Promise<string[]> => {
 export const fixPath = async (tag: TagRecord): Promise<number> => {
     return await TagsCollection.updateAsync(strictSelector(tag, ['name']), {
         $set: {
-            path: await getTagPath(tag, Meteor.settings.fixPath),
+            path: await getTagPath(tag, MeteorSettings.fixPath),
         },
     });
 };

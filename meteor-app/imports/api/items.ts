@@ -1,5 +1,5 @@
 import type InventoryItem from '/imports/model/InventoryItem';
-import createLogger from '/imports/utility/Logger';
+// import createLogger from '/imports/utility/Logger';
 import asMeteorMethods from '/imports/utility/MeteorMethods';
 import { NamedCollection } from '/imports/utility/NamedCollection';
 import type NoId from '/imports/utility/NoId';

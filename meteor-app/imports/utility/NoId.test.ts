@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import NoId from './NoId';
+import type NoId from './NoId';
 
 // Test constants
 const TEST_PAYLOAD_VALUE = 1;

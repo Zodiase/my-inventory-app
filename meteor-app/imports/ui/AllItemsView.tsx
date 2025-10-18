@@ -5,8 +5,7 @@ import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items
 import { useTracker } from '/imports/utility/reactMeteorData';
 
 // Empty props interface - component has no specific props currently
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface ItemListProps {}
+type ItemListProps = {};
 
 const ItemList = styled(({ ...rootElementProps }: ItemListProps & ComponentProps<'div'>): ReactElement => {
     const items = useTracker(

@@ -107,7 +107,11 @@ const TagList = styled(({ tag, ...rootElementProps }: TagListProps & ComponentPr
 
     return (
         <div {...rootElementProps} data-tag-id={tagId}>
-            <div className="tag-body" data-tag-id={tagId} data-tag-path={tag?.path?.map(({ name }) => name)?.join(',')}>
+            <div
+                className="tag-body"
+                data-tag-id={tagId}
+                data-tag-path={tag ? tag.path.map(({ name }) => name).join(',') : undefined}
+            >
                 <label className="tag-name-label">{tagName}</label>
                 <span className="tag-actions-container">
                     <StyledButton className="new-child-action" onClick={onClickAddChildButton}>

@@ -32,7 +32,7 @@ function printableRecursionHelper(path: Path, x: unknown): Array<{ path: Path; v
         return [
             {
                 path,
-                value: `[unrecognized primitive]${String(x)}`,
+                value: `[unrecognized primitive]${x}`,
             },
         ];
     }

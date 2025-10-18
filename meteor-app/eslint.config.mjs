@@ -119,6 +119,7 @@ export default (async () => {
 
                 // General JavaScript rules
                 'func-names': 'off', // Allow anonymous functions
+                'no-undef-init': 'off', // Allow explicit undefined initialization in TypeScript
                 'no-underscore-dangle': [
                     // Allow specific underscored names
                     'error',

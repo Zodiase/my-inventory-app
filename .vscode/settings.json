@@ -1,5 +1,12 @@
 {
     "eslint.workingDirectories": [
-        "./meteor-app"
-    ]
+        {
+            "directory": "./meteor-app",
+            "changeProcessCWD": true
+        }
+    ],
+    "eslint.useFlatConfig": true,
+    "eslint.options": {
+        "overrideConfigFile": "./meteor-app/eslint.config.mjs"
+    }
 }
