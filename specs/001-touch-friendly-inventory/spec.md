@@ -147,7 +147,7 @@ As a household user, I want to add detailed properties and attach photos/documen
 - What happens when I try to make an item a location of itself (circular reference)?
 - What happens when I try to create a location hierarchy that's very deep (e.g., 20 levels)?
 - What happens when I delete a location that contains other location items (nested hierarchies)?
-- What happens when I search with conflicting criteria (include tag A, exclude tag A)?
+- What happens when I search with conflicting criteria (include tag A, exclude tag A)? **Answer: UI prevents this - each search query fragment is unique by field/operation, so cannot have both include and exclude for the same tag.**
 - What happens when I search for items in container type "box" but hundreds of items match?
 - What happens when I apply filters to a location view that has no items matching the criteria?
 - What happens when I'm in search mode and navigate to a location - does search mode persist or exit?
@@ -163,9 +163,9 @@ As a household user, I want to add detailed properties and attach photos/documen
 - What happens when I rename a photo/PDF label to an empty string?
 - What happens when I try to reorder photos while another photo is uploading?
 - What happens when I try to export data while attachments are still uploading?
-- What happens when I import a backup that was created from a different version of the app?
-- What happens when I import a backup with conflicting item IDs?
-- What happens when the backup bundle is missing attachment files referenced in the JSON?
+- What happens when I import a backup that was created from a different version of the app? **Answer: Best-effort import with warnings for unrecognized properties. Generic interchange format supports version compatibility.**
+- What happens when I import a backup with conflicting item IDs? **Answer: Default "replace all" strategy clears existing data first, so no conflicts. Future merge strategies will need conflict resolution.**
+- What happens when the backup bundle is missing attachment files referenced in the JSON? **Answer: Import succeeds, missing attachments are skipped, warning summary shows count of missing files.**
 
 ## Requirements *(mandatory)*
 
@@ -337,8 +337,10 @@ As a household user, I want to add detailed properties and attach photos/documen
 - **Item Duplication**: When duplicating items, all properties and attachments are deep-copied. Attachment files are duplicated in storage to maintain independence.
 - **Offline Support**: Not required - assumes continuous local network connectivity
 - **Browser Compatibility**: Modern mobile browsers with ES6+ support, WebSockets, File API, and touch event APIs
-- **Backup Format**: Export creates a single file bundle (e.g., ZIP or custom format) containing JSON metadata and all attachment files. Bundle structure preserves attachment relationships via file references in JSON.
+- **Backup Format**: Export creates a single file bundle (e.g., ZIP or custom format) containing JSON metadata and all attachment files. Bundle structure preserves attachment relationships via file references in JSON. Export format uses a generic, version-independent data model to support forward/backward compatibility.
 - **Import Behavior**: Default import strategy replaces all existing data. Advanced merge strategies can be added in future iterations.
+- **Import Validation**: Import performs best-effort parsing. Unrecognized properties from future versions generate warnings but don't fail import. Missing attachment files are skipped with a warning summary (e.g., "3 attachments missing and skipped"). Import succeeds with available data.
+- **Search Query Design**: Search UI prevents conflicting criteria at the fragment level (e.g., cannot simultaneously include AND exclude the same tag/property). Each search query fragment is unique by field and operation type.
 
 ## Out of Scope
 

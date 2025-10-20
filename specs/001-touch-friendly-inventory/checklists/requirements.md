@@ -37,17 +37,26 @@
 - [x] Clear distinction between global Search (dedicated mode with contextual scope) and context-aware Filtering (refines current view)
 - [x] Property system fully specified with optional fields and hide-empty behavior
 - [x] Attachment system fully specified with photos, PDFs, labels, reordering, and duplication
+- [x] Export/import system fully specified with backup bundle format including all attachments
+- [x] Search query design prevents UI-level conflicts (unique fragments per field/operation)
+- [x] Import validation strategy: best-effort parsing with warnings for unrecognized properties
+- [x] Missing attachment handling: skip with warning summary, import succeeds with available data
 - [✓] **PASS**: Requirements are clear and actionable
 
 ### Success Criteria Validity
-- [x] 12 measurable outcomes defined (SC-001 through SC-012)
+- [x] 14 measurable outcomes defined (SC-001 through SC-014)
 - [x] Each criterion includes specific metrics (time, size, performance)
 - [x] Criteria are achievable and testable
 - [x] Criteria align with user story acceptance scenarios
+- [x] Export/import success criteria defined (SC-013, SC-014)
 - [✓] **PASS**: Success criteria are measurable
 
 ### Clarifications Needed
-- [x] **[RESOLVED]**: User Story 4, Scenario 4 - "When deleting a location item with contents, what should happen to contained items?"
+- [x] **[RESOLVED]**: User Story 4, Scenario 4 - "When deleting a location item with contents, what should happen to contained items?" - Three options provided: move to parent with tag, choose new container, or delete all with confirmation.
+- [x] **[RESOLVED]**: Edge case - "Conflicting search criteria (include tag A, exclude tag A)" - UI design prevents this by enforcing unique query fragments per field/operation.
+- [x] **[RESOLVED]**: Edge case - "Import backup from different version" - Generic interchange format with best-effort parsing and warnings for unrecognized properties.
+- [x] **[RESOLVED]**: Edge case - "Missing attachment files in backup bundle" - Skip missing attachments with warning summary, import succeeds with available data.
+- [✓] **ALL CLARIFICATIONS RESOLVED**: Specification ready for implementation planning
   - **Location in Spec**: User Story 4 - Scenario 4
   - **Resolution**: Hybrid approach with three user-selectable options:
     1. Move to parent with "no container" tag
