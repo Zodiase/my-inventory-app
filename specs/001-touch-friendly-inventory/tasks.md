@@ -81,7 +81,7 @@
 - [X] T026 [US1] Create items.byContainer publication in meteor-app/imports/api/items.ts
 - [ ] T027 [P] [US1] Create ItemForm component (create/edit form) in meteor-app/imports/ui/ItemForm.tsx
 - [ ] T028 [P] [US1] Create ItemDetailView component in meteor-app/imports/ui/ItemDetailView.tsx
-- [ ] T029 [P] [US1] Create BreadcrumbTrail component in meteor-app/imports/ui/BreadcrumbTrail.tsx
+- [X] T029 [P] [US1] Create BreadcrumbTrail component in meteor-app/imports/ui/BreadcrumbTrail.tsx
 - [ ] T030 [P] [US1] Create ContainerSelector component for move operations in meteor-app/imports/ui/ContainerSelector.tsx
 - [ ] T031 [P] [US1] Create DeleteContainerDialog component with three deletion strategies in meteor-app/imports/ui/DeleteContainerDialog.tsx
 - [ ] T032 [US1] Update AllItemsView to support hierarchy display and navigation in meteor-app/imports/ui/AllItemsView.tsx
