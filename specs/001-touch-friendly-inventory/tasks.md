@@ -77,8 +77,8 @@
 - [X] T022 [US1] Implement items.delete Meteor Method with container deletion strategies in meteor-app/imports/api/items.ts
 - [X] T023 [US1] Implement items.move Meteor Method with circular reference validation in meteor-app/imports/api/items.ts
 - [X] T024 [US1] Implement items.getPath Meteor Method (breadcrumb trail) in meteor-app/imports/api/items.ts
-- [ ] T025 [US1] Create items.all publication in meteor-app/imports/api/items.ts
-- [ ] T026 [US1] Create items.byContainer publication in meteor-app/imports/api/items.ts
+- [X] T025 [US1] Create items.all publication in meteor-app/imports/api/items.ts
+- [X] T026 [US1] Create items.byContainer publication in meteor-app/imports/api/items.ts
 - [ ] T027 [P] [US1] Create ItemForm component (create/edit form) in meteor-app/imports/ui/ItemForm.tsx
 - [ ] T028 [P] [US1] Create ItemDetailView component in meteor-app/imports/ui/ItemDetailView.tsx
 - [ ] T029 [P] [US1] Create BreadcrumbTrail component in meteor-app/imports/ui/BreadcrumbTrail.tsx

@@ -1,3 +1,5 @@
+import { Meteor } from 'meteor/meteor';
+
 import type InventoryItem from '/imports/model/InventoryItem';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import detectCircularReference, { getAncestorChain } from '/imports/utility/circularReference';
@@ -256,6 +258,47 @@ export const getItemPath = async (itemId: string): Promise<InventoryItem[]> => {
     // Reverse to get root first, and append the item itself
     return [...ancestors.reverse(), item];
 };
+
+// Publications (server-side only)
+if (Meteor.isServer) {
+    /**
+     * Publish all items in the inventory.
+     *
+     * @returns Cursor for all inventory items
+     *
+     * @remarks
+     * This publication is used for the main inventory view and global search.
+     * Items are published with all fields for complete data access.
+     */
+    Meteor.publish('items.all', function publishAllItems() {
+        logger.log('Publishing items.all');
+        return InventoryItemsCollection.find({});
+    });
+
+    /**
+     * Publish items within a specific container (direct children only).
+     *
+     * @param containerId - ID of the parent container (null/undefined for root items)
+     * @returns Cursor for items in the specified container
+     *
+     * @remarks
+     * This publication is used for browsing a specific container's contents.
+     * Pass null or undefined to get root-level items (no container).
+     * Does NOT include descendants in sub-containers (non-recursive).
+     */
+    Meteor.publish('items.byContainer', function publishItemsByContainer(containerId: string | null | undefined) {
+        logger.log('Publishing items.byContainer', { containerId });
+
+        // Normalize containerId (treat null, undefined, and empty string as "no container")
+        const normalizedContainerId =
+            typeof containerId === 'undefined' || containerId === null || containerId === '' ? undefined : containerId;
+
+        // Find items with matching containerId
+        return InventoryItemsCollection.find({
+            containerId: normalizedContainerId,
+        });
+    });
+}
 
 export default asMeteorMethods(InventoryItemsCollection, {
     createItem: createInventoryItem,
