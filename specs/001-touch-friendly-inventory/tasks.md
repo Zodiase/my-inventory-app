@@ -26,11 +26,11 @@
 
 **Purpose**: Project initialization and dependency installation
 
-- [ ] T001 Install new dependencies: sharp, archiver, unzipper, mime-types in meteor-app/package.json
-- [ ] T002 [P] Create PropertyValues interface in meteor-app/imports/model/PropertyValues.ts
-- [ ] T003 [P] Create Attachment model in meteor-app/imports/model/Attachment.ts
-- [ ] T004 [P] Update InventoryItem model with properties field and isContainer flag in meteor-app/imports/model/InventoryItem.ts
-- [ ] T005 Create Attachments collection in meteor-app/imports/api/attachments.ts
+- [X] T001 Install new dependencies: sharp, archiver, unzipper, mime-types in meteor-app/package.json
+- [X] T002 [P] Create PropertyValues interface in meteor-app/imports/model/PropertyValues.ts
+- [X] T003 [P] Create Attachment model in meteor-app/imports/model/Attachment.ts
+- [X] T004 [P] Update InventoryItem model with properties field and isContainer flag in meteor-app/imports/model/InventoryItem.ts
+- [X] T005 Create Attachments collection in meteor-app/imports/api/attachments.ts
 
 ---
 

@@ -16,17 +16,23 @@
     "dependencies": {
         "@babel/core": "^7.28.4",
         "@babel/runtime": "^7.28.4",
+        "archiver": "^7.0.1",
         "lodash": "^4.17.21",
         "meteor-node-stubs": "^1.2.24",
+        "mime-types": "^2.1.35",
         "polished": "^4.3.1",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
-        "styled-components": "^5.3.11"
+        "sharp": "^0.33.5",
+        "styled-components": "^5.3.11",
+        "unzipper": "^0.12.3"
     },
     "devDependencies": {
+        "@types/archiver": "^6.0.2",
         "@types/chai": "^5.2.2",
         "@types/lodash": "^4.17.20",
         "@types/meteor": "^2.9.9",
+        "@types/mime-types": "^2.1.4",
         "@types/mocha": "^10.0.10",
         "@types/mongodb": "^4.0.6",
         "@types/node": "^24.5.2",
