@@ -40,13 +40,13 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Create database indexes for Items collection (name, tagIds, containerId, isContainer, properties) in meteor-app/server/main.ts
-- [ ] T007 [P] Create database indexes for Tags collection (name unique, path) in meteor-app/server/main.ts
-- [ ] T008 [P] Create database indexes for Attachments collection (itemId+order, itemId+type, fileId) in meteor-app/server/main.ts
-- [ ] T009 Setup GridFS for file storage in meteor-app/server/gridfs.ts
-- [ ] T010 [P] Create image processing utilities (thumbnail generation, EXIF correction) in meteor-app/server/imageProcessing.ts
-- [ ] T011 [P] Create SearchFragment type definitions in meteor-app/imports/model/SearchFragment.ts
-- [ ] T012 Create search query builder utility (SearchFragment → MongoDB query) in meteor-app/imports/utility/searchQuery.ts
+- [X] T006 Create database indexes for Items collection (name, tagIds, containerId, isContainer, properties) in meteor-app/server/main.ts
+- [X] T007 [P] Create database indexes for Tags collection (name unique, path) in meteor-app/server/main.ts
+- [X] T008 [P] Create database indexes for Attachments collection (itemId+order, itemId+type, fileId) in meteor-app/server/main.ts
+- [X] T009 Setup GridFS for file storage in meteor-app/server/gridfs.ts
+- [X] T010 [P] Create image processing utilities (thumbnail generation, EXIF correction) in meteor-app/server/imageProcessing.ts
+- [X] T011 [P] Create SearchFragment type definitions in meteor-app/imports/model/SearchFragment.ts
+- [X] T012 Create search query builder utility (SearchFragment → MongoDB query) in meteor-app/imports/utility/searchQuery.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
