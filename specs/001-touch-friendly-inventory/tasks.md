@@ -71,12 +71,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T019 [P] [US1] Implement circular reference detection utility in meteor-app/imports/utility/circularReference.ts
-- [ ] T020 [US1] Implement items.create Meteor Method in meteor-app/imports/api/items.ts
-- [ ] T021 [US1] Implement items.update Meteor Method with strictSelector in meteor-app/imports/api/items.ts
-- [ ] T022 [US1] Implement items.delete Meteor Method with container deletion strategies in meteor-app/imports/api/items.ts
-- [ ] T023 [US1] Implement items.move Meteor Method with circular reference validation in meteor-app/imports/api/items.ts
-- [ ] T024 [US1] Implement items.getPath Meteor Method (breadcrumb trail) in meteor-app/imports/api/items.ts
+- [X] T019 [P] [US1] Implement circular reference detection utility in meteor-app/imports/utility/circularReference.ts
+- [X] T020 [US1] Implement items.create Meteor Method in meteor-app/imports/api/items.ts
+- [X] T021 [US1] Implement items.update Meteor Method with strictSelector in meteor-app/imports/api/items.ts
+- [X] T022 [US1] Implement items.delete Meteor Method with container deletion strategies in meteor-app/imports/api/items.ts
+- [X] T023 [US1] Implement items.move Meteor Method with circular reference validation in meteor-app/imports/api/items.ts
+- [X] T024 [US1] Implement items.getPath Meteor Method (breadcrumb trail) in meteor-app/imports/api/items.ts
 - [ ] T025 [US1] Create items.all publication in meteor-app/imports/api/items.ts
 - [ ] T026 [US1] Create items.byContainer publication in meteor-app/imports/api/items.ts
 - [ ] T027 [P] [US1] Create ItemForm component (create/edit form) in meteor-app/imports/ui/ItemForm.tsx

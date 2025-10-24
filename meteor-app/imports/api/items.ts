@@ -1,35 +1,266 @@
 import type InventoryItem from '/imports/model/InventoryItem';
-// import createLogger from '/imports/utility/Logger';
+import RecordNotFoundException from '/imports/model/RecordNotFoundException';
+import detectCircularReference, { getAncestorChain } from '/imports/utility/circularReference';
+import createLogger from '/imports/utility/Logger';
 import asMeteorMethods from '/imports/utility/MeteorMethods';
 import { NamedCollection } from '/imports/utility/NamedCollection';
 import type NoId from '/imports/utility/NoId';
 import type RecordInput from '/imports/utility/RecordInput';
+import strictSelector from '/imports/utility/strictSelector';
 
 export type { InventoryItem } from '/imports/model/InventoryItem';
 
-// const logger = createLogger(module);
+const logger = createLogger(module);
 
 export const InventoryItemsCollection = new NamedCollection<InventoryItem>('items');
 
 export const createInventoryItem = async (itemInput: RecordInput<InventoryItem>): Promise<string> => {
-    const { name } = itemInput;
+    const { name, description, containerId, isContainer = false, tagIds = [], properties } = itemInput;
 
-    if (typeof name === 'undefined') {
+    if (typeof name === 'undefined' || name.trim() === '') {
         throw new Error('Item must have a name.');
+    }
+
+    // Validate name length
+    if (name.length > 500) {
+        throw new Error('Item name must be 500 characters or less.');
+    }
+
+    // Validate description length if provided
+    if (typeof description !== 'undefined' && description.length > 5000) {
+        throw new Error('Item description must be 5000 characters or less.');
+    }
+
+    // Validate containerId if provided
+    if (typeof containerId !== 'undefined' && containerId !== '') {
+        const parentContainer = await InventoryItemsCollection.findOneAsync({ _id: containerId });
+
+        if (typeof parentContainer === 'undefined') {
+            throw new Error('Parent container not found.');
+        }
+
+        if (!parentContainer.isContainer) {
+            throw new Error('Parent must be a container (isContainer: true).');
+        }
     }
 
     const now = new Date();
     const newItem: NoId<InventoryItem> = {
-        name,
+        name: name.trim(),
+        description: typeof description !== 'undefined' ? description.trim() : undefined,
+        containerId: typeof containerId !== 'undefined' && containerId !== '' ? containerId : undefined,
+        isContainer,
+        tagIds: [...tagIds], // Create a copy to avoid mutations
+        properties,
         createdAt: now,
         modifiedAt: now,
     };
 
     const itemId = await InventoryItemsCollection.insertAsync(newItem);
 
+    logger.log('Item created', { itemId, name: newItem.name, isContainer });
+
     return itemId;
+};
+
+/**
+ * Update an existing inventory item.
+ *
+ * @param itemId - ID of the item to update
+ * @param updates - Fields to update (partial InventoryItem)
+ * @returns Promise resolving to the number of items updated (0 or 1)
+ *
+ * @remarks
+ * Uses strictSelector for optimistic locking to prevent race conditions.
+ * The update will fail if the item has been modified since it was read.
+ * containerId changes should use moveItem instead for proper validation.
+ */
+export const updateInventoryItem = async (
+    itemId: string,
+    updates: Partial<Pick<InventoryItem, 'name' | 'description' | 'isContainer' | 'tagIds' | 'properties'>>
+): Promise<number> => {
+    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+
+    if (typeof item === 'undefined') {
+        throw new RecordNotFoundException('Item not found', { _id: itemId });
+    }
+
+    // Validate updates
+    if (typeof updates.name !== 'undefined') {
+        if (updates.name.trim() === '') {
+            throw new Error('Item name cannot be empty.');
+        }
+        if (updates.name.length > 500) {
+            throw new Error('Item name must be 500 characters or less.');
+        }
+    }
+
+    if (typeof updates.description !== 'undefined' && updates.description.length > 5000) {
+        throw new Error('Item description must be 5000 characters or less.');
+    }
+
+    // Prepare the update object
+    const updateFields: Partial<InventoryItem> = {
+        ...updates,
+        modifiedAt: new Date(),
+    };
+
+    // Trim string fields
+    if (typeof updateFields.name !== 'undefined') {
+        updateFields.name = updateFields.name.trim();
+    }
+    if (typeof updateFields.description !== 'undefined') {
+        updateFields.description = updateFields.description.trim();
+    }
+
+    // Use strictSelector for optimistic locking
+    const selector = strictSelector(item, ['name', 'isContainer']);
+    const result = await InventoryItemsCollection.updateAsync(selector, {
+        $set: updateFields,
+    });
+
+    logger.log('Item updated', { itemId, updatedFields: Object.keys(updates), rowsAffected: result });
+
+    return result;
+};
+
+/**
+ * Move an item to a different container.
+ *
+ * @param itemId - ID of the item to move
+ * @param targetContainerId - ID of the new parent container (null/undefined for root)
+ * @returns Promise resolving to the number of items updated (0 or 1)
+ *
+ * @remarks
+ * Validates:
+ * - Target container exists and has isContainer: true
+ * - Move does not create circular reference (item containing itself)
+ * - Uses strictSelector for optimistic locking
+ */
+export const moveItem = async (itemId: string, targetContainerId: string | null | undefined): Promise<number> => {
+    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+
+    if (typeof item === 'undefined') {
+        throw new RecordNotFoundException('Item not found', { _id: itemId });
+    }
+
+    // Normalize empty string and null to undefined
+    const normalizedTargetId =
+        typeof targetContainerId === 'undefined' || targetContainerId === null || targetContainerId === ''
+            ? undefined
+            : targetContainerId;
+
+    // Validate target container if specified
+    if (typeof normalizedTargetId !== 'undefined') {
+        const targetContainer: InventoryItem | undefined = await InventoryItemsCollection.findOneAsync({
+            _id: normalizedTargetId,
+        });
+
+        if (typeof targetContainer === 'undefined') {
+            throw new RecordNotFoundException('Target container not found', { _id: normalizedTargetId });
+        }
+
+        if (!targetContainer.isContainer) {
+            throw new Error('Target must be a container (isContainer: true).');
+        }
+
+        // Check for circular reference
+        const wouldCreateCycle = await detectCircularReference(itemId, normalizedTargetId, InventoryItemsCollection);
+
+        if (wouldCreateCycle) {
+            throw new Error('Cannot move item: would create circular reference in container hierarchy.');
+        }
+    }
+
+    // Use strictSelector for optimistic locking
+    const selector = strictSelector(item, ['containerId']);
+    const result = await InventoryItemsCollection.updateAsync(selector, {
+        $set: {
+            containerId: normalizedTargetId,
+            modifiedAt: new Date(),
+        },
+    });
+
+    logger.log('Item moved', { itemId, from: item.containerId, to: normalizedTargetId, rowsAffected: result });
+
+    return result;
+};
+
+/**
+ * Delete an inventory item.
+ *
+ * @param itemId - ID of the item to delete
+ * @returns Promise resolving to the number of items deleted (0 or 1)
+ *
+ * @remarks
+ * For containers (isContainer: true), this method only deletes the container itself.
+ * Child items must be handled separately based on the deletion strategy:
+ * - Option A: Move children to parent container and tag with "no container"
+ * - Option B: Prompt user to select new container for children
+ * - Option C: Recursively delete all children (with confirmation)
+ *
+ * The UI should implement the deletion strategy and handle children before calling this method.
+ */
+export const deleteInventoryItem = async (itemId: string): Promise<number> => {
+    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+
+    if (typeof item === 'undefined') {
+        throw new RecordNotFoundException('Item not found', { _id: itemId });
+    }
+
+    // Check if this is a container with children
+    if (item.isContainer) {
+        const childCount = await InventoryItemsCollection.find({ containerId: itemId }).countAsync();
+
+        if (childCount > 0) {
+            throw new Error(`Cannot delete container with ${childCount} child items. Move or delete children first.`);
+        }
+    }
+
+    // Use strictSelector for optimistic locking
+    const selector = strictSelector(item, ['name', 'containerId']);
+    const result = await InventoryItemsCollection.removeAsync(selector);
+
+    logger.log('Item deleted', { itemId, name: item.name, isContainer: item.isContainer, rowsAffected: result });
+
+    return result;
+};
+
+/**
+ * Get the breadcrumb path for an item (all ancestors from root to item).
+ *
+ * @param itemId - ID of the item to get path for
+ * @returns Promise resolving to array of items in path order (root first, item last)
+ *
+ * @remarks
+ * This is used to display breadcrumb navigation trails showing where an item is located.
+ * The array starts with the root container and ends with the requested item.
+ *
+ * @example
+ * ```typescript
+ * // Garage > Shelf > Box > Item
+ * const path = await getItemPath('item123');
+ * // Returns: [Garage, Shelf, Box, Item]
+ * ```
+ */
+export const getItemPath = async (itemId: string): Promise<InventoryItem[]> => {
+    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+
+    if (typeof item === 'undefined') {
+        throw new RecordNotFoundException('Item not found', { _id: itemId });
+    }
+
+    // Get ancestors (returns parent first, root last)
+    const ancestors = await getAncestorChain(itemId, InventoryItemsCollection);
+
+    // Reverse to get root first, and append the item itself
+    return [...ancestors.reverse(), item];
 };
 
 export default asMeteorMethods(InventoryItemsCollection, {
     createItem: createInventoryItem,
+    updateItem: updateInventoryItem,
+    moveItem,
+    deleteItem: deleteInventoryItem,
+    getPath: getItemPath,
 });
