@@ -1,0 +1,1 @@
+cd meteor-app && npx lint-staged
