@@ -1,5 +1,6 @@
 import extend from 'lodash/extend';
 
+import { InventoryItemsCollection } from '/imports/api/items';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import type TagRecord from '/imports/model/TagRecord';
 import createLogger from '/imports/utility/Logger';
@@ -65,6 +66,15 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
         throw new Error('Tag must have a name.');
     }
 
+    // Check for case-insensitive duplicate
+    const existingTag = await TagsCollection.findOneAsync({
+        name: { $regex: `^${name}$`, $options: 'i' },
+    });
+
+    if (typeof existingTag !== 'undefined') {
+        throw new Error(`Tag with name "${name}" already exists.`);
+    }
+
     if (parentTagId !== '') {
         await assertParentTag(parentTagId);
     }
@@ -91,6 +101,16 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
  */
 export const renameTag = async (tag: TagRecord, newName: string): Promise<boolean> => {
     logger.log('renameTag <=', { tag, newName });
+
+    // Check for case-insensitive duplicate (excluding the current tag)
+    const existingTag = await TagsCollection.findOneAsync({
+        _id: { $ne: tag._id },
+        name: { $regex: `^${newName}$`, $options: 'i' },
+    });
+
+    if (typeof existingTag !== 'undefined') {
+        throw new Error(`Tag with name "${newName}" already exists.`);
+    }
 
     const selector = extend(strictSelector(tag, ['name']), {
         path: {
@@ -311,11 +331,67 @@ export const watchAndFixMissingPath = async (): Promise<true> => {
     return true;
 };
 
+/**
+ * Delete a tag and remove it from all items that reference it.
+ * @param tagId - The ID of the tag to delete
+ * @returns true if tag was deleted, false if tag didn't exist
+ */
+export const deleteTag = async (tagId: string): Promise<boolean> => {
+    // First, remove this tag from all items
+    await InventoryItemsCollection.updateAsync({ tagIds: tagId }, { $pull: { tagIds: tagId } }, { multi: true });
+
+    // Then delete the tag
+    const removed = await TagsCollection.removeAsync(tagId);
+    return removed > 0;
+};
+
+/**
+ * Add a tag to an item.
+ * @param itemId - The ID of the item
+ * @param tagId - The ID of the tag to add
+ * @returns true on success
+ * @throws RecordNotFoundException if item or tag doesn't exist
+ */
+export const addToItem = async (itemId: string, tagId: string): Promise<boolean> => {
+    // Verify item exists
+    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+    if (typeof item === 'undefined') {
+        throw new RecordNotFoundException('Item not found', { _id: itemId });
+    }
+
+    // Verify tag exists
+    const tag = await TagsCollection.findOneAsync({ _id: tagId });
+    if (typeof tag === 'undefined') {
+        throw new RecordNotFoundException('Tag not found', { _id: tagId });
+    }
+
+    // Add tag to item (idempotent - $addToSet only adds if not present)
+    await InventoryItemsCollection.updateAsync({ _id: itemId }, { $addToSet: { tagIds: tagId } });
+
+    return true;
+};
+
+/**
+ * Remove a tag from an item.
+ * @param itemId - The ID of the item
+ * @param tagId - The ID of the tag to remove
+ * @returns true (operation is idempotent)
+ */
+export const removeFromItem = async (itemId: string, tagId: string): Promise<boolean> => {
+    // Remove tag from item (idempotent - $pull is safe even if tag not present)
+    await InventoryItemsCollection.updateAsync({ _id: itemId }, { $pull: { tagIds: tagId } });
+
+    return true;
+};
+
 export default asMeteorMethods(TagsCollection, {
     createTag,
     renameTag,
     setTagParent,
     removeTag,
+    deleteTag,
+    addToItem,
+    removeFromItem,
     getDetachedTags,
     fixPath,
     watchAndFixMissingPath,
