@@ -9,6 +9,8 @@
 
 **Storybook**: All UI components should have corresponding Storybook stories for isolated development, testing, and documentation. Stories demonstrate different states and use cases.
 
+**Code Formatting**: All code changes inside `meteor-app/` MUST be formatted with Prettier before committing. Run `npm run check:code-style:prettier` from the `meteor-app/` directory to check formatting, or use `npx prettier --write <file>` to format files. Documentation and spec files outside `meteor-app/` do not need Prettier formatting. Commits should have consistent formatting to maintain code quality.
+
 ## Format: `[ID] [P?] [Story] Description`
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
