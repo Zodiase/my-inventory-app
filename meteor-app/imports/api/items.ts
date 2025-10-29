@@ -115,9 +115,12 @@ export const updateInventoryItem = async (
         updateFields.description = updateFields.description.trim();
     }
 
-    const result = await InventoryItemsCollection.updateAsync({ _id: itemId }, {
-        $set: updateFields,
-    });
+    const result = await InventoryItemsCollection.updateAsync(
+        { _id: itemId },
+        {
+            $set: updateFields,
+        }
+    );
 
     logger.log('Item updated', { itemId, updatedFields: Object.keys(updates), rowsAffected: result });
 
