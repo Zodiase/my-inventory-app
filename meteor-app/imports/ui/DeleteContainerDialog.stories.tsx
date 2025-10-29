@@ -10,7 +10,13 @@ const meta: Meta<typeof DeleteContainerDialog> = {
     title: 'UI/DeleteContainerDialog',
     component: DeleteContainerDialog,
     parameters: {
-        layout: 'centered',
+        layout: 'fullscreen',
+        docs: {
+            story: {
+                inline: false,
+                iframeHeight: 600,
+            },
+        },
     },
     tags: ['autodocs'],
 };
