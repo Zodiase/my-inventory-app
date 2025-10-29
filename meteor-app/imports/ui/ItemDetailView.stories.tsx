@@ -449,10 +449,7 @@ export const FullyInteractive: Story = {
 
                 {/* Edit Dialog */}
                 {showEditDialog && (
-                    <Layer
-                        onEsc={() => setShowEditDialog(false)}
-                        onClickOutside={() => setShowEditDialog(false)}
-                    >
+                    <Layer onEsc={() => setShowEditDialog(false)} onClickOutside={() => setShowEditDialog(false)}>
                         <Box pad="medium" gap="medium" width="medium">
                             <Heading level={3} margin="none">
                                 Edit Item
@@ -497,7 +494,7 @@ export const FullyInteractive: Story = {
                                     onClick={() => {
                                         const nameInput = document.getElementById('edit-name') as HTMLInputElement;
                                         const descInput = document.getElementById(
-                                            'edit-description',
+                                            'edit-description'
                                         ) as HTMLTextAreaElement;
                                         handleSaveEdit(nameInput.value, descInput.value);
                                     }}
@@ -528,10 +525,7 @@ export const FullyInteractive: Story = {
 
                 {/* Delete Confirmation */}
                 {showDeleteConfirm && (
-                    <Layer
-                        onEsc={() => setShowDeleteConfirm(false)}
-                        onClickOutside={() => setShowDeleteConfirm(false)}
-                    >
+                    <Layer onEsc={() => setShowDeleteConfirm(false)} onClickOutside={() => setShowDeleteConfirm(false)}>
                         <Box pad="medium" gap="medium" width="medium">
                             <Heading level={3} margin="none">
                                 Confirm Delete
