@@ -397,6 +397,29 @@ if (Meteor.isServer) {
             containerId: normalizedContainerId,
         });
     });
+
+    /**
+     * Publish items that have any of the specified tags.
+     *
+     * @param tagIds - Array of tag IDs to filter by
+     * @returns Cursor for items with matching tags
+     *
+     * @remarks
+     * Returns items that have AT LEAST ONE of the specified tags.
+     * Used for filtering items by tag selection.
+     * Empty array returns no items.
+     */
+    Meteor.publish('items.byTags', function publishItemsByTags(tagIds: string[]) {
+        logger.log('Publishing items.byTags', { tagIds });
+
+        if (!Array.isArray(tagIds) || tagIds.length === 0) {
+            return this.ready();
+        }
+
+        return InventoryItemsCollection.find({
+            tagIds: { $in: tagIds },
+        });
+    });
 }
 
 export default asMeteorMethods(InventoryItemsCollection, {

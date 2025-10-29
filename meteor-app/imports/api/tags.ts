@@ -1,5 +1,7 @@
 import extend from 'lodash/extend';
 
+import { Meteor } from 'meteor/meteor';
+
 import { InventoryItemsCollection } from '/imports/api/items';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import type TagRecord from '/imports/model/TagRecord';
@@ -383,6 +385,23 @@ export const removeFromItem = async (itemId: string, tagId: string): Promise<boo
 
     return true;
 };
+
+// Publications (server-side only)
+if (Meteor.isServer) {
+    /**
+     * Publish all tags.
+     *
+     * @returns Cursor for all tags
+     *
+     * @remarks
+     * Tags are published with all fields including path information.
+     * Used for tag selection, filtering, and management interfaces.
+     */
+    Meteor.publish('tags.all', function publishAllTags() {
+        logger.log('Publishing tags.all');
+        return TagsCollection.find({});
+    });
+}
 
 export default asMeteorMethods(TagsCollection, {
     createTag,
