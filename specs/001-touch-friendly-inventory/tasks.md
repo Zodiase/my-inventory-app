@@ -67,13 +67,13 @@
 - [ ] T015 [P] [US1] Unit tests for items.delete method in meteor-app/imports/api/items.test.ts
 - [ ] T016 [P] [US1] Unit tests for items.move method in meteor-app/imports/api/items.test.ts
 - [ ] T017 [P] [US1] Unit tests for items.getPath method in meteor-app/imports/api/items.test.ts
-- [ ] T018 [P] [US1] Unit tests for circular reference detection in meteor-app/imports/utility/circularReference.test.ts
+- [X] T018 [P] [US1] Unit tests for circular reference detection in meteor-app/imports/utility/circularReference.test.ts
 
 ### Implementation for User Story 1
 
 - [X] T019 [P] [US1] Implement circular reference detection utility in meteor-app/imports/utility/circularReference.ts
 - [X] T020 [US1] Implement items.create Meteor Method in meteor-app/imports/api/items.ts
-- [X] T021 [US1] Implement items.update Meteor Method with strictSelector in meteor-app/imports/api/items.ts
+- [X] T021 [US1] Implement items.update Meteor Method (simple ID-based version) in meteor-app/imports/api/items.ts
 - [X] T022 [US1] Implement items.delete Meteor Method with container deletion strategies in meteor-app/imports/api/items.ts
 - [X] T023 [US1] Implement items.move Meteor Method with circular reference validation in meteor-app/imports/api/items.ts
 - [X] T024 [US1] Implement items.getPath Meteor Method (breadcrumb trail) in meteor-app/imports/api/items.ts
@@ -86,6 +86,15 @@
 - [ ] T031 [P] [US1] Create DeleteContainerDialog component with three deletion strategies in meteor-app/imports/ui/DeleteContainerDialog.tsx
 - [ ] T032 [US1] Update AllItemsView to support hierarchy display and navigation in meteor-app/imports/ui/AllItemsView.tsx
 - [ ] T033 [US1] Add drag-and-drop support for moving items in meteor-app/imports/ui/AllItemsView.tsx
+
+### Optimistic Locking (Future Enhancement for US1)
+
+**Note**: These methods implement optimistic locking as specified in contracts/meteor-methods.md. They accept the current document state and use strictSelector to detect concurrent modifications. Deferred until UI components need conflict detection for better UX.
+
+- [ ] T021a [P] [US1] Implement safelyUpdateInventoryItem with optimistic locking in meteor-app/imports/api/items.ts
+- [ ] T021b [P] [US1] Implement safelyMoveItem with optimistic locking in meteor-app/imports/api/items.ts
+- [ ] T021c [P] [US1] Implement safelyDeleteInventoryItem with optimistic locking in meteor-app/imports/api/items.ts
+- [ ] T021d [P] [US1] Add unit tests for safely* methods with concurrent modification scenarios in meteor-app/imports/api/items.test.ts
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - users can create items, organize them in containers, see breadcrumb trails, and move items
 
@@ -491,11 +500,11 @@ Each user story phase delivers independently testable value:
 
 ---
 
-## Total Task Count: 168 tasks
+## Total Task Count: 172 tasks
 
 - Setup: 5 tasks
 - Foundational: 7 tasks
-- User Story 1: 21 tasks (6 tests + 15 implementation)
+- User Story 1: 25 tasks (7 tests + 18 implementation)
 - User Story 2: 19 tasks (5 tests + 14 implementation)
 - User Story 5: 14 tasks (2 tests + 12 implementation)
 - User Story 3: 14 tasks (3 tests + 11 implementation)
@@ -504,6 +513,6 @@ Each user story phase delivers independently testable value:
 - Export/Import: 18 tasks (4 tests + 14 implementation)
 - Polish: 19 tasks
 
-**Test Coverage**: 31 test tasks ensuring TDD compliance with Constitution principle II
-**Parallel Opportunities**: 67 tasks marked [P] can run concurrently
+**Test Coverage**: 32 test tasks ensuring TDD compliance with Constitution principle II
+**Parallel Opportunities**: 70 tasks marked [P] can run concurrently
 **Independent User Stories**: 6 stories can be tested and delivered independently

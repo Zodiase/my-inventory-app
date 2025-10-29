@@ -8,7 +8,7 @@ import asMeteorMethods from '/imports/utility/MeteorMethods';
 import { NamedCollection } from '/imports/utility/NamedCollection';
 import type NoId from '/imports/utility/NoId';
 import type RecordInput from '/imports/utility/RecordInput';
-import strictSelector from '/imports/utility/strictSelector';
+// import strictSelector from '/imports/utility/strictSelector'; // Will be used by safely* methods
 
 export type { InventoryItem } from '/imports/model/InventoryItem';
 
@@ -73,8 +73,8 @@ export const createInventoryItem = async (itemInput: RecordInput<InventoryItem>)
  * @returns Promise resolving to the number of items updated (0 or 1)
  *
  * @remarks
- * Uses strictSelector for optimistic locking to prevent race conditions.
- * The update will fail if the item has been modified since it was read.
+ * This method performs an unconditional update based on itemId only.
+ * For optimistic locking (to prevent race conditions), use safelyUpdateInventoryItem instead.
  * containerId changes should use moveItem instead for proper validation.
  */
 export const updateInventoryItem = async (
@@ -115,15 +115,43 @@ export const updateInventoryItem = async (
         updateFields.description = updateFields.description.trim();
     }
 
-    // Use strictSelector for optimistic locking
-    const selector = strictSelector(item, ['name', 'isContainer']);
-    const result = await InventoryItemsCollection.updateAsync(selector, {
+    const result = await InventoryItemsCollection.updateAsync({ _id: itemId }, {
         $set: updateFields,
     });
 
     logger.log('Item updated', { itemId, updatedFields: Object.keys(updates), rowsAffected: result });
 
     return result;
+};
+
+/**
+ * Safely update an inventory item with optimistic locking.
+ *
+ * @param item - The current state of the item (must include all CollectionItem fields)
+ * @param updates - Fields to update (partial InventoryItem)
+ * @returns Promise resolving to the number of items updated (0 if concurrent modification detected, 1 if successful)
+ *
+ * @remarks
+ * Uses strictSelector to ensure the item hasn't been modified since it was read.
+ * Returns 0 if the item was modified by another operation (caller should re-read and retry).
+ * This is the optimistic locking pattern - useful for preventing race conditions in the UI.
+ *
+ * @example
+ * ```typescript
+ * const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+ * const result = await safelyUpdateInventoryItem(item, { name: 'New Name' });
+ * if (result === 0) {
+ *   // Item was modified by someone else, refresh and try again
+ * }
+ * ```
+ */
+export const safelyUpdateInventoryItem = async (
+    item: InventoryItem,
+    updates: Partial<Pick<InventoryItem, 'name' | 'description' | 'isContainer' | 'tagIds' | 'properties'>>
+): Promise<number> => {
+    // TODO: Implement optimistic locking version
+    // This will use strictSelector(item, ['name', 'isContainer', 'containerId'])
+    throw new Error('safelyUpdateInventoryItem not yet implemented');
 };
 
 /**
@@ -134,10 +162,11 @@ export const updateInventoryItem = async (
  * @returns Promise resolving to the number of items updated (0 or 1)
  *
  * @remarks
+ * This method performs an unconditional move based on itemId only.
+ * For optimistic locking (to prevent race conditions), use safelyMoveItem instead.
  * Validates:
  * - Target container exists and has isContainer: true
  * - Move does not create circular reference (item containing itself)
- * - Uses strictSelector for optimistic locking
  */
 export const moveItem = async (itemId: string, targetContainerId: string | null | undefined): Promise<number> => {
     const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
@@ -174,18 +203,56 @@ export const moveItem = async (itemId: string, targetContainerId: string | null 
         }
     }
 
-    // Use strictSelector for optimistic locking
-    const selector = strictSelector(item, ['containerId']);
-    const result = await InventoryItemsCollection.updateAsync(selector, {
-        $set: {
-            containerId: normalizedTargetId,
-            modifiedAt: new Date(),
-        },
-    });
+    // MongoDB doesn't support $set with undefined values
+    // Use $unset to remove the field when moving to root, otherwise use $set
+    const updateOp =
+        typeof normalizedTargetId === 'undefined'
+            ? {
+                  $unset: { containerId: true as const },
+                  $set: { modifiedAt: new Date() },
+              }
+            : {
+                  $set: {
+                      containerId: normalizedTargetId,
+                      modifiedAt: new Date(),
+                  },
+              };
+
+    const result = await InventoryItemsCollection.updateAsync({ _id: itemId }, updateOp);
 
     logger.log('Item moved', { itemId, from: item.containerId, to: normalizedTargetId, rowsAffected: result });
 
     return result;
+};
+
+/**
+ * Safely move an item to a different container with optimistic locking.
+ *
+ * @param item - The current state of the item (must include all CollectionItem fields)
+ * @param targetContainerId - ID of the new parent container (null/undefined for root)
+ * @returns Promise resolving to the number of items updated (0 if concurrent modification detected, 1 if successful)
+ *
+ * @remarks
+ * Uses strictSelector to ensure the item hasn't been modified since it was read.
+ * Returns 0 if the item was modified by another operation (caller should re-read and retry).
+ * This is the optimistic locking pattern - useful for preventing race conditions in the UI.
+ *
+ * @example
+ * ```typescript
+ * const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+ * const result = await safelyMoveItem(item, 'newContainerId');
+ * if (result === 0) {
+ *   // Item was moved by someone else, refresh and try again
+ * }
+ * ```
+ */
+export const safelyMoveItem = async (
+    item: InventoryItem,
+    targetContainerId: string | null | undefined
+): Promise<number> => {
+    // TODO: Implement optimistic locking version
+    // This will use strictSelector(item, ['containerId'])
+    throw new Error('safelyMoveItem not yet implemented');
 };
 
 /**
@@ -195,6 +262,9 @@ export const moveItem = async (itemId: string, targetContainerId: string | null 
  * @returns Promise resolving to the number of items deleted (0 or 1)
  *
  * @remarks
+ * This method performs an unconditional delete based on itemId only.
+ * For optimistic locking (to prevent race conditions), use safelyDeleteInventoryItem instead.
+ *
  * For containers (isContainer: true), this method only deletes the container itself.
  * Child items must be handled separately based on the deletion strategy:
  * - Option A: Move children to parent container and tag with "no container"
@@ -219,13 +289,39 @@ export const deleteInventoryItem = async (itemId: string): Promise<number> => {
         }
     }
 
-    // Use strictSelector for optimistic locking
-    const selector = strictSelector(item, ['name', 'containerId']);
-    const result = await InventoryItemsCollection.removeAsync(selector);
+    const result = await InventoryItemsCollection.removeAsync({ _id: itemId });
 
     logger.log('Item deleted', { itemId, name: item.name, isContainer: item.isContainer, rowsAffected: result });
 
     return result;
+};
+
+/**
+ * Safely delete an inventory item with optimistic locking.
+ *
+ * @param item - The current state of the item (must include all CollectionItem fields)
+ * @returns Promise resolving to the number of items deleted (0 if concurrent modification detected, 1 if successful)
+ *
+ * @remarks
+ * Uses strictSelector to ensure the item hasn't been modified since it was read.
+ * Returns 0 if the item was modified by another operation (caller should re-read and retry).
+ * This is the optimistic locking pattern - useful for preventing accidental deletion of modified items.
+ *
+ * Still checks for children if the item is a container.
+ *
+ * @example
+ * ```typescript
+ * const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+ * const result = await safelyDeleteInventoryItem(item);
+ * if (result === 0) {
+ *   // Item was modified by someone else, refresh and confirm deletion
+ * }
+ * ```
+ */
+export const safelyDeleteInventoryItem = async (item: InventoryItem): Promise<number> => {
+    // TODO: Implement optimistic locking version
+    // This will use strictSelector(item, ['name', 'isContainer', 'containerId'])
+    throw new Error('safelyDeleteInventoryItem not yet implemented');
 };
 
 /**
