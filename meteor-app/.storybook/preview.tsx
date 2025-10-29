@@ -27,10 +27,15 @@ const preview: Preview = {
                 date: /Date$/i,
             },
         },
+        docs: {
+            story: {
+                inline: true,
+            },
+        },
     },
     decorators: [
         (Story) => (
-            <Grommet theme={theme} full>
+            <Grommet theme={theme}>
                 <Story />
             </Grommet>
         ),
