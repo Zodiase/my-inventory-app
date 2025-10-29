@@ -4,19 +4,40 @@ import { Box, Button, Text } from 'grommet';
 
 import { CreateTagDialog } from '/imports/ui/CreateTagDialog';
 
+/**
+ * CreateTagDialog Stories
+ *
+ * NOTE: Docs page is disabled for this component due to technical limitations
+ * with rendering modal dialogs in Storybook's documentation view.
+ *
+ * The issue: CreateTagDialog uses Grommet's Layer component (portal-based modal)
+ * with an isOpen prop that controls visibility. When Storybook's Docs page tries
+ * to render all stories simultaneously:
+ *
+ * 1. Without iframes: Modals stack on top of each other, creating a mess
+ * 2. With iframes + isOpen=true: Infinite loading spinners
+ * 3. With iframes + button-triggered (isOpen=false): Iframes fail to load
+ *
+ * Unlike DeleteContainerDialog (which has no isOpen prop and always renders
+ * the modal), CreateTagDialog's conditional rendering causes iframe loading
+ * issues that we couldn't resolve.
+ *
+ * Solution: Docs page disabled (docs.page = null). Individual stories work
+ * perfectly in Canvas view. Users can view all story variants by clicking
+ * through the sidebar.
+ *
+ * For documentation, see the component JSDoc comments in CreateTagDialog.tsx.
+ */
+
 const meta: Meta<typeof CreateTagDialog> = {
     title: 'UI/CreateTagDialog',
     component: CreateTagDialog,
     parameters: {
-        layout: 'fullscreen',
-        docs: {
-            story: {
-                inline: false,
-                iframeHeight: 500,
-            },
-        },
+        layout: 'padded',
     },
-    tags: ['autodocs'],
+    // Docs page disabled by omitting 'autodocs' tag due to technical limitations
+    // with rendering modal dialogs (see JSDoc comment above for details)
+    tags: [],
 };
 
 export default meta;
@@ -218,22 +239,13 @@ export const FullyInteractive: Story = {
 
         return (
             <Box gap="medium" align="center" pad="large">
-                <Button
-                    label="Create New Tag"
-                    onClick={() => setIsOpen(true)}
-                    primary
-                />
+                <Button label="Create New Tag" onClick={() => setIsOpen(true)} primary />
 
                 {createdTags.length > 0 && (
                     <Box gap="small">
                         <Text weight="bold">Created Tags:</Text>
                         {createdTags.map((tag, index) => (
-                            <Box
-                                key={index}
-                                background="light-2"
-                                pad="small"
-                                round="small"
-                            >
+                            <Box key={index} background="light-2" pad="small" round="small">
                                 <Text>{tag}</Text>
                             </Box>
                         ))}
@@ -325,11 +337,7 @@ export const StateSequence: Story = {
 
         return (
             <Box gap="medium" align="center" pad="large">
-                <Button
-                    label="Open Dialog (Random Success/Error)"
-                    onClick={() => setIsOpen(true)}
-                    primary
-                />
+                <Button label="Open Dialog (Random Success/Error)" onClick={() => setIsOpen(true)} primary />
 
                 <CreateTagDialog
                     isOpen={isOpen}
