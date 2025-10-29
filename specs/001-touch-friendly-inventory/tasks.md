@@ -7,6 +7,8 @@
 
 **Tests**: This project uses Test-Driven Development (TDD) per Constitution principle II. Tests are written FIRST and must FAIL before implementation begins.
 
+**Storybook**: All UI components should have corresponding Storybook stories for isolated development, testing, and documentation. Stories demonstrate different states and use cases.
+
 ## Format: `[ID] [P?] [Story] Description`
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
@@ -27,6 +29,8 @@
 **Purpose**: Project initialization and dependency installation
 
 - [X] T001 Install new dependencies: sharp, archiver, unzipper, mime-types in meteor-app/package.json
+- [ ] T001a Install Storybook and related dependencies for React in meteor-app/package.json
+- [ ] T001b Configure Storybook to work with Meteor's absolute imports and TypeScript in meteor-app/.storybook/
 - [X] T002 [P] Create PropertyValues interface in meteor-app/imports/model/PropertyValues.ts
 - [X] T003 [P] Create Attachment model in meteor-app/imports/model/Attachment.ts
 - [X] T004 [P] Update InventoryItem model with properties field and isContainer flag in meteor-app/imports/model/InventoryItem.ts
@@ -79,12 +83,18 @@
 - [X] T024 [US1] Implement items.getPath Meteor Method (breadcrumb trail) in meteor-app/imports/api/items.ts
 - [X] T025 [US1] Create items.all publication in meteor-app/imports/api/items.ts
 - [X] T026 [US1] Create items.byContainer publication in meteor-app/imports/api/items.ts
-- [ ] T027 [P] [US1] Create ItemForm component (create/edit form) in meteor-app/imports/ui/ItemForm.tsx
+- [X] T027 [P] [US1] Create ItemForm component (create/edit form) in meteor-app/imports/ui/ItemForm.tsx
+- [ ] T027a [P] [US1] Create Storybook stories for ItemForm in meteor-app/imports/ui/ItemForm.stories.tsx
 - [ ] T028 [P] [US1] Create ItemDetailView component in meteor-app/imports/ui/ItemDetailView.tsx
+- [ ] T028a [P] [US1] Create Storybook stories for ItemDetailView in meteor-app/imports/ui/ItemDetailView.stories.tsx
 - [X] T029 [P] [US1] Create BreadcrumbTrail component in meteor-app/imports/ui/BreadcrumbTrail.tsx
+- [ ] T029a [P] [US1] Create Storybook stories for BreadcrumbTrail in meteor-app/imports/ui/BreadcrumbTrail.stories.tsx
 - [ ] T030 [P] [US1] Create ContainerSelector component for move operations in meteor-app/imports/ui/ContainerSelector.tsx
+- [ ] T030a [P] [US1] Create Storybook stories for ContainerSelector in meteor-app/imports/ui/ContainerSelector.stories.tsx
 - [ ] T031 [P] [US1] Create DeleteContainerDialog component with three deletion strategies in meteor-app/imports/ui/DeleteContainerDialog.tsx
+- [ ] T031a [P] [US1] Create Storybook stories for DeleteContainerDialog in meteor-app/imports/ui/DeleteContainerDialog.stories.tsx
 - [ ] T032 [US1] Update AllItemsView to support hierarchy display and navigation in meteor-app/imports/ui/AllItemsView.tsx
+- [ ] T032a [US1] Create Storybook stories for AllItemsView in meteor-app/imports/ui/AllItemsView.stories.tsx
 - [ ] T033 [US1] Add drag-and-drop support for moving items in meteor-app/imports/ui/AllItemsView.tsx
 
 ### Optimistic Locking (Future Enhancement for US1)
@@ -124,12 +134,17 @@
 - [ ] T044 [US2] Create tags.all publication in meteor-app/imports/api/tags.ts
 - [ ] T045 [US2] Create items.byTags publication in meteor-app/imports/api/items.ts
 - [ ] T046 [P] [US2] Create TagSelector component for applying/removing tags in meteor-app/imports/ui/TagSelector.tsx
+- [ ] T046a [P] [US2] Create Storybook stories for TagSelector in meteor-app/imports/ui/TagSelector.stories.tsx
 - [ ] T047 [P] [US2] Create TagChip component for displaying tags on items in meteor-app/imports/ui/TagChip.tsx
+- [ ] T047a [P] [US2] Create Storybook stories for TagChip in meteor-app/imports/ui/TagChip.stories.tsx
 - [ ] T048 [P] [US2] Create CreateTagDialog component in meteor-app/imports/ui/CreateTagDialog.tsx
+- [ ] T048a [P] [US2] Create Storybook stories for CreateTagDialog in meteor-app/imports/ui/CreateTagDialog.stories.tsx
 - [ ] T049 [US2] Update AllTagsView to display tags with usage counts in meteor-app/imports/ui/AllTagsView.tsx
+- [ ] T049a [US2] Create Storybook stories for AllTagsView in meteor-app/imports/ui/AllTagsView.stories.tsx
 - [ ] T050 [US2] Add tag management actions (rename, delete) to AllTagsView in meteor-app/imports/ui/AllTagsView.tsx
 - [ ] T051 [US2] Update ItemDetailView to display tag chips with remove functionality in meteor-app/imports/ui/ItemDetailView.tsx
 - [ ] T052 [US2] Create ItemsByTagView component to show all items with selected tag in meteor-app/imports/ui/ItemsByTagView.tsx
+- [ ] T052a [US2] Create Storybook stories for ItemsByTagView in meteor-app/imports/ui/ItemsByTagView.stories.tsx
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently - users can tag items and find items by tags
 
@@ -150,8 +165,11 @@
 
 - [ ] T055 [P] [US5] Audit all interactive elements for 44x44px minimum tap targets in meteor-app/imports/ui/
 - [ ] T056 [P] [US5] Create TouchButton component with iOS-style feedback in meteor-app/imports/ui/TouchButton.tsx
+- [ ] T056a [P] [US5] Create Storybook stories for TouchButton in meteor-app/imports/ui/TouchButton.stories.tsx
 - [ ] T057 [P] [US5] Create LongPressContextMenu component in meteor-app/imports/ui/LongPressContextMenu.tsx
+- [ ] T057a [P] [US5] Create Storybook stories for LongPressContextMenu in meteor-app/imports/ui/LongPressContextMenu.stories.tsx
 - [ ] T058 [P] [US5] Create LoadingSpinner component for mobile in meteor-app/imports/ui/LoadingSpinner.tsx
+- [ ] T058a [P] [US5] Create Storybook stories for LoadingSpinner in meteor-app/imports/ui/LoadingSpinner.stories.tsx
 - [ ] T059 [US5] Implement keyboard visibility management utility in meteor-app/imports/utility/keyboardManager.ts
 - [ ] T060 [US5] Add pull-to-refresh support to AllItemsView in meteor-app/imports/ui/AllItemsView.tsx
 - [ ] T061 [US5] Add long-press context menus to item and tag components
@@ -181,10 +199,15 @@
 
 - [ ] T070 [US3] Implement items.search Meteor Method using searchQuery utility in meteor-app/imports/api/items.ts
 - [ ] T071 [P] [US3] Create SearchBar component with search mode indicator in meteor-app/imports/ui/SearchBar.tsx
+- [ ] T071a [P] [US3] Create Storybook stories for SearchBar in meteor-app/imports/ui/SearchBar.stories.tsx
 - [ ] T072 [P] [US3] Create SearchScopeSelector component for root/global switching in meteor-app/imports/ui/SearchScopeSelector.tsx
+- [ ] T072a [P] [US3] Create Storybook stories for SearchScopeSelector in meteor-app/imports/ui/SearchScopeSelector.stories.tsx
 - [ ] T073 [P] [US3] Create SearchFragmentBuilder component (name, tags, container type) in meteor-app/imports/ui/SearchFragmentBuilder.tsx
+- [ ] T073a [P] [US3] Create Storybook stories for SearchFragmentBuilder in meteor-app/imports/ui/SearchFragmentBuilder.stories.tsx
 - [ ] T074 [P] [US3] Create SearchResultsView component with breadcrumb context in meteor-app/imports/ui/SearchResultsView.tsx
+- [ ] T074a [P] [US3] Create Storybook stories for SearchResultsView in meteor-app/imports/ui/SearchResultsView.stories.tsx
 - [ ] T075 [P] [US3] Create FilterBar component for context-aware filtering in meteor-app/imports/ui/FilterBar.tsx
+- [ ] T075a [P] [US3] Create Storybook stories for FilterBar in meteor-app/imports/ui/FilterBar.stories.tsx
 - [ ] T076 [US3] Add search mode navigation to App.tsx
 - [ ] T077 [US3] Implement search fragment uniqueness validation (prevent include+exclude same tag)
 - [ ] T078 [US3] Update AllItemsView to support filtering current view
@@ -213,8 +236,11 @@
 - [ ] T085 [US4] Implement container deletion Option B (choose new container prompt) in items.delete
 - [ ] T086 [US4] Implement container deletion Option C (recursive delete with confirmation) in items.delete
 - [ ] T087 [P] [US4] Create EditItemDialog component in meteor-app/imports/ui/EditItemDialog.tsx
+- [ ] T087a [P] [US4] Create Storybook stories for EditItemDialog in meteor-app/imports/ui/EditItemDialog.stories.tsx
 - [ ] T088 [P] [US4] Create DeleteConfirmationDialog component with affected items list in meteor-app/imports/ui/DeleteConfirmationDialog.tsx
+- [ ] T088a [P] [US4] Create Storybook stories for DeleteConfirmationDialog in meteor-app/imports/ui/DeleteConfirmationDialog.stories.tsx
 - [ ] T089 [P] [US4] Create EditTagDialog component in meteor-app/imports/ui/EditTagDialog.tsx
+- [ ] T089a [P] [US4] Create Storybook stories for EditTagDialog in meteor-app/imports/ui/EditTagDialog.stories.tsx
 - [ ] T090 [US4] Add edit and delete actions to ItemDetailView
 - [ ] T091 [US4] Add rename and delete actions to AllTagsView with usage warnings
 - [ ] T092 [US4] Verify tag rename updates all affected items
@@ -256,14 +282,23 @@
 - [ ] T112 [US6] Implement image processing pipeline (EXIF correction, thumbnail generation) in meteor-app/server/imageProcessing.ts
 - [ ] T113 [US6] Implement items.duplicate Meteor Method with deep copy of properties and attachments in meteor-app/imports/api/items.ts
 - [ ] T114 [P] [US6] Create PropertyForm component with all optional fields in meteor-app/imports/ui/PropertyForm.tsx
+- [ ] T114a [P] [US6] Create Storybook stories for PropertyForm in meteor-app/imports/ui/PropertyForm.stories.tsx
 - [ ] T115 [P] [US6] Create PropertyDisplay component (hide empty properties) in meteor-app/imports/ui/PropertyDisplay.tsx
+- [ ] T115a [P] [US6] Create Storybook stories for PropertyDisplay in meteor-app/imports/ui/PropertyDisplay.stories.tsx
 - [ ] T116 [P] [US6] Create AttachmentGallery component with photo grid and PDF list in meteor-app/imports/ui/AttachmentGallery.tsx
+- [ ] T116a [P] [US6] Create Storybook stories for AttachmentGallery in meteor-app/imports/ui/AttachmentGallery.stories.tsx
 - [ ] T117 [P] [US6] Create PhotoUploader component with drag-and-drop in meteor-app/imports/ui/PhotoUploader.tsx
+- [ ] T117a [P] [US6] Create Storybook stories for PhotoUploader in meteor-app/imports/ui/PhotoUploader.stories.tsx
 - [ ] T118 [P] [US6] Create PDFUploader component in meteor-app/imports/ui/PDFUploader.tsx
+- [ ] T118a [P] [US6] Create Storybook stories for PDFUploader in meteor-app/imports/ui/PDFUploader.stories.tsx
 - [ ] T119 [P] [US6] Create PhotoReorder component with drag-and-drop in meteor-app/imports/ui/PhotoReorder.tsx
+- [ ] T119a [P] [US6] Create Storybook stories for PhotoReorder in meteor-app/imports/ui/PhotoReorder.stories.tsx
 - [ ] T120 [P] [US6] Create PhotoViewer component (full-screen with zoom/pan) in meteor-app/imports/ui/PhotoViewer.tsx
+- [ ] T120a [P] [US6] Create Storybook stories for PhotoViewer in meteor-app/imports/ui/PhotoViewer.stories.tsx
 - [ ] T121 [P] [US6] Create PDFViewer component in meteor-app/imports/ui/PDFViewer.tsx
+- [ ] T121a [P] [US6] Create Storybook stories for PDFViewer in meteor-app/imports/ui/PDFViewer.stories.tsx
 - [ ] T122 [P] [US6] Create AttachmentLabelEditor component in meteor-app/imports/ui/AttachmentLabelEditor.tsx
+- [ ] T122a [P] [US6] Create Storybook stories for AttachmentLabelEditor in meteor-app/imports/ui/AttachmentLabelEditor.stories.tsx
 - [ ] T123 [US6] Update ItemDetailView to include PropertyForm and AttachmentGallery
 - [ ] T124 [US6] Add "Duplicate Item" action button to ItemDetailView
 - [ ] T125 [US6] Add "Open in New Window" action to ItemDetailView
@@ -300,8 +335,11 @@
 - [ ] T140 Implement HTTP endpoint for backup download in meteor-app/server/backupDownload.ts
 - [ ] T141 Implement HTTP endpoint for backup upload in meteor-app/server/backupUpload.ts
 - [ ] T142 [P] Create ExportButton component with download trigger in meteor-app/imports/ui/ExportButton.tsx
+- [ ] T142a [P] Create Storybook stories for ExportButton in meteor-app/imports/ui/ExportButton.stories.tsx
 - [ ] T143 [P] Create ImportDialog component with file picker and strategy selection in meteor-app/imports/ui/ImportDialog.tsx
+- [ ] T143a [P] Create Storybook stories for ImportDialog in meteor-app/imports/ui/ImportDialog.stories.tsx
 - [ ] T144 [P] Create BackupProgress component showing export/import progress in meteor-app/imports/ui/BackupProgress.tsx
+- [ ] T144a [P] Create Storybook stories for BackupProgress in meteor-app/imports/ui/BackupProgress.stories.tsx
 - [ ] T145 Add Export and Import buttons to main navigation
 - [ ] T146 Implement missing attachment file handling (skip with warning summary)
 - [ ] T147 Implement version compatibility checks with best-effort parsing
