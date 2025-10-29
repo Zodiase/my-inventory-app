@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import React, { useState } from 'react';
+import { Box, Button, Heading, Layer, Text } from 'grommet';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
@@ -340,5 +342,230 @@ export const LongItemName: Story = {
         onMove: () => console.log('Move clicked'),
         onNavigateToContainer: (id) => console.log('Navigate to:', id),
         onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+    },
+};
+
+// Story: Fully Interactive Demo
+// This story demonstrates real-time state management and interactivity
+export const FullyInteractive: Story = {
+    render: () => {
+        const [item, setItem] = useState<InventoryItem>(sampleItem);
+        const [tags, setTags] = useState<TagRecord[]>(sampleTags);
+        const [isDeleted, setIsDeleted] = useState(false);
+        const [showEditDialog, setShowEditDialog] = useState(false);
+        const [showMoveDialog, setShowMoveDialog] = useState(false);
+        const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+        const [feedback, setFeedback] = useState<string>('');
+
+        const showFeedback = (message: string): void => {
+            setFeedback(message);
+            setTimeout(() => setFeedback(''), 3000);
+        };
+
+        const handleRemoveTag = (tagId: string): void => {
+            const removedTag = tags.find((t) => t._id === tagId);
+            setTags(tags.filter((t) => t._id !== tagId));
+            setItem({
+                ...item,
+                tagIds: item.tagIds.filter((id) => id !== tagId),
+            });
+            showFeedback(`Removed tag: ${removedTag?.name ?? 'Unknown'}`);
+        };
+
+        const handleEdit = (): void => {
+            setShowEditDialog(true);
+        };
+
+        const handleSaveEdit = (newName: string, newDescription: string): void => {
+            setItem({
+                ...item,
+                name: newName,
+                description: newDescription,
+                modifiedAt: new Date(),
+            });
+            setShowEditDialog(false);
+            showFeedback('Item updated successfully!');
+        };
+
+        const handleMove = (): void => {
+            setShowMoveDialog(true);
+        };
+
+        const handleConfirmMove = (): void => {
+            setShowMoveDialog(false);
+            showFeedback('Item moved to new location!');
+        };
+
+        const handleDelete = (): void => {
+            setShowDeleteConfirm(true);
+        };
+
+        const handleConfirmDelete = (): void => {
+            setIsDeleted(true);
+            setShowDeleteConfirm(false);
+            showFeedback('Item deleted!');
+        };
+
+        if (isDeleted) {
+            return (
+                <Box fill align="center" justify="center" pad="large" gap="medium">
+                    <Text size="large" weight="bold">
+                        Item Deleted
+                    </Text>
+                    <Text>The item has been removed from your inventory.</Text>
+                    <Button label="Undo Delete" onClick={() => setIsDeleted(false)} primary />
+                </Box>
+            );
+        }
+
+        return (
+            <Box fill>
+                {/* Feedback Toast */}
+                {feedback && (
+                    <Box
+                        background="brand"
+                        pad="small"
+                        round="small"
+                        margin={{ bottom: 'medium' }}
+                        animation="slideDown"
+                    >
+                        <Text color="white" textAlign="center">
+                            {feedback}
+                        </Text>
+                    </Box>
+                )}
+
+                {/* Main View */}
+                <ItemDetailView
+                    item={item}
+                    containerPath={sampleContainerPath}
+                    tags={tags}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onMove={handleMove}
+                    onRemoveTag={handleRemoveTag}
+                    onNavigateToContainer={(id) => showFeedback(`Navigating to: ${id}`)}
+                />
+
+                {/* Edit Dialog */}
+                {showEditDialog && (
+                    <Layer
+                        onEsc={() => setShowEditDialog(false)}
+                        onClickOutside={() => setShowEditDialog(false)}
+                    >
+                        <Box pad="medium" gap="medium" width="medium">
+                            <Heading level={3} margin="none">
+                                Edit Item
+                            </Heading>
+                            <Box gap="small">
+                                <Text size="small" weight="bold">
+                                    Name:
+                                </Text>
+                                <input
+                                    type="text"
+                                    defaultValue={item.name}
+                                    id="edit-name"
+                                    style={{
+                                        padding: '8px',
+                                        fontSize: '14px',
+                                        border: '1px solid #ccc',
+                                        borderRadius: '4px',
+                                    }}
+                                />
+                            </Box>
+                            <Box gap="small">
+                                <Text size="small" weight="bold">
+                                    Description:
+                                </Text>
+                                <textarea
+                                    defaultValue={item.description}
+                                    id="edit-description"
+                                    rows={4}
+                                    style={{
+                                        padding: '8px',
+                                        fontSize: '14px',
+                                        border: '1px solid #ccc',
+                                        borderRadius: '4px',
+                                        fontFamily: 'inherit',
+                                    }}
+                                />
+                            </Box>
+                            <Box direction="row" gap="small" justify="end">
+                                <Button label="Cancel" onClick={() => setShowEditDialog(false)} />
+                                <Button
+                                    label="Save"
+                                    onClick={() => {
+                                        const nameInput = document.getElementById('edit-name') as HTMLInputElement;
+                                        const descInput = document.getElementById(
+                                            'edit-description',
+                                        ) as HTMLTextAreaElement;
+                                        handleSaveEdit(nameInput.value, descInput.value);
+                                    }}
+                                    primary
+                                />
+                            </Box>
+                        </Box>
+                    </Layer>
+                )}
+
+                {/* Move Dialog */}
+                {showMoveDialog && (
+                    <Layer onEsc={() => setShowMoveDialog(false)} onClickOutside={() => setShowMoveDialog(false)}>
+                        <Box pad="medium" gap="medium" width="medium">
+                            <Heading level={3} margin="none">
+                                Move Item
+                            </Heading>
+                            <Text>Select a new location for this item:</Text>
+                            <Box gap="small">
+                                <Button label="📦 Storage Box A" onClick={handleConfirmMove} />
+                                <Button label="📦 Kitchen Cabinet" onClick={handleConfirmMove} />
+                                <Button label="📦 Bedroom Closet" onClick={handleConfirmMove} />
+                            </Box>
+                            <Button label="Cancel" onClick={() => setShowMoveDialog(false)} />
+                        </Box>
+                    </Layer>
+                )}
+
+                {/* Delete Confirmation */}
+                {showDeleteConfirm && (
+                    <Layer
+                        onEsc={() => setShowDeleteConfirm(false)}
+                        onClickOutside={() => setShowDeleteConfirm(false)}
+                    >
+                        <Box pad="medium" gap="medium" width="medium">
+                            <Heading level={3} margin="none">
+                                Confirm Delete
+                            </Heading>
+                            <Text>
+                                Are you sure you want to delete &quot;{item.name}&quot;? This action cannot be undone.
+                            </Text>
+                            <Box direction="row" gap="small" justify="end">
+                                <Button label="Cancel" onClick={() => setShowDeleteConfirm(false)} />
+                                <Button label="Delete" onClick={handleConfirmDelete} color="status-critical" primary />
+                            </Box>
+                        </Box>
+                    </Layer>
+                )}
+            </Box>
+        );
+    },
+    parameters: {
+        layout: 'fullscreen',
+        docs: {
+            description: {
+                story: `**Fully Interactive Demo**
+
+This story demonstrates complete interactivity with state management:
+
+- **Remove Tags**: Click the X button on any tag to remove it in real-time
+- **Edit Item**: Click Edit to modify the item name and description
+- **Move Item**: Click Move to see location selection dialog
+- **Delete Item**: Click Delete to confirm deletion (with undo option)
+- **Navigate**: Click breadcrumb items to simulate navigation
+- **Feedback**: Toast notifications show action results
+
+All changes are reflected immediately in the UI, demonstrating how the component would behave when connected to a real data source.`,
+            },
+        },
     },
 };
