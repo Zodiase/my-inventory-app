@@ -110,7 +110,11 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
     }
 
     return (
-        <Layer position="center" onClickOutside={isLoading ? undefined : handleClose} onEsc={isLoading ? undefined : handleClose}>
+        <Layer
+            position="center"
+            onClickOutside={isLoading ? undefined : handleClose}
+            onEsc={isLoading ? undefined : handleClose}
+        >
             <Box width="medium" pad="medium" gap="medium">
                 {/* Header */}
                 <Box direction="row" justify="between" align="center">
@@ -146,12 +150,7 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
 
                     {/* Error Message */}
                     {displayError && (
-                        <Box
-                            background="status-error"
-                            pad="small"
-                            round="xsmall"
-                            margin={{ bottom: 'small' }}
-                        >
+                        <Box background="status-error" pad="small" round="xsmall" margin={{ bottom: 'small' }}>
                             <Text color="white" size="small">
                                 {displayError}
                             </Text>
@@ -160,12 +159,7 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
 
                     {/* Success Message */}
                     {successMessage && (
-                        <Box
-                            background="status-ok"
-                            pad="small"
-                            round="xsmall"
-                            margin={{ bottom: 'small' }}
-                        >
+                        <Box background="status-ok" pad="small" round="xsmall" margin={{ bottom: 'small' }}>
                             <Text color="white" size="small">
                                 {successMessage}
                             </Text>

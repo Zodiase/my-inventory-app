@@ -205,9 +205,7 @@ export const FullyInteractive: Story = {
         const [showFeedback, setShowFeedback] = useState<string>('');
 
         const handleToggleTag = (tagId: string, isSelected: boolean): void => {
-            setSelectedTagIds(
-                isSelected ? [...selectedTagIds, tagId] : selectedTagIds.filter((id) => id !== tagId),
-            );
+            setSelectedTagIds(isSelected ? [...selectedTagIds, tagId] : selectedTagIds.filter((id) => id !== tagId));
             const tagName = sampleTags.find((t) => t._id === tagId)?.name;
             setShowFeedback(isSelected ? `Added tag: ${tagName}` : `Removed tag: ${tagName}`);
             setTimeout(() => setShowFeedback(''), 2000);
