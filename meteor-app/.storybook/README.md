@@ -79,4 +79,4 @@ export const AnotherVariant: Story = {
 -   All stories automatically wrapped in Grommet theme provider (iOS-style)
 -   Webpack configured to resolve Meteor's `/imports` absolute paths
 -   TypeScript errors in config files about missing modules are expected (VS Code limitation) but don't affect runtime
--   **Always format your story files with Prettier before committing**: Run `npx prettier --write <file>` or use the project's Prettier script
+-   **Code formatting**: Stage your changes with `git add`, then run `npx prettier --write $(git diff --cached --name-only --diff-filter=ACM | grep '^meteor-app/')` to format all staged files before committing
