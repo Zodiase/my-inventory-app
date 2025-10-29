@@ -17,6 +17,8 @@
         "@babel/core": "^7.28.4",
         "@babel/runtime": "^7.28.4",
         "archiver": "^7.0.1",
+        "grommet": "^2.50.0",
+        "grommet-icons": "^4.14.0",
         "lodash": "^4.17.21",
         "meteor-node-stubs": "^1.2.24",
         "mime-types": "^2.1.35",
