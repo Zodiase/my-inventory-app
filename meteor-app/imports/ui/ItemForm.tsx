@@ -2,7 +2,7 @@ import React, { useState, type ReactElement } from 'react';
 import { Box, Button, CheckBox, Form, FormField, Text, TextArea, TextInput } from 'grommet';
 import type { FormExtendedEvent } from 'grommet';
 
-import type { InventoryItem } from '/imports/api/items';
+import type { InventoryItem } from '/imports/model/InventoryItem';
 import type RecordInput from '/imports/utility/RecordInput';
 
 /**

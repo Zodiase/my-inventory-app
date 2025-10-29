@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import type { InventoryItem } from '/imports/api/items';
+import type { InventoryItem } from '/imports/model/InventoryItem';
 
 /**
  * Breadcrumb trail showing the path from root to current item.

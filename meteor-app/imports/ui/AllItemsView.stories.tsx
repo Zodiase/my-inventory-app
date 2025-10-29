@@ -1,115 +1,363 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Box, Text } from 'grommet';
-import React from 'react';
+import { Box, Text as GrommetText } from 'grommet';
+import React, { useState } from 'react';
 
-const meta: Meta = {
+import type { InventoryItem } from '/imports/model/InventoryItem';
+
+import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
+
+const meta: Meta<typeof AllItemsViewPresentation> = {
     title: 'UI/AllItemsView',
+    component: AllItemsViewPresentation,
     parameters: {
         layout: 'fullscreen',
     },
     tags: ['autodocs'],
+    decorators: [
+        (Story) => (
+            <Box fill pad="medium" background="background-back">
+                <Story />
+            </Box>
+        ),
+    ],
 };
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<typeof AllItemsViewPresentation>;
 
-/**
- * AllItemsView displays inventory items in a hierarchical navigation structure.
- *
- * ## Features
- * - Shows items at the current container level
- * - BreadcrumbTrail for navigation context and moving up the hierarchy
- * - Visual distinction between containers (Folder icon) and items
- * - Touch-optimized navigation (44x44px minimum touch targets)
- * - Click containers to navigate into them
- *
- * ## Props
- * - `initialContainerId?: string` - Initial container ID to display. If undefined, shows root level items.
- * - `onNavigate?: (containerId: string | undefined) => void` - Callback when navigating to a different container
- *
- * ## Behavior
- * - Containers are sorted first, then items
- * - Items are sorted alphabetically by name
- * - Clicking a container navigates into it
- * - Breadcrumb trail allows navigation back up the hierarchy
- * - Empty state shown when no items at current level
- *
- * ## Data Requirements
- * This component uses Meteor's reactive data system (`useTracker`) to fetch items from
- * `InventoryItemsCollection`. It requires:
- * - Items with `containerId` matching the current level
- * - Full item documents with `_id`, `name`, `description`, `isContainer`, etc.
- * - Parent containers available for breadcrumb trail construction
- *
- * ## Testing Note
- * Storybook stories for this component require mocking Meteor's reactive data system.
- * The component is best tested in a live Meteor environment or with comprehensive mocks.
- * See the component file for full implementation details.
- */
-export const Documentation: Story = {
-    render: () => (
-        <Box fill pad="large" align="center" justify="center">
-            <Box width="large" pad="medium" background="background-front" round="small" gap="small">
-                <Text size="large" weight="bold">
-                    AllItemsView Component
-                </Text>
-                <Text>
-                    This component provides hierarchical navigation for inventory items. It shows items at the current
-                    container level with breadcrumb navigation.
-                </Text>
-                <Text size="small" color="text-weak">
-                    Note: This component requires a Meteor backend to function. Interactive stories would require
-                    mocking the Meteor reactive data system.
-                </Text>
-            </Box>
-        </Box>
-    ),
+// Sample data hierarchy
+const home: InventoryItem = {
+    _id: 'home',
+    name: 'Home',
+    description: '',
+    isContainer: true,
+    containerId: undefined,
+    tagIds: [],
+    createdAt: new Date('2024-01-01'),
+    modifiedAt: new Date('2024-01-01'),
+};
+
+const garage: InventoryItem = {
+    _id: 'garage',
+    name: 'Garage',
+    description: 'Two-car garage with storage',
+    isContainer: true,
+    containerId: 'home',
+    tagIds: [],
+    createdAt: new Date('2024-01-02'),
+    modifiedAt: new Date('2024-01-02'),
+};
+
+const kitchen: InventoryItem = {
+    _id: 'kitchen',
+    name: 'Kitchen',
+    description: '',
+    isContainer: true,
+    containerId: 'home',
+    tagIds: [],
+    createdAt: new Date('2024-01-03'),
+    modifiedAt: new Date('2024-01-03'),
+};
+
+const toolBox: InventoryItem = {
+    _id: 'toolbox',
+    name: 'Tool Box',
+    description: 'Red metal tool box',
+    isContainer: true,
+    containerId: 'garage',
+    tagIds: [],
+    createdAt: new Date('2024-01-04'),
+    modifiedAt: new Date('2024-01-04'),
+};
+
+const hammer: InventoryItem = {
+    _id: 'hammer',
+    name: 'Hammer',
+    description: 'Claw hammer, 16oz',
+    isContainer: false,
+    containerId: 'toolbox',
+    tagIds: [],
+    createdAt: new Date('2024-01-05'),
+    modifiedAt: new Date('2024-01-05'),
+};
+
+const screwdriver: InventoryItem = {
+    _id: 'screwdriver',
+    name: 'Screwdriver Set',
+    description: 'Phillips and flathead, 6 pieces',
+    isContainer: false,
+    containerId: 'toolbox',
+    tagIds: [],
+    createdAt: new Date('2024-01-06'),
+    modifiedAt: new Date('2024-01-06'),
+};
+
+const bike: InventoryItem = {
+    _id: 'bike',
+    name: 'Mountain Bike',
+    description: '21-speed mountain bike, blue',
+    isContainer: false,
+    containerId: 'garage',
+    tagIds: [],
+    createdAt: new Date('2024-01-07'),
+    modifiedAt: new Date('2024-01-07'),
 };
 
 /**
- * Example structure for stories with mocked data (not functional in this setup):
- *
- * ## Example: Empty Root Level
- * Shows the empty state when no items exist at root level.
- *
- * ## Example: Root with Containers
- * Shows multiple top-level containers (e.g., Home, Garage, Kitchen).
- *
- * ## Example: One Level Deep
- * Shows items inside a container with breadcrumb trail showing the path.
- *
- * ## Example: Two Levels Deep
- * Shows items in a nested container (e.g., Home > Garage > Tool Box).
- *
- * ## Example: Many Items
- * Shows a container with many items to test scrolling and performance.
- *
- * ## Example: Mixed Containers and Items
- * Shows a level with both containers and regular items.
- *
- * ## Example: Long Names
- * Tests how the component handles long item names and descriptions.
+ * Empty root level - no items at all
  */
-export const ExampleScenarios: Story = {
-    render: () => (
-        <Box fill pad="large" align="center" justify="center">
-            <Box width="large" pad="medium" background="background-front" round="small" gap="small">
-                <Text size="large" weight="bold">
-                    Example Scenarios
-                </Text>
-                <Text>The following scenarios should be tested with live data:</Text>
-                <Box as="ul" pad={{ left: 'medium' }} gap="xsmall">
-                    <Text as="li">Empty root level - no items</Text>
-                    <Text as="li">Root with only containers (Home, Garage, etc.)</Text>
-                    <Text as="li">Root with only items (no hierarchy)</Text>
-                    <Text as="li">One level deep (items in a container)</Text>
-                    <Text as="li">Two levels deep (nested containers)</Text>
-                    <Text as="li">Container with many items (scrolling)</Text>
-                    <Text as="li">Long item names and descriptions</Text>
-                    <Text as="li">Empty container (exists but has no items)</Text>
-                    <Text as="li">Navigation interaction (clicking containers)</Text>
+export const EmptyRoot: Story = {
+    args: {
+        items: [],
+        containerPath: [],
+        showHomeIcon: true,
+        onNavigateToContainer: () => {
+            console.log('Navigate to container');
+        },
+        onBreadcrumbNavigate: () => {
+            console.log('Breadcrumb navigate');
+        },
+    },
+};
+
+/**
+ * Root level with only items (no containers)
+ */
+export const RootWithOnlyItems: Story = {
+    args: {
+        items: [
+            { ...hammer, containerId: undefined },
+            { ...bike, containerId: undefined },
+        ],
+        containerPath: [],
+        showHomeIcon: true,
+        onNavigateToContainer: () => {
+            console.log('Navigate to container');
+        },
+        onBreadcrumbNavigate: () => {
+            console.log('Breadcrumb navigate');
+        },
+    },
+};
+
+/**
+ * Root level with only containers
+ */
+export const RootWithOnlyContainers: Story = {
+    args: {
+        items: [home, garage, kitchen],
+        containerPath: [],
+        showHomeIcon: true,
+        onNavigateToContainer: () => {
+            console.log('Navigate to container');
+        },
+        onBreadcrumbNavigate: () => {
+            console.log('Breadcrumb navigate');
+        },
+    },
+};
+
+/**
+ * Root level with mixed containers and items
+ */
+export const RootWithMixedItems: Story = {
+    args: {
+        items: [home, garage, { ...hammer, containerId: undefined }, { ...bike, containerId: undefined }],
+        containerPath: [],
+        showHomeIcon: true,
+        onNavigateToContainer: () => {
+            console.log('Navigate to container');
+        },
+        onBreadcrumbNavigate: () => {
+            console.log('Breadcrumb navigate');
+        },
+    },
+};
+
+/**
+ * One level deep - showing items inside a container
+ */
+export const OneLevelDeep: Story = {
+    args: {
+        items: [toolBox, bike],
+        containerPath: [garage],
+        showHomeIcon: true,
+        onNavigateToContainer: () => {
+            console.log('Navigate to container');
+        },
+        onBreadcrumbNavigate: () => {
+            console.log('Breadcrumb navigate');
+        },
+    },
+};
+
+/**
+ * Two levels deep - showing items in a nested container
+ */
+export const TwoLevelsDeep: Story = {
+    args: {
+        items: [hammer, screwdriver],
+        containerPath: [garage, toolBox],
+        showHomeIcon: true,
+        onNavigateToContainer: () => {
+            console.log('Navigate to container');
+        },
+        onBreadcrumbNavigate: () => {
+            console.log('Breadcrumb navigate');
+        },
+    },
+};
+
+/**
+ * Container with many items
+ */
+export const ContainerWithManyItems: Story = {
+    args: {
+        items: [
+            { ...toolBox, containerId: 'garage' },
+            { ...hammer, _id: 'item1', name: 'Hammer', containerId: 'garage' },
+            { ...screwdriver, _id: 'item2', name: 'Screwdriver Set', containerId: 'garage' },
+            { ...bike, _id: 'item3', name: 'Mountain Bike', containerId: 'garage' },
+            {
+                ...hammer,
+                _id: 'item5',
+                name: 'Wrench Set',
+                description: 'Metric and SAE wrenches',
+                containerId: 'garage',
+            },
+            {
+                ...bike,
+                _id: 'item6',
+                name: 'Lawn Mower',
+                description: 'Electric lawn mower',
+                containerId: 'garage',
+            },
+            {
+                ...hammer,
+                _id: 'item7',
+                name: 'Extension Cord',
+                description: '50ft heavy duty',
+                containerId: 'garage',
+            },
+            {
+                ...bike,
+                _id: 'item8',
+                name: 'Ladder',
+                description: '6ft aluminum step ladder',
+                containerId: 'garage',
+            },
+        ],
+        containerPath: [garage],
+        showHomeIcon: true,
+        onNavigateToContainer: () => {
+            console.log('Navigate to container');
+        },
+        onBreadcrumbNavigate: () => {
+            console.log('Breadcrumb navigate');
+        },
+    },
+};
+
+/**
+ * Long item names that might wrap or truncate
+ */
+export const LongItemNames: Story = {
+    args: {
+        items: [
+            {
+                ...garage,
+                name: 'Garage Storage Area with Extra Long Name That Should Handle Wrapping',
+                description:
+                    'This is a very long description that should also wrap or truncate appropriately in the list view',
+            },
+            {
+                ...kitchen,
+                name: 'Kitchen Cabinet Organization System with Multiple Shelves and Drawers',
+            },
+        ],
+        containerPath: [],
+        showHomeIcon: true,
+        onNavigateToContainer: () => {
+            console.log('Navigate to container');
+        },
+        onBreadcrumbNavigate: () => {
+            console.log('Breadcrumb navigate');
+        },
+    },
+};
+
+/**
+ * Interactive navigation example with state management
+ */
+export const InteractiveNavigation: Story = {
+    render: () => {
+        // All items in our mock database
+        const allItems: InventoryItem[] = [home, garage, kitchen, toolBox, bike, hammer, screwdriver];
+
+        const [currentContainerId, setCurrentContainerId] = useState<string | undefined>(undefined);
+        const [navigationLog, setNavigationLog] = useState<string[]>([]);
+
+        // Filter items at current level
+        const items = allItems.filter((item) => item.containerId === currentContainerId);
+
+        // Build breadcrumb path
+        const buildPath = (containerId: string | undefined): InventoryItem[] => {
+            if (containerId === undefined) return [];
+            const container = allItems.find((item) => item._id === containerId);
+            if (container === undefined) return [];
+
+            const path: InventoryItem[] = [container];
+            let current = container;
+            while (current.containerId !== undefined) {
+                const parent = allItems.find((item) => item._id === current.containerId);
+                if (parent === undefined) break;
+                path.unshift(parent);
+                current = parent;
+            }
+            return path;
+        };
+
+        const containerPath = buildPath(currentContainerId);
+
+        const handleNavigate = (containerId: string | undefined): void => {
+            setCurrentContainerId(containerId);
+            const label = containerId === undefined ? 'Root' : `Container: ${containerId}`;
+            setNavigationLog((prev) => [...prev, label]);
+        };
+
+        return (
+            <Box fill gap="medium">
+                <AllItemsViewPresentation
+                    items={items}
+                    containerPath={containerPath}
+                    showHomeIcon
+                    onNavigateToContainer={(containerId) => {
+                        handleNavigate(containerId);
+                    }}
+                    onBreadcrumbNavigate={(containerId) => {
+                        handleNavigate(containerId);
+                    }}
+                />
+                <Box
+                    pad="medium"
+                    background="background-contrast"
+                    round="small"
+                    style={{ maxHeight: '200px', overflow: 'auto' }}
+                >
+                    <GrommetText weight="bold">Navigation Log:</GrommetText>
+                    {navigationLog.length === 0 ? (
+                        <GrommetText>No navigation yet. Click a container to navigate.</GrommetText>
+                    ) : (
+                        <Box as="ul" pad={{ left: 'medium' }} gap="xsmall">
+                            {navigationLog.map((log, index) => (
+                                <GrommetText as="li" key={index}>
+                                    {log}
+                                </GrommetText>
+                            ))}
+                        </Box>
+                    )}
                 </Box>
             </Box>
-        </Box>
-    ),
+        );
+    },
 };
