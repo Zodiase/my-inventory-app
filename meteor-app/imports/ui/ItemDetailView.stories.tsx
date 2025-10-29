@@ -83,6 +83,7 @@ export const WithAllFeatures: Story = {
         onDelete: () => console.log('Delete clicked'),
         onMove: () => console.log('Move clicked'),
         onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
     },
 };
 
@@ -111,6 +112,7 @@ export const ItemAtRoot: Story = {
         onEdit: () => console.log('Edit clicked'),
         onDelete: () => console.log('Delete clicked'),
         onMove: () => console.log('Move clicked'),
+        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
     },
 };
 
@@ -127,6 +129,7 @@ export const WithoutDescription: Story = {
         onDelete: () => console.log('Delete clicked'),
         onMove: () => console.log('Move clicked'),
         onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
     },
 };
 
@@ -211,6 +214,7 @@ export const ManyTags: Story = {
         onDelete: () => console.log('Delete clicked'),
         onMove: () => console.log('Move clicked'),
         onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
     },
 };
 
@@ -256,6 +260,7 @@ export const DeepContainerPath: Story = {
         onDelete: () => console.log('Delete clicked'),
         onMove: () => console.log('Move clicked'),
         onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
     },
 };
 
@@ -279,6 +284,7 @@ export const LongDescription: Story = {
         onDelete: () => console.log('Delete clicked'),
         onMove: () => console.log('Move clicked'),
         onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
     },
 };
 
@@ -292,6 +298,7 @@ export const DisabledActions: Story = {
         onDelete: () => console.log('Delete clicked'),
         onMove: () => console.log('Move clicked'),
         onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
         disabled: true,
     },
 };
@@ -303,6 +310,7 @@ export const ReadOnlyMode: Story = {
         containerPath: sampleContainerPath,
         tags: sampleTags,
         onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
     },
 };
 
@@ -314,6 +322,7 @@ export const EditOnly: Story = {
         tags: sampleTags,
         onEdit: () => console.log('Edit clicked'),
         onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
     },
 };
 
@@ -330,5 +339,6 @@ export const LongItemName: Story = {
         onDelete: () => console.log('Delete clicked'),
         onMove: () => console.log('Move clicked'),
         onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
     },
 };

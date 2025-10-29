@@ -6,6 +6,7 @@ import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
 
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
+import { TagChip } from '/imports/ui/TagChip';
 
 /**
  * ItemDetailView component displays the full details of an inventory item.
@@ -35,6 +36,9 @@ export interface ItemDetailViewProps {
 
     /** Callback when move button is clicked */
     onMove?: () => void;
+
+    /** Callback when a tag is removed from the item */
+    onRemoveTag?: (tagId: string) => void;
 
     /** Callback when a breadcrumb is clicked to navigate */
     onNavigateToContainer?: (containerId: string) => void;
@@ -70,6 +74,7 @@ export const ItemDetailView: React.FC<ItemDetailViewProps> = ({
     onEdit,
     onDelete,
     onMove,
+    onRemoveTag,
     onNavigateToContainer,
     disabled = false,
 }) => {
@@ -117,14 +122,12 @@ export const ItemDetailView: React.FC<ItemDetailViewProps> = ({
                     </Text>
                     <Box direction="row" wrap gap="small">
                         {tags.map((tag) => (
-                            <Box
+                            <TagChip
                                 key={tag._id}
-                                background="light-2"
-                                pad={{ horizontal: 'small', vertical: 'xsmall' }}
-                                round="small"
-                            >
-                                <Text size="small">{tag.name}</Text>
-                            </Box>
+                                tagName={tag.name}
+                                onRemove={onRemoveTag ? () => onRemoveTag(tag._id) : undefined}
+                                disabled={disabled}
+                            />
                         ))}
                     </Box>
                 </Box>
