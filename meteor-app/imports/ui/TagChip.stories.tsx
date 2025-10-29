@@ -1,4 +1,3 @@
-import { fn } from '@storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from 'grommet';
 import React, { useState } from 'react';
@@ -56,7 +55,7 @@ export const Basic: Story = {
 export const WithRemoveButton: Story = {
     args: {
         tagName: 'Camping Gear',
-        onRemove: fn(),
+        onRemove: () => console.log('Tag removed'),
     },
 };
 
@@ -66,7 +65,7 @@ export const WithRemoveButton: Story = {
 export const Disabled: Story = {
     args: {
         tagName: 'Outdated Tag',
-        onRemove: fn(),
+        onRemove: () => console.log('Tag removed'),
         disabled: true,
     },
 };
@@ -78,7 +77,7 @@ export const CustomColor: Story = {
     args: {
         tagName: 'Important',
         color: 'status-error',
-        onRemove: fn(),
+        onRemove: () => console.log('Tag removed'),
     },
 };
 
@@ -89,7 +88,7 @@ export const CustomColorSuccess: Story = {
     args: {
         tagName: 'Verified',
         color: 'status-ok',
-        onRemove: fn(),
+        onRemove: () => console.log('Tag removed'),
     },
 };
 
@@ -99,7 +98,7 @@ export const CustomColorSuccess: Story = {
 export const LongTagName: Story = {
     args: {
         tagName: 'This is a very long tag name that might wrap or overflow',
-        onRemove: fn(),
+        onRemove: () => console.log('Tag removed'),
     },
 };
 
@@ -109,7 +108,7 @@ export const LongTagName: Story = {
 export const ShortTag: Story = {
     args: {
         tagName: 'A',
-        onRemove: fn(),
+        onRemove: () => console.log('Tag removed'),
     },
 };
 
@@ -119,7 +118,7 @@ export const ShortTag: Story = {
 export const WithEmoji: Story = {
     args: {
         tagName: '🏕️ Camping',
-        onRemove: fn(),
+        onRemove: () => console.log('Tag removed'),
     },
 };
 
@@ -129,7 +128,7 @@ export const WithEmoji: Story = {
 export const WithSpecialCharacters: Story = {
     args: {
         tagName: 'C++/C# Tools',
-        onRemove: fn(),
+        onRemove: () => console.log('Tag removed'),
     },
 };
 
@@ -139,11 +138,11 @@ export const WithSpecialCharacters: Story = {
 export const MultipleTagsInList: Story = {
     render: () => (
         <Box direction="row" gap="small" wrap>
-            <TagChip tagName="Electronics" onRemove={fn()} />
-            <TagChip tagName="Tools" onRemove={fn()} />
-            <TagChip tagName="Camping" onRemove={fn()} />
-            <TagChip tagName="Kitchen" onRemove={fn()} />
-            <TagChip tagName="Books" onRemove={fn()} />
+            <TagChip tagName="Electronics" onRemove={() => console.log('Tag removed')} />
+            <TagChip tagName="Tools" onRemove={() => console.log('Tag removed')} />
+            <TagChip tagName="Camping" onRemove={() => console.log('Tag removed')} />
+            <TagChip tagName="Kitchen" onRemove={() => console.log('Tag removed')} />
+            <TagChip tagName="Books" onRemove={() => console.log('Tag removed')} />
         </Box>
     ),
 };
@@ -154,11 +153,11 @@ export const MultipleTagsInList: Story = {
 export const ColorVariety: Story = {
     render: () => (
         <Box direction="row" gap="small" wrap>
-            <TagChip tagName="Brand" color="brand" onRemove={fn()} />
-            <TagChip tagName="Accent 1" color="accent-1" onRemove={fn()} />
-            <TagChip tagName="Accent 2" color="accent-2" onRemove={fn()} />
-            <TagChip tagName="Accent 3" color="accent-3" onRemove={fn()} />
-            <TagChip tagName="Accent 4" color="accent-4" onRemove={fn()} />
+            <TagChip tagName="Brand" color="brand" onRemove={() => console.log('Tag removed')} />
+            <TagChip tagName="Accent 1" color="accent-1" onRemove={() => console.log('Tag removed')} />
+            <TagChip tagName="Accent 2" color="accent-2" onRemove={() => console.log('Tag removed')} />
+            <TagChip tagName="Accent 3" color="accent-3" onRemove={() => console.log('Tag removed')} />
+            <TagChip tagName="Accent 4" color="accent-4" onRemove={() => console.log('Tag removed')} />
         </Box>
     ),
 };
@@ -169,10 +168,10 @@ export const ColorVariety: Story = {
 export const MixedStates: Story = {
     render: () => (
         <Box direction="row" gap="small" wrap>
-            <TagChip tagName="Active" onRemove={fn()} />
-            <TagChip tagName="Disabled" onRemove={fn()} disabled />
+            <TagChip tagName="Active" onRemove={() => console.log('Tag removed')} />
+            <TagChip tagName="Disabled" onRemove={() => console.log('Tag removed')} disabled />
             <TagChip tagName="Read-only" />
-            <TagChip tagName="Important" color="status-warning" onRemove={fn()} />
+            <TagChip tagName="Important" color="status-warning" onRemove={() => console.log('Tag removed')} />
         </Box>
     ),
 };
