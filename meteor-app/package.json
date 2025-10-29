@@ -11,7 +11,9 @@
         "start": "meteor run",
         "test": "meteor test --once --driver-package meteortesting:mocha",
         "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
-        "visualize": "meteor --production --extra-packages bundle-visualizer"
+        "visualize": "meteor --production --extra-packages bundle-visualizer",
+        "storybook": "storybook dev -p 6006",
+        "build-storybook": "storybook build"
     },
     "dependencies": {
         "@babel/core": "^7.28.4",
@@ -62,7 +64,13 @@
         "globals": "^16.4.0",
         "prettier": "2.8.8",
         "sinon": "^21.0.0",
-        "typescript": "^5.9.2"
+        "typescript": "^5.9.2",
+        "storybook": "^10.0.0",
+        "@storybook/react-webpack5": "^10.0.0",
+        "@storybook/addon-webpack5-compiler-swc": "^4.0.1",
+        "@storybook/addon-docs": "^10.0.0",
+        "@storybook/addon-onboarding": "^10.0.0",
+        "eslint-plugin-storybook": "^10.0.0"
     },
     "engines": {
         "node": ">=22.0.0",
