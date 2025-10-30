@@ -386,6 +386,36 @@ export const removeFromItem = async (itemId: string, tagId: string): Promise<boo
     return true;
 };
 
+/**
+ * Get usage counts for all tags (how many items have each tag).
+ *
+ * @returns Record mapping tagId to count of items with that tag
+ *
+ * @remarks
+ * This aggregates across all inventory items to count tag usage.
+ * Returns a map where each key is a tag ID and the value is the number
+ * of items that have that tag in their tagIds array.
+ *
+ * @example
+ * ```typescript
+ * const counts = await getTagUsageCounts();
+ * // { "tag1": 5, "tag2": 12, "tag3": 0 }
+ * ```
+ */
+export const getTagUsageCounts = async (): Promise<Record<string, number>> => {
+    const items = await InventoryItemsCollection.find({}).fetchAsync();
+    const counts: Record<string, number> = {};
+
+    // Count how many items have each tag
+    for (const item of items) {
+        for (const tagId of item.tagIds) {
+            counts[tagId] = (counts[tagId] ?? 0) + 1;
+        }
+    }
+
+    return counts;
+};
+
 // Publications (server-side only)
 if (Meteor.isServer) {
     /**
@@ -412,6 +442,7 @@ export default asMeteorMethods(TagsCollection, {
     addToItem,
     removeFromItem,
     getDetachedTags,
+    getTagUsageCounts,
     fixPath,
     watchAndFixMissingPath,
 });
