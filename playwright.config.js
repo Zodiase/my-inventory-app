@@ -47,13 +47,16 @@ export default defineConfig({
     ],
 
     /* Run your local dev server before starting the tests */
-    webServer: {
-        command: 'meteor run --port 3000',
-        url: 'http://localhost:3000',
-        reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000, // 2 minutes for Meteor to start
-        stdout: 'pipe',
-        stderr: 'pipe',
-        cwd: './meteor-app',
-    },
+    // Skip webServer if PLAYWRIGHT_SKIP_WEBSERVER is set (for running tests against already-running server)
+    ...(process.env.PLAYWRIGHT_SKIP_WEBSERVER ? {} : {
+        webServer: {
+            command: 'meteor run --port 3000',
+            url: 'http://localhost:3000',
+            reuseExistingServer: !process.env.CI,
+            timeout: 120 * 1000, // 2 minutes for Meteor to start
+            stdout: 'pipe',
+            stderr: 'pipe',
+            cwd: './meteor-app',
+        },
+    }),
 });

@@ -19,22 +19,22 @@ Meteor.startup(async () => {
     logger.log('Creating database indexes...');
 
     // Items collection indexes (T006)
-    await InventoryItemsCollection._ensureIndex({ name: 1 }); // Text search
-    await InventoryItemsCollection._ensureIndex({ tagIds: 1 }); // Tag filtering
-    await InventoryItemsCollection._ensureIndex({ containerId: 1 }); // Hierarchy queries
-    await InventoryItemsCollection._ensureIndex({ isContainer: 1 }); // Filter containers vs items
-    await InventoryItemsCollection._ensureIndex({ 'properties.make': 1 }); // Property search
-    await InventoryItemsCollection._ensureIndex({ 'properties.model': 1 }); // Property search
-    await InventoryItemsCollection._ensureIndex({ modifiedAt: -1 }); // Recently modified
+    await InventoryItemsCollection.createIndexAsync({ name: 1 }); // Text search
+    await InventoryItemsCollection.createIndexAsync({ tagIds: 1 }); // Tag filtering
+    await InventoryItemsCollection.createIndexAsync({ containerId: 1 }); // Hierarchy queries
+    await InventoryItemsCollection.createIndexAsync({ isContainer: 1 }); // Filter containers vs items
+    await InventoryItemsCollection.createIndexAsync({ 'properties.make': 1 }); // Property search
+    await InventoryItemsCollection.createIndexAsync({ 'properties.model': 1 }); // Property search
+    await InventoryItemsCollection.createIndexAsync({ modifiedAt: -1 }); // Recently modified
 
     // Tags collection indexes (T007)
-    await TagsCollection._ensureIndex({ name: 1 }, { unique: true, collation: { locale: 'en', strength: 2 } }); // Case-insensitive unique
-    await TagsCollection._ensureIndex({ path: 1 }); // Hierarchy queries
+    await TagsCollection.createIndexAsync({ name: 1 }, { unique: true, collation: { locale: 'en', strength: 2 } }); // Case-insensitive unique
+    await TagsCollection.createIndexAsync({ path: 1 }); // Hierarchy queries
 
     // Attachments collection indexes (T008)
-    await Attachments._ensureIndex({ itemId: 1, order: 1 }); // Ordered list per item
-    await Attachments._ensureIndex({ itemId: 1, type: 1 }); // Filter by type
-    await Attachments._ensureIndex({ fileId: 1 }); // GridFS lookup
+    await Attachments.createIndexAsync({ itemId: 1, order: 1 }); // Ordered list per item
+    await Attachments.createIndexAsync({ itemId: 1, type: 1 }); // Filter by type
+    await Attachments.createIndexAsync({ fileId: 1 }); // GridFS lookup
 
     logger.log('Database indexes created successfully');
 
