@@ -115,3 +115,15 @@ This is a Meteor.js inventory management application built with TypeScript, Reac
 - ESLint and TypeScript configs are in `meteor-app/`
 - VS Code workspace is at the **parent directory** level
 - **Prettier** is configured - always format code after editing
+
+## Testing & Development Workflow
+
+### Playwright E2E Tests
+- Tests in `tests/e2e/` at project root
+- **Fast iteration**: Use `npm run test:e2e:no-server:ui` with server already running (7x faster)
+
+### Critical Rules (ALWAYS FOLLOW)
+1. **NEVER commit before testing** - Test first, commit after
+2. **Use `createIndexAsync`** not deprecated `_ensureIndex` 
+3. **Background processes**: Use `nohup command > /tmp/log 2>&1 &`, NOT `isBackground: true`
+4. **Test actual behavior** - Run the code, don't assume it works from code inspection alone
