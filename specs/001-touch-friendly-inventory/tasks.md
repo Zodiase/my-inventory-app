@@ -128,22 +128,22 @@
 
 ### Implementation for User Story 2
 
-- [ ] T039 [US2] Implement tags.create Meteor Method with case-insensitive uniqueness in meteor-app/imports/api/tags.ts
-- [ ] T040 [US2] Implement tags.rename Meteor Method in meteor-app/imports/api/tags.ts
-- [ ] T041 [US2] Implement tags.delete Meteor Method with item cleanup in meteor-app/imports/api/tags.ts
-- [ ] T042 [US2] Implement tags.addToItem Meteor Method in meteor-app/imports/api/tags.ts
-- [ ] T043 [US2] Implement tags.removeFromItem Meteor Method in meteor-app/imports/api/tags.ts
-- [ ] T044 [US2] Create tags.all publication in meteor-app/imports/api/tags.ts
+- [X] T039 [US2] Implement tags.create Meteor Method with case-insensitive uniqueness in meteor-app/imports/api/tags.ts
+- [X] T040 [US2] Implement tags.rename Meteor Method in meteor-app/imports/api/tags.ts
+- [X] T041 [US2] Implement tags.delete Meteor Method with item cleanup in meteor-app/imports/api/tags.ts
+- [X] T042 [US2] Implement tags.addToItem Meteor Method in meteor-app/imports/api/tags.ts
+- [X] T043 [US2] Implement tags.removeFromItem Meteor Method in meteor-app/imports/api/tags.ts
+- [X] T044 [US2] Create tags.all publication in meteor-app/imports/api/tags.ts
 - [ ] T045 [US2] Create items.byTags publication in meteor-app/imports/api/items.ts
-- [ ] T046 [P] [US2] Create TagSelector component for applying/removing tags in meteor-app/imports/ui/TagSelector.tsx
-- [ ] T046a [P] [US2] Create Storybook stories for TagSelector in meteor-app/imports/ui/TagSelector.stories.tsx
-- [ ] T047 [P] [US2] Create TagChip component for displaying tags on items in meteor-app/imports/ui/TagChip.tsx
-- [ ] T047a [P] [US2] Create Storybook stories for TagChip in meteor-app/imports/ui/TagChip.stories.tsx
-- [ ] T048 [P] [US2] Create CreateTagDialog component in meteor-app/imports/ui/CreateTagDialog.tsx
-- [ ] T048a [P] [US2] Create Storybook stories for CreateTagDialog in meteor-app/imports/ui/CreateTagDialog.stories.tsx
-- [ ] T049 [US2] Update AllTagsView to display tags with usage counts in meteor-app/imports/ui/AllTagsView.tsx
-- [ ] T049a [US2] Create Storybook stories for AllTagsView in meteor-app/imports/ui/AllTagsView.stories.tsx
-- [ ] T050 [US2] Add tag management actions (rename, delete) to AllTagsView in meteor-app/imports/ui/AllTagsView.tsx
+- [X] T046 [P] [US2] Create TagSelector component for applying/removing tags in meteor-app/imports/ui/TagSelector.tsx
+- [X] T046a [P] [US2] Create Storybook stories for TagSelector in meteor-app/imports/ui/TagSelector.stories.tsx
+- [X] T047 [P] [US2] Create TagChip component for displaying tags on items in meteor-app/imports/ui/TagChip.tsx
+- [X] T047a [P] [US2] Create Storybook stories for TagChip in meteor-app/imports/ui/TagChip.stories.tsx
+- [X] T048 [P] [US2] Create CreateTagDialog component in meteor-app/imports/ui/CreateTagDialog.tsx
+- [X] T048a [P] [US2] Create Storybook stories for CreateTagDialog in meteor-app/imports/ui/CreateTagDialog.stories.tsx
+- [X] T049 [US2] Update AllTagsView to display tags with usage counts in meteor-app/imports/ui/AllTagsView.tsx
+- [X] T049a [US2] Create Storybook stories for AllTagsView in meteor-app/imports/ui/AllTagsView.stories.tsx
+- [X] T050 [US2] Add tag management actions (rename, delete) to AllTagsView in meteor-app/imports/ui/AllTagsView.tsx
 - [ ] T051 [US2] Update ItemDetailView to display tag chips with remove functionality in meteor-app/imports/ui/ItemDetailView.tsx
 - [X] T052 [US2] Create ItemsByTagView component to show all items with selected tag in meteor-app/imports/ui/ItemsByTagView.tsx
 - [X] T052a [US2] Create Storybook stories for ItemsByTagView in meteor-app/imports/ui/ItemsByTagView.stories.tsx
