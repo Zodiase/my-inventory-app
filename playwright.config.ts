@@ -54,5 +54,6 @@ export default defineConfig({
         timeout: 120 * 1000, // 2 minutes for Meteor to start
         stdout: 'pipe',
         stderr: 'pipe',
+        cwd: './meteor-app',
     },
 });

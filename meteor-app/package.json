@@ -12,10 +12,10 @@
         "start": "meteor run",
         "test": "meteor test --once --driver-package meteortesting:mocha",
         "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
-        "test:e2e": "playwright test",
-        "test:e2e:ui": "playwright test --ui",
-        "test:e2e:headed": "playwright test --headed",
-        "test:e2e:debug": "playwright test --debug",
+        "test:e2e": "cd .. && npm run test:e2e",
+        "test:e2e:ui": "cd .. && npm run test:e2e:ui",
+        "test:e2e:headed": "cd .. && npm run test:e2e:headed",
+        "test:e2e:debug": "cd .. && npm run test:e2e:debug",
         "visualize": "meteor --production --extra-packages bundle-visualizer",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build"
@@ -37,7 +37,6 @@
         "unzipper": "^0.12.3"
     },
     "devDependencies": {
-        "@playwright/test": "^1.56.1",
         "@storybook/addon-docs": "^10.0.0",
         "@storybook/addon-onboarding": "^10.0.0",
         "@storybook/addon-webpack5-compiler-swc": "^4.0.1",
@@ -75,7 +74,6 @@
         "globals": "^16.4.0",
         "husky": "^9.1.7",
         "lint-staged": "^16.2.6",
-        "playwright": "^1.56.1",
         "prettier": "2.8.8",
         "sinon": "^21.0.0",
         "storybook": "^10.0.0",
