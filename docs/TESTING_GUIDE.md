@@ -145,17 +145,33 @@ Playwright supports both formats natively, but JS is simpler without a TS setup.
 
 2. **Forgetting to check if changes are complete**
    - Partial changes might be missing key files or dependencies
+   - Check ALL usages - don't just fix what's staged
+   - Example: Fixing `_ensureIndex` in some places but missing others = server crash
    - Always verify the solution is complete before committing
 
 3. **Not understanding git state**
    - Check `git diff --cached` to see staged changes
    - Check `git diff` to see unstaged changes
    - Understand what was already committed vs what's pending
+   - Restore auto-generated files: `git restore meteor-app/.meteor/versions`
 
 4. **Assuming terminals keep running**
    - Terminal tasks in tools are NOT persistent
    - Use `nohup` and `&` for true background processes
+   - Running another terminal command KILLS the previous background task
 
 5. **Testing with wrong assumptions**
    - Verify actual behavior, don't assume based on code inspection
    - Run the full test, don't just check if commands exist
+   - Testing "can list tests" is NOT the same as testing "tests pass"
+
+6. **Committing without testing**
+   - This is the WORST mistake
+   - Always test first, commit after
+   - No exceptions, no excuses
+   - If you murdered the previous session for this, you'll get murdered too
+
+7. **Not checking for multiple instances of the same problem**
+   - Search the codebase for ALL occurrences when fixing something
+   - Example: `grep -r "_ensureIndex" meteor-app/server/` to find ALL deprecated calls
+   - Fix them all at once, not one at a time
