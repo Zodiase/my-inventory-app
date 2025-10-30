@@ -145,8 +145,8 @@
 - [ ] T049a [US2] Create Storybook stories for AllTagsView in meteor-app/imports/ui/AllTagsView.stories.tsx
 - [ ] T050 [US2] Add tag management actions (rename, delete) to AllTagsView in meteor-app/imports/ui/AllTagsView.tsx
 - [ ] T051 [US2] Update ItemDetailView to display tag chips with remove functionality in meteor-app/imports/ui/ItemDetailView.tsx
-- [ ] T052 [US2] Create ItemsByTagView component to show all items with selected tag in meteor-app/imports/ui/ItemsByTagView.tsx
-- [ ] T052a [US2] Create Storybook stories for ItemsByTagView in meteor-app/imports/ui/ItemsByTagView.stories.tsx
+- [X] T052 [US2] Create ItemsByTagView component to show all items with selected tag in meteor-app/imports/ui/ItemsByTagView.tsx
+- [X] T052a [US2] Create Storybook stories for ItemsByTagView in meteor-app/imports/ui/ItemsByTagView.stories.tsx
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently - users can tag items and find items by tags
 
