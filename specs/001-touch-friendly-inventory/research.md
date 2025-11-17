@@ -256,6 +256,140 @@ Apply to: item updates, tag assignments, attachment reordering, property changes
 
 ---
 
+## 6. Testing Infrastructure (Storybook + Playwright)
+
+### Storybook Integration with Meteor
+
+**Decision**: Use Storybook 7+ with custom Webpack configuration for Meteor absolute imports
+
+**Rationale**:
+- **Component Isolation**: Develop and test UI components independently without running full Meteor app
+- **Visual Documentation**: Stories serve as living documentation of component states and API
+- **AI Development**: AI assistants can generate stories alongside components for instant verification
+- **State Coverage**: Demonstrate all component states (loading, error, empty, populated, edge cases)
+- **Meteor Compatibility**: Custom webpack alias maps `/imports/` to work with Meteor's absolute import convention
+
+**Alternatives Considered**:
+- **Jest + React Testing Library only**: Rejected because lacks visual testing and state demonstration valuable for documentation
+- **No component testing**: Rejected because AI assistants need isolated component verification
+- **Storybook 6**: Rejected due to slower build times and less mature TypeScript support
+
+**Implementation Notes**:
+```javascript
+// meteor-app/.storybook/main.ts
+const config = {
+  framework: '@storybook/react-webpack5',
+  stories: ['../imports/ui/**/*.stories.@(ts|tsx)'],
+  addons: ['@storybook/addon-essentials', '@storybook/addon-actions'],
+  webpackFinal: async (config) => {
+    // Map Meteor absolute imports to work in Storybook
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '/imports': path.resolve(__dirname, '../imports'),
+    };
+    return config;
+  },
+};
+```
+
+**Story Best Practices**:
+- Co-locate stories with components (`ComponentName.stories.tsx`)
+- Use `action()` addon for event handler logging
+- Create mock data factories for realistic demonstrations
+- Cover all states: default, loading, error, empty, populated, edge cases
+- Use `args` and `argTypes` for interactive controls
+- Export named stories for each state variant
+
+---
+
+### Playwright E2E Testing
+
+**Decision**: Use Playwright with mobile viewport emulation for comprehensive acceptance testing
+
+**Rationale**:
+- **Acceptance Verification**: Each user story has dedicated test file verifying all acceptance scenarios
+- **Mobile Testing**: Excellent iPad/iPhone viewport emulation for touch UX verification
+- **Cross-Browser**: Tests on Chromium, Firefox, WebKit catch compatibility issues
+- **AI Confidence**: AI can run E2E tests after changes to verify no regressions
+- **Reliability**: Auto-waiting and retry logic reduce flaky tests
+- **Debugging**: Screenshot and video capture on failures aid troubleshooting
+
+**Alternatives Considered**:
+- **Cypress**: Rejected due to weaker mobile emulation and no cross-browser support (Chromium only)
+- **Selenium**: Rejected for complex setup and less reliable auto-waiting
+- **Puppeteer**: Rejected because limited to Chromium (no Firefox/WebKit)
+
+**Implementation Notes**:
+```typescript
+// playwright.config.js
+export default defineConfig({
+  testDir: './tests/e2e',
+  use: {
+    baseURL: 'http://localhost:3000',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'iPad', use: { ...devices['iPad Pro'] } },
+    { name: 'iPhone', use: { ...devices['iPhone 13'] } },
+  ],
+});
+```
+
+**Test Organization**:
+- One test file per user story (e.g., `item-creation.spec.ts` for User Story 1)
+- Each acceptance scenario becomes a test case
+- Use `test.describe()` to group related tests
+- Reset database before each test for isolation
+
+**Test Data Management**:
+- Factory functions create consistent, realistic test data
+- Database reset via Meteor method before each E2E test
+- Deterministic IDs for reliable assertions
+- Seed data created via Meteor methods in test setup
+
+**Testing Meteor Reactivity**:
+- Use Playwright's `waitForSelector` for reactive UI updates
+- Simulate data changes via `page.evaluate(() => Meteor.call(...))`
+- Test both optimistic updates and server confirmations
+- Verify loading states during async operations
+
+---
+
+### CI/CD Integration
+
+**Decision**: Run tests in parallel GitHub Actions jobs (unit, Storybook build, E2E)
+
+**Rationale**:
+- Parallel execution speeds up CI pipeline
+- Clear failure isolation per test type
+- Storybook build catches story compilation errors
+- E2E runs headless for CI environment
+
+**Implementation Notes**:
+```yaml
+# .github/workflows/test.yml
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: cd meteor-app && npm test
+
+  storybook-build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: cd meteor-app && npm run build-storybook
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: cd meteor-app && npm start &
+      - run: npm run test:e2e:machine
+```
+
+---
+
 ## Dependencies to Add
 
 ### Production Dependencies
@@ -273,13 +407,32 @@ Apply to: item updates, tag assignments, attachment reordering, property changes
 {
   "@types/archiver": "^6.0.0",
   "@types/unzipper": "^0.11.0",
-  "@types/mime-types": "^2.1.0"
+  "@types/mime-types": "^2.1.0",
+  "@storybook/react-webpack5": "^7.0.0",
+  "@storybook/addon-essentials": "^7.0.0",
+  "@storybook/addon-actions": "^7.0.0",
+  "@playwright/test": "^1.40.0"
 }
 ```
 
 ### Meteor Packages
 - Consider `ostrio:files` for GridFS if custom implementation too complex
 - Otherwise, use native MongoDB GridFSBucket API
+
+---
+
+## Testing Strategy Summary
+
+The comprehensive testing approach using Storybook + Playwright enables:
+
+1. **Component Isolation**: Develop UI components independently with all states demonstrated
+2. **Visual Documentation**: Stories serve as living component API documentation
+3. **Automated Verification**: E2E tests verify all acceptance criteria automatically
+4. **AI Development Confidence**: AI assistants can run tests to verify changes work correctly
+5. **Regression Prevention**: Comprehensive coverage catches bugs before they reach production
+6. **Mobile Testing**: Playwright device emulation properly tests touch-optimized UX
+
+This aligns with Constitution Principle II (Test-Driven Development) and extends it beyond unit tests to include component and end-to-end testing.
 
 ---
 

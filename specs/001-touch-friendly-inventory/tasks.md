@@ -28,15 +28,33 @@
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-**Purpose**: Project initialization and dependency installation
+**Purpose**: Project initialization, dependency installation, and test infrastructure setup
+
+### Core Dependencies
 
 - [X] T001 Install new dependencies: sharp, archiver, unzipper, mime-types in meteor-app/package.json
-- [X] T001a Install Storybook and related dependencies for React in meteor-app/package.json
-- [X] T001b Configure Storybook to work with Meteor's absolute imports and TypeScript in meteor-app/.storybook/
 - [X] T002 [P] Create PropertyValues interface in meteor-app/imports/model/PropertyValues.ts
 - [X] T003 [P] Create Attachment model in meteor-app/imports/model/Attachment.ts
 - [X] T004 [P] Update InventoryItem model with properties field and isContainer flag in meteor-app/imports/model/InventoryItem.ts
 - [X] T005 Create Attachments collection in meteor-app/imports/api/attachments.ts
+
+### Storybook Setup (Component Testing Infrastructure)
+
+- [X] T001a Install Storybook and related dependencies for React in meteor-app/package.json
+- [X] T001b Configure Storybook to work with Meteor's absolute imports and TypeScript in meteor-app/.storybook/
+- [X] T001c Verify Storybook runs successfully with npm run storybook from meteor-app/
+
+### Playwright Setup (E2E Testing Infrastructure)
+
+**⚠️ CRITICAL**: Set up E2E testing infrastructure BEFORE implementing user stories to enable TDD
+
+- [ ] T001d Install Playwright and related dependencies in package.json (repository root)
+- [ ] T001e Initialize Playwright configuration in playwright.config.js with mobile viewports (iPad, iPhone)
+- [ ] T001f Create Playwright test directory structure in tests/e2e/
+- [ ] T001g Create test helper utilities in tests/e2e/helpers/ (database reset, mock data factories)
+- [ ] T001h Create smoke test in tests/e2e/app-smoke.spec.ts to verify Playwright setup works
+- [ ] T001i Verify Playwright tests run successfully with npm run test:e2e
+- [ ] T001j Add npm scripts for different test modes (headless, UI, specific browsers) to package.json
 
 ---
 
@@ -68,12 +86,25 @@
 
 **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
+#### Unit Tests (Business Logic)
+
 - [ ] T013 [P] [US1] Unit tests for items.create method in meteor-app/imports/api/items.test.ts
 - [ ] T014 [P] [US1] Unit tests for items.update method in meteor-app/imports/api/items.test.ts
 - [ ] T015 [P] [US1] Unit tests for items.delete method in meteor-app/imports/api/items.test.ts
 - [ ] T016 [P] [US1] Unit tests for items.move method in meteor-app/imports/api/items.test.ts
 - [ ] T017 [P] [US1] Unit tests for items.getPath method in meteor-app/imports/api/items.test.ts
 - [X] T018 [P] [US1] Unit tests for circular reference detection in meteor-app/imports/utility/circularReference.test.ts
+
+#### Playwright E2E Tests (Acceptance Criteria)
+
+**⚠️ CRITICAL**: Write E2E tests BEFORE implementing features to enable true TDD workflow
+
+- [ ] T013a [P] [US1] E2E test: Create new item from main screen in tests/e2e/item-creation.spec.ts
+- [ ] T013b [P] [US1] E2E test: Item appears in inventory list after creation in tests/e2e/item-creation.spec.ts
+- [ ] T013c [P] [US1] E2E test: Nest item under location container in tests/e2e/item-creation.spec.ts
+- [ ] T013d [P] [US1] E2E test: Expand location to see contained items in tests/e2e/item-creation.spec.ts
+- [ ] T013e [P] [US1] E2E test: View item details shows location breadcrumb trail in tests/e2e/item-creation.spec.ts
+- [ ] T013f [P] [US1] E2E test: Verify all touch targets are 44×44px minimum in tests/e2e/item-creation.spec.ts
 
 ### Implementation for User Story 1
 
@@ -120,11 +151,27 @@
 
 ### Tests for User Story 2
 
+**NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+
+#### Unit Tests (Business Logic)
+
 - [ ] T034 [P] [US2] Unit tests for tags.create method in meteor-app/imports/api/tags.test.ts
 - [ ] T035 [P] [US2] Unit tests for tags.rename method in meteor-app/imports/api/tags.test.ts
 - [ ] T036 [P] [US2] Unit tests for tags.delete method in meteor-app/imports/api/tags.test.ts
 - [ ] T037 [P] [US2] Unit tests for tags.addToItem method in meteor-app/imports/api/tags.test.ts
 - [ ] T038 [P] [US2] Unit tests for tags.removeFromItem method in meteor-app/imports/api/tags.test.ts
+
+#### Playwright E2E Tests (Acceptance Criteria)
+
+**⚠️ CRITICAL**: Write E2E tests BEFORE implementing features to enable true TDD workflow
+
+- [ ] T034a [P] [US2] E2E test: Create a new tag in tests/e2e/tag-management.spec.ts
+- [ ] T034b [P] [US2] E2E test: Apply tag to item in tests/e2e/tag-management.spec.ts
+- [ ] T034c [P] [US2] E2E test: View all items with a specific tag in tests/e2e/tag-management.spec.ts
+- [ ] T034d [P] [US2] E2E test: Remove tag from item in tests/e2e/tag-management.spec.ts
+- [ ] T034e [P] [US2] E2E test: Rename tag and verify all tagged items updated in tests/e2e/tag-management.spec.ts
+- [ ] T034f [P] [US2] E2E test: Delete tag and verify removed from all items in tests/e2e/tag-management.spec.ts
+- [ ] T034g [P] [US2] E2E test: Tags are case-insensitive (reject duplicate "camping" and "Camping") in tests/e2e/tag-management.spec.ts
 
 ### Implementation for User Story 2
 
@@ -160,8 +207,25 @@
 
 ### Tests for User Story 5
 
+**NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+
+#### Unit Tests (Business Logic)
+
 - [ ] T053 [P] [US5] Visual regression tests for touch target sizes in meteor-app/tests/visual/touchTargets.test.ts
 - [ ] T054 [P] [US5] Integration tests for keyboard visibility handling in meteor-app/tests/integration/keyboard.test.ts
+
+#### Playwright E2E Tests (Acceptance Criteria)
+
+**⚠️ CRITICAL**: Write E2E tests BEFORE implementing features to enable true TDD workflow
+
+- [ ] T053a [P] [US5] E2E test: All tap targets meet 44×44px minimum on mobile viewport in tests/e2e/touch-optimization.spec.ts
+- [ ] T053b [P] [US5] E2E test: Long-press on item reveals context menu in tests/e2e/touch-optimization.spec.ts
+- [ ] T053c [P] [US5] E2E test: Pull-to-refresh works on item lists in tests/e2e/touch-optimization.spec.ts
+- [ ] T053d [P] [US5] E2E test: Swipe-back navigation works in hierarchy in tests/e2e/touch-optimization.spec.ts
+- [ ] T053e [P] [US5] E2E test: Visual feedback on button press (iOS-style highlight) in tests/e2e/touch-optimization.spec.ts
+- [ ] T053f [P] [US5] E2E test: Keyboard doesn't obscure input fields (viewport adjusts) in tests/e2e/touch-optimization.spec.ts
+- [ ] T053g [P] [US5] E2E test: Double-tap prevention on submit buttons in tests/e2e/touch-optimization.spec.ts
+- [ ] T053h [P] [US5] E2E test: Smooth scroll with momentum in long lists in tests/e2e/touch-optimization.spec.ts
 
 ### Implementation for User Story 5
 
@@ -193,9 +257,28 @@
 
 ### Tests for User Story 3
 
+**NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+
+#### Unit Tests (Business Logic)
+
 - [ ] T067 [P] [US3] Unit tests for search query builder with all fragment types in meteor-app/imports/utility/searchQuery.test.ts
 - [ ] T068 [P] [US3] Unit tests for items.search Meteor Method in meteor-app/imports/api/items.test.ts
 - [ ] T069 [P] [US3] Integration tests for search scoping behavior in meteor-app/tests/integration/search.test.ts
+
+#### Playwright E2E Tests (Acceptance Criteria)
+
+**⚠️ CRITICAL**: Write E2E tests BEFORE implementing features to enable true TDD workflow
+
+- [ ] T067a [P] [US3] E2E test: Global search finds items across all containers in tests/e2e/search-and-filter.spec.ts
+- [ ] T067b [P] [US3] E2E test: Search by item name (partial match, case-insensitive) in tests/e2e/search-and-filter.spec.ts
+- [ ] T067c [P] [US3] E2E test: Search by included tags in tests/e2e/search-and-filter.spec.ts
+- [ ] T067d [P] [US3] E2E test: Search by excluded tags in tests/e2e/search-and-filter.spec.ts
+- [ ] T067e [P] [US3] E2E test: Search by container type in tests/e2e/search-and-filter.spec.ts
+- [ ] T067f [P] [US3] E2E test: Scoped search (search within current container only) in tests/e2e/search-and-filter.spec.ts
+- [ ] T067g [P] [US3] E2E test: Context filters apply to current view (narrow down visible items) in tests/e2e/search-and-filter.spec.ts
+- [ ] T067h [P] [US3] E2E test: Filters cleared when navigating to different location in tests/e2e/search-and-filter.spec.ts
+- [ ] T067i [P] [US3] E2E test: Search results show breadcrumb trail for context in tests/e2e/search-and-filter.spec.ts
+- [ ] T067j [P] [US3] E2E test: Prevent contradictory filters (same tag included and excluded) in tests/e2e/search-and-filter.spec.ts
 
 ### Implementation for User Story 3
 
@@ -228,8 +311,26 @@
 
 ### Tests for User Story 4
 
+**NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+
+#### Unit Tests (Business Logic)
+
 - [ ] T081 [P] [US4] Integration tests for all three container deletion strategies in meteor-app/tests/integration/deleteContainer.test.ts
 - [ ] T082 [P] [US4] Unit tests for "no container" tag creation and application in meteor-app/imports/api/tags.test.ts
+
+#### Playwright E2E Tests (Acceptance Criteria)
+
+**⚠️ CRITICAL**: Write E2E tests BEFORE implementing features to enable true TDD workflow
+
+- [ ] T081a [P] [US4] E2E test: Edit item name and description in tests/e2e/item-management.spec.ts
+- [ ] T081b [P] [US4] E2E test: Move item to different container in tests/e2e/item-management.spec.ts
+- [ ] T081c [P] [US4] E2E test: Delete empty container (no confirmation) in tests/e2e/item-management.spec.ts
+- [ ] T081d [P] [US4] E2E test: Delete container with items - Option A (move to parent + "no container" tag) in tests/e2e/item-management.spec.ts
+- [ ] T081e [P] [US4] E2E test: Delete container with items - Option B (choose new container) in tests/e2e/item-management.spec.ts
+- [ ] T081f [P] [US4] E2E test: Delete container with items - Option C (recursive delete with confirmation) in tests/e2e/item-management.spec.ts
+- [ ] T081g [P] [US4] E2E test: Delete unused tag (no confirmation) in tests/e2e/tag-management.spec.ts
+- [ ] T081h [P] [US4] E2E test: Delete tag in use shows warning with count in tests/e2e/tag-management.spec.ts
+- [ ] T081i [P] [US4] E2E test: Rename tag updates all affected items in tests/e2e/tag-management.spec.ts
 
 ### Implementation for User Story 4
 
@@ -259,6 +360,10 @@
 
 ### Tests for User Story 6
 
+**NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+
+#### Unit Tests (Business Logic)
+
 - [ ] T093 [P] [US6] Unit tests for items.updateProperties method in meteor-app/imports/api/items.test.ts
 - [ ] T094 [P] [US6] Unit tests for items.clearProperty method in meteor-app/imports/api/items.test.ts
 - [ ] T095 [P] [US6] Unit tests for attachments.upload with file validation in meteor-app/imports/api/attachments.test.ts
@@ -268,6 +373,29 @@
 - [ ] T099 [P] [US6] Unit tests for attachments.updateLabel method in meteor-app/imports/api/attachments.test.ts
 - [ ] T100 [P] [US6] Unit tests for image processing (thumbnail, EXIF) in meteor-app/server/imageProcessing.test.ts
 - [ ] T101 [P] [US6] Unit tests for items.duplicate method in meteor-app/imports/api/items.test.ts
+
+#### Playwright E2E Tests (Acceptance Criteria)
+
+**⚠️ CRITICAL**: Write E2E tests BEFORE implementing features to enable true TDD workflow
+
+- [ ] T093a [P] [US6] E2E test: Add optional item properties (serial, purchase date, price) in tests/e2e/item-properties.spec.ts
+- [ ] T093b [P] [US6] E2E test: Edit existing properties in tests/e2e/item-properties.spec.ts
+- [ ] T093c [P] [US6] E2E test: Clear property (set back to empty) in tests/e2e/item-properties.spec.ts
+- [ ] T093d [P] [US6] E2E test: Empty properties hidden in display view in tests/e2e/item-properties.spec.ts
+- [ ] T093e [P] [US6] E2E test: Upload photo attachment with custom label in tests/e2e/attachments.spec.ts
+- [ ] T093f [P] [US6] E2E test: Upload multiple photos (batch upload) in tests/e2e/attachments.spec.ts
+- [ ] T093g [P] [US6] E2E test: Upload PDF receipt in tests/e2e/attachments.spec.ts
+- [ ] T093h [P] [US6] E2E test: Reorder photos via drag-and-drop in tests/e2e/attachments.spec.ts
+- [ ] T093i [P] [US6] E2E test: Set primary photo (thumbnail for list view) in tests/e2e/attachments.spec.ts
+- [ ] T093j [P] [US6] E2E test: View photo full-screen with zoom/pan in tests/e2e/attachments.spec.ts
+- [ ] T093k [P] [US6] E2E test: View PDF in viewer in tests/e2e/attachments.spec.ts
+- [ ] T093l [P] [US6] E2E test: Delete attachment in tests/e2e/attachments.spec.ts
+- [ ] T093m [P] [US6] E2E test: Duplicate item with all properties and attachments in tests/e2e/item-management.spec.ts
+- [ ] T093n [P] [US6] E2E test: File size validation (reject >20MB) in tests/e2e/attachments.spec.ts
+- [ ] T093o [P] [US6] E2E test: MIME type validation (accept JPEG, PNG, HEIC, PDF only) in tests/e2e/attachments.spec.ts
+- [ ] T093p [P] [US6] E2E test: Upload progress indicator displayed in tests/e2e/attachments.spec.ts
+- [ ] T093q [P] [US6] E2E test: Thumbnail generation for photos in tests/e2e/attachments.spec.ts
+- [ ] T093r [P] [US6] E2E test: EXIF orientation correction for photos in tests/e2e/attachments.spec.ts
 
 ### Implementation for User Story 6
 
@@ -322,10 +450,29 @@
 
 ### Tests for Export/Import
 
+**NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+
+#### Unit Tests (Business Logic)
+
 - [ ] T131 [P] Unit tests for backup.export method in meteor-app/imports/api/backup.test.ts
 - [ ] T132 [P] Unit tests for backup.import method in meteor-app/imports/api/backup.test.ts
 - [ ] T133 [P] Unit tests for ZIP bundle structure validation in meteor-app/imports/utility/backupFormat.test.ts
 - [ ] T134 [P] Integration tests for export-import round-trip in meteor-app/tests/integration/backup.test.ts
+
+#### Playwright E2E Tests (Acceptance Criteria)
+
+**⚠️ CRITICAL**: Write E2E tests BEFORE implementing features to enable true TDD workflow
+
+- [ ] T131a [P] E2E test: Export entire inventory to ZIP bundle in tests/e2e/export-import.spec.ts
+- [ ] T131b [P] E2E test: Verify ZIP contains manifest.json, data.json, and all attachments in tests/e2e/export-import.spec.ts
+- [ ] T131c [P] E2E test: Import backup into empty database in tests/e2e/export-import.spec.ts
+- [ ] T131d [P] E2E test: Verify all items, tags, properties restored after import in tests/e2e/export-import.spec.ts
+- [ ] T131e [P] E2E test: Verify all attachments restored and accessible after import in tests/e2e/export-import.spec.ts
+- [ ] T131f [P] E2E test: Import with merge strategy (preserve existing data) in tests/e2e/export-import.spec.ts
+- [ ] T131g [P] E2E test: Import with replace strategy (clear existing data first) in tests/e2e/export-import.spec.ts
+- [ ] T131h [P] E2E test: Import handles missing attachment files with warning in tests/e2e/export-import.spec.ts
+- [ ] T131i [P] E2E test: Import validates version compatibility in tests/e2e/export-import.spec.ts
+- [ ] T131j [P] E2E test: Progress indicator during export/import in tests/e2e/export-import.spec.ts
 
 ### Implementation for Export/Import
 
