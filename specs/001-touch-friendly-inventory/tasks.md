@@ -48,13 +48,13 @@
 
 **⚠️ CRITICAL**: Set up E2E testing infrastructure BEFORE implementing user stories to enable TDD
 
-- [ ] T001d Install Playwright and related dependencies in package.json (repository root)
-- [ ] T001e Initialize Playwright configuration in playwright.config.js with mobile viewports (iPad, iPhone)
-- [ ] T001f Create Playwright test directory structure in tests/e2e/
-- [ ] T001g Create test helper utilities in tests/e2e/helpers/ (database reset, mock data factories)
-- [ ] T001h Create smoke test in tests/e2e/app-smoke.spec.ts to verify Playwright setup works
-- [ ] T001i Verify Playwright tests run successfully with npm run test:e2e
-- [ ] T001j Add npm scripts for different test modes (headless, UI, specific browsers) to package.json
+- [X] T001d Install Playwright and related dependencies in package.json (repository root)
+- [X] T001e Initialize Playwright configuration in playwright.config.js with mobile viewports (iPad, iPhone)
+- [X] T001f Create Playwright test directory structure in tests/e2e/
+- [X] T001g Create test helper utilities in tests/e2e/helpers/ (database reset, mock data factories)
+- [X] T001h Create smoke test in tests/e2e/app-smoke.spec.ts to verify Playwright setup works
+- [X] T001i Verify Playwright tests run successfully with npm run test:e2e
+- [X] T001j Add npm scripts for different test modes (headless, UI, specific browsers) to package.json
 
 ---
 

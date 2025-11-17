@@ -38,11 +38,19 @@ export default defineConfig({
         video: 'retain-on-failure',
     },
 
-    /* Configure projects for major browsers */
+    /* Configure projects for major browsers and mobile devices */
     projects: [
         {
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
+        },
+        {
+            name: 'iPad',
+            use: { ...devices['iPad Pro'] },
+        },
+        {
+            name: 'iPhone',
+            use: { ...devices['iPhone 13'] },
         },
     ],
 

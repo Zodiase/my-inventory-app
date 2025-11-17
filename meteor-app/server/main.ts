@@ -6,6 +6,7 @@ import { Attachments } from '/imports/api/attachments';
 import createLogger from '/imports/utility/Logger';
 
 import { initializeGridFS } from './gridfs';
+import './test-helpers'; // Test helper methods for E2E testing
 
 const logger = createLogger(module);
 

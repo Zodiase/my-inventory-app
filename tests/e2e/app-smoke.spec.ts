@@ -1,8 +1,18 @@
 import { test, expect } from '@playwright/test';
+import { waitForMeteorReady, resetDatabase } from './helpers';
 
 /**
  * Basic app smoke tests to verify the app loads and core navigation works.
  */
+
+test.beforeEach(async ({ page }) => {
+    // Navigate to app and wait for Meteor to be ready
+    await page.goto('/');
+    await waitForMeteorReady(page);
+    
+    // Reset database before each test for isolation
+    await resetDatabase(page);
+});
 
 test.describe('App Smoke Tests', () => {
     test('should load the app homepage', async ({ page }) => {
