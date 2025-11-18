@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
     // Navigate to app and wait for Meteor to be ready
     await page.goto('/');
     await waitForMeteorReady(page);
-    
+
     // Reset database before each test for isolation
     await resetDatabase(page);
 });
