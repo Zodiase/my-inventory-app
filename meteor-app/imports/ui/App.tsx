@@ -1,14 +1,19 @@
 import React, { type ReactElement, useState } from 'react';
 import { Box, Button, Grommet, Header, Heading, Layer, Main, Nav } from 'grommet';
-import { Apps, Tag as TagIcon, Close } from 'grommet-icons';
+import { Apps, Tag as TagIcon, Close, Search as SearchIcon } from 'grommet-icons';
 
 import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';
 import { ItemsByTagView } from './ItemsByTagView';
 import { ItemForm } from './ItemForm';
 import { ItemDetailView } from './ItemDetailView';
+import { SearchBar } from './SearchBar';
+import { SearchScopeSelector } from './SearchScopeSelector';
+import { SearchFragmentBuilder } from './SearchFragmentBuilder';
+import { SearchResultsView } from './SearchResultsView';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
+import type { SearchFragment } from '/imports/model/SearchFragment';
 import {
     InventoryItemsCollection,
     createInventoryItem,
@@ -18,6 +23,7 @@ import {
 import TagsCollection from '/imports/api/tags';
 import { useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
+import { Meteor } from 'meteor/meteor';
 
 // Grommet theme with iOS-style design
 const theme = {
@@ -38,13 +44,20 @@ const theme = {
     },
 };
 
-type View = 'items' | 'tags' | 'itemsByTag';
+type View = 'items' | 'tags' | 'itemsByTag' | 'search';
 
 export const App = (): ReactElement => {
     const [currentView, setCurrentView] = useState<View>('items');
     const [selectedTagId, setSelectedTagId] = useState<string | undefined>();
     const [showCreateItem, setShowCreateItem] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
+
+    // Search state
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchScope, setSearchScope] = useState<'global' | 'scoped'>('global');
+    const [searchFragments, setSearchFragments] = useState<SearchFragment[]>([]);
+    const [searchResults, setSearchResults] = useState<InventoryItem[]>([]);
+    const [searchLoading, setSearchLoading] = useState(false);
 
     // Fetch selected item for detail view
     const selectedItem = useTracker(() => {
@@ -57,6 +70,11 @@ export const App = (): ReactElement => {
         if (selectedItem === undefined) return [];
         return TagsCollection.find({ _id: { $in: selectedItem.tagIds ?? [] } }).fetch();
     }, [selectedItem?.tagIds?.join(',')]);
+
+    // Fetch all tags for search components
+    const allTags = useTracker(() => {
+        return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
+    }, []);
 
     const handleSelectTag = (tagId: string): void => {
         setSelectedTagId(tagId);
@@ -117,6 +135,46 @@ export const App = (): ReactElement => {
         }
     };
 
+    const handleSearch = async (): Promise<void> => {
+        setSearchLoading(true);
+        try {
+            // Build fragments from current state
+            const fragments: SearchFragment[] = [...searchFragments];
+
+            // Add name fragment if search query exists
+            if (searchQuery.trim() !== '') {
+                fragments.push({ type: 'name', value: searchQuery.trim() });
+            }
+
+            // Call search method
+            const results = await Meteor.callAsync('items.search', fragments);
+            setSearchResults(results as InventoryItem[]);
+        } catch (error) {
+            console.error('Search failed:', error);
+            setSearchResults([]);
+        } finally {
+            setSearchLoading(false);
+        }
+    };
+
+    const handleClearSearch = (): void => {
+        setSearchQuery('');
+    };
+
+    const handleSearchFragmentsChange = (fragments: SearchFragment[]): void => {
+        setSearchFragments(fragments);
+    };
+
+    const handleSearchItemClick = (itemId: string): void => {
+        setSelectedItemId(itemId);
+    };
+
+    const getItemPath = (_itemId: string): InventoryItem[] => {
+        // TODO: Implement breadcrumb path resolution
+        // For now, return empty array
+        return [];
+    };
+
     return (
         <Grommet theme={theme} full>
             <Box fill>
@@ -140,6 +198,13 @@ export const App = (): ReactElement => {
                             primary={currentView === 'tags'}
                             plain={currentView !== 'tags'}
                         />
+                        <Button
+                            icon={<SearchIcon />}
+                            label="Search"
+                            onClick={() => setCurrentView('search')}
+                            primary={currentView === 'search'}
+                            plain={currentView !== 'search'}
+                        />
                     </Nav>
                 </Header>
 
@@ -161,6 +226,61 @@ export const App = (): ReactElement => {
 
                     {currentView === 'itemsByTag' && selectedTagId !== undefined && (
                         <ItemsByTagView initialTagId={selectedTagId} onSelectItem={handleSelectItem} />
+                    )}
+
+                    {currentView === 'search' && (
+                        <Box gap="medium">
+                            <Heading level="2" margin="none">
+                                Search
+                            </Heading>
+
+                            {/* Search bar with scope selector */}
+                            <Box gap="small">
+                                <SearchBar
+                                    value={searchQuery}
+                                    onChange={setSearchQuery}
+                                    onSearch={handleSearch}
+                                    onClear={handleClearSearch}
+                                    searchMode={searchScope}
+                                    scopeLabel="Current Location"
+                                />
+                                <SearchScopeSelector
+                                    value={searchScope}
+                                    onChange={setSearchScope}
+                                    scopeLabel="Current Location"
+                                />
+                            </Box>
+
+                            {/* Advanced search filters */}
+                            <Box>
+                                <Heading level="4" margin={{ top: 'none', bottom: 'small' }}>
+                                    Advanced Filters
+                                </Heading>
+                                <SearchFragmentBuilder
+                                    fragments={searchFragments}
+                                    onChange={handleSearchFragmentsChange}
+                                    availableTags={allTags}
+                                />
+                            </Box>
+
+                            {/* Search button */}
+                            <Box>
+                                <Button
+                                    label="Search"
+                                    primary
+                                    onClick={handleSearch}
+                                    disabled={searchQuery.trim() === '' && searchFragments.length === 0}
+                                />
+                            </Box>
+
+                            {/* Search results */}
+                            <SearchResultsView
+                                items={searchResults}
+                                onItemClick={handleSearchItemClick}
+                                loading={searchLoading}
+                                getItemPath={getItemPath}
+                            />
+                        </Box>
                     )}
                 </Main>
 
