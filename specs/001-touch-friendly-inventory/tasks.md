@@ -155,11 +155,11 @@
 
 #### Unit Tests (Business Logic)
 
-- [ ] T034 [P] [US2] Unit tests for tags.create method in meteor-app/imports/api/tags.test.ts
-- [ ] T035 [P] [US2] Unit tests for tags.rename method in meteor-app/imports/api/tags.test.ts
-- [ ] T036 [P] [US2] Unit tests for tags.delete method in meteor-app/imports/api/tags.test.ts
-- [ ] T037 [P] [US2] Unit tests for tags.addToItem method in meteor-app/imports/api/tags.test.ts
-- [ ] T038 [P] [US2] Unit tests for tags.removeFromItem method in meteor-app/imports/api/tags.test.ts
+- [X] T034 [P] [US2] Unit tests for tags.create method in meteor-app/imports/api/tags.test.ts
+- [X] T035 [P] [US2] Unit tests for tags.rename method in meteor-app/imports/api/tags.test.ts
+- [X] T036 [P] [US2] Unit tests for tags.delete method in meteor-app/imports/api/tags.test.ts
+- [X] T037 [P] [US2] Unit tests for tags.addToItem method in meteor-app/imports/api/tags.test.ts
+- [X] T038 [P] [US2] Unit tests for tags.removeFromItem method in meteor-app/imports/api/tags.test.ts
 
 #### Playwright E2E Tests (Acceptance Criteria)
 
