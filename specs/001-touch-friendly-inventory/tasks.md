@@ -261,7 +261,7 @@
 
 #### Unit Tests (Business Logic)
 
-- [ ] T067 [P] [US3] Unit tests for search query builder with all fragment types in meteor-app/imports/utility/searchQuery.test.ts
+- [X] T067 [P] [US3] Unit tests for search query builder with all fragment types in meteor-app/imports/utility/searchQuery.test.ts
 - [ ] T068 [P] [US3] Unit tests for items.search Meteor Method in meteor-app/imports/api/items.test.ts
 - [ ] T069 [P] [US3] Integration tests for search scoping behavior in meteor-app/tests/integration/search.test.ts
 
