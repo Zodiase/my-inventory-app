@@ -165,13 +165,13 @@
 
 **⚠️ CRITICAL**: Write E2E tests BEFORE implementing features to enable true TDD workflow
 
-- [ ] T034a [P] [US2] E2E test: Create a new tag in tests/e2e/tag-management.spec.ts
-- [ ] T034b [P] [US2] E2E test: Apply tag to item in tests/e2e/tag-management.spec.ts
-- [ ] T034c [P] [US2] E2E test: View all items with a specific tag in tests/e2e/tag-management.spec.ts
-- [ ] T034d [P] [US2] E2E test: Remove tag from item in tests/e2e/tag-management.spec.ts
-- [ ] T034e [P] [US2] E2E test: Rename tag and verify all tagged items updated in tests/e2e/tag-management.spec.ts
-- [ ] T034f [P] [US2] E2E test: Delete tag and verify removed from all items in tests/e2e/tag-management.spec.ts
-- [ ] T034g [P] [US2] E2E test: Tags are case-insensitive (reject duplicate "camping" and "Camping") in tests/e2e/tag-management.spec.ts
+- [X] T034a [P] [US2] E2E test: Create a new tag in tests/e2e/tag-management.spec.ts
+- [X] T034b [P] [US2] E2E test: Apply tag to item in tests/e2e/tag-management.spec.ts
+- [X] T034c [P] [US2] E2E test: View all items with a specific tag in tests/e2e/tag-management.spec.ts
+- [X] T034d [P] [US2] E2E test: Remove tag from item in tests/e2e/tag-management.spec.ts
+- [X] T034e [P] [US2] E2E test: Rename tag and verify all tagged items updated in tests/e2e/tag-management.spec.ts
+- [X] T034f [P] [US2] E2E test: Delete tag and verify removed from all items in tests/e2e/tag-management.spec.ts
+- [X] T034g [P] [US2] E2E test: Tags are case-insensitive (reject duplicate "camping" and "Camping") in tests/e2e/tag-management.spec.ts
 
 ### Implementation for User Story 2
 
