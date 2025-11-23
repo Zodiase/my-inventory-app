@@ -2,12 +2,14 @@ import { Meteor } from 'meteor/meteor';
 
 import type InventoryItem from '/imports/model/InventoryItem';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
+import type { SearchFragment } from '/imports/model/SearchFragment';
 import detectCircularReference, { getAncestorChain } from '/imports/utility/circularReference';
 import createLogger from '/imports/utility/Logger';
 import asMeteorMethods from '/imports/utility/MeteorMethods';
 import { NamedCollection } from '/imports/utility/NamedCollection';
 import type NoId from '/imports/utility/NoId';
 import type RecordInput from '/imports/utility/RecordInput';
+import { buildSearchQuery } from '/imports/utility/searchQuery';
 // import strictSelector from '/imports/utility/strictSelector'; // Will be used by safely* methods
 
 export type { InventoryItem } from '/imports/model/InventoryItem';
@@ -358,6 +360,48 @@ export const getItemPath = async (itemId: string): Promise<InventoryItem[]> => {
     return [...ancestors.reverse(), item];
 };
 
+/**
+ * Search for items using flexible search fragments.
+ *
+ * @param fragments - Array of search fragments to combine with AND logic
+ * @returns Promise resolving to array of matching items
+ *
+ * @remarks
+ * This method uses the buildSearchQuery utility to convert search fragments
+ * into MongoDB queries. Multiple fragments are combined with AND logic.
+ *
+ * Supported fragment types:
+ * - name: Partial, case-insensitive name search
+ * - tagInclude: Items must have specified tags
+ * - tagExclude: Items must NOT have specified tags
+ * - containerType: Filter by container vs item
+ * - containerScope: Search within specific container hierarchy
+ * - property: Search by custom property values
+ *
+ * @example
+ * ```typescript
+ * // Search for laptops with "electronics" tag
+ * const results = await searchItems([
+ *   { type: 'name', value: 'laptop' },
+ *   { type: 'tagInclude', tagIds: ['electronics123'] }
+ * ]);
+ * ```
+ */
+export const searchItems = async (fragments: SearchFragment[]): Promise<InventoryItem[]> => {
+    if (!Array.isArray(fragments)) {
+        throw new Error('Search fragments must be an array');
+    }
+
+    // Build MongoDB query from fragments
+    const query = buildSearchQuery(fragments);
+
+    logger.log('Searching items', { fragments, query });
+
+    // Execute query and return results
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return await InventoryItemsCollection.find(query as any).fetchAsync();
+};
+
 // Publications (server-side only)
 if (Meteor.isServer) {
     /**
@@ -428,4 +472,5 @@ export default asMeteorMethods(InventoryItemsCollection, {
     moveItem,
     deleteItem: deleteInventoryItem,
     getPath: getItemPath,
+    search: searchItems,
 });

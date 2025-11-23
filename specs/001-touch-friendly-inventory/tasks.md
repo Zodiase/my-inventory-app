@@ -282,7 +282,7 @@
 
 ### Implementation for User Story 3
 
-- [ ] T070 [US3] Implement items.search Meteor Method using searchQuery utility in meteor-app/imports/api/items.ts
+- [X] T070 [US3] Implement items.search Meteor Method using searchQuery utility in meteor-app/imports/api/items.ts
 - [ ] T071 [P] [US3] Create SearchBar component with search mode indicator in meteor-app/imports/ui/SearchBar.tsx
 - [ ] T071a [P] [US3] Create Storybook stories for SearchBar in meteor-app/imports/ui/SearchBar.stories.tsx
 - [ ] T072 [P] [US3] Create SearchScopeSelector component for root/global switching in meteor-app/imports/ui/SearchScopeSelector.tsx
