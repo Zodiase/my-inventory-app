@@ -88,23 +88,23 @@
 
 #### Unit Tests (Business Logic)
 
-- [ ] T013 [P] [US1] Unit tests for items.create method in meteor-app/imports/api/items.test.ts
-- [ ] T014 [P] [US1] Unit tests for items.update method in meteor-app/imports/api/items.test.ts
-- [ ] T015 [P] [US1] Unit tests for items.delete method in meteor-app/imports/api/items.test.ts
-- [ ] T016 [P] [US1] Unit tests for items.move method in meteor-app/imports/api/items.test.ts
-- [ ] T017 [P] [US1] Unit tests for items.getPath method in meteor-app/imports/api/items.test.ts
+- [X] T013 [P] [US1] Unit tests for items.create method in meteor-app/imports/api/items.test.ts
+- [X] T014 [P] [US1] Unit tests for items.update method in meteor-app/imports/api/items.test.ts
+- [X] T015 [P] [US1] Unit tests for items.delete method in meteor-app/imports/api/items.test.ts
+- [X] T016 [P] [US1] Unit tests for items.move method in meteor-app/imports/api/items.test.ts
+- [X] T017 [P] [US1] Unit tests for items.getPath method in meteor-app/imports/api/items.test.ts
 - [X] T018 [P] [US1] Unit tests for circular reference detection in meteor-app/imports/utility/circularReference.test.ts
 
 #### Playwright E2E Tests (Acceptance Criteria)
 
 **⚠️ CRITICAL**: Write E2E tests BEFORE implementing features to enable true TDD workflow
 
-- [ ] T013a [P] [US1] E2E test: Create new item from main screen in tests/e2e/item-creation.spec.ts
-- [ ] T013b [P] [US1] E2E test: Item appears in inventory list after creation in tests/e2e/item-creation.spec.ts
-- [ ] T013c [P] [US1] E2E test: Nest item under location container in tests/e2e/item-creation.spec.ts
-- [ ] T013d [P] [US1] E2E test: Expand location to see contained items in tests/e2e/item-creation.spec.ts
-- [ ] T013e [P] [US1] E2E test: View item details shows location breadcrumb trail in tests/e2e/item-creation.spec.ts
-- [ ] T013f [P] [US1] E2E test: Verify all touch targets are 44×44px minimum in tests/e2e/item-creation.spec.ts
+- [X] T013a [P] [US1] E2E test: Create new item from main screen in tests/e2e/item-creation.spec.ts
+- [X] T013b [P] [US1] E2E test: Item appears in inventory list after creation in tests/e2e/item-creation.spec.ts
+- [X] T013c [P] [US1] E2E test: Nest item under location container in tests/e2e/item-creation.spec.ts
+- [X] T013d [P] [US1] E2E test: Expand location to see contained items in tests/e2e/item-creation.spec.ts
+- [X] T013e [P] [US1] E2E test: View item details shows location breadcrumb trail in tests/e2e/item-creation.spec.ts
+- [X] T013f [P] [US1] E2E test: Verify all touch targets are 44×44px minimum in tests/e2e/item-creation.spec.ts
 
 ### Implementation for User Story 1
 
