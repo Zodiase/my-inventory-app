@@ -285,8 +285,8 @@
 - [X] T070 [US3] Implement items.search Meteor Method using searchQuery utility in meteor-app/imports/api/items.ts
 - [X] T071 [P] [US3] Create SearchBar component with search mode indicator in meteor-app/imports/ui/SearchBar.tsx
 - [X] T071a [P] [US3] Create Storybook stories for SearchBar in meteor-app/imports/ui/SearchBar.stories.tsx
-- [ ] T072 [P] [US3] Create SearchScopeSelector component for root/global switching in meteor-app/imports/ui/SearchScopeSelector.tsx
-- [ ] T072a [P] [US3] Create Storybook stories for SearchScopeSelector in meteor-app/imports/ui/SearchScopeSelector.stories.tsx
+- [X] T072 [P] [US3] Create SearchScopeSelector component for root/global switching in meteor-app/imports/ui/SearchScopeSelector.tsx
+- [X] T072a [P] [US3] Create Storybook stories for SearchScopeSelector in meteor-app/imports/ui/SearchScopeSelector.stories.tsx
 - [ ] T073 [P] [US3] Create SearchFragmentBuilder component (name, tags, container type) in meteor-app/imports/ui/SearchFragmentBuilder.tsx
 - [ ] T073a [P] [US3] Create Storybook stories for SearchFragmentBuilder in meteor-app/imports/ui/SearchFragmentBuilder.stories.tsx
 - [ ] T074 [P] [US3] Create SearchResultsView component with breadcrumb context in meteor-app/imports/ui/SearchResultsView.tsx
