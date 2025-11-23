@@ -287,8 +287,8 @@
 - [X] T071a [P] [US3] Create Storybook stories for SearchBar in meteor-app/imports/ui/SearchBar.stories.tsx
 - [X] T072 [P] [US3] Create SearchScopeSelector component for root/global switching in meteor-app/imports/ui/SearchScopeSelector.tsx
 - [X] T072a [P] [US3] Create Storybook stories for SearchScopeSelector in meteor-app/imports/ui/SearchScopeSelector.stories.tsx
-- [ ] T073 [P] [US3] Create SearchFragmentBuilder component (name, tags, container type) in meteor-app/imports/ui/SearchFragmentBuilder.tsx
-- [ ] T073a [P] [US3] Create Storybook stories for SearchFragmentBuilder in meteor-app/imports/ui/SearchFragmentBuilder.stories.tsx
+- [X] T073 [P] [US3] Create SearchFragmentBuilder component (name, tags, container type) in meteor-app/imports/ui/SearchFragmentBuilder.tsx
+- [X] T073a [P] [US3] Create Storybook stories for SearchFragmentBuilder in meteor-app/imports/ui/SearchFragmentBuilder.stories.tsx
 - [ ] T074 [P] [US3] Create SearchResultsView component with breadcrumb context in meteor-app/imports/ui/SearchResultsView.tsx
 - [ ] T074a [P] [US3] Create Storybook stories for SearchResultsView in meteor-app/imports/ui/SearchResultsView.stories.tsx
 - [ ] T075 [P] [US3] Create FilterBar component for context-aware filtering in meteor-app/imports/ui/FilterBar.tsx
