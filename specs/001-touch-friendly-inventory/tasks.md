@@ -269,16 +269,16 @@
 
 **⚠️ CRITICAL**: Write E2E tests BEFORE implementing features to enable true TDD workflow
 
-- [ ] T067a [P] [US3] E2E test: Global search finds items across all containers in tests/e2e/search-and-filter.spec.ts
-- [ ] T067b [P] [US3] E2E test: Search by item name (partial match, case-insensitive) in tests/e2e/search-and-filter.spec.ts
-- [ ] T067c [P] [US3] E2E test: Search by included tags in tests/e2e/search-and-filter.spec.ts
-- [ ] T067d [P] [US3] E2E test: Search by excluded tags in tests/e2e/search-and-filter.spec.ts
-- [ ] T067e [P] [US3] E2E test: Search by container type in tests/e2e/search-and-filter.spec.ts
-- [ ] T067f [P] [US3] E2E test: Scoped search (search within current container only) in tests/e2e/search-and-filter.spec.ts
-- [ ] T067g [P] [US3] E2E test: Context filters apply to current view (narrow down visible items) in tests/e2e/search-and-filter.spec.ts
-- [ ] T067h [P] [US3] E2E test: Filters cleared when navigating to different location in tests/e2e/search-and-filter.spec.ts
-- [ ] T067i [P] [US3] E2E test: Search results show breadcrumb trail for context in tests/e2e/search-and-filter.spec.ts
-- [ ] T067j [P] [US3] E2E test: Prevent contradictory filters (same tag included and excluded) in tests/e2e/search-and-filter.spec.ts
+- [X] T067a [P] [US3] E2E test: Global search finds items across all containers in tests/e2e/search-and-filter.spec.ts
+- [X] T067b [P] [US3] E2E test: Search by item name (partial match, case-insensitive) in tests/e2e/search-and-filter.spec.ts
+- [X] T067c [P] [US3] E2E test: Search by included tags in tests/e2e/search-and-filter.spec.ts
+- [X] T067d [P] [US3] E2E test: Search by excluded tags in tests/e2e/search-and-filter.spec.ts
+- [X] T067e [P] [US3] E2E test: Search by container type in tests/e2e/search-and-filter.spec.ts
+- [X] T067f [P] [US3] E2E test: Scoped search (search within current container only) in tests/e2e/search-and-filter.spec.ts
+- [X] T067g [P] [US3] E2E test: Context filters apply to current view (narrow down visible items) in tests/e2e/search-and-filter.spec.ts
+- [X] T067h [P] [US3] E2E test: Filters cleared when navigating to different location in tests/e2e/search-and-filter.spec.ts
+- [X] T067i [P] [US3] E2E test: Search results show breadcrumb trail for context in tests/e2e/search-and-filter.spec.ts
+- [X] T067j [P] [US3] E2E test: Prevent contradictory filters (same tag included and excluded) in tests/e2e/search-and-filter.spec.ts
 
 ### Implementation for User Story 3
 
