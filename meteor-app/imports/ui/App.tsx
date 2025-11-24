@@ -1,4 +1,4 @@
-import React, { type ReactElement, useState } from 'react';
+import React, { type ReactElement, useState, useEffect } from 'react';
 import { Box, Button, Grommet, Header, Heading, Layer, Main, Nav } from 'grommet';
 import { Apps, Tag as TagIcon, Close, Search as SearchIcon, Filter, Add } from 'grommet-icons';
 
@@ -80,6 +80,12 @@ export const App = (): ReactElement => {
     const allTags = useTracker(() => {
         return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
     }, []);
+
+    // Clear filters when navigating between views
+    useEffect(() => {
+        setItemsViewFilters([]);
+        setShowFilterBuilder(false);
+    }, [currentView]);
 
     const handleSelectTag = (tagId: string): void => {
         setSelectedTagId(tagId);
@@ -180,6 +186,12 @@ export const App = (): ReactElement => {
         return [];
     };
 
+    const handleItemsViewNavigate = (_containerId: string | undefined): void => {
+        // Clear filters when navigating to a different container
+        setItemsViewFilters([]);
+        setShowFilterBuilder(false);
+    };
+
     return (
         <Grommet theme={theme} full>
             <Box fill>
@@ -261,7 +273,7 @@ export const App = (): ReactElement => {
                                 </Box>
                             )}
 
-                            <AllItemsView filters={itemsViewFilters} />
+                            <AllItemsView filters={itemsViewFilters} onNavigate={handleItemsViewNavigate} />
                         </Box>
                     )}
 
