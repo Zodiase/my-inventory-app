@@ -296,7 +296,7 @@
 - [X] T076 [US3] Add search mode navigation to App.tsx
 - [X] T077 [US3] Implement search fragment uniqueness validation (prevent include+exclude same tag)
 - [X] T078 [US3] Update AllItemsView to support filtering current view
-- [ ] T079 [US3] Add filter status display and clear functionality
+- [X] T079 [US3] Add filter status display and clear functionality
 - [ ] T080 [US3] Implement filter clearing on navigation between locations
 
 **Checkpoint**: Users can perform complex global searches and apply contextual filters to any view

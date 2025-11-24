@@ -1,6 +1,6 @@
 import React, { type ReactElement, useState } from 'react';
 import { Box, Button, Grommet, Header, Heading, Layer, Main, Nav } from 'grommet';
-import { Apps, Tag as TagIcon, Close, Search as SearchIcon } from 'grommet-icons';
+import { Apps, Tag as TagIcon, Close, Search as SearchIcon, Filter, Add } from 'grommet-icons';
 
 import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';
@@ -62,6 +62,7 @@ export const App = (): ReactElement => {
 
     // Filter state for items view
     const [itemsViewFilters, setItemsViewFilters] = useState<SearchFragment[]>([]);
+    const [showFilterBuilder, setShowFilterBuilder] = useState(false);
 
     // Fetch selected item for detail view
     const selectedItem = useTracker(() => {
@@ -220,18 +221,45 @@ export const App = (): ReactElement => {
                                 <Heading level="2" margin="none">
                                     Items
                                 </Heading>
-                                <Button label="Create Item" primary onClick={() => setShowCreateItem(true)} />
+                                <Box direction="row" gap="small">
+                                    <Button
+                                        icon={<Filter />}
+                                        label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
+                                        onClick={() => setShowFilterBuilder(!showFilterBuilder)}
+                                        secondary={!showFilterBuilder}
+                                        primary={showFilterBuilder}
+                                    />
+                                    <Button
+                                        icon={<Add />}
+                                        label="Create Item"
+                                        primary
+                                        onClick={() => setShowCreateItem(true)}
+                                    />
+                                </Box>
                             </Box>
 
-                            {/* Filter bar for items view */}
-                            <Box margin={{ bottom: 'medium' }}>
-                                <FilterBar
-                                    filters={itemsViewFilters}
-                                    onChange={setItemsViewFilters}
-                                    onClearAll={() => setItemsViewFilters([])}
-                                    availableTags={allTags}
-                                />
-                            </Box>
+                            {/* Filter status and clear */}
+                            {itemsViewFilters.length > 0 && (
+                                <Box margin={{ bottom: 'medium' }}>
+                                    <FilterBar
+                                        filters={itemsViewFilters}
+                                        onChange={setItemsViewFilters}
+                                        onClearAll={() => setItemsViewFilters([])}
+                                        availableTags={allTags}
+                                    />
+                                </Box>
+                            )}
+
+                            {/* Filter builder (collapsible) */}
+                            {showFilterBuilder && (
+                                <Box margin={{ bottom: 'medium' }} pad="medium" background="light-2" round="small">
+                                    <SearchFragmentBuilder
+                                        fragments={itemsViewFilters}
+                                        onChange={setItemsViewFilters}
+                                        availableTags={allTags}
+                                    />
+                                </Box>
+                            )}
 
                             <AllItemsView filters={itemsViewFilters} />
                         </Box>
