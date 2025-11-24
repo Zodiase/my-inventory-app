@@ -185,6 +185,77 @@ const EmptyState = styled.div`
     font-size: 14px;
 `;
 
+const ValidationWarning = styled.div`
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    color: #856404;
+    font-size: 14px;
+`;
+
+const WarningIcon = styled.span`
+    font-size: 18px;
+    font-weight: bold;
+`;
+
+const WarningText = styled.div`
+    flex: 1;
+`;
+
+/**
+ * Validates search fragments for contradictions and returns warnings.
+ *
+ * @remarks
+ * Checks for:
+ * - Same tag in both include and exclude lists (contradictory)
+ * - Other logical conflicts
+ *
+ * @param fragments - Array of search fragments to validate
+ * @param availableTags - Available tags for name resolution
+ * @returns Array of warning messages (empty if no issues)
+ */
+const validateFragments = (
+    fragments: SearchFragment[],
+    availableTags: Array<{ _id: string; name: string }>
+): string[] => {
+    const warnings: string[] = [];
+
+    // Get all included and excluded tag IDs
+    const includedTagIds = new Set<string>();
+    const excludedTagIds = new Set<string>();
+
+    for (const fragment of fragments) {
+        if (fragment.type === 'tagInclude') {
+            fragment.tagIds.forEach((id) => includedTagIds.add(id));
+        } else if (fragment.type === 'tagExclude') {
+            fragment.tagIds.forEach((id) => excludedTagIds.add(id));
+        }
+    }
+
+    // Check for contradictory tag filters (same tag included and excluded)
+    const contradictoryTags: string[] = [];
+    for (const tagId of includedTagIds) {
+        if (excludedTagIds.has(tagId)) {
+            const tagName = availableTags.find((t) => t._id === tagId)?.name ?? tagId;
+            contradictoryTags.push(tagName);
+        }
+    }
+
+    if (contradictoryTags.length > 0) {
+        warnings.push(
+            `Contradictory filter: Tag "${contradictoryTags.join(
+                '", "'
+            )}" is both included and excluded. This will return no results.`
+        );
+    }
+
+    return warnings;
+};
+
 export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
     fragments = [],
     onChange,
@@ -196,6 +267,9 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
     const [selectedIncludeTag, setSelectedIncludeTag] = useState('');
     const [selectedExcludeTag, setSelectedExcludeTag] = useState('');
     const [containerTypeValue, setContainerTypeValue] = useState<'containers' | 'items' | 'all'>('all');
+
+    // Validate fragments for contradictions
+    const validationWarnings = validateFragments(fragments, availableTags);
 
     const handleRemoveFragment = useCallback(
         (index: number) => {
@@ -215,6 +289,15 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
 
     const handleAddTagInclude = useCallback(() => {
         if (selectedIncludeTag) {
+            // Check if this tag is already excluded
+            const isExcluded = fragments.some((f) => f.type === 'tagExclude' && f.tagIds.includes(selectedIncludeTag));
+
+            if (isExcluded) {
+                // Don't add - this would create a contradiction
+                // The validation warning will show the issue
+                return;
+            }
+
             onChange?.([...fragments, { type: 'tagInclude', tagIds: [selectedIncludeTag] }]);
             setSelectedIncludeTag('');
         }
@@ -222,6 +305,15 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
 
     const handleAddTagExclude = useCallback(() => {
         if (selectedExcludeTag) {
+            // Check if this tag is already included
+            const isIncluded = fragments.some((f) => f.type === 'tagInclude' && f.tagIds.includes(selectedExcludeTag));
+
+            if (isIncluded) {
+                // Don't add - this would create a contradiction
+                // The validation warning will show the issue
+                return;
+            }
+
             onChange?.([...fragments, { type: 'tagExclude', tagIds: [selectedExcludeTag] }]);
             setSelectedExcludeTag('');
         }
@@ -230,6 +322,26 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
     const handleAddContainerType = useCallback(() => {
         onChange?.([...fragments, { type: 'containerType', value: containerTypeValue }]);
     }, [containerTypeValue, fragments, onChange]);
+
+    // Get tags that are already excluded (can't be included)
+    const excludedTagIds = new Set<string>();
+    fragments.forEach((f) => {
+        if (f.type === 'tagExclude') {
+            f.tagIds.forEach((id) => excludedTagIds.add(id));
+        }
+    });
+
+    // Get tags that are already included (can't be excluded)
+    const includedTagIds = new Set<string>();
+    fragments.forEach((f) => {
+        if (f.type === 'tagInclude') {
+            f.tagIds.forEach((id) => includedTagIds.add(id));
+        }
+    });
+
+    // Filter available tags for each dropdown
+    const availableIncludeTags = availableTags.filter((tag) => !excludedTagIds.has(tag._id));
+    const availableExcludeTags = availableTags.filter((tag) => !includedTagIds.has(tag._id));
 
     const getFragmentDisplay = (fragment: SearchFragment): { type: string; value: string } => {
         switch (fragment.type) {
@@ -261,6 +373,18 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
 
     return (
         <Container className={className} style={style}>
+            {/* Validation warnings */}
+            {validationWarnings.length > 0 && (
+                <div>
+                    {validationWarnings.map((warning, index) => (
+                        <ValidationWarning key={index}>
+                            <WarningIcon>⚠️</WarningIcon>
+                            <WarningText>{warning}</WarningText>
+                        </ValidationWarning>
+                    ))}
+                </div>
+            )}
+
             {fragments.length > 0 ? (
                 <FragmentList>
                     {fragments.map((fragment, index) => {
@@ -310,7 +434,7 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                     <FormRow>
                         <Select value={selectedIncludeTag} onChange={(e) => setSelectedIncludeTag(e.target.value)}>
                             <option value="">Select tag to include...</option>
-                            {availableTags.map((tag) => (
+                            {availableIncludeTags.map((tag) => (
                                 <option key={tag._id} value={tag._id}>
                                     {tag.name}
                                 </option>
@@ -327,7 +451,7 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                     <FormRow>
                         <Select value={selectedExcludeTag} onChange={(e) => setSelectedExcludeTag(e.target.value)}>
                             <option value="">Select tag to exclude...</option>
-                            {availableTags.map((tag) => (
+                            {availableExcludeTags.map((tag) => (
                                 <option key={tag._id} value={tag._id}>
                                     {tag.name}
                                 </option>
