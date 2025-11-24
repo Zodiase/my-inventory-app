@@ -295,7 +295,7 @@
 - [X] T075a [P] [US3] Create Storybook stories for FilterBar in meteor-app/imports/ui/FilterBar.stories.tsx
 - [X] T076 [US3] Add search mode navigation to App.tsx
 - [X] T077 [US3] Implement search fragment uniqueness validation (prevent include+exclude same tag)
-- [ ] T078 [US3] Update AllItemsView to support filtering current view
+- [X] T078 [US3] Update AllItemsView to support filtering current view
 - [ ] T079 [US3] Add filter status display and clear functionality
 - [ ] T080 [US3] Implement filter clearing on navigation between locations
 

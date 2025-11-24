@@ -11,6 +11,7 @@ import { SearchBar } from './SearchBar';
 import { SearchScopeSelector } from './SearchScopeSelector';
 import { SearchFragmentBuilder } from './SearchFragmentBuilder';
 import { SearchResultsView } from './SearchResultsView';
+import { FilterBar } from './FilterBar';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
 import type { SearchFragment } from '/imports/model/SearchFragment';
@@ -58,6 +59,9 @@ export const App = (): ReactElement => {
     const [searchFragments, setSearchFragments] = useState<SearchFragment[]>([]);
     const [searchResults, setSearchResults] = useState<InventoryItem[]>([]);
     const [searchLoading, setSearchLoading] = useState(false);
+
+    // Filter state for items view
+    const [itemsViewFilters, setItemsViewFilters] = useState<SearchFragment[]>([]);
 
     // Fetch selected item for detail view
     const selectedItem = useTracker(() => {
@@ -218,7 +222,18 @@ export const App = (): ReactElement => {
                                 </Heading>
                                 <Button label="Create Item" primary onClick={() => setShowCreateItem(true)} />
                             </Box>
-                            <AllItemsView />
+
+                            {/* Filter bar for items view */}
+                            <Box margin={{ bottom: 'medium' }}>
+                                <FilterBar
+                                    filters={itemsViewFilters}
+                                    onChange={setItemsViewFilters}
+                                    onClearAll={() => setItemsViewFilters([])}
+                                    availableTags={allTags}
+                                />
+                            </Box>
+
+                            <AllItemsView filters={itemsViewFilters} />
                         </Box>
                     )}
 

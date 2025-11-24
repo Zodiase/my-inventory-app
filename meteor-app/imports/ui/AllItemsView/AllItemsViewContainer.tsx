@@ -1,7 +1,9 @@
 import React, { type ComponentProps, type ReactElement, useState } from 'react';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
+import type { SearchFragment } from '/imports/model/SearchFragment';
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
+import { buildSearchQuery } from '/imports/utility/searchQuery';
 import { useTracker } from '/imports/utility/reactMeteorData';
 
 /**
@@ -12,10 +14,14 @@ import { useTracker } from '/imports/utility/reactMeteorData';
  * - Fetching items at the current container level from Meteor
  * - Building the breadcrumb path by traversing parent containers
  * - Managing navigation state
+ * - Applying search filters to the current view (context-aware filtering)
  *
  * @remarks
  * The component maintains local state for the current container ID and fetches only
  * the items at that level. It uses Meteor's useTracker for reactive data.
+ *
+ * When filters are provided, they are applied to narrow down the visible items
+ * within the current container (context-aware filtering).
  */
 export interface AllItemsViewContainerProps {
     /**
@@ -28,32 +34,56 @@ export interface AllItemsViewContainerProps {
      * @param containerId - The ID of the container being navigated to, or undefined for root
      */
     onNavigate?: (containerId: string | undefined) => void;
+
+    /**
+     * Optional search fragments to filter the items in the current view.
+     * These filters apply to items at the current container level only.
+     */
+    filters?: SearchFragment[];
 }
 
 export const AllItemsViewContainer = ({
     initialContainerId,
     onNavigate,
+    filters = [],
     ...rootElementProps
 }: AllItemsViewContainerProps & ComponentProps<'div'>): ReactElement => {
     const [currentContainerId, setCurrentContainerId] = useState<string | undefined>(initialContainerId);
 
-    // Fetch items at current level
-    const items = useTracker(
-        () =>
-            InventoryItemsCollection.find(
-                {
-                    containerId: currentContainerId,
-                },
-                {
-                    sort: [
-                        ['isContainer', 'desc'], // Containers first
-                        ['name', 'asc'],
-                        ['createdAt', 'asc'],
-                    ],
-                }
-            ).fetch(),
-        [currentContainerId]
-    );
+    // Fetch items at current level with optional filters
+    const items = useTracker(() => {
+        // Start with base query for current container level
+        const baseQuery: any = {
+            containerId: currentContainerId,
+        };
+
+        // If filters are provided, merge them with base query
+        if (filters.length > 0) {
+            const filterQuery = buildSearchQuery(filters);
+
+            // Combine base query (container scoping) with filter query (AND logic)
+            const combinedQuery = {
+                $and: [baseQuery, filterQuery as any],
+            };
+
+            return InventoryItemsCollection.find(combinedQuery, {
+                sort: [
+                    ['isContainer', 'desc'], // Containers first
+                    ['name', 'asc'],
+                    ['createdAt', 'asc'],
+                ],
+            }).fetch();
+        } else {
+            // No filters - just show items at current level
+            return InventoryItemsCollection.find(baseQuery, {
+                sort: [
+                    ['isContainer', 'desc'], // Containers first
+                    ['name', 'asc'],
+                    ['createdAt', 'asc'],
+                ],
+            }).fetch();
+        }
+    }, [currentContainerId, JSON.stringify(filters)]);
 
     // Fetch current container path for breadcrumb
     const containerPath = useTracker(() => {
