@@ -23,6 +23,7 @@ const BreadcrumbContainer = styled.nav`
     background-color: #f5f5f5;
     border-radius: 8px;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 `;
 
 const BreadcrumbButton = styled.button`

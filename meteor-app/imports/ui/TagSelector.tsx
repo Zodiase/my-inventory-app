@@ -90,7 +90,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                     <Text color="dark-3">{emptyMessage}</Text>
                 </Box>
             ) : (
-                <Box gap="xsmall" overflow="auto" style={{ maxHeight: '400px' }}>
+                <Box gap="xsmall" overflow="auto" style={{ maxHeight: '400px', WebkitOverflowScrolling: 'touch' }}>
                     {availableTags.map((tag) => (
                         <Box
                             key={tag._id}

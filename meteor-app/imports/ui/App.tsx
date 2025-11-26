@@ -266,7 +266,7 @@ export const App = (): ReactElement => {
                 </Header>
 
                 {/* Main content area */}
-                <Main pad="medium" overflow="auto">
+                <Main pad="medium" overflow="auto" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {currentView === 'items' && (
                         <Box>
                             <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }}>
@@ -397,7 +397,13 @@ export const App = (): ReactElement => {
                 {/* Item Detail Modal */}
                 {selectedItem !== undefined && (
                     <Layer onEsc={handleCloseItemDetail} onClickOutside={handleCloseItemDetail}>
-                        <Box pad="medium" gap="medium" width="large" overflow="auto">
+                        <Box
+                            pad="medium"
+                            gap="medium"
+                            width="large"
+                            overflow="auto"
+                            style={{ WebkitOverflowScrolling: 'touch' }}
+                        >
                             <Box direction="row" justify="between" align="center">
                                 <Heading level="3" margin="none">
                                     Item Details

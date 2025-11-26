@@ -124,7 +124,7 @@ export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
     });
 
     return (
-        <Box fill overflow="auto">
+        <Box fill overflow="auto" style={{ WebkitOverflowScrolling: 'touch' }}>
             <List
                 data={listData}
                 pad={{ horizontal: 'small', vertical: 'xsmall' }}
