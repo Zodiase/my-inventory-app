@@ -6,6 +6,7 @@ import styled, { keyframes } from 'styled-components';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
+import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
 import { usePullToRefresh } from '/imports/utility/pullToRefresh';
 
 /**
@@ -83,6 +84,7 @@ const RefreshIcon = styled.svg.attrs<{ isTriggered: boolean; pullDistance: numbe
  * - Visual distinction between containers (Folder icon) and items
  * - Touch-optimized navigation (44x44px minimum touch targets)
  * - Pull-to-refresh gesture for iOS-style data refresh
+ * - Long-press context menus on items for actions
  * - Click containers to navigate into them
  */
 export interface AllItemsViewPresentationProps {
@@ -115,6 +117,21 @@ export interface AllItemsViewPresentationProps {
      * Callback when pull-to-refresh is triggered
      */
     onRefresh?: () => Promise<void>;
+
+    /**
+     * Callback when item edit is selected from context menu
+     */
+    onEditItem?: (itemId: string) => void;
+
+    /**
+     * Callback when item delete is selected from context menu
+     */
+    onDeleteItem?: (itemId: string) => void;
+
+    /**
+     * Callback when item view details is selected from context menu
+     */
+    onViewItemDetails?: (itemId: string) => void;
 }
 
 export const AllItemsViewPresentation = ({
@@ -124,6 +141,9 @@ export const AllItemsViewPresentation = ({
     onNavigateToContainer,
     onBreadcrumbNavigate,
     onRefresh,
+    onEditItem,
+    onDeleteItem,
+    onViewItemDetails,
     ...rootElementProps
 }: AllItemsViewPresentationProps & ComponentProps<'div'>): ReactElement => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -175,42 +195,78 @@ export const AllItemsViewPresentation = ({
                     </Box>
                 ) : (
                     <List data={items} pad="none" border={false}>
-                        {(item: InventoryItem) => (
-                            <Box
-                                key={item._id}
-                                direction="row"
-                                align="center"
-                                pad="small"
-                                gap="small"
-                                background="background-front"
-                                hoverIndicator="background-contrast"
-                                style={{
-                                    minHeight: '44px',
-                                    cursor: item.isContainer ? 'pointer' : 'default',
-                                }}
-                                onClick={() => {
-                                    if (item.isContainer) {
-                                        onNavigateToContainer(item._id);
-                                    }
-                                }}
-                            >
-                                {/* Icon for containers */}
-                                {item.isContainer && <Folder size="medium" color="brand" />}
+                        {(item: InventoryItem) => {
+                            // Build context menu actions
+                            const menuActions = [];
 
-                                {/* Item name */}
-                                <Box flex>
-                                    <Text weight={item.isContainer ? 'bold' : 'normal'}>{item.name}</Text>
-                                    {item.description && (
-                                        <Text size="small" color="text-weak" truncate>
-                                            {item.description}
-                                        </Text>
-                                    )}
-                                </Box>
+                            if (onViewItemDetails !== undefined) {
+                                menuActions.push({
+                                    label: 'View Details',
+                                    onClick: () => {
+                                        onViewItemDetails(item._id);
+                                    },
+                                });
+                            }
 
-                                {/* Navigation arrow for containers */}
-                                {item.isContainer && <Next size="medium" color="text-weak" />}
-                            </Box>
-                        )}
+                            if (onEditItem !== undefined) {
+                                menuActions.push({
+                                    label: 'Edit',
+                                    onClick: () => {
+                                        onEditItem(item._id);
+                                    },
+                                });
+                            }
+
+                            if (onDeleteItem !== undefined) {
+                                menuActions.push({
+                                    label: 'Delete',
+                                    onClick: () => {
+                                        onDeleteItem(item._id);
+                                    },
+                                    variant: 'danger' as const,
+                                });
+                            }
+
+                            const hasContextMenu = menuActions.length > 0;
+
+                            return (
+                                <LongPressContextMenu key={item._id} actions={menuActions}>
+                                    <Box
+                                        direction="row"
+                                        align="center"
+                                        pad="small"
+                                        gap="small"
+                                        background="background-front"
+                                        hoverIndicator="background-contrast"
+                                        style={{
+                                            minHeight: '44px',
+                                            cursor: item.isContainer ? 'pointer' : 'default',
+                                        }}
+                                        onClick={() => {
+                                            if (item.isContainer) {
+                                                onNavigateToContainer(item._id);
+                                            }
+                                        }}
+                                    >
+                                        {/* Icon for containers */}
+                                        {item.isContainer && <Folder size="medium" color="brand" />}
+
+                                        {/* Item name */}
+                                        <Box flex>
+                                            <Text weight={item.isContainer ? 'bold' : 'normal'}>{item.name}</Text>
+                                            {item.description && (
+                                                <Text size="small" color="text-weak" truncate>
+                                                    {item.description}
+                                                </Text>
+                                            )}
+                                        </Box>
+
+                                        {/* Navigation arrow for containers */}
+                                        {item.isContainer && <Next size="medium" color="text-weak" />}
+                                    </Box>
+                                </LongPressContextMenu>
+                            );
+                        }}
                     </List>
                 )}
             </ScrollableContainer>

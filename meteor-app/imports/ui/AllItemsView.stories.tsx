@@ -409,3 +409,67 @@ export const PullToRefresh: Story = {
         );
     },
 };
+
+/**
+ * Long-press context menu demo
+ */
+export const LongPressContextMenu: Story = {
+    render: () => {
+        const [items, setItems] = useState<InventoryItem[]>([garage, kitchen, toolBox]);
+        const [actionLog, setActionLog] = useState<string[]>([]);
+
+        const logAction = (action: string, itemId: string): void => {
+            const item = items.find((i) => i._id === itemId);
+            const message = `${action}: ${item?.name ?? itemId}`;
+            setActionLog((prev) => [...prev, message]);
+        };
+
+        return (
+            <Box fill gap="small">
+                <Box pad="small" background="status-warning" round="small">
+                    <GrommetText>Long-press (500ms) any item to show context menu</GrommetText>
+                </Box>
+                <AllItemsViewPresentation
+                    items={items}
+                    containerPath={[]}
+                    showHomeIcon
+                    onNavigateToContainer={(containerId) => {
+                        logAction('Navigate', containerId);
+                    }}
+                    onBreadcrumbNavigate={() => {
+                        console.log('Breadcrumb navigate');
+                    }}
+                    onViewItemDetails={(itemId) => {
+                        logAction('View Details', itemId);
+                    }}
+                    onEditItem={(itemId) => {
+                        logAction('Edit', itemId);
+                    }}
+                    onDeleteItem={(itemId) => {
+                        logAction('Delete', itemId);
+                        setItems((prev) => prev.filter((i) => i._id !== itemId));
+                    }}
+                />
+                <Box
+                    pad="medium"
+                    background="background-contrast"
+                    round="small"
+                    style={{ maxHeight: '200px', overflow: 'auto' }}
+                >
+                    <GrommetText weight="bold">Action Log:</GrommetText>
+                    {actionLog.length === 0 ? (
+                        <GrommetText>No actions yet. Long-press an item.</GrommetText>
+                    ) : (
+                        <Box as="ul" pad={{ left: 'medium' }} gap="xsmall">
+                            {actionLog.map((log, index) => (
+                                <GrommetText as="li" key={index}>
+                                    {log}
+                                </GrommetText>
+                            ))}
+                        </Box>
+                    )}
+                </Box>
+            </Box>
+        );
+    },
+};

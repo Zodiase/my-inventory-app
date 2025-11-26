@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import type { TagRecord } from '/imports/model/TagRecord';
 
+import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
 import StyledButton from '/imports/ui/StyledButton';
 
 /**
@@ -112,27 +113,54 @@ const TagList = styled(
 
         return (
             <div {...rootElementProps} data-tag-id={tagId}>
-                <div
-                    className="tag-body"
-                    data-tag-id={tagId}
-                    data-tag-path={tag ? tag.path.map(({ name }) => name).join(',') : undefined}
+                <LongPressContextMenu
+                    actions={
+                        tag !== undefined
+                            ? [
+                                  {
+                                      label: 'Add Child',
+                                      onClick: handleAddChild,
+                                  },
+                                  {
+                                      label: 'Rename',
+                                      onClick: handleRename,
+                                  },
+                                  {
+                                      label: 'Delete',
+                                      onClick: handleDelete,
+                                      variant: 'danger' as const,
+                                  },
+                              ]
+                            : [
+                                  {
+                                      label: 'Add Child',
+                                      onClick: handleAddChild,
+                                  },
+                              ]
+                    }
                 >
-                    <label className="tag-name-label">
-                        {tagName}
-                        {tagId !== '' && <span className="tag-item-count"> ({itemCount})</span>}
-                    </label>
-                    <span className="tag-actions-container">
-                        <StyledButton className="new-child-action" onClick={handleAddChild}>
-                            +
-                        </StyledButton>
-                        <StyledButton className="rename-tag-action" onClick={handleRename}>
-                            Rename
-                        </StyledButton>
-                        <StyledButton className="remove-tag-action" onClick={handleDelete}>
-                            Delete
-                        </StyledButton>
-                    </span>
-                </div>
+                    <div
+                        className="tag-body"
+                        data-tag-id={tagId}
+                        data-tag-path={tag ? tag.path.map(({ name }) => name).join(',') : undefined}
+                    >
+                        <label className="tag-name-label">
+                            {tagName}
+                            {tagId !== '' && <span className="tag-item-count"> ({itemCount})</span>}
+                        </label>
+                        <span className="tag-actions-container">
+                            <StyledButton className="new-child-action" onClick={handleAddChild}>
+                                +
+                            </StyledButton>
+                            <StyledButton className="rename-tag-action" onClick={handleRename}>
+                                Rename
+                            </StyledButton>
+                            <StyledButton className="remove-tag-action" onClick={handleDelete}>
+                                Delete
+                            </StyledButton>
+                        </span>
+                    </div>
+                </LongPressContextMenu>
 
                 <ul className="tag-children-list" data-parent-tag-id={tagId} data-children-count={tagChildren.length}>
                     {tagChildren.map((childTag) => {

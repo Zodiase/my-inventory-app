@@ -238,7 +238,7 @@
 - [X] T058a [P] [US5] Create Storybook stories for LoadingSpinner in meteor-app/imports/ui/LoadingSpinner.stories.tsx
 - [X] T059 [US5] Implement keyboard visibility management utility in meteor-app/imports/utility/keyboardManager.ts
 - [X] T060 [US5] Add pull-to-refresh support to AllItemsView in meteor-app/imports/ui/AllItemsView.tsx
-- [ ] T061 [US5] Add long-press context menus to item and tag components
+- [X] T061 [US5] Add long-press context menus to item and tag components
 - [ ] T062 [US5] Add double-submission prevention to all forms
 - [ ] T063 [US5] Replace all buttons with TouchButton component ensuring adequate sizing
 - [ ] T064 [US5] Add smooth scroll with momentum to all scrollable lists
