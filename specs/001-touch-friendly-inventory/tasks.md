@@ -234,8 +234,8 @@
 - [X] T056a [P] [US5] Create Storybook stories for TouchButton in meteor-app/imports/ui/TouchButton.stories.tsx
 - [X] T057 [P] [US5] Create LongPressContextMenu component in meteor-app/imports/ui/LongPressContextMenu.tsx
 - [X] T057a [P] [US5] Create Storybook stories for LongPressContextMenu in meteor-app/imports/ui/LongPressContextMenu.stories.tsx
-- [ ] T058 [P] [US5] Create LoadingSpinner component for mobile in meteor-app/imports/ui/LoadingSpinner.tsx
-- [ ] T058a [P] [US5] Create Storybook stories for LoadingSpinner in meteor-app/imports/ui/LoadingSpinner.stories.tsx
+- [X] T058 [P] [US5] Create LoadingSpinner component for mobile in meteor-app/imports/ui/LoadingSpinner.tsx
+- [X] T058a [P] [US5] Create Storybook stories for LoadingSpinner in meteor-app/imports/ui/LoadingSpinner.stories.tsx
 - [ ] T059 [US5] Implement keyboard visibility management utility in meteor-app/imports/utility/keyboardManager.ts
 - [ ] T060 [US5] Add pull-to-refresh support to AllItemsView in meteor-app/imports/ui/AllItemsView.tsx
 - [ ] T061 [US5] Add long-press context menus to item and tag components
