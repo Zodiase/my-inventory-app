@@ -241,9 +241,9 @@
 - [X] T061 [US5] Add long-press context menus to item and tag components
 - [X] T062 [US5] Add double-submission prevention to all forms
 - [X] T063 [US5] Replace all buttons with TouchButton component ensuring adequate sizing
-- [ ] T064 [US5] Add smooth scroll with momentum to all scrollable lists
-- [ ] T065 [US5] Implement swipe-back navigation for location hierarchy
-- [ ] T066 [US5] Add visual feedback for drag-and-drop (highlight drop targets)
+- [X] T064 [US5] Add smooth scroll with momentum to all scrollable lists
+- [X] T065 [US5] Implement swipe-back navigation for location hierarchy
+- [X] T066 [US5] Add visual feedback for drag-and-drop (highlight drop targets)
 
 **Checkpoint**: All UI interactions should be touch-optimized and feel native on iOS devices
 
