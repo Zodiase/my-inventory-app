@@ -9,22 +9,18 @@ import type { Page } from '@playwright/test';
  * Reset the entire database (remove all items, tags, and attachments).
  * This ensures each test starts with a clean slate.
  *
+ * Uses a REST endpoint instead of Meteor.call() for reliability.
+ *
  * @param page - Playwright page object
  */
 export async function resetDatabase(page: Page): Promise<void> {
-    await page.evaluate(() => {
-        return new Promise<void>((resolve, reject) => {
-            // Call Meteor method to reset all collections
-            // @ts-expect-error - Meteor is available in browser context
-            Meteor.call('test.resetDatabase', (error: Error | null) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
-        });
-    });
+    // Use page.request to make HTTP call to reset endpoint
+    const response = await page.request.post('http://localhost:3000/api/test/reset-database');
+
+    if (!response.ok()) {
+        const body = await response.text();
+        throw new Error(`Failed to reset database: ${response.status()} ${body}`);
+    }
 }
 
 /**
@@ -53,11 +49,7 @@ export async function waitForMeteorReady(page: Page, timeoutMs = 30000): Promise
  * @param args - Arguments to pass to the method
  * @returns Promise resolving to the method result
  */
-export async function callMeteorMethod<T>(
-    page: Page,
-    methodName: string,
-    ...args: unknown[]
-): Promise<T> {
+export async function callMeteorMethod<T>(page: Page, methodName: string, ...args: unknown[]): Promise<T> {
     return await page.evaluate(
         ({ method, methodArgs }) => {
             return new Promise<T>((resolve, reject) => {
@@ -83,11 +75,7 @@ export async function callMeteorMethod<T>(
  * @param publicationName - Name of the Meteor publication
  * @param args - Arguments to pass to the subscription
  */
-export async function subscribeAndWait(
-    page: Page,
-    publicationName: string,
-    ...args: unknown[]
-): Promise<void> {
+export async function subscribeAndWait(page: Page, publicationName: string, ...args: unknown[]): Promise<void> {
     await page.evaluate(
         ({ pubName, pubArgs }) => {
             return new Promise<void>((resolve) => {

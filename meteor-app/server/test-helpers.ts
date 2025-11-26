@@ -4,6 +4,7 @@
  */
 
 import { Meteor } from 'meteor/meteor';
+import { WebApp } from 'meteor/webapp';
 import Items from '/imports/api/items';
 import Tags from '/imports/api/tags';
 import { Attachments } from '/imports/api/attachments';
@@ -36,5 +37,28 @@ if (!Meteor.isProduction) {
         async 'test.resetDatabase'(): Promise<void> {
             await resetDatabase();
         },
+    });
+
+    /**
+     * HTTP endpoint for resetting the database in E2E tests.
+     * This allows tests to reset without needing Meteor.call().
+     * Only available in development mode.
+     */
+    WebApp.connectHandlers.use('/api/test/reset-database', async (req, res) => {
+        // Only allow POST requests
+        if (req.method !== 'POST') {
+            res.writeHead(405, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Method not allowed. Use POST.' }));
+            return;
+        }
+
+        try {
+            await resetDatabase();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true }));
+        } catch (error) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }));
+        }
     });
 }
