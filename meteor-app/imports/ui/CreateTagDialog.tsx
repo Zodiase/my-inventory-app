@@ -2,6 +2,8 @@ import { Box, Button, Form, FormField, Heading, Layer, Text, TextInput } from 'g
 import { Close } from 'grommet-icons';
 import React, { useState } from 'react';
 
+import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
+
 /**
  * CreateTagDialog component for creating new tags.
  *
@@ -69,6 +71,10 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
 }) => {
     const [tagName, setTagName] = useState('');
     const [localError, setLocalError] = useState('');
+    const [internalLoading, setInternalLoading] = useState(false);
+
+    // Double-submission prevention: use internal state OR external state
+    const isActuallyLoading = isLoading || internalLoading;
 
     const handleClose = (): void => {
         setTagName('');
@@ -77,6 +83,11 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
     };
 
     const handleSubmit = async (): Promise<void> => {
+        // Prevent double-submission
+        if (isActuallyLoading) {
+            return;
+        }
+
         // Clear previous errors
         setLocalError('');
 
@@ -92,6 +103,8 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
             return;
         }
 
+        setInternalLoading(true);
+
         // Submit
         try {
             await onSubmit(trimmedName);
@@ -100,6 +113,8 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
         } catch (error) {
             // Error is handled via errorMessage prop
             console.error('Error creating tag:', error);
+        } finally {
+            setInternalLoading(false);
         }
     };
 
@@ -112,10 +127,31 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
     return (
         <Layer
             position="center"
-            onClickOutside={isLoading ? undefined : handleClose}
-            onEsc={isLoading ? undefined : handleClose}
+            onClickOutside={isActuallyLoading ? undefined : handleClose}
+            onEsc={isActuallyLoading ? undefined : handleClose}
         >
-            <Box width="medium" pad="medium" gap="medium">
+            <Box width="medium" pad="medium" gap="medium" style={{ position: 'relative' }}>
+                {/* Show loading spinner overlay during submission */}
+                {isActuallyLoading && (
+                    <Box
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            zIndex: 100,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'rgba(255, 255, 255, 0.8)',
+                            borderRadius: '4px',
+                        }}
+                    >
+                        <LoadingSpinner size="medium" />
+                    </Box>
+                )}
+
                 {/* Header */}
                 <Box direction="row" justify="between" align="center">
                     <Heading level={3} margin="none">
@@ -124,7 +160,7 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
                     <Button
                         icon={<Close />}
                         onClick={handleClose}
-                        disabled={isLoading}
+                        disabled={isActuallyLoading}
                         plain
                         style={{ minWidth: '44px', minHeight: '44px' }}
                         aria-label="Close dialog"
@@ -143,7 +179,7 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
                             placeholder="Enter tag name"
                             value={tagName}
                             onChange={(event) => setTagName(event.target.value)}
-                            disabled={isLoading}
+                            disabled={isActuallyLoading}
                             autoFocus
                         />
                     </FormField>
@@ -171,14 +207,14 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
                         <Button
                             label="Cancel"
                             onClick={handleClose}
-                            disabled={isLoading}
+                            disabled={isActuallyLoading}
                             style={{ minWidth: '44px', minHeight: '44px' }}
                         />
                         <Button
                             type="submit"
-                            label={isLoading ? 'Creating...' : 'Create Tag'}
+                            label={isActuallyLoading ? 'Creating...' : 'Create Tag'}
                             primary
-                            disabled={isLoading || tagName.trim().length === 0}
+                            disabled={isActuallyLoading || tagName.trim().length === 0}
                             style={{ minWidth: '44px', minHeight: '44px' }}
                         />
                     </Box>

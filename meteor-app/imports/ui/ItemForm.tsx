@@ -3,6 +3,7 @@ import { Box, Button, CheckBox, Form, FormField, Text, TextArea, TextInput } fro
 import type { FormExtendedEvent } from 'grommet';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import type RecordInput from '/imports/utility/RecordInput';
 
 /**
@@ -49,28 +50,42 @@ export const ItemForm = ({
     const [description, setDescription] = useState(initialValues.description ?? '');
     const [isContainer, setIsContainer] = useState(initialValues.isContainer ?? false);
     const [validationError, setValidationError] = useState<string>('');
+    const [internalSubmitting, setInternalSubmitting] = useState(false);
+
+    // Double-submission prevention: use internal state OR external state
+    const isActuallySubmitting = isSubmitting || internalSubmitting;
 
     const nameLength = name.length;
     const descriptionLength = description.length;
 
     const handleSubmit = async (event: FormExtendedEvent): Promise<void> => {
         event.preventDefault();
+
+        // Prevent double-submission
+        if (isActuallySubmitting) {
+            return;
+        }
+
         setValidationError('');
+        setInternalSubmitting(true);
 
         // Validate name
         if (name.trim() === '') {
             setValidationError('Item name is required.');
+            setInternalSubmitting(false);
             return;
         }
 
         if (name.length > 500) {
             setValidationError('Item name must be 500 characters or less.');
+            setInternalSubmitting(false);
             return;
         }
 
         // Validate description if provided
         if (description.length > 5000) {
             setValidationError('Item description must be 5000 characters or less.');
+            setInternalSubmitting(false);
             return;
         }
 
@@ -99,6 +114,8 @@ export const ItemForm = ({
         } catch (err) {
             // Error will be shown via the error prop
             console.error('Form submission error:', err);
+        } finally {
+            setInternalSubmitting(false);
         }
     };
 
@@ -107,6 +124,26 @@ export const ItemForm = ({
     return (
         <Form onSubmit={handleSubmit}>
             <Box gap="medium" pad="medium" width="large">
+                {/* Show loading spinner overlay during submission */}
+                {isActuallySubmitting && (
+                    <Box
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            zIndex: 100,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                    >
+                        <LoadingSpinner size="medium" />
+                    </Box>
+                )}
+
                 {displayError !== undefined && displayError !== '' && (
                     <Box
                         background="status-error"
@@ -139,7 +176,7 @@ export const ItemForm = ({
                             setName(event.target.value);
                         }}
                         placeholder="Enter item name"
-                        disabled={isSubmitting}
+                        disabled={isActuallySubmitting}
                         autoFocus
                         maxLength={550}
                     />
@@ -169,7 +206,7 @@ export const ItemForm = ({
                             setDescription(event.target.value);
                         }}
                         placeholder="Enter optional description"
-                        disabled={isSubmitting}
+                        disabled={isActuallySubmitting}
                         resize="vertical"
                         rows={5}
                         maxLength={5050}
@@ -184,25 +221,31 @@ export const ItemForm = ({
                         onChange={(event) => {
                             setIsContainer(event.target.checked);
                         }}
-                        disabled={isSubmitting}
+                        disabled={isActuallySubmitting}
                     />
                 </Box>
 
                 <Box direction="row" gap="medium" justify="end">
                     {onCancel !== undefined && (
-                        <Button type="button" label="Cancel" onClick={onCancel} disabled={isSubmitting} secondary />
+                        <Button
+                            type="button"
+                            label="Cancel"
+                            onClick={onCancel}
+                            disabled={isActuallySubmitting}
+                            secondary
+                        />
                     )}
                     <Button
                         type="submit"
                         label={
-                            isSubmitting
+                            isActuallySubmitting
                                 ? 'Saving...'
                                 : initialValues.name !== undefined
                                 ? 'Save Changes'
                                 : 'Create Item'
                         }
                         primary
-                        disabled={isSubmitting || name.trim() === ''}
+                        disabled={isActuallySubmitting || name.trim() === ''}
                     />
                 </Box>
             </Box>
