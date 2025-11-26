@@ -3,6 +3,7 @@ import { Close } from 'grommet-icons';
 import React, { useState } from 'react';
 
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
+import { TouchButton } from '/imports/ui/TouchButton';
 
 /**
  * CreateTagDialog component for creating new tags.
@@ -204,19 +205,16 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({
 
                     {/* Action Buttons */}
                     <Box direction="row" gap="small" justify="end" margin={{ top: 'medium' }}>
-                        <Button
-                            label="Cancel"
-                            onClick={handleClose}
-                            disabled={isActuallyLoading}
-                            style={{ minWidth: '44px', minHeight: '44px' }}
-                        />
-                        <Button
+                        <TouchButton onClick={handleClose} disabled={isActuallyLoading} variant="secondary">
+                            Cancel
+                        </TouchButton>
+                        <TouchButton
                             type="submit"
-                            label={isActuallyLoading ? 'Creating...' : 'Create Tag'}
-                            primary
+                            variant="primary"
                             disabled={isActuallyLoading || tagName.trim().length === 0}
-                            style={{ minWidth: '44px', minHeight: '44px' }}
-                        />
+                        >
+                            {isActuallyLoading ? 'Creating...' : 'Create Tag'}
+                        </TouchButton>
                     </Box>
                 </Form>
             </Box>

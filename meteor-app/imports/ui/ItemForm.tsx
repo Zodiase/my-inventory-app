@@ -1,9 +1,10 @@
 import React, { useState, type ReactElement } from 'react';
-import { Box, Button, CheckBox, Form, FormField, Text, TextArea, TextInput } from 'grommet';
+import { Box, CheckBox, Form, FormField, Text, TextArea, TextInput } from 'grommet';
 import type { FormExtendedEvent } from 'grommet';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
+import { TouchButton } from '/imports/ui/TouchButton';
 import type RecordInput from '/imports/utility/RecordInput';
 
 /**
@@ -227,26 +228,22 @@ export const ItemForm = ({
 
                 <Box direction="row" gap="medium" justify="end">
                     {onCancel !== undefined && (
-                        <Button
+                        <TouchButton
                             type="button"
-                            label="Cancel"
                             onClick={onCancel}
                             disabled={isActuallySubmitting}
-                            secondary
-                        />
+                            variant="secondary"
+                        >
+                            Cancel
+                        </TouchButton>
                     )}
-                    <Button
-                        type="submit"
-                        label={
-                            isActuallySubmitting
-                                ? 'Saving...'
-                                : initialValues.name !== undefined
-                                ? 'Save Changes'
-                                : 'Create Item'
-                        }
-                        primary
-                        disabled={isActuallySubmitting || name.trim() === ''}
-                    />
+                    <TouchButton type="submit" variant="primary" disabled={isActuallySubmitting || name.trim() === ''}>
+                        {isActuallySubmitting
+                            ? 'Saving...'
+                            : initialValues.name !== undefined
+                            ? 'Save Changes'
+                            : 'Create Item'}
+                    </TouchButton>
                 </Box>
             </Box>
         </Form>

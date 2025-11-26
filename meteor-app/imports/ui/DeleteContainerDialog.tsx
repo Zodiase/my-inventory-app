@@ -3,6 +3,7 @@ import { Alert, Close } from 'grommet-icons';
 import React, { useState } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import { TouchButton } from '/imports/ui/TouchButton';
 
 /**
  * DeleteContainerDialog component for handling container deletion with multiple strategies.
@@ -223,14 +224,12 @@ export const DeleteContainerDialog: React.FC<DeleteContainerDialogProps> = ({
 
                 {/* Action buttons */}
                 <Box direction="row" gap="small" justify="end">
-                    <Button label="Cancel" onClick={onCancel} disabled={isDeleting} />
-                    <Button
-                        label={isDeleting ? 'Deleting...' : 'Delete Container'}
-                        onClick={handleConfirm}
-                        disabled={isDeleting || !canConfirm}
-                        primary
-                        color="status-critical"
-                    />
+                    <TouchButton onClick={onCancel} disabled={isDeleting} variant="secondary">
+                        Cancel
+                    </TouchButton>
+                    <TouchButton onClick={handleConfirm} disabled={isDeleting || !canConfirm} variant="danger">
+                        {isDeleting ? 'Deleting...' : 'Delete Container'}
+                    </TouchButton>
                 </Box>
             </Box>
         </Layer>
