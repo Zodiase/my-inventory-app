@@ -114,9 +114,9 @@ const RemoveButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    padding: 0;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px; /* Centers 24px icon: (44px - 24px) / 2 = 10px */
     background: rgba(255, 255, 255, 0.2);
     border: none;
     border-radius: 50%;
