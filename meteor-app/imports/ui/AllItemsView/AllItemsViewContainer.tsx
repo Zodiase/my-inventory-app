@@ -1,4 +1,4 @@
-import React, { type ComponentProps, type ReactElement, useState } from 'react';
+import React, { type ComponentProps, type ReactElement, useState, useCallback } from 'react';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import type { SearchFragment } from '/imports/model/SearchFragment';
@@ -49,6 +49,18 @@ export const AllItemsViewContainer = ({
     ...rootElementProps
 }: AllItemsViewContainerProps & ComponentProps<'div'>): ReactElement => {
     const [currentContainerId, setCurrentContainerId] = useState<string | undefined>(initialContainerId);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    // Handle pull-to-refresh
+    const handleRefresh = useCallback(async () => {
+        // Trigger re-fetch by updating dependency
+        setRefreshTrigger((prev) => prev + 1);
+
+        // Small delay for visual feedback
+        await new Promise((resolve) => {
+            setTimeout(resolve, 500);
+        });
+    }, []);
 
     // Fetch items at current level with optional filters
     const items = useTracker(() => {
@@ -83,7 +95,7 @@ export const AllItemsViewContainer = ({
                 ],
             }).fetch();
         }
-    }, [currentContainerId, JSON.stringify(filters)]);
+    }, [currentContainerId, JSON.stringify(filters), refreshTrigger]);
 
     // Fetch current container path for breadcrumb
     const containerPath = useTracker(() => {
@@ -122,6 +134,7 @@ export const AllItemsViewContainer = ({
             onBreadcrumbNavigate={(containerId) => {
                 handleNavigateToContainer(containerId);
             }}
+            onRefresh={handleRefresh}
         />
     );
 };

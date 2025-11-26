@@ -361,3 +361,51 @@ export const InteractiveNavigation: Story = {
         );
     },
 };
+
+/**
+ * Pull-to-refresh functionality demo
+ */
+export const PullToRefresh: Story = {
+    render: () => {
+        const [items, setItems] = useState<InventoryItem[]>([garage, kitchen]);
+        const [refreshCount, setRefreshCount] = useState(0);
+
+        const handleRefresh = async (): Promise<void> => {
+            // Simulate data refresh
+            await new Promise((resolve) => {
+                setTimeout(resolve, 1000);
+            });
+
+            // Add a timestamp to show refresh worked
+            setRefreshCount((prev) => prev + 1);
+
+            // Optionally modify items to show refresh
+            const timestamp = new Date().toLocaleTimeString();
+            setItems([
+                { ...garage, description: `Refreshed at ${timestamp}` },
+                { ...kitchen, description: `Refreshed at ${timestamp}` },
+                { ...toolBox, containerId: undefined, description: `Added at ${timestamp}` },
+            ]);
+        };
+
+        return (
+            <Box fill gap="small">
+                <Box pad="small" background="status-ok" round="small">
+                    <GrommetText>Pull down at the top to refresh. Refresh count: {refreshCount}</GrommetText>
+                </Box>
+                <AllItemsViewPresentation
+                    items={items}
+                    containerPath={[]}
+                    showHomeIcon
+                    onNavigateToContainer={() => {
+                        console.log('Navigate to container');
+                    }}
+                    onBreadcrumbNavigate={() => {
+                        console.log('Breadcrumb navigate');
+                    }}
+                    onRefresh={handleRefresh}
+                />
+            </Box>
+        );
+    },
+};

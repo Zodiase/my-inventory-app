@@ -1,9 +1,74 @@
 import { Box, List, Text } from 'grommet';
 import { Folder, Next } from 'grommet-icons';
-import React, { type ComponentProps, type ReactElement } from 'react';
+import React, { type ComponentProps, type ReactElement, useRef } from 'react';
+import styled, { keyframes } from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
+import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
+import { usePullToRefresh } from '/imports/utility/pullToRefresh';
+
+/**
+ * Scrollable container for items list
+ */
+const ScrollableContainer = styled.div`
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+`;
+
+/**
+ * Pull-to-refresh indicator container
+ */
+const PullToRefreshIndicator = styled.div`
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    pointer-events: none;
+    z-index: 100;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+`;
+
+/**
+ * Rotation animation for refresh icon
+ */
+const rotate = keyframes`
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+`;
+
+/**
+ * Refresh icon arrow (SVG)
+ */
+const RefreshIcon = styled.svg.attrs<{ isTriggered: boolean; pullDistance: number }>(() => ({
+    viewBox: '0 0 24 24',
+    width: '24',
+    height: '24',
+}))<{ isTriggered: boolean; pullDistance: number }>`
+    fill: none;
+    stroke: ${(props) => (props.isTriggered ? '#7D4CDB' : '#999')};
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transform: rotate(${(props) => Math.min((props.pullDistance / 80) * 360, 360)}deg);
+    transition: stroke 0.2s ease-out;
+
+    ${(props) =>
+        props.isTriggered &&
+        `
+        animation: ${rotate} 0.6s linear infinite;
+    `}
+`;
 
 /**
  * AllItemsViewPresentation is a pure presentation component that displays inventory items
@@ -17,6 +82,7 @@ import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
  * - BreadcrumbTrail for navigation context
  * - Visual distinction between containers (Folder icon) and items
  * - Touch-optimized navigation (44x44px minimum touch targets)
+ * - Pull-to-refresh gesture for iOS-style data refresh
  * - Click containers to navigate into them
  */
 export interface AllItemsViewPresentationProps {
@@ -44,6 +110,11 @@ export interface AllItemsViewPresentationProps {
      * Callback when navigating via breadcrumb trail
      */
     onBreadcrumbNavigate: (containerId: string | undefined) => void;
+
+    /**
+     * Callback when pull-to-refresh is triggered
+     */
+    onRefresh?: () => Promise<void>;
 }
 
 export const AllItemsViewPresentation = ({
@@ -52,64 +123,97 @@ export const AllItemsViewPresentation = ({
     showHomeIcon = true,
     onNavigateToContainer,
     onBreadcrumbNavigate,
+    onRefresh,
     ...rootElementProps
 }: AllItemsViewPresentationProps & ComponentProps<'div'>): ReactElement => {
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    // Pull-to-refresh hook
+    const { isRefreshing, pullDistance, isTriggered } = usePullToRefresh({
+        containerRef,
+        onRefresh: onRefresh ?? (async () => {}),
+        triggerDistance: 80,
+        enabled: onRefresh !== undefined,
+    });
+
     return (
         <Box {...rootElementProps} fill gap="small" pad="small">
-            {/* Breadcrumb trail for navigation */}
-            <BreadcrumbTrail
-                path={containerPath}
-                showHomeIcon={showHomeIcon}
-                onNavigate={(item) => {
-                    onBreadcrumbNavigate(item?._id);
-                }}
-            />
-
-            {/* Items list */}
-            {items.length === 0 ? (
-                <Box align="center" justify="center" pad="large">
-                    <Text color="text-weak">No items at this level</Text>
-                </Box>
-            ) : (
-                <List data={items} pad="none" border={false}>
-                    {(item: InventoryItem) => (
-                        <Box
-                            key={item._id}
-                            direction="row"
-                            align="center"
-                            pad="small"
-                            gap="small"
-                            background="background-front"
-                            hoverIndicator="background-contrast"
-                            style={{
-                                minHeight: '44px',
-                                cursor: item.isContainer ? 'pointer' : 'default',
-                            }}
-                            onClick={() => {
-                                if (item.isContainer) {
-                                    onNavigateToContainer(item._id);
-                                }
-                            }}
-                        >
-                            {/* Icon for containers */}
-                            {item.isContainer && <Folder size="medium" color="brand" />}
-
-                            {/* Item name */}
-                            <Box flex>
-                                <Text weight={item.isContainer ? 'bold' : 'normal'}>{item.name}</Text>
-                                {item.description && (
-                                    <Text size="small" color="text-weak" truncate>
-                                        {item.description}
-                                    </Text>
-                                )}
-                            </Box>
-
-                            {/* Navigation arrow for containers */}
-                            {item.isContainer && <Next size="medium" color="text-weak" />}
-                        </Box>
+            {/* Pull-to-refresh indicator */}
+            {onRefresh !== undefined && (
+                <PullToRefreshIndicator
+                    style={{
+                        transform: `translateY(${Math.min(pullDistance, 60)}px) translateX(-50%)`,
+                        opacity: Math.min(pullDistance / 80, 1),
+                    }}
+                >
+                    {isRefreshing ? (
+                        <LoadingSpinner size="small" />
+                    ) : (
+                        <RefreshIcon isTriggered={isTriggered} pullDistance={pullDistance}>
+                            <path d="M23 4v6h-6M1 20v-6h6" />
+                            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+                        </RefreshIcon>
                     )}
-                </List>
+                </PullToRefreshIndicator>
             )}
+
+            {/* Scrollable container */}
+            <ScrollableContainer ref={containerRef}>
+                {/* Breadcrumb trail for navigation */}
+                <BreadcrumbTrail
+                    path={containerPath}
+                    showHomeIcon={showHomeIcon}
+                    onNavigate={(item) => {
+                        onBreadcrumbNavigate(item?._id);
+                    }}
+                />
+
+                {/* Items list */}
+                {items.length === 0 ? (
+                    <Box align="center" justify="center" pad="large">
+                        <Text color="text-weak">No items at this level</Text>
+                    </Box>
+                ) : (
+                    <List data={items} pad="none" border={false}>
+                        {(item: InventoryItem) => (
+                            <Box
+                                key={item._id}
+                                direction="row"
+                                align="center"
+                                pad="small"
+                                gap="small"
+                                background="background-front"
+                                hoverIndicator="background-contrast"
+                                style={{
+                                    minHeight: '44px',
+                                    cursor: item.isContainer ? 'pointer' : 'default',
+                                }}
+                                onClick={() => {
+                                    if (item.isContainer) {
+                                        onNavigateToContainer(item._id);
+                                    }
+                                }}
+                            >
+                                {/* Icon for containers */}
+                                {item.isContainer && <Folder size="medium" color="brand" />}
+
+                                {/* Item name */}
+                                <Box flex>
+                                    <Text weight={item.isContainer ? 'bold' : 'normal'}>{item.name}</Text>
+                                    {item.description && (
+                                        <Text size="small" color="text-weak" truncate>
+                                            {item.description}
+                                        </Text>
+                                    )}
+                                </Box>
+
+                                {/* Navigation arrow for containers */}
+                                {item.isContainer && <Next size="medium" color="text-weak" />}
+                            </Box>
+                        )}
+                    </List>
+                )}
+            </ScrollableContainer>
         </Box>
     );
 };
