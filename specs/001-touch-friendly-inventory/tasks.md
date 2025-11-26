@@ -232,8 +232,8 @@
 - [X] T055 [P] [US5] Audit all interactive elements for 44x44px minimum tap targets in meteor-app/imports/ui/
 - [X] T056 [P] [US5] Create TouchButton component with iOS-style feedback in meteor-app/imports/ui/TouchButton.tsx
 - [X] T056a [P] [US5] Create Storybook stories for TouchButton in meteor-app/imports/ui/TouchButton.stories.tsx
-- [ ] T057 [P] [US5] Create LongPressContextMenu component in meteor-app/imports/ui/LongPressContextMenu.tsx
-- [ ] T057a [P] [US5] Create Storybook stories for LongPressContextMenu in meteor-app/imports/ui/LongPressContextMenu.stories.tsx
+- [X] T057 [P] [US5] Create LongPressContextMenu component in meteor-app/imports/ui/LongPressContextMenu.tsx
+- [X] T057a [P] [US5] Create Storybook stories for LongPressContextMenu in meteor-app/imports/ui/LongPressContextMenu.stories.tsx
 - [ ] T058 [P] [US5] Create LoadingSpinner component for mobile in meteor-app/imports/ui/LoadingSpinner.tsx
 - [ ] T058a [P] [US5] Create Storybook stories for LoadingSpinner in meteor-app/imports/ui/LoadingSpinner.stories.tsx
 - [ ] T059 [US5] Implement keyboard visibility management utility in meteor-app/imports/utility/keyboardManager.ts
