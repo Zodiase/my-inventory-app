@@ -244,6 +244,7 @@ export const App = (): ReactElement => {
                             onClick={() => setCurrentView('items')}
                             primary={currentView === 'items'}
                             plain={currentView !== 'items'}
+                            style={{ minHeight: '44px' }}
                         />
                         <Button
                             icon={<TagIcon />}
@@ -251,6 +252,7 @@ export const App = (): ReactElement => {
                             onClick={() => setCurrentView('tags')}
                             primary={currentView === 'tags'}
                             plain={currentView !== 'tags'}
+                            style={{ minHeight: '44px' }}
                         />
                         <Button
                             icon={<SearchIcon />}
@@ -258,6 +260,7 @@ export const App = (): ReactElement => {
                             onClick={() => setCurrentView('search')}
                             primary={currentView === 'search'}
                             plain={currentView !== 'search'}
+                            style={{ minHeight: '44px' }}
                         />
                     </Nav>
                 </Header>
