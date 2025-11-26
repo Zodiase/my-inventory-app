@@ -2,6 +2,8 @@
     "name": "my-inventory-app-root",
     "private": true,
     "scripts": {
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
         "test:e2e": "playwright test",
         "test:e2e:ui": "playwright test --ui",
         "test:e2e:headed": "playwright test --headed",
@@ -16,6 +18,7 @@
         "test:e2e:no-server:debug": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --debug"
     },
     "devDependencies": {
-        "@playwright/test": "^1.56.1"
+        "@playwright/test": "^1.56.1",
+        "prettier": "^3.6.2"
     }
 }
