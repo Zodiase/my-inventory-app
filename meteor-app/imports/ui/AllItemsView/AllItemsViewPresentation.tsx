@@ -8,6 +8,7 @@ import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
 import { usePullToRefresh } from '/imports/utility/pullToRefresh';
+import { useSwipeNavigation } from '/imports/utility/swipeNavigation';
 
 /**
  * Scrollable container for items list
@@ -155,6 +156,25 @@ export const AllItemsViewPresentation = ({
         triggerDistance: 80,
         enabled: onRefresh !== undefined,
     });
+
+    // Swipe-back navigation hook
+    // Navigate to parent container (second-to-last in breadcrumb path)
+    const hasParent = containerPath.length > 0;
+    const parentContainerId = containerPath.length > 1 ? containerPath[containerPath.length - 2]?._id : undefined;
+
+    useSwipeNavigation(
+        containerRef,
+        {
+            enabled: hasParent,
+            threshold: 100, // 100px swipe distance
+            edgeThreshold: 50, // Must start within 50px of left edge
+            maxVerticalDeviation: 50, // Max 50px vertical movement
+        },
+        () => {
+            // Navigate to parent container
+            onBreadcrumbNavigate(parentContainerId);
+        }
+    );
 
     return (
         <Box {...rootElementProps} fill gap="small" pad="small">
