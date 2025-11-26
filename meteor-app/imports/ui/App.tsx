@@ -26,7 +26,7 @@ import { useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
 import { Meteor } from 'meteor/meteor';
 
-// Grommet theme with iOS-style design
+// Grommet theme with iOS-style design and touch-friendly sizing
 const theme = {
     global: {
         colors: {
@@ -41,6 +41,43 @@ const theme = {
             border: {
                 radius: '8px',
             },
+        },
+    },
+    button: {
+        default: {
+            // Ensure all buttons meet 44px minimum touch target
+            padding: {
+                vertical: '10px', // 10px + 16px font + 10px = 36px + border ≈ 44px total
+                horizontal: '20px',
+            },
+        },
+        border: {
+            radius: '8px',
+        },
+    },
+    formField: {
+        border: false,
+        content: {
+            pad: { vertical: 'small' },
+        },
+    },
+    textInput: {
+        extend: `
+            min-height: 44px;
+            padding: 12px 16px;
+        `,
+    },
+    textArea: {
+        extend: `
+            min-height: 44px;
+            padding: 12px 16px;
+        `,
+    },
+    select: {
+        container: {
+            extend: `
+                min-height: 44px;
+            `,
         },
     },
 };
