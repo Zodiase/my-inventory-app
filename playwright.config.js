@@ -46,11 +46,17 @@ export default defineConfig({
         },
         {
             name: 'iPad',
-            use: { ...devices['iPad Pro'] },
+            use: { 
+                ...devices['iPad Pro'],
+                hasTouch: true,
+            },
         },
         {
             name: 'iPhone',
-            use: { ...devices['iPhone 13'] },
+            use: { 
+                ...devices['iPhone 13'],
+                hasTouch: true,
+            },
         },
     ],
 

@@ -15,7 +15,8 @@
         "test:e2e:no-server": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test",
         "test:e2e:no-server:ui": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --ui",
         "test:e2e:no-server:headed": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --headed",
-        "test:e2e:no-server:debug": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --debug"
+        "test:e2e:no-server:debug": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --debug",
+        "test:e2e:no-server:machine": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --reporter=line"
     },
     "devDependencies": {
         "@playwright/test": "^1.56.1",
