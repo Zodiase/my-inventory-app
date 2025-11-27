@@ -19,14 +19,14 @@ export class InventoryPage {
     }
 
     /**
-     * Get the "Add Item" button locator.
+     * Get the "Create Item" button locator.
      */
     get addItemButton(): Locator {
-        return this.page.getByRole('button', { name: /add item/i });
+        return this.page.getByRole('button', { name: /create item/i });
     }
 
     /**
-     * Click the "Add Item" button to open the item creation form.
+     * Click the "Create Item" button to open the item creation form.
      */
     async clickAddItem(): Promise<void> {
         await this.addItemButton.click();

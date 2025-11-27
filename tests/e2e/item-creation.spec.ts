@@ -35,7 +35,7 @@ test.describe("User Story 1: Create and Organize Items", () => {
 
     await inventoryPage.goto();
 
-    // Click "Add Item" button from main screen
+    // Click "Create Item" button from main screen
     await inventoryPage.clickAddItem();
 
     // Fill in item details
