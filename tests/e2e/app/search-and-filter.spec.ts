@@ -5,7 +5,7 @@ import {
   createItem,
   createTag,
   callMeteorMethod,
-} from "./helpers";
+} from "../helpers/page-objects";
 
 /**
  * E2E tests for User Story 3: Global Search and Context Filtering

@@ -58,6 +58,15 @@ export default defineConfig({
                 hasTouch: true,
             },
         },
+        /* Storybook component testing project */
+        {
+            name: 'storybook-chromium',
+            use: { 
+                ...devices['Desktop Chrome'],
+                baseURL: 'http://localhost:6006',
+            },
+            testMatch: /tests\/e2e\/storybook\/.*\.spec\.ts/,
+        },
     ],
 
     /* Run your local dev server before starting the tests */

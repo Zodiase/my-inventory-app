@@ -7,12 +7,20 @@ import type { Page, Locator } from '@playwright/test';
 
 /**
  * Page Object for the main inventory view.
+ * 
+ * **Context-Agnostic Design**: Works in both Storybook and full app contexts.
+ * 
+ * **Selector Strategy**:
+ * - Uses `getByRole('button')` for interactive elements (accessible)
+ * - Uses `getByRole('listitem')` for list items (semantic HTML)
+ * - These selectors work across contexts because they rely on HTML semantics
  */
 export class InventoryPage {
     constructor(public readonly page: Page) {}
 
     /**
      * Navigate to the home page.
+     * Only works in full app context (Storybook doesn't have routing).
      */
     async goto(): Promise<void> {
         await this.page.goto('/');
@@ -28,8 +36,16 @@ export class InventoryPage {
     /**
      * Click the "Create Item" button to open the item creation form.
      */
-    async clickAddItem(): Promise<void> {
+    async clickCreateItem(): Promise<void> {
         await this.addItemButton.click();
+    }
+
+    /**
+     * Legacy alias for clickCreateItem().
+     * @deprecated Use clickCreateItem() instead
+     */
+    async clickAddItem(): Promise<void> {
+        await this.clickCreateItem();
     }
 
     /**
@@ -47,7 +63,19 @@ export class InventoryPage {
     }
 
     /**
+     * Verify that an item with the given name appears in the list.
+     * Uses Playwright's auto-waiting assertion.
+     * 
+     * @param itemName - Name of the item to look for
+     */
+    async expectItemInList(itemName: string): Promise<void> {
+        const item = this.itemByName(itemName);
+        await item.waitFor({ state: 'visible', timeout: 5000 });
+    }
+
+    /**
      * Check if an item exists in the current view.
+     * @deprecated Use expectItemInList() for assertions
      */
     async hasItem(name: string): Promise<boolean> {
         return await this.itemByName(name).isVisible();
@@ -56,47 +84,115 @@ export class InventoryPage {
 
 /**
  * Page Object for the item form (create/edit).
+ * 
+ * **Context-Agnostic Design**: This page object works in both:
+ * - Storybook isolated component testing (`http://localhost:6006/iframe.html?id=...`)
+ * - Full Meteor app integration testing (`http://localhost:3000`)
+ * 
+ * **Grommet Known Issues**:
+ * - Cannot use `getByLabel()` with Grommet FormField components (label association broken)
+ * - Must use `input[name="..."]` or `textarea[name="..."]` selectors instead
+ * - This is a Grommet/styled-components limitation, not a bug in our tests
+ * 
+ * **Selector Strategy**:
+ * - Use `name` attribute for form inputs (most reliable)
+ * - Use `type` attribute for buttons (`button[type="submit"]`)
+ * - Use `data-testid` for elements without semantic attributes
+ * - Avoid `getByLabel()`, `getByRole('textbox')` with Grommet components
  */
 export class ItemFormPage {
     constructor(public readonly page: Page) {}
 
     /**
-     * Get the name input field.
+     * Get the name input field using name attribute (context-agnostic selector).
      */
     get nameInput(): Locator {
-        return this.page.getByLabel(/name/i);
+        return this.page.locator('input[name="name"]');
     }
 
     /**
-     * Get the description textarea.
+     * Get the description textarea using name attribute (context-agnostic selector).
      */
     get descriptionInput(): Locator {
-        return this.page.getByLabel(/description/i);
+        return this.page.locator('textarea[name="description"]');
     }
 
     /**
      * Get the "Is Container" checkbox.
+     * 
+     * NOTE: This uses getByLabel which may not work with Grommet FormField.
+     * If this fails, refactor to use `input[name="isContainer"]` or similar.
      */
     get isContainerCheckbox(): Locator {
         return this.page.getByLabel(/container|location/i);
     }
 
     /**
-     * Get the Save/Submit button.
+     * Get the Save/Submit button using type attribute (context-agnostic selector).
      */
     get saveButton(): Locator {
-        return this.page.getByRole('button', { name: /save|create/i });
+        return this.page.locator('button[type="submit"]');
     }
 
     /**
      * Get the Cancel button.
+     * 
+     * NOTE: Uses getByRole which may need refactoring for Storybook if button
+     * doesn't have explicit role. Consider using `button[data-testid="cancel"]` if needed.
      */
     get cancelButton(): Locator {
         return this.page.getByRole('button', { name: /cancel/i });
     }
 
     /**
+     * Fill the name field with the provided value.
+     * 
+     * @param name - Item name to enter
+     */
+    async fillName(name: string): Promise<void> {
+        await this.nameInput.fill(name);
+    }
+
+    /**
+     * Fill the description field with the provided value.
+     * 
+     * @param description - Item description to enter
+     */
+    async fillDescription(description: string): Promise<void> {
+        await this.descriptionInput.fill(description);
+    }
+
+    /**
+     * Submit the form using the submit button.
+     * Uses Playwright's auto-waiting to ensure button is clickable.
+     */
+    async submit(): Promise<void> {
+        await this.saveButton.click();
+    }
+
+    /**
+     * Verify form submission succeeded by checking if form cleared or success message shown.
+     * 
+     * In Storybook: May check for Storybook action or DOM changes
+     * In full app: May check for navigation or success message
+     * 
+     * @remarks
+     * Implementation may vary based on context. Override this method in test files
+     * if context-specific verification needed.
+     */
+    async expectSuccess(): Promise<void> {
+        // Default: check that name field is empty (form was cleared after submit)
+        await this.page.waitForTimeout(500); // Brief wait for form to process
+        const nameValue = await this.nameInput.inputValue();
+        if (nameValue !== '') {
+            throw new Error(`Expected form to clear after submission, but name field still contains: "${nameValue}"`);
+        }
+    }
+
+    /**
      * Fill out the item form with the provided data.
+     * 
+     * @deprecated Use fillName(), fillDescription(), and submit() separately for more control
      */
     async fillForm(data: {
         name: string;
@@ -115,14 +211,9 @@ export class ItemFormPage {
     }
 
     /**
-     * Submit the form to create/update an item.
-     */
-    async submit(): Promise<void> {
-        await this.saveButton.click();
-    }
-
-    /**
      * Create an item with the provided data.
+     * 
+     * @deprecated Use fillName(), fillDescription(), submit(), and expectSuccess() separately
      */
     async createItem(data: {
         name: string;

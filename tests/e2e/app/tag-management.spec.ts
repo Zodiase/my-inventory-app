@@ -8,7 +8,7 @@ import {
   TagsPage,
   InventoryPage,
   ItemDetailPage,
-} from "./helpers";
+} from "../helpers/page-objects";
 
 /**
  * E2E tests for User Story 2: Tag Items for Cross-Location Collections

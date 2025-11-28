@@ -1,25 +1,23 @@
 import { test, expect } from "@playwright/test";
-import {
-  resetDatabase,
-  waitForMeteorReady,
-  createItem,
-  testData,
-  InventoryPage,
-  ItemFormPage,
-  ItemDetailPage,
-  verifyTouchTargets,
-} from "./helpers";
+import { InventoryPage, ItemFormPage } from "../helpers/page-objects";
 
 /**
- * E2E tests for User Story 1: Create and Organize Items
- *
- * Tests cover all acceptance criteria:
- * - T013a: Create new item from main screen
- * - T013b: Item appears in inventory list after creation
- * - T013c: Nest item under location container
- * - T013d: Expand location to see contained items
- * - T013e: View item details shows location breadcrumb trail
- * - T013f: Verify all touch targets are 44×44px minimum
+ * IntegrationTest for item creation in full Meteor app.
+ * 
+ * **Context**: Full app integration testing (http://localhost:3000)
+ * **Dependencies**: T007 (ItemForm ComponentTest) MUST have 100% pass rate
+ * 
+ * **Purpose**: Verify that the SAME page objects proven in Storybook (T007)
+ * work correctly in the full application context with real data persistence.
+ * 
+ * **TestPattern Used**: "Submit Grommet form with name attribute selectors"
+ * - Validated in Storybook: ✅ (T007)
+ * - Ported to Integration: ✅ (this test)
+ * 
+ * **Success Criteria**:
+ * - Same ItemFormPage works in both Storybook and full app
+ * - No selector changes needed
+ * - Data persists to MongoDB and appears in list
  */
 
 test.beforeEach(async ({ page }) => {

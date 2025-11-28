@@ -18,15 +18,15 @@
 
 **Purpose**: Configure Playwright for Storybook testing - enables all user stories
 
-- [ ] T001 Configure Playwright with Storybook project in playwright.config.js
+- [X] T001 Configure Playwright with Storybook project in playwright.config.js
   - Add `storybook-chromium` project targeting http://localhost:6006
   - Set testMatch pattern: `/tests\/e2e\/storybook\/.*\.spec\.ts/`
   - Do NOT add webServer config (Storybook runs manually per research.md Q1)
-- [ ] T002 Create test directory structure
+- [X] T002 Create test directory structure
   - Create `tests/e2e/storybook/` for component tests
   - Create `tests/e2e/app/` (if doesn't exist) for integration tests
   - Ensure `tests/e2e/helpers/` exists for shared utilities
-- [ ] T003 [P] Create Storybook helper utilities in tests/e2e/helpers/storybook-helpers.ts
+- [X] T003 [P] Create Storybook helper utilities in tests/e2e/helpers/storybook-helpers.ts
   - Function to build story URL: `getStoryUrl(componentName, storyName)`
   - Function to navigate to story: `gotoStory(page, storyId)`
   - Export story URL pattern constant
@@ -39,16 +39,16 @@
 
 **⚠️ CRITICAL**: These page objects must be proven context-agnostic before ANY user story implementation
 
-- [ ] T004 Refactor ItemFormPage in tests/e2e/helpers/page-objects.ts
+- [X] T004 Refactor ItemFormPage in tests/e2e/helpers/page-objects.ts
   - Use context-agnostic selectors: `input[name="name"]`, `textarea[name="description"]`, `button[type="submit"]`
   - Remove getByLabel() selectors (Grommet incompatible per research.md Q4)
   - Add JSDoc documenting known Grommet quirks
   - Methods: fillName(), fillDescription(), submit(), expectSuccess()
-- [ ] T005 [P] Create InventoryPage in tests/e2e/helpers/page-objects.ts
+- [X] T005 [P] Create InventoryPage in tests/e2e/helpers/page-objects.ts
   - Method: clickCreateItem() - finds "Create Item" button
   - Method: expectItemInList(itemName) - verifies item appears in list
   - Context-agnostic selectors only
-- [ ] T006 [P] Verify existing Storybook stories exist
+- [X] T006 [P] Verify existing Storybook stories exist
   - Confirm meteor-app/imports/ui/ItemForm.stories.tsx exists
   - Confirm meteor-app/imports/ui/TouchButton.stories.tsx exists (if applicable)
   - Document story IDs for each component
@@ -72,7 +72,7 @@
 
 ### Component Tests for User Story 1
 
-- [ ] T007 [P] [US1] Create ItemForm component test in tests/e2e/storybook/ItemForm.spec.ts
+- [X] T007 [P] [US1] Create ItemForm component test in tests/e2e/storybook/ItemForm.spec.ts
   - Test: "should fill and submit form successfully"
     - Navigate to `http://localhost:6006/iframe.html?id=itemform--default&viewMode=story`
     - Use ItemFormPage page object

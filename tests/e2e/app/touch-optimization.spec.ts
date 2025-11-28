@@ -15,6 +15,7 @@
 import { expect, test } from "@playwright/test";
 
 import { resetDatabase } from "./helpers/database";
+import { InventoryPage, ItemFormPage } from "./helpers/page-objects";
 
 test.describe("Touch Optimization - User Story 5", () => {
   test.beforeEach(async ({ page }) => {
@@ -108,20 +109,20 @@ test.describe("Touch Optimization - User Story 5", () => {
    * - Works on both items and containers
    */
   test("T053b: Long-press on item reveals context menu", async ({ page }) => {
+    const inventoryPage = new InventoryPage(page);
+    const itemForm = new ItemFormPage(page);
+    
     // Set viewport to iPhone size
     await page.setViewportSize({ width: 375, height: 667 });
 
     // Create a test item first
-    await page.goto("/");
+    await inventoryPage.goto();
     await page.waitForSelector("text=Inventory App");
 
-    // Click "Create Item" button to create an item
-    await page.click("button:has-text('Create Item')");
+    // Create an item using page objects
+    await inventoryPage.clickAddItem();
     await page.waitForSelector("text=Create New Item");
-
-    // Fill in the form
-    await page.fill('input[name="name"]', "Test Item for Long Press");
-    await page.click("button:has-text('Create')");
+    await itemForm.createItem({ name: "Test Item for Long Press" });
 
     // Wait for item to appear in the list
     await page.waitForSelector("text=Test Item for Long Press");
@@ -226,11 +227,11 @@ test.describe("Touch Optimization - User Story 5", () => {
 
     // Create a nested container structure first
     // 1. Create parent container
-    await page.click("button:has-text('Create Item')");
+    await page.click('button:has-text("Create Item")');
     await page.waitForSelector("text=Create New Item");
     await page.fill('input[name="name"]', "Parent Container");
-    await page.check('input[type="checkbox"][value="isContainer"]');
-    await page.click("button:has-text('Create')");
+    await page.click('text=This item is a container');
+    await page.click('button[type="submit"]:has-text("Create Item")');
 
     // Wait for container to appear
     await page.waitForSelector("text=Parent Container");
@@ -287,7 +288,7 @@ test.describe("Touch Optimization - User Story 5", () => {
     await page.waitForSelector("text=Inventory App");
 
     // Find a TouchButton (e.g., "Create Item" button)
-    const addButton = page.locator("button:has-text('Create Item')");
+    const addButton = page.locator('button:has-text("Create Item")').first();
 
     // Get initial button styles
     const initialBg = await addButton.evaluate((el) =>
@@ -338,7 +339,7 @@ test.describe("Touch Optimization - User Story 5", () => {
     await page.waitForSelector("text=Inventory App");
 
     // Open the create item form
-    await page.click("button:has-text('Create Item')");
+    await page.click('button:has-text("Create Item")');
     await page.waitForSelector("text=Create New Item");
 
     // Focus on the name input field
@@ -391,7 +392,7 @@ test.describe("Touch Optimization - User Story 5", () => {
     await page.fill('input[name="name"]', "Double Tap Test Item");
 
     // Get the submit button
-    const submitButton = page.locator("button:has-text('Create')");
+    const submitButton = page.locator('button[type="submit"]:has-text("Create Item")');
 
     // Verify button is enabled initially
     await expect(submitButton).toBeEnabled();
@@ -433,10 +434,10 @@ test.describe("Touch Optimization - User Story 5", () => {
 
     // Create multiple items to ensure scrollable list
     for (let i = 1; i <= 15; i++) {
-      await page.click("button:has-text('Create Item')");
+      await page.locator('button:has-text("Create Item")').first().click({ force: true });
       await page.waitForSelector("text=Create New Item");
       await page.fill('input[name="name"]', `Scroll Test Item ${i}`);
-      await page.click("button:has-text('Create')");
+      await page.click('button[type="submit"]:has-text("Create Item")');
       await page.waitForTimeout(100);
     }
 
