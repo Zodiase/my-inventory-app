@@ -55,12 +55,37 @@ export function getStoryUrl(componentName: string, storyName: string): string {
  * });
  * ```
  *
+ * @throws Error if the story doesn't exist or fails to load
+ *
  * @remarks
  * - Storybook must be running at http://localhost:6006 before calling this function
  * - Uses Playwright's default navigation timeout (30s)
  * - Waits for 'load' event (full page load including assets)
+ * - Validates that the story actually rendered (not an error page)
  */
 export async function gotoStory(page: Page, componentName: string, storyName: string): Promise<void> {
     const url = getStoryUrl(componentName, storyName);
     await page.goto(url, { waitUntil: 'load' });
+
+    // Wait for Storybook to finish rendering and add status classes to body
+    // Storybook adds either 'sb-show-main' (success) or 'sb-show-errordisplay' (error)
+    // Use Promise.race to wait for whichever state appears first
+    await Promise.race([
+        page.locator('body.sb-show-main').waitFor({ state: 'attached', timeout: 5000 }),
+        page.locator('body.sb-show-errordisplay').waitFor({ state: 'attached', timeout: 5000 }),
+    ]);
+
+    // Verify the story actually loaded successfully
+    // Storybook adds 'sb-show-main' class to body when story renders
+    // If story doesn't exist, it shows error with 'sb-show-errordisplay' class
+    const bodyClass = await page.locator('body').getAttribute('class');
+    const hasError = bodyClass?.includes('sb-show-errordisplay') ?? false;
+
+    if (hasError) {
+        throw new Error(
+            `Story not found or failed to load: ${componentName}--${storyName}\n` +
+                `URL: ${url}\n` +
+                `Check that the story exists in Storybook and the ID is correct.`
+        );
+    }
 }
