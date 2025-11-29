@@ -289,7 +289,7 @@ test.describe('User Story 1 - Create and Organize Items', () => {
 - Unit tests: `npm test` (from `meteor-app/`)
 - Storybook: `npm run storybook` (from `meteor-app/`)
 - E2E tests: `npm run test:e2e` (from repository root, requires running Meteor server)
-- E2E tests (headless): `npm run test:e2e:machine` (CI/CD friendly)
+- E2E tests (headless): `npm run test:e2e:headless` (CI/CD friendly)
 
 ### AI Development Workflow
 

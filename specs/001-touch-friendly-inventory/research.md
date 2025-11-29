@@ -385,7 +385,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: cd meteor-app && npm start &
-      - run: npm run test:e2e:machine
+      - run: npm run test:e2e:headless
 ```
 
 ---

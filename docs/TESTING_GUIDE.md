@@ -41,7 +41,7 @@ npm run test:e2e:debug        # Debug mode
 
 **Timing:** ~12.5s per test (includes server startup time)
 
-### No-Server Mode (faster iteration)
+### Skip-Server Mode (faster iteration)
 Run tests against an already-running server:
 
 Terminal 1 (keep running):
@@ -51,15 +51,15 @@ cd meteor-app && npm start
 
 Terminal 2 (run tests repeatedly):
 ```bash
-npm run test:e2e:no-server:ui     # UI mode
-npm run test:e2e:no-server        # Headless
-npm run test:e2e:no-server:headed # With visible browser
-npm run test:e2e:no-server:debug  # Debug mode
+npm run test:e2e:skip-server:ui     # UI mode
+npm run test:e2e:skip-server        # Headless
+npm run test:e2e:skip-server:headed # With visible browser
+npm run test:e2e:skip-server:debug  # Debug mode
 ```
 
 **Timing:** ~1.7s per test (7x faster!)
 
-### How No-Server Mode Works
+### How Skip-Server Mode Works
 Set `PLAYWRIGHT_SKIP_WEBSERVER=1` environment variable to skip the `webServer` config:
 
 ```javascript

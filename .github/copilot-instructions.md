@@ -120,10 +120,31 @@ This is a Meteor.js inventory management application built with TypeScript, Reac
 
 ### Playwright E2E Tests
 - Tests in `tests/e2e/` at project root
-- **Fast iteration**: Use `npm run test:e2e:no-server:ui` with server already running (7x faster)
+- **Use npm scripts** - Don't use raw `npx playwright` commands
+- **For CI/automated runs**: Use `npm run test:e2e:skip-server:headless` (already includes `--reporter=line`)
+- **For interactive debugging**: Use `npm run test:e2e:skip-server:ui` (fast, with app already running)
+- **NEVER use default reporter** - It hangs forever and never finishes
+
+### Playwright Command Examples
+```bash
+# Run Storybook component tests (Storybook must be running on port 6006)
+npm run test:e2e:skip-server:headless -- tests/e2e/storybook/ --project=storybook-chromium
+
+# Run full app integration tests (Meteor app must be running on port 3000)
+npm run test:e2e:skip-server:headless -- tests/e2e/app/ --project=chromium
+
+# Run specific test file
+npm run test:e2e:skip-server:headless -- tests/e2e/storybook/ItemForm.spec.ts --project=storybook-chromium
+
+# Interactive debugging (fast iteration)
+npm run test:e2e:skip-server:ui
+```
 
 ### Critical Rules (ALWAYS FOLLOW)
 1. **NEVER commit before testing** - Test first, commit after
 2. **Use `createIndexAsync`** not deprecated `_ensureIndex` 
 3. **Background processes**: Use `nohup command > /tmp/log 2>&1 &`, NOT `isBackground: true`
 4. **Test actual behavior** - Run the code, don't assume it works from code inspection alone
+5. **Use npm scripts for Playwright** - Don't use raw `npx playwright` commands
+6. **Use `test:e2e:skip-server:headless`** for automated test runs (includes correct reporter)
+7. **Use `test:e2e:skip-server:ui`** for interactive debugging
