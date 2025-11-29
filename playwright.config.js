@@ -46,14 +46,14 @@ export default defineConfig({
         },
         {
             name: 'iPad',
-            use: { 
+            use: {
                 ...devices['iPad Pro'],
                 hasTouch: true,
             },
         },
         {
             name: 'iPhone',
-            use: { 
+            use: {
                 ...devices['iPhone 13'],
                 hasTouch: true,
             },
@@ -61,7 +61,7 @@ export default defineConfig({
         /* Storybook component testing project */
         {
             name: 'storybook-chromium',
-            use: { 
+            use: {
                 ...devices['Desktop Chrome'],
                 baseURL: 'http://localhost:6006',
             },
@@ -71,15 +71,17 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     // Skip webServer if PLAYWRIGHT_SKIP_WEBSERVER is set (for running tests against already-running server)
-    ...(process.env.PLAYWRIGHT_SKIP_WEBSERVER ? {} : {
-        webServer: {
-            command: 'meteor run --port 3000',
-            url: 'http://localhost:3000',
-            reuseExistingServer: !process.env.CI,
-            timeout: 120 * 1000, // 2 minutes for Meteor to start
-            stdout: 'pipe',
-            stderr: 'pipe',
-            cwd: './meteor-app',
-        },
-    }),
+    ...(process.env.PLAYWRIGHT_SKIP_WEBSERVER
+        ? {}
+        : {
+              webServer: {
+                  command: 'meteor run --port 3000',
+                  url: 'http://localhost:3000',
+                  reuseExistingServer: !process.env.CI,
+                  timeout: 120 * 1000, // 2 minutes for Meteor to start
+                  stdout: 'pipe',
+                  stderr: 'pipe',
+                  cwd: './meteor-app',
+              },
+          }),
 });

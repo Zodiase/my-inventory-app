@@ -7,9 +7,9 @@ import type { Page, Locator } from '@playwright/test';
 
 /**
  * Page Object for the main inventory view.
- * 
+ *
  * **Context-Agnostic Design**: Works in both Storybook and full app contexts.
- * 
+ *
  * **Selector Strategy**:
  * - Uses `getByRole('button')` for interactive elements (accessible)
  * - Uses `getByRole('listitem')` for list items (semantic HTML)
@@ -65,7 +65,7 @@ export class InventoryPage {
     /**
      * Verify that an item with the given name appears in the list.
      * Uses Playwright's auto-waiting assertion.
-     * 
+     *
      * @param itemName - Name of the item to look for
      */
     async expectItemInList(itemName: string): Promise<void> {
@@ -84,16 +84,16 @@ export class InventoryPage {
 
 /**
  * Page Object for the item form (create/edit).
- * 
+ *
  * **Context-Agnostic Design**: This page object works in both:
  * - Storybook isolated component testing (`http://localhost:6006/iframe.html?id=...`)
  * - Full Meteor app integration testing (`http://localhost:3000`)
- * 
+ *
  * **Grommet Known Issues**:
  * - Cannot use `getByLabel()` with Grommet FormField components (label association broken)
  * - Must use `input[name="..."]` or `textarea[name="..."]` selectors instead
  * - This is a Grommet/styled-components limitation, not a bug in our tests
- * 
+ *
  * **Selector Strategy**:
  * - Use `name` attribute for form inputs (most reliable)
  * - Use `type` attribute for buttons (`button[type="submit"]`)
@@ -119,7 +119,7 @@ export class ItemFormPage {
 
     /**
      * Get the "Is Container" checkbox.
-     * 
+     *
      * NOTE: This uses getByLabel which may not work with Grommet FormField.
      * If this fails, refactor to use `input[name="isContainer"]` or similar.
      */
@@ -136,7 +136,7 @@ export class ItemFormPage {
 
     /**
      * Get the Cancel button.
-     * 
+     *
      * NOTE: Uses getByRole which may need refactoring for Storybook if button
      * doesn't have explicit role. Consider using `button[data-testid="cancel"]` if needed.
      */
@@ -146,7 +146,7 @@ export class ItemFormPage {
 
     /**
      * Fill the name field with the provided value.
-     * 
+     *
      * @param name - Item name to enter
      */
     async fillName(name: string): Promise<void> {
@@ -155,7 +155,7 @@ export class ItemFormPage {
 
     /**
      * Fill the description field with the provided value.
-     * 
+     *
      * @param description - Item description to enter
      */
     async fillDescription(description: string): Promise<void> {
@@ -172,10 +172,10 @@ export class ItemFormPage {
 
     /**
      * Verify form submission succeeded by checking if form cleared or success message shown.
-     * 
+     *
      * In Storybook: May check for Storybook action or DOM changes
      * In full app: May check for navigation or success message
-     * 
+     *
      * @remarks
      * Implementation may vary based on context. Override this method in test files
      * if context-specific verification needed.
@@ -191,14 +191,10 @@ export class ItemFormPage {
 
     /**
      * Fill out the item form with the provided data.
-     * 
+     *
      * @deprecated Use fillName(), fillDescription(), and submit() separately for more control
      */
-    async fillForm(data: {
-        name: string;
-        description?: string;
-        isContainer?: boolean;
-    }): Promise<void> {
+    async fillForm(data: { name: string; description?: string; isContainer?: boolean }): Promise<void> {
         await this.nameInput.fill(data.name);
 
         if (data.description) {
@@ -212,14 +208,10 @@ export class ItemFormPage {
 
     /**
      * Create an item with the provided data.
-     * 
+     *
      * @deprecated Use fillName(), fillDescription(), submit(), and expectSuccess() separately
      */
-    async createItem(data: {
-        name: string;
-        description?: string;
-        isContainer?: boolean;
-    }): Promise<void> {
+    async createItem(data: { name: string; description?: string; isContainer?: boolean }): Promise<void> {
         await this.fillForm(data);
         await this.submit();
     }

@@ -1,24 +1,24 @@
-import { test, expect } from "@playwright/test";
-import { InventoryPage, ItemFormPage } from "../helpers/page-objects";
+import { test, expect } from '@playwright/test';
+import { InventoryPage, ItemFormPage } from '../helpers/page-objects';
 
 /**
  * IntegrationTest for item creation in full Meteor app.
- * 
+ *
  * **Context**: Full app integration testing (http://localhost:3000)
  * **Dependencies**: T007 (ItemForm ComponentTest) MUST have 100% pass rate
- * 
+ *
  * **Purpose**: Verify that the SAME page objects proven in Storybook (T007)
  * work correctly in the full application context with real data persistence.
- * 
+ *
  * **TestPattern Used**: "Submit Grommet form with name attribute selectors"
  * - Validated in Storybook: ✅ (T007)
  * - Ported to Integration: ✅ (this test)
- * 
+ *
  * **Success Criteria**:
  * - Same ItemFormPage works in both Storybook and full app
  * - No selector changes needed
  * - Data persists to MongoDB and appears in list
- * 
+ *
  * **Run this test**:
  * ```bash
  * npx playwright test tests/e2e/app/item-creation-refactored.spec.ts --project=chromium --reporter=list
@@ -28,7 +28,7 @@ import { InventoryPage, ItemFormPage } from "../helpers/page-objects";
 test.describe('Item Creation (Refactored with Proven Patterns)', () => {
     test('User can create new item from main screen', async ({ page }) => {
         // Listen for console errors
-        page.on('console', msg => {
+        page.on('console', (msg) => {
             if (msg.type() === 'error') {
                 console.log('Browser console error:', msg.text());
             }
@@ -39,7 +39,7 @@ test.describe('Item Creation (Refactored with Proven Patterns)', () => {
 
         // Use InventoryPage (context-agnostic page object)
         const inventoryPage = new InventoryPage(page);
-        
+
         // Click "Create Item" button
         await inventoryPage.clickCreateItem();
 
@@ -129,10 +129,10 @@ test.describe('Item Creation (Refactored with Proven Patterns)', () => {
 
 /**
  * VALIDATION RESULTS:
- * 
+ *
  * ✅ ComponentTest (T007): 100% pass rate (5/5 tests)
  * ⏳ IntegrationTest (T008): Pending execution
- * 
+ *
  * If these tests pass, we have PROVEN:
  * - Same page object works in both Storybook and full app
  * - Selectors are truly context-agnostic

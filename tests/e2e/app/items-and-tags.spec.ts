@@ -1,11 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import {
-    resetDatabase,
-    waitForMeteorReady,
-    callMeteorMethod,
-    InventoryPage,
-    ItemFormPage,
-} from './helpers';
+import { resetDatabase, waitForMeteorReady, callMeteorMethod, InventoryPage, ItemFormPage } from './helpers';
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -31,27 +25,27 @@ test.describe('Items view', () => {
         const containerName = `Container ${Date.now()}`;
         const itemName = `Item ${Date.now()}`;
 
-    await page.getByRole('button', { name: 'Create Item' }).first().click();
+        await page.getByRole('button', { name: 'Create Item' }).first().click();
         await expect(page.getByRole('heading', { name: 'Create New Item' })).toBeVisible();
         await page.locator('input[name="name"]').fill(containerName);
-    const modalForm = page.locator('form');
-    await modalForm.locator('input[name="isContainer"]').scrollIntoViewIfNeeded();
-            await modalForm.getByText('This item is a container (can hold other items)').click();
-            await expect(modalForm.locator('input[name="isContainer"]')).toBeChecked();
-            await modalForm.evaluate((form: HTMLFormElement) => {
-                form.requestSubmit();
-            });
-    await expect(page.getByRole('heading', { name: 'Create New Item' })).not.toBeVisible({ timeout: 10000 });
+        const modalForm = page.locator('form');
+        await modalForm.locator('input[name="isContainer"]').scrollIntoViewIfNeeded();
+        await modalForm.getByText('This item is a container (can hold other items)').click();
+        await expect(modalForm.locator('input[name="isContainer"]')).toBeChecked();
+        await modalForm.evaluate((form: HTMLFormElement) => {
+            form.requestSubmit();
+        });
+        await expect(page.getByRole('heading', { name: 'Create New Item' })).not.toBeVisible({ timeout: 10000 });
 
         await expect(getListItemLocator(page, containerName)).toBeVisible();
 
-    await page.getByRole('button', { name: 'Create Item' }).first().click();
-    await page.locator('input[name="name"]').fill(itemName);
-    const secondModalForm = page.locator('form');
-            await secondModalForm.evaluate((form: HTMLFormElement) => {
-                form.requestSubmit();
-            });
-    await expect(page.getByRole('heading', { name: 'Create New Item' })).not.toBeVisible({ timeout: 10000 });
+        await page.getByRole('button', { name: 'Create Item' }).first().click();
+        await page.locator('input[name="name"]').fill(itemName);
+        const secondModalForm = page.locator('form');
+        await secondModalForm.evaluate((form: HTMLFormElement) => {
+            form.requestSubmit();
+        });
+        await expect(page.getByRole('heading', { name: 'Create New Item' })).not.toBeVisible({ timeout: 10000 });
 
         await expect(getListItemLocator(page, itemName)).toBeVisible();
 
@@ -108,7 +102,7 @@ test.describe('Tags view', () => {
             await dialog.accept(tagName);
         });
         await page.locator('[data-tag-id=""]').locator('.new-child-action').click();
-    const tagRow = page.locator('.tag-body', { hasText: tagName }).first();
+        const tagRow = page.locator('.tag-body', { hasText: tagName }).first();
         await expect(tagRow).toBeVisible();
 
         const renamedTag = `${tagName} Updated`;
@@ -116,16 +110,16 @@ test.describe('Tags view', () => {
             expect(dialog.type()).toBe('prompt');
             await dialog.accept(renamedTag);
         });
-            await tagRow.hover();
-            await tagRow.locator('.rename-tag-action').click();
-    await expect(page.locator('.tag-body', { hasText: renamedTag }).first()).toBeVisible({ timeout: 10000 });
+        await tagRow.hover();
+        await tagRow.locator('.rename-tag-action').click();
+        await expect(page.locator('.tag-body', { hasText: renamedTag }).first()).toBeVisible({ timeout: 10000 });
 
         page.once('dialog', async (dialog) => {
             expect(dialog.type()).toBe('confirm');
             await dialog.accept();
         });
-            await page.locator('.tag-body', { hasText: renamedTag }).first().hover();
-            await page.locator('.tag-body', { hasText: renamedTag }).first().locator('.remove-tag-action').click();
+        await page.locator('.tag-body', { hasText: renamedTag }).first().hover();
+        await page.locator('.tag-body', { hasText: renamedTag }).first().locator('.remove-tag-action').click();
         await expect(page.locator('.tag-body', { hasText: renamedTag })).toHaveCount(0);
     });
 
@@ -139,7 +133,7 @@ test.describe('Tags view', () => {
 
         await reloadAndWait(page);
 
-    await page.getByRole('button', { name: 'Tags' }).click();
-    await expect(page.locator('.tag-body', { hasText: `${tagName} (1)` })).toBeVisible({ timeout: 10000 });
+        await page.getByRole('button', { name: 'Tags' }).click();
+        await expect(page.locator('.tag-body', { hasText: `${tagName} (1)` })).toBeVisible({ timeout: 10000 });
     });
 });

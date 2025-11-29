@@ -74,12 +74,7 @@ export interface CreateTagOptions {
  * @returns Promise resolving to the created tag ID
  */
 export async function createTag(page: Page, options: CreateTagOptions): Promise<string> {
-    return await callMeteorMethod<string>(
-        page,
-        'tags.create',
-        options.name,
-        options.parentId || null
-    );
+    return await callMeteorMethod<string>(page, 'tags.create', options.name, options.parentId || null);
 }
 
 /**
@@ -141,10 +136,7 @@ export const testData = {
     /**
      * Create a fully populated item with properties and tags.
      */
-    async createFullItem(
-        page: Page,
-        containerId?: string
-    ): Promise<{ itemId: string; tagId: string }> {
+    async createFullItem(page: Page, containerId?: string): Promise<{ itemId: string; tagId: string }> {
         const tagId = await createTag(page, { name: 'Test Equipment' });
 
         const itemId = await createItem(page, {
