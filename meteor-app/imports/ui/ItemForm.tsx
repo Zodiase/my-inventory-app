@@ -1,4 +1,4 @@
-import React, { useState, type ReactElement } from 'react';
+import React, { useState, useRef, type ReactElement } from 'react';
 import { Box, CheckBox, Form, FormField, Text, TextArea, TextInput } from 'grommet';
 import type { FormExtendedEvent } from 'grommet';
 
@@ -53,20 +53,38 @@ export const ItemForm = ({
     const [validationError, setValidationError] = useState<string>('');
     const [internalSubmitting, setInternalSubmitting] = useState(false);
 
-    // Double-submission prevention: use internal state OR external state
+    /**
+     * Double-submission prevention using synchronous ref check.
+     *
+     * @remarks
+     * Uses useRef instead of useState because:
+     * - Ref updates are synchronous (can check immediately)
+     * - State updates are async (batched by React)
+     *
+     * This prevents rapid clicks during async operations (database saves, network requests).
+     * The ref is set to true when submission starts, checked synchronously on each click,
+     * and reset to false when submission completes.
+     *
+     * Works in conjunction with button disability (internalSubmitting state) for full protection.
+     */
+    const isSubmittingRef = useRef(false);
+
+    // For UI state (loading spinner, button disabled)
     const isActuallySubmitting = isSubmitting || internalSubmitting;
 
     const nameLength = name.length;
     const descriptionLength = description.length;
 
     const handleSubmit = async (event: FormExtendedEvent): Promise<void> => {
-        event.preventDefault();
-
-        // Prevent double-submission
-        if (isActuallySubmitting) {
+        // Prevent double-submission using synchronous ref check FIRST (before preventDefault)
+        // This catches rapid clicks that happen while async onSubmit is in progress
+        if (isSubmittingRef.current || isSubmitting) {
+            event.preventDefault();
             return;
         }
 
+        event.preventDefault();
+        isSubmittingRef.current = true;
         setValidationError('');
         setInternalSubmitting(true);
 
@@ -74,12 +92,14 @@ export const ItemForm = ({
         if (name.trim() === '') {
             setValidationError('Item name is required.');
             setInternalSubmitting(false);
+            isSubmittingRef.current = false;
             return;
         }
 
         if (name.length > 500) {
             setValidationError('Item name must be 500 characters or less.');
             setInternalSubmitting(false);
+            isSubmittingRef.current = false;
             return;
         }
 
@@ -87,6 +107,7 @@ export const ItemForm = ({
         if (description.length > 5000) {
             setValidationError('Item description must be 5000 characters or less.');
             setInternalSubmitting(false);
+            isSubmittingRef.current = false;
             return;
         }
 
@@ -117,13 +138,14 @@ export const ItemForm = ({
             console.error('Form submission error:', err);
         } finally {
             setInternalSubmitting(false);
+            isSubmittingRef.current = false;
         }
     };
 
     const displayError = validationError || error;
 
     return (
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} validate="blur">
             <Box gap="medium" pad="medium" width="large">
                 {/* Show loading spinner overlay during submission */}
                 {isActuallySubmitting && (
@@ -159,6 +181,7 @@ export const ItemForm = ({
                 )}
 
                 <FormField
+                    name="name"
                     label="Name"
                     required
                     help={
@@ -184,6 +207,7 @@ export const ItemForm = ({
                 </FormField>
 
                 <FormField
+                    name="description"
                     label="Description"
                     help={
                         <Text

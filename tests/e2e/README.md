@@ -18,6 +18,7 @@ tests/e2e/
 **When to use**: Testing features that require the complete application with backend (Meteor + MongoDB).
 
 **Characteristics**:
+
 - Requires Meteor server running (`npm run dev` in meteor-app/)
 - Tests real database operations
 - Tests Meteor method calls
@@ -25,6 +26,7 @@ tests/e2e/
 - Tests integration between components
 
 **Examples**:
+
 - `item-creation.spec.ts` - Creating items through the UI with database persistence
 - `tag-management.spec.ts` - Managing tags with parent/child relationships
 - `search-and-filter.spec.ts` - Searching and filtering with real data
@@ -36,6 +38,7 @@ tests/e2e/
 **When to use**: Testing individual components in isolation before integrating them.
 
 **Characteristics**:
+
 - Requires Storybook running (`npm run storybook` in meteor-app/)
 - No backend/database required
 - Tests component rendering and behavior
@@ -44,6 +47,7 @@ tests/e2e/
 - **Include helper validation tests** - Tests for helper utilities that require Storybook
 
 **Examples**:
+
 - `ItemForm.spec.ts` - Testing ItemForm component in isolation
 - `storybook-helpers.spec.ts` - Validating the `gotoStory()` helper function
 
@@ -56,6 +60,7 @@ tests/e2e/
 **When to use**: Code that is used by multiple tests but is not itself a test.
 
 **Characteristics**:
+
 - **No `.spec.ts` files** - This directory contains utilities, not tests
 - Page objects (e.g., `ItemFormPage`, `InventoryPage`)
 - Test data factories (e.g., `createTestItem()`)
@@ -63,6 +68,7 @@ tests/e2e/
 - Shared selectors and constants
 
 **Examples**:
+
 - `page-objects.ts` - Page object classes for common UI components
 - `factories.ts` - Functions to generate test data
 - `storybook-helpers.ts` - Utilities for navigating Storybook stories
@@ -72,16 +78,17 @@ tests/e2e/
 ## Testing Strategy: Storybook-First Approach
 
 1. **Component Tests First** (`storybook/`)
-   - Validate components work in isolation
-   - Prove selectors and interactions work
-   - Achieve 100% pass rate before integration
+    - Validate components work in isolation
+    - Prove selectors and interactions work
+    - Achieve 100% pass rate before integration
 
 2. **Integration Tests Second** (`app/`)
-   - Port proven patterns from component tests
-   - Test full workflows with backend
-   - Debug integration layer issues
+    - Port proven patterns from component tests
+    - Test full workflows with backend
+    - Debug integration layer issues
 
 This two-phase approach helps isolate failures:
+
 - If component test passes but integration test fails → integration layer issue
 - If component test fails → component or selector issue
 

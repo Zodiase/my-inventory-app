@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ItemForm } from '/imports/ui/ItemForm';
 
@@ -232,5 +233,52 @@ Location: Office closet, top shelf`,
             isContainer: false,
         },
         isSubmitting: false,
+    },
+};
+
+/**
+ * Test-specific story for E2E validation of form submission behavior.
+ * Wraps ItemForm with a parent that captures and displays callback data in the DOM.
+ *
+ * Features:
+ * - Exposes onSubmit callback data as JSON in data-testid="submit-data"
+ * - Tracks submission count in data-testid="submit-count"
+ * - Includes 5-second delay to simulate realistic async operations (database/network)
+ * - Call log shows all callback invocations for debugging
+ *
+ * Used by tests/e2e/storybook/ItemForm.spec.ts
+ */
+export const TestSubmitBehavior: Story = {
+    render: () => {
+        const [submitData, setSubmitData] = useState<any>(null);
+        const [submitCount, setSubmitCount] = useState(0);
+        const [errorMessage, setErrorMessage] = useState('');
+        const [callLog, setCallLog] = useState<string[]>([]);
+
+        return (
+            <>
+                <ItemForm
+                    onSubmit={async (data) => {
+                        const timestamp = new Date().toISOString();
+                        setCallLog((log) => [...log, `[${timestamp}] onSubmit called`]);
+                        setSubmitData(data);
+                        setSubmitCount((c) => c + 1);
+                        // Simulate realistic async operation (database save, network request)
+                        await new Promise((resolve) => setTimeout(resolve, 5000));
+                    }}
+                    error={errorMessage}
+                />
+                {/* Make callback data observable in DOM for E2E tests */}
+                <pre data-testid="submit-data" style={{ marginTop: '16px' }}>
+                    {submitData ? JSON.stringify(submitData, null, 2) : 'No submission yet'}
+                </pre>
+                <div data-testid="submit-count">{submitCount}</div>
+                <div data-testid="call-log" style={{ marginTop: '8px', fontSize: '12px', color: '#666' }}>
+                    {callLog.map((entry, i) => (
+                        <div key={i}>{entry}</div>
+                    ))}
+                </div>
+            </>
+        );
     },
 };

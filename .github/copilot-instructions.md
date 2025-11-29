@@ -65,6 +65,23 @@ This is a Meteor.js inventory management application built with TypeScript, Reac
 - **Async operations** should have proper error handling
 - **User-facing operations** (UI callbacks) should log to console with clear messages
 
+### Double-Submit Prevention (FR-070)
+
+- **Use `useRef(false)` for synchronous guard** - State updates are async, refs are synchronous
+- **Set ref to true BEFORE async operation** - Prevents subsequent calls during I/O
+- **Reset ref in finally block** - Ensures cleanup even if operation fails
+- **Combine with button disability** - `disabled={isSubmitting || name.trim() === ''}`
+- **Why this works**:
+    - Async operations (database saves, network requests) have realistic delays
+    - During these delays, the ref guard catches rapid clicks
+    - Without delays (instant callbacks), there's no time between clicks to protect against
+    - Real-world async operations always have I/O delays, making this pattern effective
+- **Testing double-submit prevention**:
+    - Test story MUST include realistic delay: `await new Promise(resolve => setTimeout(resolve, 5000))`
+    - Without delay, callback completes before next click can happen
+    - Use `{force: true}` clicks to bypass button disability and test ref guard directly
+    - Verify submit count stays at 1 despite multiple rapid clicks
+
 ### ESLint Configuration
 
 - The project uses **ESLint flat config** (`eslint.config.mjs`)
@@ -158,6 +175,72 @@ npm run test:e2e:skip-server:headless -- tests/e2e/storybook/ItemForm.spec.ts --
 npm run test:e2e:skip-server:ui
 ```
 
+### Storybook Component Testing Strategy
+
+**Component tests in Storybook are end-to-end tests of components in isolation, NOT just selector smoke tests.**
+
+#### Testing Component Behavior (Not Just Selectors)
+
+1. **Get expectations from specs**, not from code implementation
+    - Check `specs/` directory for requirements and acceptance criteria
+    - Look for functional requirements (FR-XXX) and success criteria (SC-XXX)
+    - Test what the component SHOULD do, not what it currently does
+
+2. **Create test-specific stories** that make behavior observable
+    - Create custom parent components that wrap the component under test
+    - Handle callbacks (like `onSubmit`) and render the results in the DOM
+    - Display callback data in `<pre>` tags with `data-testid` attributes
+    - Show validation errors, submit counts, loading states - anything that needs verification
+    - **Include realistic delays** in async callbacks to simulate real I/O operations (database, network)
+    - Example:
+
+        ```tsx
+        export const TestableSubmit: Story = {
+            render: () => {
+                const [submitData, setSubmitData] = useState(null);
+                const [submitCount, setSubmitCount] = useState(0);
+
+                return (
+                    <>
+                        <ItemForm
+                            onSubmit={async (data) => {
+                                setSubmitData(data);
+                                setSubmitCount((c) => c + 1);
+                                // Simulate realistic async operation (5s delay)
+                                await new Promise((resolve) => setTimeout(resolve, 5000));
+                            }}
+                        />
+                        <pre data-testid="submit-data">{JSON.stringify(submitData)}</pre>
+                        <div data-testid="submit-count">{submitCount}</div>
+                    </>
+                );
+            },
+        };
+        ```
+
+3. **Test actual component behavior**, not just element visibility
+    - Verify validation errors appear in the DOM
+    - Check that callbacks are called with correct data (read from test story's DOM output)
+    - Validate loading states, disabled states, error messages
+    - Test double-submit prevention by checking submit count
+    - Don't just check if buttons are visible - check what happens when you click them
+
+4. **Never use `page.evaluate()` to spy on JavaScript**
+    - Instead, create stories that expose JavaScript state as DOM elements
+    - The test story's parent component can render any internal state
+    - Everything should be observable through the DOM
+
+#### What to Test
+
+From specs (not from reading the code):
+
+- Component contract (props → behavior)
+- Validation rules
+- Error handling
+- Loading/disabled states
+- User interactions (submit, cancel, etc.)
+- Double-submission prevention (FR-070)
+
 ### Critical Rules (ALWAYS FOLLOW)
 
 1. **NEVER commit before testing** - Test first, commit after
@@ -167,3 +250,5 @@ npm run test:e2e:skip-server:ui
 5. **Use npm scripts for Playwright** - Don't use raw `npx playwright` commands
 6. **Use `test:e2e:skip-server:headless`** for automated test runs (includes correct reporter)
 7. **Use `test:e2e:skip-server:ui`** for interactive debugging
+8. **Read specs before writing tests** - Get expectations from `specs/`, not from code
+9. **Create test-specific Storybook stories** - Make component behavior observable in the DOM
