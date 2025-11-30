@@ -2,8 +2,11 @@
     "name": "my-inventory-app-root",
     "private": true,
     "scripts": {
-        "format": "prettier --write .",
-        "format:check": "prettier --check .",
+        "prepare": "cd meteor-app && npm run prepare",
+        "start": "cd meteor-app && npm start",
+        "storybook": "cd meteor-app && npm run storybook",
+        "format": "prettier --write . && (cd meteor-app && npm run format)",
+        "format:check": "prettier --check . && (cd meteor-app && npm run format:check)",
         "test:e2e": "playwright test",
         "test:e2e:ui": "playwright test --ui",
         "test:e2e:headed": "playwright test --headed",
