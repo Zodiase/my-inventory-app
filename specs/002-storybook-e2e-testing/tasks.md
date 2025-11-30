@@ -62,10 +62,10 @@
 
 **Goal**: Prove that testing components in Storybook isolation works and selectors port to full app
 
-**Independent Test**: 
+**Independent Test**:
 1. Run Storybook tests: `npx playwright test tests/e2e/storybook/ItemForm.spec.ts`
 2. Verify 100% pass rate
-3. Run full app test: `npx playwright test tests/e2e/app/item-creation.spec.ts`  
+3. Run full app test: `npx playwright test tests/e2e/app/item-creation.spec.ts`
 4. Verify same page object works in both contexts
 
 **Success Criteria**: SC-001 (100% ComponentTest pass rate), SC-003 (90% selector reuse)
@@ -89,7 +89,7 @@
 
 ### Integration Tests for User Story 1 (Porting Proven Patterns)
 
-- [ ] T008 [US1] Refactor item creation integration test in tests/e2e/app/item-creation.spec.ts
+- [X] T008 [US1] Refactor item creation integration test in tests/e2e/app/item-creation.spec.ts
   - Test: "User can create new item from main screen"
     - Navigate to http://localhost:3000
     - Use InventoryPage.clickCreateItem()
@@ -99,6 +99,7 @@
     - Verify item in list (InventoryPage.expectItemInList())
     - Verify data persistence (query MongoDB or re-navigate)
   - DEPENDENCY: Must verify T007 has 100% pass rate first
+  - **COMPLETED**: Full integration test validates UI → Meteor methods → DB → reactive UI
 
 ### Validation & Documentation for User Story 1
 

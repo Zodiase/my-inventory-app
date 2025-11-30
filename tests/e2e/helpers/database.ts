@@ -56,7 +56,8 @@ export async function callMeteorMethod<T>(page: Page, methodName: string, ...arg
                 // @ts-expect-error - Meteor is available in browser context
                 Meteor.call(method, ...methodArgs, (error: Error | null, result: T) => {
                     if (error) {
-                        reject(error);
+                        // Serialize error properly for Playwright
+                        reject(new Error(error.message || String(error)));
                     } else {
                         resolve(result);
                     }

@@ -19,7 +19,9 @@
         "test:e2e:skip-server:ui": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --ui",
         "test:e2e:skip-server:headed": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --headed",
         "test:e2e:skip-server:debug": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --debug",
-        "test:e2e:skip-server:headless": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --reporter=line"
+        "test:e2e:skip-server:headless": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --reporter=line",
+        "debug:check-meteor": "curl -s http://localhost:3000 | head -20",
+        "debug:check-storybook": "curl -s http://localhost:6006 | head -20"
     },
     "devDependencies": {
         "@playwright/test": "^1.56.1",

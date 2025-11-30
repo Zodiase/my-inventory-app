@@ -5,6 +5,10 @@ import { TagsCollection, createTag, watchAndFixMissingPath } from '/imports/api/
 import { Attachments } from '/imports/api/attachments';
 import createLogger from '/imports/utility/Logger';
 
+// Import default exports to register Meteor methods via asMeteorMethods
+import '/imports/api/items'; // Registers createItem, updateItem, deleteItem, etc.
+import '/imports/api/tags'; // Registers createTag, updateTag, deleteTag, etc.
+
 import { initializeGridFS } from './gridfs';
 import './test-helpers'; // Test helper methods for E2E testing
 

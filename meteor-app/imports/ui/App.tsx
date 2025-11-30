@@ -15,13 +15,8 @@ import { FilterBar } from './FilterBar';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
 import type { SearchFragment } from '/imports/model/SearchFragment';
-import {
-    InventoryItemsCollection,
-    createInventoryItem,
-    updateInventoryItem,
-    deleteInventoryItem,
-} from '/imports/api/items';
-import TagsCollection from '/imports/api/tags';
+import Items, { InventoryItemsCollection } from '/imports/api/items';
+import Tags, { TagsCollection } from '/imports/api/tags';
 import { useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
 import { Meteor } from 'meteor/meteor';
@@ -139,7 +134,7 @@ export const App = (): ReactElement => {
 
     const handleCreateItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
         try {
-            await createInventoryItem(itemData);
+            await Items.createItem(itemData);
             setShowCreateItem(false);
         } catch (error) {
             console.error('Failed to create item:', error);
@@ -149,7 +144,7 @@ export const App = (): ReactElement => {
     const handleEditItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
         if (selectedItem === undefined) return;
         try {
-            await updateInventoryItem(selectedItem._id, itemData);
+            await Items.updateItem(selectedItem._id, itemData);
         } catch (error) {
             console.error('Failed to update item:', error);
         }
@@ -158,7 +153,7 @@ export const App = (): ReactElement => {
     const handleDeleteItem = async (): Promise<void> => {
         if (selectedItem === undefined) return;
         try {
-            await deleteInventoryItem(selectedItem._id);
+            await Items.deleteItem(selectedItem._id);
             handleCloseItemDetail();
         } catch (error) {
             console.error('Failed to delete item:', error);
@@ -168,18 +163,18 @@ export const App = (): ReactElement => {
     const handleAddTagToItem = async (tagId: string): Promise<void> => {
         if (selectedItem === undefined) return;
         try {
-            await TagsCollection.addToItem(selectedItem._id, tagId);
+            await Tags.addToItem(selectedItem._id, tagId);
         } catch (error) {
-            console.error('Failed to add tag:', error);
+            console.error('Failed to add tag to item:', error);
         }
     };
 
     const handleRemoveTagFromItem = async (tagId: string): Promise<void> => {
         if (selectedItem === undefined) return;
         try {
-            await TagsCollection.removeFromItem(selectedItem._id, tagId);
+            await Tags.removeFromItem(selectedItem._id, tagId);
         } catch (error) {
-            console.error('Failed to remove tag:', error);
+            console.error('Failed to remove tag from item:', error);
         }
     };
 
