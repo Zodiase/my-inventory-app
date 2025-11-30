@@ -252,3 +252,43 @@ From specs (not from reading the code):
 7. **Use `test:e2e:skip-server:ui`** for interactive debugging
 8. **Read specs before writing tests** - Get expectations from `specs/`, not from code
 9. **Create test-specific Storybook stories** - Make component behavior observable in the DOM
+
+### Debugging & Testing Philosophy
+
+When tests fail mysteriously or in ways that don't make sense:
+
+1. **Verify the app works manually FIRST** - Before concluding the test framework is broken, open the browser and test manually
+    - Click the actual button in the UI
+    - Check browser console for error messages (403, 404, JavaScript errors)
+    - Verify network requests succeed
+    - If manual testing fails, it's an app bug, not a test issue
+
+2. **Read actual error messages carefully** - Don't ignore console errors
+    - "Form won't submit" (vague) vs "Access denied [403]" (specific)
+    - Specific errors point to root causes
+    - Ask user to check browser console if tests fail without clear errors
+
+3. **Understand the architecture before implementing**
+    - Read existing code patterns (e.g., `asMeteorMethods` for Meteor)
+    - Check how similar features are implemented
+    - Verify assumptions about how systems work (client/server boundaries, method registration)
+
+4. **When debugging fails repeatedly (5+ attempts), stop and reassess**
+    - If many different approaches fail, the assumption about what's broken is likely wrong
+    - Step back and verify basic functionality manually
+    - Question whether the test framework is really the issue
+
+5. **Infrastructure tasks ≠ Working features**
+    - Don't claim success just because config files exist
+    - Verify actual functionality works (app runs, forms submit, data persists)
+    - Green checkmarks on setup tasks don't mean the feature works
+
+6. **Test the simplest thing first**
+    - Before complex interactions, verify basic operations work
+    - Can the button be clicked? Does the form exist? Is the server running?
+    - Build up from simple to complex, don't start with full integration
+
+7. **When something seems impossible, you're missing something fundamental**
+    - "Grommet modals can't be tested" → Actually, the app was broken
+    - "This framework doesn't support X" → Usually a misunderstanding
+    - Impossible-seeming issues point to gaps in understanding the system
