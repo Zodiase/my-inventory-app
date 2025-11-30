@@ -103,12 +103,13 @@
 
 ### Validation & Documentation for User Story 1
 
-- [ ] T009 [US1] Document TestPattern for form submission
+- [X] T009 [US1] Document TestPattern for form submission
   - Create pattern documentation in tests/e2e/helpers/page-objects.ts JSDoc
   - Pattern name: "Submit Grommet form with name attribute selectors"
   - Document selectors: input[name="name"], textarea[name="description"], button[type="submit"]
   - Document known issue: "Cannot use getByLabel with Grommet FormField"
   - Mark as validatedInStorybook: true, portedToIntegration: true
+  - **COMPLETED**: Pattern documented in ItemFormPage JSDoc with full usage example
 
 **Checkpoint**: User Story 1 complete - testing approach PROVEN. Can demonstrate:
 - ✅ ComponentTest passes in Storybook isolation

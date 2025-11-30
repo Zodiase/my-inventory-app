@@ -99,6 +99,43 @@ export class InventoryPage {
  * - Use `type` attribute for buttons (`button[type="submit"]`)
  * - Use `data-testid` for elements without semantic attributes
  * - Avoid `getByLabel()`, `getByRole('textbox')` with Grommet components
+ *
+ * ---
+ *
+ * ## TestPattern: Submit Grommet form with name attribute selectors
+ *
+ * **Pattern Name**: "Grommet Form Submission Pattern"
+ *
+ * **Validated In**: Storybook (T007) ✅ | Full App Integration (T008) ✅
+ *
+ * **Selectors Used**:
+ * - `input[name="name"]` - Name field (not getByLabel)
+ * - `textarea[name="description"]` - Description field (not getByLabel)
+ * - `button[type="submit"]` - Submit button
+ *
+ * **Interaction Sequence**:
+ * 1. Fill name field using `fillName(value)`
+ * 2. Fill description field using `fillDescription(value)`
+ * 3. Click submit button using `submit()`
+ *
+ * **Behavior Validation**:
+ * - onSubmit callback receives correct data (verify via DOM or network)
+ * - Validation errors appear in DOM when data is invalid
+ * - Double-submission is prevented (FR-070) via useRef guard
+ * - Form fields maintain values during interaction
+ *
+ * **Known Limitations**:
+ * - Cannot use `getByLabel()` with Grommet FormField (label not properly associated)
+ * - Must use `name` attribute selectors instead
+ * - This pattern is specific to Grommet/styled-components forms
+ *
+ * **Usage Example**:
+ * ```typescript
+ * const itemForm = new ItemFormPage(page);
+ * await itemForm.fillName('Test Item');
+ * await itemForm.fillDescription('Test Description');
+ * await itemForm.submit();
+ * ```
  */
 export class ItemFormPage {
     constructor(public readonly page: Page) {}
