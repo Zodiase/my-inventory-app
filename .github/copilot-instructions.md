@@ -252,6 +252,67 @@ From specs (not from reading the code):
 7. **Use `test:e2e:skip-server:ui`** for interactive debugging
 8. **Read specs before writing tests** - Get expectations from `specs/`, not from code
 9. **Create test-specific Storybook stories** - Make component behavior observable in the DOM
+10. **Separate presentation from logic** - Extract testable components from presentation wrappers (e.g., Form from Dialog/Layer)
+
+### Component Architecture Patterns
+
+#### Separating Presentation from Logic
+
+When components mix presentation (modals, dialogs, layers) with business logic (forms, data handling):
+
+- **Problem**: Tests must deal with modal overlays, z-index issues, visibility problems
+- **Solution**: Split into two components:
+  - **Logic component** (e.g., `ItemForm`, `CreateTagForm`) - Pure form/business logic, no presentation wrapper
+  - **Presentation component** (e.g., `ItemDialog`, `CreateTagDialog`) - Wraps logic in Layer/modal/dialog
+- **Benefits**:
+  - Tests focus on actual behavior without modal complications
+  - Reusable logic component can be used in different contexts (inline, modal, sidebar)
+  - Consistent naming: `*Form` for logic, `*Dialog` for modal wrapper
+
+**Example**:
+```tsx
+// Logic component - testable
+export const CreateTagForm: React.FC<CreateTagFormProps> = ({ onSubmit, onClose }) => {
+    // All form logic here
+    return <Form>...</Form>;
+};
+
+// Presentation wrapper - uses logic component
+export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({ isOpen, ...props }) => {
+    if (!isOpen) return null;
+    return (
+        <Layer>
+            <CreateTagForm {...props} />
+        </Layer>
+    );
+};
+```
+
+**Test the logic component directly**:
+```tsx
+// Story renders CreateTagForm WITHOUT Layer
+export const TestSubmitBehavior: Story = {
+    render: () => (
+        <>
+            <CreateTagForm onSubmit={...} />
+            <pre data-testid="submit-data">{...}</pre>
+        </>
+    ),
+};
+```
+
+#### Grommet Form Validation Requirements
+
+- **FormField and TextInput MUST have matching `name` attributes** for validation to work
+- **Without matching names**: Form validation fails, shows "required" error even when field has value
+- **Pattern**:
+  ```tsx
+  <FormField name="tagName" label="Tag Name">
+      <TextInput name="tagName" value={...} onChange={...} />
+  </FormField>
+  ```
+- **Do NOT use `required` on FormField** - It triggers HTML5 validation that conflicts with Grommet
+- **Selectors**: Use `input[name="fieldName"]` or `getByPlaceholder()` to find inputs
 
 ### Debugging & Testing Philosophy
 
