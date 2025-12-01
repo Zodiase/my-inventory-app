@@ -24,7 +24,7 @@
         "test:e2e:skip-server:debug": "cd .. && npm run test:e2e:skip-server:debug",
         "visualize": "meteor --production --extra-packages bundle-visualizer",
         "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build"
+        "build-storybook": "storybook build -o ../storybook-static"
     },
     "dependencies": {
         "@babel/core": "^7.28.4",
