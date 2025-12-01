@@ -143,10 +143,18 @@
 
 ### Integration Tests for User Story 2
 
-- [ ] T011 [US2] Port proven patterns to tag management tests in tests/e2e/app/tag-management.spec.ts
+- [x] T011 [US2] CreateTagForm Component Tests (Storybook)
+  - **Status**: Complete ✅ (6/6 tests passing)
+  - **Test File**: `tests/e2e/storybook/CreateTagDialog.spec.ts`
+  - **Key Achievement**: Separated CreateTagForm (testable component) from CreateTagDialog (Layer wrapper)
+  - **Pattern**: Grommet Dialog Form Submission Pattern
+  - **Implemented**: FR-070 double-submit prevention with useRef
+  - **Fixed**: Grommet form validation (matching name attributes on FormField/TextInput)
+  - **Tests**: Form submission ✅ | Empty validation ✅ | Double-submit prevention ✅ | Error display ✅ | Loading state ✅ | Cancel ✅
+
+- [ ] T012 [US2] Port proven patterns to tag management tests in tests/e2e/app/tag-management.spec.ts
   - Identify which page objects needed (may require new TagFormPage)
-  - Create ComponentTests for tag form in Storybook first
-  - Then port to full app using proven patterns
+  - Port CreateTagForm tests to full app using proven patterns
   - Test: "User can create new tag"
   - Test: "User can assign tag to item"
 - [ ] T012 [US2] Port proven patterns to touch optimization tests in tests/e2e/app/touch-optimization.spec.ts

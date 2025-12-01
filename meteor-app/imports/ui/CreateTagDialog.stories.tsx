@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Box, Button, Text } from 'grommet';
 
-import { CreateTagDialog } from '/imports/ui/CreateTagDialog';
+import { CreateTagDialog, CreateTagForm } from '/imports/ui/CreateTagDialog';
 
 /**
  * CreateTagDialog Stories
@@ -360,5 +360,45 @@ export const StateSequence: Story = {
                 story: 'Shows the full state sequence: idle → loading → success/error. Each submission has a 50% chance of success or error.',
             },
         },
+    },
+};
+
+/**
+ * Test Story: Exposes submit behavior for E2E testing
+ *
+ * This story makes the dialog's behavior observable in the DOM for testing:
+ * - Submit count in [data-testid="submit-count"]
+ * - Submit data in [data-testid="submit-data"]
+ * - Includes realistic async delay (5s) to test double-submit prevention
+ *
+ * Used by: tests/e2e/storybook/CreateTagDialog.spec.ts
+ */
+export const TestSubmitBehavior: Story = {
+    render: () => {
+        const [submitData, setSubmitData] = useState<string | null>(null);
+        const [submitCount, setSubmitCount] = useState(0);
+
+        return (
+            <Box gap="medium">
+                <CreateTagForm
+                    onClose={() => {
+                        // No-op for testing
+                    }}
+                    onSubmit={async (name) => {
+                        setSubmitData(name);
+                        setSubmitCount((c) => c + 1);
+                        // Simulate realistic async operation (5s delay)
+                        await new Promise((resolve) => setTimeout(resolve, 5000));
+                    }}
+                />
+                <Box pad="medium" background="light-2">
+                    <Text weight="bold">Test Output:</Text>
+                    <pre data-testid="submit-data">
+                        {submitData === null ? 'No submission yet' : JSON.stringify({ name: submitData })}
+                    </pre>
+                    <div data-testid="submit-count">{submitCount}</div>
+                </Box>
+            </Box>
+        );
     },
 };
