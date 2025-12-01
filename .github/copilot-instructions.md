@@ -262,14 +262,15 @@ When components mix presentation (modals, dialogs, layers) with business logic (
 
 - **Problem**: Tests must deal with modal overlays, z-index issues, visibility problems
 - **Solution**: Split into two components:
-  - **Logic component** (e.g., `ItemForm`, `CreateTagForm`) - Pure form/business logic, no presentation wrapper
-  - **Presentation component** (e.g., `ItemDialog`, `CreateTagDialog`) - Wraps logic in Layer/modal/dialog
+    - **Logic component** (e.g., `ItemForm`, `CreateTagForm`) - Pure form/business logic, no presentation wrapper
+    - **Presentation component** (e.g., `ItemDialog`, `CreateTagDialog`) - Wraps logic in Layer/modal/dialog
 - **Benefits**:
-  - Tests focus on actual behavior without modal complications
-  - Reusable logic component can be used in different contexts (inline, modal, sidebar)
-  - Consistent naming: `*Form` for logic, `*Dialog` for modal wrapper
+    - Tests focus on actual behavior without modal complications
+    - Reusable logic component can be used in different contexts (inline, modal, sidebar)
+    - Consistent naming: `*Form` for logic, `*Dialog` for modal wrapper
 
 **Example**:
+
 ```tsx
 // Logic component - testable
 export const CreateTagForm: React.FC<CreateTagFormProps> = ({ onSubmit, onClose }) => {
@@ -289,6 +290,7 @@ export const CreateTagDialog: React.FC<CreateTagDialogProps> = ({ isOpen, ...pro
 ```
 
 **Test the logic component directly**:
+
 ```tsx
 // Story renders CreateTagForm WITHOUT Layer
 export const TestSubmitBehavior: Story = {
@@ -306,11 +308,11 @@ export const TestSubmitBehavior: Story = {
 - **FormField and TextInput MUST have matching `name` attributes** for validation to work
 - **Without matching names**: Form validation fails, shows "required" error even when field has value
 - **Pattern**:
-  ```tsx
-  <FormField name="tagName" label="Tag Name">
-      <TextInput name="tagName" value={...} onChange={...} />
-  </FormField>
-  ```
+    ```tsx
+    <FormField name="tagName" label="Tag Name">
+        <TextInput name="tagName" value={...} onChange={...} />
+    </FormField>
+    ```
 - **Do NOT use `required` on FormField** - It triggers HTML5 validation that conflicts with Grommet
 - **Selectors**: Use `input[name="fieldName"]` or `getByPlaceholder()` to find inputs
 
