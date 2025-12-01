@@ -1,8 +1,9 @@
-import React, { type ComponentProps, type ReactElement } from 'react';
+import React, { type ComponentProps, type ReactElement, useState } from 'react';
 import styled from 'styled-components';
 
 import type { TagRecord } from '/imports/model/TagRecord';
 
+import { CreateTagDialog } from '/imports/ui/CreateTagDialog';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
 import StyledButton from '/imports/ui/StyledButton';
 
@@ -82,11 +83,22 @@ const TagList = styled(
         const tagName = tag?.name ?? 'All Tags';
         const itemCount = tagId !== '' ? usageCounts[tagId] ?? 0 : 0;
 
+        const [createDialogState, setCreateDialogState] = useState<{ isOpen: boolean; parentTagId: string }>({
+            isOpen: false,
+            parentTagId: '',
+        });
+
         const handleAddChild = (): void => {
-            const newTagName = window.prompt(`Name of new tag:`);
-            if (newTagName !== null) {
-                onAddChild(tagId, newTagName);
-            }
+            setCreateDialogState({ isOpen: true, parentTagId: tagId });
+        };
+
+        const handleCreateTagSubmit = (tagName: string): void => {
+            onAddChild(createDialogState.parentTagId, tagName);
+            setCreateDialogState({ isOpen: false, parentTagId: '' });
+        };
+
+        const handleCreateTagClose = (): void => {
+            setCreateDialogState({ isOpen: false, parentTagId: '' });
         };
 
         const handleRename = (): void => {
@@ -113,6 +125,11 @@ const TagList = styled(
 
         return (
             <div {...rootElementProps} data-tag-id={tagId}>
+                <CreateTagDialog
+                    isOpen={createDialogState.isOpen}
+                    onSubmit={handleCreateTagSubmit}
+                    onClose={handleCreateTagClose}
+                />
                 <LongPressContextMenu
                     actions={
                         tag !== undefined

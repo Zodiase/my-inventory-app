@@ -152,12 +152,24 @@
   - **Fixed**: Grommet form validation (matching name attributes on FormField/TextInput)
   - **Tests**: Form submission ✅ | Empty validation ✅ | Double-submit prevention ✅ | Error display ✅ | Loading state ✅ | Cancel ✅
 
-- [ ] T012 [US2] Port proven patterns to tag management tests in tests/e2e/app/tag-management.spec.ts
-  - Identify which page objects needed (may require new TagFormPage)
-  - Port CreateTagForm tests to full app using proven patterns
-  - Test: "User can create new tag"
-  - Test: "User can assign tag to item"
-- [ ] T012 [US2] Port proven patterns to touch optimization tests in tests/e2e/app/touch-optimization.spec.ts
+- [ ] T012 [US2] Port CreateTagDialog to full app integration
+  - **Status**: BLOCKED ⚠️ - Requires routing implementation
+  - **Partial Work Complete**:
+    - ✅ CreateTagDialog integrated into AllTagsViewPresentation.tsx (replaces window.prompt)
+    - ✅ Import error fixed in tag-management.spec.ts (waitForMeteorReady from database.ts)
+    - ✅ 4 integration tests written (create tag, validation, double-submit, cancel)
+  - **Blocker**: App lacks URL routing - tests assume `/tags` route exists but app only has state-based view switching
+    - Tests use `tagsPage.goto()` which navigates to `/tags` but shows Items view
+    - Workaround attempted: Click navigation button instead of goto() - but `.new-child-action` not found
+    - Root cause: Navigation requires proper routing (React Router or similar)
+  - **Uncommitted Changes**: AllTagsViewPresentation.tsx, tag-management.spec.ts (T012 tests)
+  - **Next Steps**:
+    1. Create new spec for routing requirements (spec 003)
+    2. Implement routing with React Router
+    3. Resume T012 integration tests
+  - **Tests to Complete**: "User can create new tag" | "User can assign tag to item"
+
+- [ ] T012b [US2] Port proven patterns to touch optimization tests in tests/e2e/app/touch-optimization.spec.ts
   - Refactor existing tests to use proven selector patterns
   - Replace any getByLabel() with name attribute selectors
   - Ensure tests use Playwright auto-waiting (no fixed timeouts)
