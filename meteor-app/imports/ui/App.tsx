@@ -440,8 +440,8 @@ export const App = (): ReactElement => {
                         {/* Item detail route */}
                         <Route path="/items/:itemId">{() => <ItemDetailView />}</Route>
 
-                        {/* Items by tag route - will be updated in Phase 3 (T007) */}
-                        <Route path="/tags/:tagId">{() => <NotFoundView />}</Route>
+                        {/* Items by tag route */}
+                        <Route path="/tags/:tagId">{() => <ItemsByTagView />}</Route>
 
                         {/* 404 Not Found */}
                         <Route>{() => <NotFoundView />}</Route>

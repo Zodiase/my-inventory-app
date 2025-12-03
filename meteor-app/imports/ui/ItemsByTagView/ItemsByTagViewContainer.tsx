@@ -1,4 +1,6 @@
 import React, { type ComponentProps, type ReactElement, useState } from 'react';
+import { useParams, Link } from 'wouter';
+import { Box, Button, Heading, Text } from 'grommet';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import { TagsCollection, type TagRecord } from '/imports/api/tags';
@@ -7,45 +9,35 @@ import { useTracker } from '/imports/utility/reactMeteorData';
 import { ItemsByTagViewPresentation } from '/imports/ui/ItemsByTagView/ItemsByTagViewPresentation';
 
 /**
- * ItemsByTagViewContainer is a container component that connects ItemsByTagViewPresentation
- * to Meteor's reactive data system.
+ * ItemsByTagViewContainer - Route-aware wrapper that extracts tagId from URL parameters.
  *
- * Features:
- * - Manages selected tag state
- * - Subscribes to items.byTags publication reactively
- * - Fetches container paths for items
- * - Handles item selection callbacks
+ * This component:
+ * - Extracts tagId from /tags/:tagId route using useParams
+ * - Fetches tag data reactively using useTracker
+ * - Fetches items with the selected tag reactively
+ * - Handles error cases (missing tagId, tag not found)
+ * - Delegates rendering to ItemsByTagViewPresentation
+ *
+ * @remarks
+ * Use this component in Route definitions. For non-route usage with props,
+ * create a separate non-route container component.
  */
 
-export interface ItemsByTagViewContainerProps {
-    /**
-     * Initial tag to select (optional)
-     */
-    initialTagId?: string;
-
-    /**
-     * Callback when an item is selected
-     */
-    onSelectItem?: (item: InventoryItem) => void;
-}
-
-export const ItemsByTagViewContainer = (props: ItemsByTagViewContainerProps): ReactElement => {
-    const { initialTagId, onSelectItem } = props;
-
-    const [selectedTagId, setSelectedTagId] = useState<string | undefined>(initialTagId);
+export const ItemsByTagViewContainer = (): ReactElement => {
+    const { tagId } = useParams<{ tagId: string }>();
 
     // Fetch selected tag reactively
     const selectedTag = useTracker(() => {
-        if (selectedTagId === undefined) return undefined;
-        return TagsCollection.findOne({ _id: selectedTagId });
-    }, [selectedTagId]);
+        if (!tagId) return undefined;
+        return TagsCollection.findOne({ _id: tagId });
+    }, [tagId]);
 
     // Fetch items with selected tag reactively
     const items = useTracker(() => {
-        if (selectedTagId === undefined) return [];
+        if (!tagId) return [];
 
         return InventoryItemsCollection.find(
-            { tagIds: { $in: [selectedTagId] } },
+            { tagIds: { $in: [tagId] } },
             {
                 sort: [
                     ['name', 'asc'],
@@ -53,7 +45,7 @@ export const ItemsByTagViewContainer = (props: ItemsByTagViewContainerProps): Re
                 ],
             }
         ).fetch();
-    }, [selectedTagId]);
+    }, [tagId]);
 
     // Fetch container paths for items (simplified - doesn't recursively build full path)
     const containerPaths = useTracker(() => {
@@ -71,17 +63,44 @@ export const ItemsByTagViewContainer = (props: ItemsByTagViewContainerProps): Re
         return paths;
     }, [items]);
 
-    const handleClearSelection = (): void => {
-        setSelectedTagId(undefined);
-    };
+    // Validate tagId exists
+    if (!tagId) {
+        return (
+            <Box fill align="center" justify="center" gap="medium" pad="large">
+                <Heading level={3} color="status-error">
+                    Invalid Tag ID
+                </Heading>
+                <Text>The tag ID in the URL is missing or invalid.</Text>
+                <Link href="/tags">
+                    <Button label="Go to Tags" primary />
+                </Link>
+            </Box>
+        );
+    }
+
+    // Check if tag exists in database
+    if (selectedTag === undefined) {
+        return (
+            <Box fill align="center" justify="center" gap="medium" pad="large">
+                <Heading level={3} color="status-error">
+                    Tag Not Found
+                </Heading>
+                <Text>The tag you're looking for doesn't exist or has been deleted.</Text>
+                <Link href="/tags">
+                    <Button label="Go to Tags" primary />
+                </Link>
+            </Box>
+        );
+    }
 
     return (
         <ItemsByTagViewPresentation
             selectedTag={selectedTag}
             items={items}
             containerPaths={containerPaths}
-            onSelectItem={onSelectItem}
-            onClearSelection={handleClearSelection}
+            onClearSelection={() => {
+                /* Route-based, navigate to /tags instead */
+            }}
         />
     );
 };

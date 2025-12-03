@@ -92,7 +92,7 @@
   - Add validation: Check if itemId exists, show error if undefined
   - Add error handling: If item not found in DB, show "Item not found" with Link to /items
   - Follow pattern from quickstart.md Step 4
-- [ ] T007 [P] [US1] Update ItemsByTagView to use route parameters in meteor-app/imports/ui/ItemsByTagView.tsx
+- [X] T007 [P] [US1] Update ItemsByTagView to use route parameters in meteor-app/imports/ui/ItemsByTagView.tsx
   - Import: `import { useParams } from 'wouter'`
   - Add: `const { tagId } = useParams<{ tagId: string }>()`
   - Replace prop `tagId: string` with route parameter
