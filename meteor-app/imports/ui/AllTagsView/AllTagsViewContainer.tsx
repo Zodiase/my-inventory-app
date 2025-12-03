@@ -1,4 +1,5 @@
 import React, { type ComponentProps, type ReactElement, useCallback, useState } from 'react';
+import { useLocation } from 'wouter';
 
 import TagsCollection, { type TagRecord } from '/imports/api/tags';
 import { SCROLL_DELAY_MS } from '/imports/utility/constants';
@@ -21,6 +22,8 @@ import { AllTagsViewPresentation } from '/imports/ui/AllTagsView/AllTagsViewPres
  * for tag operations (create, rename, delete).
  */
 export const AllTagsViewContainer = (): ReactElement => {
+    const [, setLocation] = useLocation();
+
     // Fetch all tags
     const tags = useTracker(() => TagsCollection.find({}).fetch(), []);
 
@@ -60,16 +63,21 @@ export const AllTagsViewContainer = (): ReactElement => {
     );
 
     // Tag operations
-    const onAddChild = useCallback((parentTagId: string, tagName: string) => {
-        TagsCollection.createTag({ name: tagName, parentTagId }).then(
-            (newTagId) => {
-                console.log(`New tag "${tagName}" created.`, newTagId);
-            },
-            (reason) => {
-                console.warn(`Creation of tag "${tagName}" failed:`, reason);
-            }
-        );
-    }, []);
+    const onAddChild = useCallback(
+        (parentTagId: string, tagName: string) => {
+            TagsCollection.createTag({ name: tagName, parentTagId }).then(
+                (newTagId) => {
+                    console.log(`New tag "${tagName}" created.`, newTagId);
+                    // Navigate to the newly created tag's filter view
+                    setLocation(`/tags/${newTagId}`);
+                },
+                (reason) => {
+                    console.warn(`Creation of tag "${tagName}" failed:`, reason);
+                }
+            );
+        },
+        [setLocation]
+    );
 
     const onRename = useCallback((tag: TagRecord, newName: string) => {
         TagsCollection.renameTag(tag, newName).then(

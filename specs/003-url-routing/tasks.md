@@ -186,7 +186,7 @@
   - After successful item creation, call: `setLocation('/items/' + newItemId)`
   - Navigate user to newly created item's detail view
   - Follow pattern from quickstart.md "Navigate after action"
-- [ ] T015 [P] [US3] Add programmatic navigation after tag creation in meteor-app/imports/ui/CreateTagDialog.tsx (if exists)
+- [X] T015 [P] [US3] Add programmatic navigation after tag creation in meteor-app/imports/ui/CreateTagDialog.tsx (if exists)
   - Import: `import { useLocation } from 'wouter'`
   - Add: `const [, setLocation] = useLocation()`
   - After successful tag creation, call: `setLocation('/tags/' + newTagId)`
