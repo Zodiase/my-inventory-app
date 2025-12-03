@@ -1,13 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { resetDatabase, waitForMeteorReady } from '../helpers/database';
-import {
-    createItem,
-    createTag,
-    callMeteorMethod,
-    TagsPage,
-    InventoryPage,
-    ItemDetailPage,
-} from '../helpers/page-objects';
+import { TagsPage, InventoryPage, ItemDetailPage } from '../helpers/page-objects';
+import { createItem, createTag, callMeteorMethod } from '../helpers/factories';
 
 /**
  * E2E tests for User Story 2: Tag Items for Cross-Location Collections
