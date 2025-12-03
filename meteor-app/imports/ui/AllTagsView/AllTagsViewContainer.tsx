@@ -202,6 +202,9 @@ export const AllTagsViewContainer = (): ReactElement => {
             onAddChild={onAddChild}
             onRename={onRename}
             onDelete={onDelete}
+            onTagClick={(tagId) => {
+                setLocation(`/tags/${tagId}`);
+            }}
             detachedTags={{
                 detachedTagIds: detachedTagsData.tagIds,
                 isUpdating: detachedTagsData.updating,

@@ -1,4 +1,5 @@
 import React, { type ComponentProps, type ReactElement, useState, useCallback } from 'react';
+import { useLocation } from 'wouter';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import type { SearchFragment } from '/imports/model/SearchFragment';
@@ -50,6 +51,7 @@ export const AllItemsViewContainer = ({
 }: AllItemsViewContainerProps & ComponentProps<'div'>): ReactElement => {
     const [currentContainerId, setCurrentContainerId] = useState<string | undefined>(initialContainerId);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [, setLocation] = useLocation();
 
     // Handle pull-to-refresh
     const handleRefresh = useCallback(async () => {
@@ -135,6 +137,9 @@ export const AllItemsViewContainer = ({
                 handleNavigateToContainer(containerId);
             }}
             onRefresh={handleRefresh}
+            onViewItemDetails={(itemId) => {
+                setLocation(`/items/${itemId}`);
+            }}
         />
     );
 };

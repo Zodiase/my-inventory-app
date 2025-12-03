@@ -1,6 +1,5 @@
 import React, { type ComponentProps, type ReactElement, useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'wouter';
 
 import type { TagRecord } from '/imports/model/TagRecord';
 
@@ -68,6 +67,7 @@ interface TagListProps {
     onAddChild: (parentTagId: string, tagName: string) => void;
     onRename: (tag: TagRecord, newName: string) => void;
     onDelete: (tag: TagRecord) => void;
+    onTagClick?: (tagId: string) => void;
 }
 
 const TagList = styled(
@@ -78,6 +78,7 @@ const TagList = styled(
         onAddChild,
         onRename,
         onDelete,
+        onTagClick,
         ...rootElementProps
     }: TagListProps & ComponentProps<'div'>): ReactElement => {
         const tagId = tag?._id ?? '';
@@ -164,12 +165,13 @@ const TagList = styled(
                     >
                         <label className="tag-name-label">
                             {tagId !== '' ? (
-                                <Link href={`/tags/${tagId}`}>
-                                    <span style={{ cursor: 'pointer', textDecoration: 'underline' }}>
-                                        {tagName}
-                                        <span className="tag-item-count"> ({itemCount})</span>
-                                    </span>
-                                </Link>
+                                <span
+                                    onClick={() => onTagClick?.(tagId)}
+                                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                >
+                                    {tagName}
+                                    <span className="tag-item-count"> ({itemCount})</span>
+                                </span>
                             ) : (
                                 <span>
                                     {tagName}
@@ -202,6 +204,7 @@ const TagList = styled(
                                     onAddChild={onAddChild}
                                     onRename={onRename}
                                     onDelete={onDelete}
+                                    onTagClick={onTagClick}
                                 />
                             </li>
                         );
@@ -309,6 +312,11 @@ export interface AllTagsViewPresentationProps {
     onDelete: (tag: TagRecord) => void;
 
     /**
+     * Callback when clicking a tag name (for navigation)
+     */
+    onTagClick?: (tagId: string) => void;
+
+    /**
      * Detached tags utility props
      */
     detachedTags?: {
@@ -334,6 +342,7 @@ export const AllTagsViewPresentation = styled(
         onAddChild,
         onRename,
         onDelete,
+        onTagClick,
         detachedTags,
         tagsWithoutPath,
         ...rootElementProps
@@ -367,6 +376,7 @@ export const AllTagsViewPresentation = styled(
                     onAddChild={onAddChild}
                     onRename={onRename}
                     onDelete={onDelete}
+                    onTagClick={onTagClick}
                 />
             </div>
         );
