@@ -1,5 +1,6 @@
 import React, { type ComponentProps, type ReactElement, useState } from 'react';
 import styled from 'styled-components';
+import { Link } from 'wouter';
 
 import type { TagRecord } from '/imports/model/TagRecord';
 
@@ -162,8 +163,19 @@ const TagList = styled(
                         data-tag-path={tag ? tag.path.map(({ name }) => name).join(',') : undefined}
                     >
                         <label className="tag-name-label">
-                            {tagName}
-                            {tagId !== '' && <span className="tag-item-count"> ({itemCount})</span>}
+                            {tagId !== '' ? (
+                                <Link href={`/tags/${tagId}`}>
+                                    <span style={{ cursor: 'pointer', textDecoration: 'underline' }}>
+                                        {tagName}
+                                        <span className="tag-item-count"> ({itemCount})</span>
+                                    </span>
+                                </Link>
+                            ) : (
+                                <span>
+                                    {tagName}
+                                    {tagId !== '' && <span className="tag-item-count"> ({itemCount})</span>}
+                                </span>
+                            )}
                         </label>
                         <span className="tag-actions-container">
                             <StyledButton className="new-child-action" onClick={handleAddChild}>

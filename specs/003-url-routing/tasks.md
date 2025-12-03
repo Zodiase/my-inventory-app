@@ -139,7 +139,7 @@
   - Replace onClick with `<Link href={'/items/' + item._id}>...</Link>`
   - Ensure clicking item navigates to /items/:itemId route
   - Verify browser history stack updates correctly
-- [ ] T011 [P] [US2] Update tag navigation links to use Wouter Link in meteor-app/imports/ui/AllTagsView.tsx
+- [X] T011 [P] [US2] Update tag navigation links to use Wouter Link in meteor-app/imports/ui/AllTagsView.tsx
   - Import: `import { Link } from 'wouter'`
   - Find tag click handlers that navigate to items-by-tag view
   - Replace onClick with `<Link href={'/tags/' + tag._id}>...</Link>`
