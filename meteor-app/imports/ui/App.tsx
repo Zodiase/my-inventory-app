@@ -80,7 +80,7 @@ const theme = {
 };
 
 export const App = (): ReactElement => {
-    const [location] = useLocation();
+    const [location, setLocation] = useLocation();
     const [showCreateItem, setShowCreateItem] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
 
@@ -128,8 +128,10 @@ export const App = (): ReactElement => {
 
     const handleCreateItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
         try {
-            await Items.createItem(itemData);
+            const newItemId = await Items.createItem(itemData);
             setShowCreateItem(false);
+            // Navigate to the newly created item's detail view
+            setLocation(`/items/${newItemId}`);
         } catch (error) {
             console.error('Failed to create item:', error);
         }

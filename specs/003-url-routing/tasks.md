@@ -180,7 +180,7 @@
 
 ### Implementation for User Story 3
 
-- [ ] T014 [P] [US3] Add programmatic navigation after item creation in meteor-app/imports/ui/ItemForm.tsx
+- [X] T014 [P] [US3] Add programmatic navigation after item creation in meteor-app/imports/ui/ItemForm.tsx
   - Import: `import { useLocation } from 'wouter'`
   - Add: `const [, setLocation] = useLocation()`
   - After successful item creation, call: `setLocation('/items/' + newItemId)`
