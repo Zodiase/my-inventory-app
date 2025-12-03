@@ -99,7 +99,7 @@
   - Add validation: Check if tagId exists, show error if undefined
   - Add error handling: If tag not found in DB, show "Tag not found" with Link to /tags
   - Follow pattern from quickstart.md Step 4
-- [ ] T008 [US1] Update component signatures in meteor-app/imports/ui/App.tsx
+- [X] T008 [US1] Update component signatures in meteor-app/imports/ui/App.tsx
   - Remove `itemId` prop from ItemDetailView (now uses useParams)
   - Remove `tagId` prop from ItemsByTagView (now uses useParams)
   - Verify TypeScript compilation passes
