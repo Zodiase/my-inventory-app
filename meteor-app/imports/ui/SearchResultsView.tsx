@@ -2,6 +2,7 @@ import React, { type ComponentProps } from 'react';
 import styled from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import { usePageTitle } from '/imports/utility/usePageTitle';
 
 /**
  * SearchResultsView component for displaying search results with breadcrumb context.
@@ -215,6 +216,8 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
     className,
     style,
 }) => {
+    usePageTitle('Search - My Inventory');
+
     const handleItemClick = (itemId: string): void => {
         onItemClick?.(itemId);
     };

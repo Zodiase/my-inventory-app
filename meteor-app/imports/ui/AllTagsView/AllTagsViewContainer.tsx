@@ -4,6 +4,7 @@ import { useLocation } from 'wouter';
 import TagsCollection, { type TagRecord } from '/imports/api/tags';
 import { SCROLL_DELAY_MS } from '/imports/utility/constants';
 import { useTracker } from '/imports/utility/reactMeteorData';
+import { usePageTitle } from '/imports/utility/usePageTitle';
 
 import { AllTagsViewPresentation } from '/imports/ui/AllTagsView/AllTagsViewPresentation';
 
@@ -23,6 +24,8 @@ import { AllTagsViewPresentation } from '/imports/ui/AllTagsView/AllTagsViewPres
  */
 export const AllTagsViewContainer = (): ReactElement => {
     const [, setLocation] = useLocation();
+
+    usePageTitle('Tags - My Inventory');
 
     // Fetch all tags
     const tags = useTracker(() => TagsCollection.find({}).fetch(), []);

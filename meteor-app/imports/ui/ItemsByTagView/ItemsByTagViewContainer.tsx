@@ -5,6 +5,7 @@ import { Box, Button, Heading, Text } from 'grommet';
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import { TagsCollection, type TagRecord } from '/imports/api/tags';
 import { useTracker } from '/imports/utility/reactMeteorData';
+import { usePageTitle } from '/imports/utility/usePageTitle';
 
 import { ItemsByTagViewPresentation } from '/imports/ui/ItemsByTagView/ItemsByTagViewPresentation';
 
@@ -25,6 +26,8 @@ import { ItemsByTagViewPresentation } from '/imports/ui/ItemsByTagView/ItemsByTa
 
 export const ItemsByTagViewContainer = (): ReactElement => {
     const { tagId } = useParams<{ tagId: string }>();
+
+    usePageTitle('Tag Filter - My Inventory');
 
     // Fetch selected tag reactively
     const selectedTag = useTracker(() => {

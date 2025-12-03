@@ -5,6 +5,7 @@ import { useTracker } from '/imports/utility/reactMeteorData';
 import { InventoryItemsCollection } from '/imports/api/items';
 import { TagsCollection } from '/imports/api/tags';
 import { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
+import { usePageTitle } from '/imports/utility/usePageTitle';
 
 export type { ItemDetailViewProps } from '/imports/ui/ItemDetailViewPresentation';
 export { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
@@ -32,6 +33,8 @@ export { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentati
  */
 export const ItemDetailView: React.FC = () => {
     const { itemId } = useParams<{ itemId: string }>();
+
+    usePageTitle('Item Details - My Inventory');
 
     // Fetch item from database
     const item = useTracker(() => {
