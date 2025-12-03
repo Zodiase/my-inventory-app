@@ -5,7 +5,7 @@ import { Box, Button, Heading, Layer, Text } from 'grommet';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
 
-import { ItemDetailViewPresentation } from '/imports/ui/ItemDetailView';
+import { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
 
 const meta: Meta<typeof ItemDetailViewPresentation> = {
     title: 'UI/ItemDetailView',
