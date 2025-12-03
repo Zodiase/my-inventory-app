@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import React, { type ReactElement } from 'react';
 import { Box, Button, Heading } from 'grommet';
 import { Home } from 'grommet-icons';
 
