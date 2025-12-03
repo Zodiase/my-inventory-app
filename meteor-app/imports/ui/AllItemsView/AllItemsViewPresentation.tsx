@@ -2,6 +2,7 @@ import { Box, List, Text } from 'grommet';
 import { Folder, Next } from 'grommet-icons';
 import React, { type ComponentProps, type ReactElement, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useLocation } from 'wouter';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
@@ -148,6 +149,7 @@ export const AllItemsViewPresentation = ({
     ...rootElementProps
 }: AllItemsViewPresentationProps & ComponentProps<'div'>): ReactElement => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const [, setLocation] = useLocation();
 
     // Pull-to-refresh hook
     const { isRefreshing, pullDistance, isTriggered } = usePullToRefresh({
@@ -219,14 +221,13 @@ export const AllItemsViewPresentation = ({
                             // Build context menu actions
                             const menuActions = [];
 
-                            if (onViewItemDetails !== undefined) {
-                                menuActions.push({
-                                    label: 'View Details',
-                                    onClick: () => {
-                                        onViewItemDetails(item._id);
-                                    },
-                                });
-                            }
+                            // Always add View Details - navigates to /items/:itemId
+                            menuActions.push({
+                                label: 'View Details',
+                                onClick: () => {
+                                    setLocation(`/items/${item._id}`);
+                                },
+                            });
 
                             if (onEditItem !== undefined) {
                                 menuActions.push({

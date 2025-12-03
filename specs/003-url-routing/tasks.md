@@ -133,7 +133,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T010 [P] [US2] Update item navigation links to use Wouter Link in meteor-app/imports/ui/AllItemsView.tsx
+- [X] T010 [P] [US2] Update item navigation links to use Wouter Link in meteor-app/imports/ui/AllItemsView.tsx
   - Import: `import { Link } from 'wouter'`
   - Find item click handlers that navigate to item detail
   - Replace onClick with `<Link href={'/items/' + item._id}>...</Link>`
