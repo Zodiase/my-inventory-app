@@ -7,7 +7,7 @@ import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';
 import { ItemsByTagView } from './ItemsByTagView';
 import { ItemForm } from './ItemForm';
-import { ItemDetailView } from './ItemDetailView';
+import { ItemDetailView, ItemDetailViewPresentation } from './ItemDetailView';
 import { SearchBar } from './SearchBar';
 import { SearchScopeSelector } from './SearchScopeSelector';
 import { SearchFragmentBuilder } from './SearchFragmentBuilder';
@@ -437,8 +437,8 @@ export const App = (): ReactElement => {
                             )}
                         </Route>
 
-                        {/* Item detail route - will be updated in Phase 3 (T006) */}
-                        <Route path="/items/:itemId">{() => <NotFoundView />}</Route>
+                        {/* Item detail route */}
+                        <Route path="/items/:itemId">{() => <ItemDetailView />}</Route>
 
                         {/* Items by tag route - will be updated in Phase 3 (T007) */}
                         <Route path="/tags/:tagId">{() => <NotFoundView />}</Route>
@@ -479,7 +479,7 @@ export const App = (): ReactElement => {
                                 </Heading>
                                 <Button icon={<Close />} onClick={handleCloseItemDetail} />
                             </Box>
-                            <ItemDetailView
+                            <ItemDetailViewPresentation
                                 item={selectedItem}
                                 tags={selectedItemTags}
                                 onEdit={() => {

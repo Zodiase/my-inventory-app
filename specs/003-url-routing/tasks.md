@@ -22,12 +22,12 @@
   - Run: `cd meteor-app && npm install wouter@^3.0.0`
   - Verify: `npm list wouter` shows v3.x.x
   - Commit package.json and package-lock.json changes
-- [ ] T002 [P] Create NotFoundView component in meteor-app/imports/ui/NotFoundView.tsx
+- [X] T002 [P] Create NotFoundView component in meteor-app/imports/ui/NotFoundView.tsx
   - Functional component with TypeScript
   - Display "Page not found" message using Grommet Heading
   - Include Button to navigate back to home (will use Link in Phase 3)
   - Export as named export
-- [ ] T003 [P] Document routing patterns in meteor-app/imports/ui/README.md (create if needed)
+- [X] T003 [P] Document routing patterns in meteor-app/imports/ui/README.md (create if needed)
   - Document URL patterns for all 7 routes
   - Document useParams pattern for itemId/tagId
   - Document Link vs setLocation usage
@@ -41,7 +41,7 @@
 
 **⚠️ CRITICAL**: This phase replaces state-based navigation with URL routing - all user stories depend on this
 
-- [ ] T004 Replace state-based navigation with Wouter routing in meteor-app/imports/ui/App.tsx
+- [X] T004 Replace state-based navigation with Wouter routing in meteor-app/imports/ui/App.tsx
   - Import: `import { Route, Switch } from 'wouter'`
   - Remove: `const [currentView, setCurrentView] = useState<View>('items')`
   - Remove: `const [selectedItemId, setSelectedItemId] = useState<string | undefined>()`
@@ -57,7 +57,7 @@
     - `<Route path="/tags/:tagId" component={ItemsByTagView} />`
     - `<Route component={NotFoundView} />` (catchall)
   - Ensure TypeScript compilation passes with no new errors
-- [ ] T005 Update navigation buttons to use Wouter Link in meteor-app/imports/ui/App.tsx
+- [X] T005 Update navigation buttons to use Wouter Link in meteor-app/imports/ui/App.tsx
   - Import: `import { Link, useLocation } from 'wouter'`
   - Wrap Items button with `<Link href="/items">...</Link>`
   - Wrap Tags button with `<Link href="/tags">...</Link>`
@@ -85,7 +85,7 @@
 
 ### Implementation for User Story 1
 
-- [ ] T006 [US1] Update ItemDetailView to use route parameters in meteor-app/imports/ui/ItemDetailView.tsx
+- [X] T006 [US1] Update ItemDetailView to use route parameters in meteor-app/imports/ui/ItemDetailView.tsx
   - Import: `import { useParams } from 'wouter'`
   - Add: `const { itemId } = useParams<{ itemId: string }>()`
   - Replace prop `itemId: string` with route parameter
