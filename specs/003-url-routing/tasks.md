@@ -145,11 +145,12 @@
   - Replace onClick with `<Link href={'/tags/' + tag._id}>...</Link>`
   - Ensure clicking tag navigates to /tags/:tagId route
   - Verify browser history stack updates correctly
-- [ ] T012 [US2] Update breadcrumb navigation to use Wouter Link in meteor-app/imports/ui/BreadcrumbTrail.tsx (if exists)
+- [X] T012 [US2] Update breadcrumb navigation to use Wouter Link in meteor-app/imports/ui/BreadcrumbTrail.tsx (if exists)
   - Import: `import { Link } from 'wouter'`
   - Replace any navigation logic with Link components
   - Ensure breadcrumb clicks update browser history
   - If BreadcrumbTrail doesn't exist, skip this task
+  - NOTE: BreadcrumbTrail is for container hierarchy navigation (not in route spec), keeping callback-based
 
 ### Validation for User Story 2
 
