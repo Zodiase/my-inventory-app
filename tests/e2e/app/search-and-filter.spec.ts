@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { resetDatabase, waitForMeteorReady, createItem, createTag, callMeteorMethod } from '../helpers/page-objects';
+import { resetDatabase, waitForMeteorReady, callMeteorMethod } from '../helpers/database';
+import { createItem, createTag } from '../helpers/factories';
 
 /**
  * E2E tests for User Story 3: Global Search and Context Filtering
