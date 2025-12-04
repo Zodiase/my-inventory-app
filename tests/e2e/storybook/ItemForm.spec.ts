@@ -162,6 +162,79 @@ test.describe('ItemForm Component (Storybook)', () => {
         const submitCount = await page.locator('[data-testid="submit-count"]').textContent();
         expect(submitCount).toBe('0');
     });
+
+    test('should handle special characters in name field', async ({ page }) => {
+        await gotoStory(page, 'ui-itemform', 'test-submit-behavior');
+
+        const itemForm = new ItemFormPage(page);
+
+        // Test various special characters that might cause issues
+        const specialChars = 'Test & "quotes" <tags> 日本語 émojis 🎉🔥';
+        await itemForm.fillName(specialChars);
+        await itemForm.fillDescription('Description with special chars: & < > " \'');
+
+        // Submit the form
+        await itemForm.submit();
+
+        // Wait for submission to complete
+        await expect(page.locator('[data-testid="submit-count"]')).toHaveText('1', { timeout: 10000 });
+
+        // Verify the data was submitted correctly (not mangled or escaped incorrectly)
+        const submitDataText = await page.locator('[data-testid="submit-data"]').textContent();
+        const submitData = JSON.parse(submitDataText ?? '{}');
+        expect(submitData.name).toBe(specialChars);
+        expect(submitData.description).toBe('Description with special chars: & < > " \'');
+    });
+
+    test('should handle container checkbox selection', async ({ page }) => {
+        await gotoStory(page, 'ui-itemform', 'test-submit-behavior');
+
+        const itemForm = new ItemFormPage(page);
+
+        // Fill name and check container checkbox
+        await itemForm.fillName('Storage Box');
+
+        // Find the checkbox label/container and click it (Grommet hides the actual input)
+        const containerCheckboxLabel = page.getByText('This item is a container (can hold other items)');
+        await containerCheckboxLabel.click();
+
+        // Verify checkbox is now checked using the hidden input
+        const containerCheckbox = page.locator('input[name="isContainer"]');
+        await expect(containerCheckbox).toBeChecked();
+
+        // Submit the form
+        await itemForm.submit();
+
+        // Wait for submission
+        await expect(page.locator('[data-testid="submit-count"]')).toHaveText('1', { timeout: 10000 });
+
+        // Verify isContainer is true in submitted data
+        const submitDataText = await page.locator('[data-testid="submit-data"]').textContent();
+        const submitData = JSON.parse(submitDataText ?? '{}');
+        expect(submitData.isContainer).toBe(true);
+    });
+
+    test('should handle form cancellation', async ({ page }) => {
+        await gotoStory(page, 'ui-itemform', 'test-cancel-behavior');
+
+        const itemForm = new ItemFormPage(page);
+
+        // Fill out the form partially
+        await itemForm.fillName('Cancelled Item');
+        await itemForm.fillDescription('This should not be submitted');
+
+        // Find and click cancel button
+        const cancelButton = page.getByRole('button', { name: /cancel/i });
+        await cancelButton.click();
+
+        // Verify cancel callback was called
+        const cancelCount = page.locator('[data-testid="cancel-count"]');
+        await expect(cancelCount).toHaveText('1');
+
+        // Verify submit was NOT called
+        const submitCount = page.locator('[data-testid="submit-count"]');
+        await expect(submitCount).toHaveText('0');
+    });
 });
 
 /**

@@ -282,3 +282,35 @@ export const TestSubmitBehavior: Story = {
         );
     },
 };
+
+/**
+ * Test-specific story for E2E validation of form cancellation behavior.
+ * Wraps ItemForm with a parent that tracks cancel callback invocations.
+ *
+ * Features:
+ * - Tracks cancel count in data-testid="cancel-count"
+ * - Tracks submit count in data-testid="submit-count" (should stay 0)
+ *
+ * Used by tests/e2e/storybook/ItemForm.spec.ts
+ */
+export const TestCancelBehavior: Story = {
+    render: () => {
+        const [cancelCount, setCancelCount] = useState(0);
+        const [submitCount, setSubmitCount] = useState(0);
+
+        return (
+            <>
+                <ItemForm
+                    onSubmit={() => {
+                        setSubmitCount((c) => c + 1);
+                    }}
+                    onCancel={() => {
+                        setCancelCount((c) => c + 1);
+                    }}
+                />
+                <div data-testid="cancel-count">{cancelCount}</div>
+                <div data-testid="submit-count">{submitCount}</div>
+            </>
+        );
+    },
+};
