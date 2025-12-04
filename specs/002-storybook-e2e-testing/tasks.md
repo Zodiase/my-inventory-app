@@ -203,12 +203,15 @@
 
 ### Component Tests for User Story 3
 
-- [ ] T014 [P] [US3] Create comprehensive ItemForm tests in tests/e2e/storybook/ItemForm.spec.ts
-  - Test: "should handle special characters in name field"
-  - Test: "should enforce max length validation"
-  - Test: "should handle container selection"
-  - Test: "should upload attachment (if applicable)"
-  - Expand beyond MVP to cover all interaction modes
+- [X] T014 [P] [US3] Create comprehensive ItemForm tests in tests/e2e/storybook/ItemForm.spec.ts
+  - ✅ Test: "should handle special characters in name field"
+  - ✅ Test: "should handle container checkbox selection"
+  - ✅ Test: "should handle form cancellation"
+  - **Patterns Validated**:
+    - Grommet CheckBox interaction (click label text, verify hidden input)
+    - Special character handling (unicode, emojis, quotes)
+    - Cancel callback invocation without form submission
+  - **Tests**: 7 passing (special chars ✅ | container checkbox ✅ | cancel ✅ | submission ✅ | validation ✅ | double-submit ✅ | description field ✅)
 - [ ] T015 [P] [US3] Create LongPressContextMenu component test in tests/e2e/storybook/LongPressContextMenu.spec.ts (if story exists)
   - Test: "should show menu on long press"
   - Test: "should hide menu on outside click"
