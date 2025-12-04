@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForMeteorReady, resetDatabase } from './helpers';
+import { waitForMeteorReady, resetDatabase } from '../helpers/database';
 
 /**
  * Basic app smoke tests to verify the app loads and core navigation works.

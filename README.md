@@ -18,6 +18,25 @@ meteor run
 
 The app will be available at http://localhost:3000/.
 
+## Features
+
+### URL Routing
+
+The app uses client-side URL routing (via [Wouter](https://github.com/molefrog/wouter)) for navigation:
+
+- **`/` or `/items`** - Items list view (root level)
+- **`/items/:itemId`** - Individual item detail view
+- **`/tags`** - Tag management view
+- **`/tags/:tagId`** - Items filtered by specific tag
+- **`/search`** - Search results view
+
+Features:
+
+- ✅ Browser back/forward buttons work
+- ✅ Bookmarkable and shareable URLs
+- ✅ Direct URL navigation
+- ✅ Page refresh maintains view state
+
 ## Testing
 
 Run unit and full-app tests:

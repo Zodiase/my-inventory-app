@@ -1,10 +1,12 @@
 import React, { type ComponentProps, type ReactElement, useState, useCallback } from 'react';
+import { useLocation } from 'wouter';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
 import { buildSearchQuery } from '/imports/utility/searchQuery';
 import { useTracker } from '/imports/utility/reactMeteorData';
+import { usePageTitle } from '/imports/utility/usePageTitle';
 
 /**
  * AllItemsViewContainer is a container component that fetches data from Meteor and passes it
@@ -50,6 +52,9 @@ export const AllItemsViewContainer = ({
 }: AllItemsViewContainerProps & ComponentProps<'div'>): ReactElement => {
     const [currentContainerId, setCurrentContainerId] = useState<string | undefined>(initialContainerId);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [, setLocation] = useLocation();
+
+    usePageTitle('Items - My Inventory');
 
     // Handle pull-to-refresh
     const handleRefresh = useCallback(async () => {
@@ -135,6 +140,9 @@ export const AllItemsViewContainer = ({
                 handleNavigateToContainer(containerId);
             }}
             onRefresh={handleRefresh}
+            onViewItemDetails={(itemId) => {
+                setLocation(`/items/${itemId}`);
+            }}
         />
     );
 };

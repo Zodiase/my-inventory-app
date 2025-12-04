@@ -34,27 +34,9 @@ export interface CreateItemOptions {
  * @returns Promise resolving to the created item ID
  */
 export async function createItem(page: Page, options: CreateItemOptions): Promise<string> {
-    const itemId = await callMeteorMethod<string>(
-        page,
-        'items.create',
-        options.name,
-        options.description || '',
-        options.containerId || null,
-        options.isContainer || false
-    );
+    const itemId = await callMeteorMethod<string>(page, 'createItem', options);
 
-    // Apply tags if provided
-    if (options.tagIds && options.tagIds.length > 0) {
-        for (const tagId of options.tagIds) {
-            await callMeteorMethod(page, 'tags.addToItem', tagId, itemId);
-        }
-    }
-
-    // Set properties if provided
-    if (options.properties) {
-        await callMeteorMethod(page, 'items.updateProperties', itemId, options.properties);
-    }
-
+    // Properties are included in the main options, no separate call needed
     return itemId;
 }
 
@@ -74,7 +56,7 @@ export interface CreateTagOptions {
  * @returns Promise resolving to the created tag ID
  */
 export async function createTag(page: Page, options: CreateTagOptions): Promise<string> {
-    return await callMeteorMethod<string>(page, 'tags.create', options.name, options.parentId || null);
+    return await callMeteorMethod<string>(page, 'createTag', options);
 }
 
 /**

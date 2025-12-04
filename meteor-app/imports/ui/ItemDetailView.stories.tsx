@@ -5,11 +5,11 @@ import { Box, Button, Heading, Layer, Text } from 'grommet';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
 
-import { ItemDetailView } from '/imports/ui/ItemDetailView';
+import { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
 
-const meta: Meta<typeof ItemDetailView> = {
+const meta: Meta<typeof ItemDetailViewPresentation> = {
     title: 'UI/ItemDetailView',
-    component: ItemDetailView,
+    component: ItemDetailViewPresentation,
     parameters: {
         layout: 'centered',
     },
@@ -17,7 +17,7 @@ const meta: Meta<typeof ItemDetailView> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ItemDetailView>;
+type Story = StoryObj<typeof ItemDetailViewPresentation>;
 
 // Sample data
 const sampleItem: InventoryItem = {

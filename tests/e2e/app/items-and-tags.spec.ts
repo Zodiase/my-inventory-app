@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
-import { resetDatabase, waitForMeteorReady, callMeteorMethod, InventoryPage, ItemFormPage } from './helpers';
+import { resetDatabase, waitForMeteorReady, callMeteorMethod } from '../helpers/database';
+import { InventoryPage, ItemFormPage } from '../helpers/page-objects';
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');

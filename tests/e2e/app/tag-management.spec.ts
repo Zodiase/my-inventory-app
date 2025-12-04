@@ -1,14 +1,7 @@
 import { test, expect } from '@playwright/test';
-import {
-    resetDatabase,
-    waitForMeteorReady,
-    createItem,
-    createTag,
-    callMeteorMethod,
-    TagsPage,
-    InventoryPage,
-    ItemDetailPage,
-} from '../helpers/page-objects';
+import { resetDatabase, waitForMeteorReady } from '../helpers/database';
+import { TagsPage, InventoryPage, ItemDetailPage } from '../helpers/page-objects';
+import { createItem, createTag, callMeteorMethod } from '../helpers/factories';
 
 /**
  * E2E tests for User Story 2: Tag Items for Cross-Location Collections
@@ -278,5 +271,89 @@ test.describe('User Story 2: Tag Items for Cross-Location Collections', () => {
         // Verify both items from different locations appear
         await expect(page.getByText('Kitchen Knife')).toBeVisible();
         await expect(page.getByText('Screwdriver')).toBeVisible();
+    });
+});
+
+/**
+ * T012: CreateTagDialog Integration Tests
+ * Porting proven patterns from Storybook tests (tests/e2e/storybook/CreateTagDialog.spec.ts)
+ * to full app integration tests.
+ */
+test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () => {
+    test('should create tag via CreateTagDialog', async ({ page }) => {
+        // Navigate to tags view by clicking navigation button
+        await page.goto('/');
+        await page.getByRole('button', { name: /tags/i }).click();
+
+        // Click + button to open CreateTagDialog
+        await page.locator('.new-child-action').first().click();
+
+        // Fill form using same selectors as Storybook tests
+        const tagName = `Integration Test Tag ${Date.now()}`;
+        await page.locator('input[name="tagName"]').fill(tagName);
+
+        // Submit
+        await page.getByRole('button', { name: /create tag/i }).click();
+
+        // Verify tag appears in list
+        await expect(page.getByRole('listitem').filter({ hasText: tagName })).toBeVisible();
+    });
+
+    test('should show validation error for empty tag name', async ({ page }) => {
+        const tagsPage = new TagsPage(page);
+        await tagsPage.goto();
+
+        // Open dialog
+        await page.locator('.new-child-action').first().click();
+
+        // Try to submit without filling
+        await page.getByRole('button', { name: /create tag/i }).click();
+
+        // Expect validation error (form won't submit)
+        await expect(page.locator('input[name="tagName"]')).toBeVisible();
+        await expect(page.locator('input[name="tagName"]')).toHaveAttribute('required', '');
+    });
+
+    test('should prevent double-submit', async ({ page }) => {
+        const tagsPage = new TagsPage(page);
+        await tagsPage.goto();
+
+        // Open dialog
+        await page.locator('.new-child-action').first().click();
+
+        const tagName = `Double Submit Test ${Date.now()}`;
+        await page.locator('input[name="tagName"]').fill(tagName);
+
+        // Click submit button rapidly multiple times
+        const submitButton = page.getByRole('button', { name: /create tag/i });
+        await Promise.all([
+            submitButton.click({ force: true }),
+            submitButton.click({ force: true }),
+            submitButton.click({ force: true }),
+        ]);
+
+        // Wait for dialog to close
+        await expect(page.locator('input[name="tagName"]')).not.toBeVisible();
+
+        // Verify only one tag was created
+        const tags = page.locator(`text="${tagName}"`);
+        await expect(tags).toHaveCount(1);
+    });
+
+    test('should close dialog on cancel', async ({ page }) => {
+        const tagsPage = new TagsPage(page);
+        await tagsPage.goto();
+
+        // Open dialog
+        await page.locator('.new-child-action').first().click();
+
+        // Verify dialog is open
+        await expect(page.locator('input[name="tagName"]')).toBeVisible();
+
+        // Click cancel
+        await page.getByRole('button', { name: /cancel/i }).click();
+
+        // Verify dialog closed
+        await expect(page.locator('input[name="tagName"]')).not.toBeVisible();
     });
 });

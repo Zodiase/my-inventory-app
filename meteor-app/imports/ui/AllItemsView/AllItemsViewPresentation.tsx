@@ -219,6 +219,7 @@ export const AllItemsViewPresentation = ({
                             // Build context menu actions
                             const menuActions = [];
 
+                            // Always add View Details - navigates to /items/:itemId
                             if (onViewItemDetails !== undefined) {
                                 menuActions.push({
                                     label: 'View Details',
@@ -260,11 +261,13 @@ export const AllItemsViewPresentation = ({
                                         hoverIndicator="background-contrast"
                                         style={{
                                             minHeight: '44px',
-                                            cursor: item.isContainer ? 'pointer' : 'default',
+                                            cursor: 'pointer',
                                         }}
                                         onClick={() => {
                                             if (item.isContainer) {
                                                 onNavigateToContainer(item._id);
+                                            } else if (onViewItemDetails !== undefined) {
+                                                onViewItemDetails(item._id);
                                             }
                                         }}
                                     >

@@ -1,8 +1,9 @@
-import React, { type ComponentProps, type ReactElement } from 'react';
+import React, { type ComponentProps, type ReactElement, useState } from 'react';
 import styled from 'styled-components';
 
 import type { TagRecord } from '/imports/model/TagRecord';
 
+import { CreateTagDialog } from '/imports/ui/CreateTagDialog';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
 import StyledButton from '/imports/ui/StyledButton';
 
@@ -66,6 +67,7 @@ interface TagListProps {
     onAddChild: (parentTagId: string, tagName: string) => void;
     onRename: (tag: TagRecord, newName: string) => void;
     onDelete: (tag: TagRecord) => void;
+    onTagClick?: (tagId: string) => void;
 }
 
 const TagList = styled(
@@ -76,17 +78,29 @@ const TagList = styled(
         onAddChild,
         onRename,
         onDelete,
+        onTagClick,
         ...rootElementProps
     }: TagListProps & ComponentProps<'div'>): ReactElement => {
         const tagId = tag?._id ?? '';
         const tagName = tag?.name ?? 'All Tags';
         const itemCount = tagId !== '' ? usageCounts[tagId] ?? 0 : 0;
 
+        const [createDialogState, setCreateDialogState] = useState<{ isOpen: boolean; parentTagId: string }>({
+            isOpen: false,
+            parentTagId: '',
+        });
+
         const handleAddChild = (): void => {
-            const newTagName = window.prompt(`Name of new tag:`);
-            if (newTagName !== null) {
-                onAddChild(tagId, newTagName);
-            }
+            setCreateDialogState({ isOpen: true, parentTagId: tagId });
+        };
+
+        const handleCreateTagSubmit = (tagName: string): void => {
+            onAddChild(createDialogState.parentTagId, tagName);
+            setCreateDialogState({ isOpen: false, parentTagId: '' });
+        };
+
+        const handleCreateTagClose = (): void => {
+            setCreateDialogState({ isOpen: false, parentTagId: '' });
         };
 
         const handleRename = (): void => {
@@ -113,6 +127,11 @@ const TagList = styled(
 
         return (
             <div {...rootElementProps} data-tag-id={tagId}>
+                <CreateTagDialog
+                    isOpen={createDialogState.isOpen}
+                    onSubmit={handleCreateTagSubmit}
+                    onClose={handleCreateTagClose}
+                />
                 <LongPressContextMenu
                     actions={
                         tag !== undefined
@@ -145,8 +164,20 @@ const TagList = styled(
                         data-tag-path={tag ? tag.path.map(({ name }) => name).join(',') : undefined}
                     >
                         <label className="tag-name-label">
-                            {tagName}
-                            {tagId !== '' && <span className="tag-item-count"> ({itemCount})</span>}
+                            {tagId !== '' ? (
+                                <span
+                                    onClick={() => onTagClick?.(tagId)}
+                                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                >
+                                    {tagName}
+                                    <span className="tag-item-count"> ({itemCount})</span>
+                                </span>
+                            ) : (
+                                <span>
+                                    {tagName}
+                                    {tagId !== '' && <span className="tag-item-count"> ({itemCount})</span>}
+                                </span>
+                            )}
                         </label>
                         <span className="tag-actions-container">
                             <StyledButton className="new-child-action" onClick={handleAddChild}>
@@ -173,6 +204,7 @@ const TagList = styled(
                                     onAddChild={onAddChild}
                                     onRename={onRename}
                                     onDelete={onDelete}
+                                    onTagClick={onTagClick}
                                 />
                             </li>
                         );
@@ -280,6 +312,11 @@ export interface AllTagsViewPresentationProps {
     onDelete: (tag: TagRecord) => void;
 
     /**
+     * Callback when clicking a tag name (for navigation)
+     */
+    onTagClick?: (tagId: string) => void;
+
+    /**
      * Detached tags utility props
      */
     detachedTags?: {
@@ -305,6 +342,7 @@ export const AllTagsViewPresentation = styled(
         onAddChild,
         onRename,
         onDelete,
+        onTagClick,
         detachedTags,
         tagsWithoutPath,
         ...rootElementProps
@@ -338,6 +376,7 @@ export const AllTagsViewPresentation = styled(
                     onAddChild={onAddChild}
                     onRename={onRename}
                     onDelete={onDelete}
+                    onTagClick={onTagClick}
                 />
             </div>
         );

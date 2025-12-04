@@ -1,17 +1,19 @@
 import React, { type ReactElement, useState, useEffect } from 'react';
 import { Box, Button, Grommet, Header, Heading, Layer, Main, Nav } from 'grommet';
 import { Apps, Tag as TagIcon, Close, Search as SearchIcon, Filter, Add } from 'grommet-icons';
+import { Route, Switch, Link, useLocation } from 'wouter';
 
 import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';
 import { ItemsByTagView } from './ItemsByTagView';
 import { ItemForm } from './ItemForm';
-import { ItemDetailView } from './ItemDetailView';
+import { ItemDetailView, ItemDetailViewPresentation } from './ItemDetailView';
 import { SearchBar } from './SearchBar';
 import { SearchScopeSelector } from './SearchScopeSelector';
 import { SearchFragmentBuilder } from './SearchFragmentBuilder';
 import { SearchResultsView } from './SearchResultsView';
 import { FilterBar } from './FilterBar';
+import { NotFoundView } from './NotFoundView';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
 import type { SearchFragment } from '/imports/model/SearchFragment';
@@ -77,11 +79,8 @@ const theme = {
     },
 };
 
-type View = 'items' | 'tags' | 'itemsByTag' | 'search';
-
 export const App = (): ReactElement => {
-    const [currentView, setCurrentView] = useState<View>('items');
-    const [selectedTagId, setSelectedTagId] = useState<string | undefined>();
+    const [location, setLocation] = useLocation();
     const [showCreateItem, setShowCreateItem] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
 
@@ -117,12 +116,7 @@ export const App = (): ReactElement => {
     useEffect(() => {
         setItemsViewFilters([]);
         setShowFilterBuilder(false);
-    }, [currentView]);
-
-    const handleSelectTag = (tagId: string): void => {
-        setSelectedTagId(tagId);
-        setCurrentView('itemsByTag');
-    };
+    }, [location]);
 
     const handleSelectItem = (item: InventoryItem): void => {
         setSelectedItemId(item._id);
@@ -134,8 +128,10 @@ export const App = (): ReactElement => {
 
     const handleCreateItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
         try {
-            await Items.createItem(itemData);
+            const newItemId = await Items.createItem(itemData);
             setShowCreateItem(false);
+            // Navigate to the newly created item's detail view
+            setLocation(`/items/${newItemId}`);
         } catch (error) {
             console.error('Failed to create item:', error);
         }
@@ -233,145 +229,225 @@ export const App = (): ReactElement => {
                         Inventory App
                     </Heading>
                     <Nav direction="row" gap="small">
-                        <Button
-                            icon={<Apps />}
-                            label="Items"
-                            onClick={() => setCurrentView('items')}
-                            primary={currentView === 'items'}
-                            plain={currentView !== 'items'}
-                            style={{ minHeight: '44px' }}
-                        />
-                        <Button
-                            icon={<TagIcon />}
-                            label="Tags"
-                            onClick={() => setCurrentView('tags')}
-                            primary={currentView === 'tags'}
-                            plain={currentView !== 'tags'}
-                            style={{ minHeight: '44px' }}
-                        />
-                        <Button
-                            icon={<SearchIcon />}
-                            label="Search"
-                            onClick={() => setCurrentView('search')}
-                            primary={currentView === 'search'}
-                            plain={currentView !== 'search'}
-                            style={{ minHeight: '44px' }}
-                        />
+                        <Link href="/items">
+                            <Button
+                                icon={<Apps />}
+                                label="Items"
+                                primary={location === '/items' || location === '/'}
+                                plain={location !== '/items' && location !== '/'}
+                                style={{ minHeight: '44px' }}
+                            />
+                        </Link>
+                        <Link href="/tags">
+                            <Button
+                                icon={<TagIcon />}
+                                label="Tags"
+                                primary={location === '/tags'}
+                                plain={location !== '/tags'}
+                                style={{ minHeight: '44px' }}
+                            />
+                        </Link>
+                        <Link href="/search">
+                            <Button
+                                icon={<SearchIcon />}
+                                label="Search"
+                                primary={location === '/search'}
+                                plain={location !== '/search'}
+                                style={{ minHeight: '44px' }}
+                            />
+                        </Link>
                     </Nav>
                 </Header>
 
                 {/* Main content area */}
                 <Main pad="medium" overflow="auto" style={{ WebkitOverflowScrolling: 'touch' }}>
-                    {currentView === 'items' && (
-                        <Box>
-                            <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }}>
-                                <Heading level="2" margin="none">
-                                    Items
-                                </Heading>
-                                <Box direction="row" gap="small">
-                                    <Button
-                                        icon={<Filter />}
-                                        label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
-                                        onClick={() => setShowFilterBuilder(!showFilterBuilder)}
-                                        secondary={!showFilterBuilder}
-                                        primary={showFilterBuilder}
-                                    />
-                                    <Button
-                                        icon={<Add />}
-                                        label="Create Item"
-                                        primary
-                                        onClick={() => setShowCreateItem(true)}
-                                    />
-                                </Box>
-                            </Box>
+                    <Switch>
+                        {/* Home route - Items view */}
+                        <Route path="/">
+                            {() => (
+                                <Box>
+                                    <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }}>
+                                        <Heading level="2" margin="none">
+                                            Items
+                                        </Heading>
+                                        <Box direction="row" gap="small">
+                                            <Button
+                                                icon={<Filter />}
+                                                label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
+                                                onClick={() => setShowFilterBuilder(!showFilterBuilder)}
+                                                secondary={!showFilterBuilder}
+                                                primary={showFilterBuilder}
+                                            />
+                                            <Button
+                                                icon={<Add />}
+                                                label="Create Item"
+                                                primary
+                                                onClick={() => setShowCreateItem(true)}
+                                            />
+                                        </Box>
+                                    </Box>
 
-                            {/* Filter status and clear */}
-                            {itemsViewFilters.length > 0 && (
-                                <Box margin={{ bottom: 'medium' }}>
-                                    <FilterBar
-                                        filters={itemsViewFilters}
-                                        onChange={setItemsViewFilters}
-                                        onClearAll={() => setItemsViewFilters([])}
-                                        availableTags={allTags}
+                                    {/* Filter status and clear */}
+                                    {itemsViewFilters.length > 0 && (
+                                        <Box margin={{ bottom: 'medium' }}>
+                                            <FilterBar
+                                                filters={itemsViewFilters}
+                                                onChange={setItemsViewFilters}
+                                                onClearAll={() => setItemsViewFilters([])}
+                                                availableTags={allTags}
+                                            />
+                                        </Box>
+                                    )}
+
+                                    {/* Filter builder (collapsible) */}
+                                    {showFilterBuilder && (
+                                        <Box
+                                            margin={{ bottom: 'medium' }}
+                                            pad="medium"
+                                            background="light-2"
+                                            round="small"
+                                        >
+                                            <SearchFragmentBuilder
+                                                fragments={itemsViewFilters}
+                                                onChange={setItemsViewFilters}
+                                                availableTags={allTags}
+                                            />
+                                        </Box>
+                                    )}
+
+                                    <AllItemsView filters={itemsViewFilters} onNavigate={handleItemsViewNavigate} />
+                                </Box>
+                            )}
+                        </Route>
+
+                        {/* Items list route */}
+                        <Route path="/items">
+                            {() => (
+                                <Box>
+                                    <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }}>
+                                        <Heading level="2" margin="none">
+                                            Items
+                                        </Heading>
+                                        <Box direction="row" gap="small">
+                                            <Button
+                                                icon={<Filter />}
+                                                label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
+                                                onClick={() => setShowFilterBuilder(!showFilterBuilder)}
+                                                secondary={!showFilterBuilder}
+                                                primary={showFilterBuilder}
+                                            />
+                                            <Button
+                                                icon={<Add />}
+                                                label="Create Item"
+                                                primary
+                                                onClick={() => setShowCreateItem(true)}
+                                            />
+                                        </Box>
+                                    </Box>
+
+                                    {/* Filter status and clear */}
+                                    {itemsViewFilters.length > 0 && (
+                                        <Box margin={{ bottom: 'medium' }}>
+                                            <FilterBar
+                                                filters={itemsViewFilters}
+                                                onChange={setItemsViewFilters}
+                                                onClearAll={() => setItemsViewFilters([])}
+                                                availableTags={allTags}
+                                            />
+                                        </Box>
+                                    )}
+
+                                    {/* Filter builder (collapsible) */}
+                                    {showFilterBuilder && (
+                                        <Box
+                                            margin={{ bottom: 'medium' }}
+                                            pad="medium"
+                                            background="light-2"
+                                            round="small"
+                                        >
+                                            <SearchFragmentBuilder
+                                                fragments={itemsViewFilters}
+                                                onChange={setItemsViewFilters}
+                                                availableTags={allTags}
+                                            />
+                                        </Box>
+                                    )}
+
+                                    <AllItemsView filters={itemsViewFilters} onNavigate={handleItemsViewNavigate} />
+                                </Box>
+                            )}
+                        </Route>
+
+                        {/* Tags list route */}
+                        <Route path="/tags">{() => <AllTagsView />}</Route>
+
+                        {/* Search route */}
+                        <Route path="/search">
+                            {() => (
+                                <Box gap="medium">
+                                    <Heading level="2" margin="none">
+                                        Search
+                                    </Heading>
+
+                                    {/* Search bar with scope selector */}
+                                    <Box gap="small">
+                                        <SearchBar
+                                            value={searchQuery}
+                                            onChange={setSearchQuery}
+                                            onSearch={handleSearch}
+                                            onClear={handleClearSearch}
+                                            searchMode={searchScope}
+                                            scopeLabel="Current Location"
+                                        />
+                                        <SearchScopeSelector
+                                            value={searchScope}
+                                            onChange={setSearchScope}
+                                            scopeLabel="Current Location"
+                                        />
+                                    </Box>
+
+                                    {/* Advanced search filters */}
+                                    <Box>
+                                        <Heading level="4" margin={{ top: 'none', bottom: 'small' }}>
+                                            Advanced Filters
+                                        </Heading>
+                                        <SearchFragmentBuilder
+                                            fragments={searchFragments}
+                                            onChange={handleSearchFragmentsChange}
+                                            availableTags={allTags}
+                                        />
+                                    </Box>
+
+                                    {/* Search button */}
+                                    <Box>
+                                        <Button
+                                            label="Search"
+                                            primary
+                                            onClick={handleSearch}
+                                            disabled={searchQuery.trim() === '' && searchFragments.length === 0}
+                                        />
+                                    </Box>
+
+                                    {/* Search results */}
+                                    <SearchResultsView
+                                        items={searchResults}
+                                        onItemClick={handleSearchItemClick}
+                                        loading={searchLoading}
+                                        getItemPath={getItemPath}
                                     />
                                 </Box>
                             )}
+                        </Route>
 
-                            {/* Filter builder (collapsible) */}
-                            {showFilterBuilder && (
-                                <Box margin={{ bottom: 'medium' }} pad="medium" background="light-2" round="small">
-                                    <SearchFragmentBuilder
-                                        fragments={itemsViewFilters}
-                                        onChange={setItemsViewFilters}
-                                        availableTags={allTags}
-                                    />
-                                </Box>
-                            )}
+                        {/* Item detail route */}
+                        <Route path="/items/:itemId">{() => <ItemDetailView />}</Route>
 
-                            <AllItemsView filters={itemsViewFilters} onNavigate={handleItemsViewNavigate} />
-                        </Box>
-                    )}
+                        {/* Items by tag route */}
+                        <Route path="/tags/:tagId">{() => <ItemsByTagView />}</Route>
 
-                    {currentView === 'tags' && <AllTagsView />}
-
-                    {currentView === 'itemsByTag' && selectedTagId !== undefined && (
-                        <ItemsByTagView initialTagId={selectedTagId} onSelectItem={handleSelectItem} />
-                    )}
-
-                    {currentView === 'search' && (
-                        <Box gap="medium">
-                            <Heading level="2" margin="none">
-                                Search
-                            </Heading>
-
-                            {/* Search bar with scope selector */}
-                            <Box gap="small">
-                                <SearchBar
-                                    value={searchQuery}
-                                    onChange={setSearchQuery}
-                                    onSearch={handleSearch}
-                                    onClear={handleClearSearch}
-                                    searchMode={searchScope}
-                                    scopeLabel="Current Location"
-                                />
-                                <SearchScopeSelector
-                                    value={searchScope}
-                                    onChange={setSearchScope}
-                                    scopeLabel="Current Location"
-                                />
-                            </Box>
-
-                            {/* Advanced search filters */}
-                            <Box>
-                                <Heading level="4" margin={{ top: 'none', bottom: 'small' }}>
-                                    Advanced Filters
-                                </Heading>
-                                <SearchFragmentBuilder
-                                    fragments={searchFragments}
-                                    onChange={handleSearchFragmentsChange}
-                                    availableTags={allTags}
-                                />
-                            </Box>
-
-                            {/* Search button */}
-                            <Box>
-                                <Button
-                                    label="Search"
-                                    primary
-                                    onClick={handleSearch}
-                                    disabled={searchQuery.trim() === '' && searchFragments.length === 0}
-                                />
-                            </Box>
-
-                            {/* Search results */}
-                            <SearchResultsView
-                                items={searchResults}
-                                onItemClick={handleSearchItemClick}
-                                loading={searchLoading}
-                                getItemPath={getItemPath}
-                            />
-                        </Box>
-                    )}
+                        {/* 404 Not Found */}
+                        <Route>{() => <NotFoundView />}</Route>
+                    </Switch>
                 </Main>
 
                 {/* Create Item Modal */}
@@ -405,7 +481,7 @@ export const App = (): ReactElement => {
                                 </Heading>
                                 <Button icon={<Close />} onClick={handleCloseItemDetail} />
                             </Box>
-                            <ItemDetailView
+                            <ItemDetailViewPresentation
                                 item={selectedItem}
                                 tags={selectedItemTags}
                                 onEdit={() => {
