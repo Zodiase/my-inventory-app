@@ -14,8 +14,8 @@
 
 import { expect, test } from '@playwright/test';
 
-import { resetDatabase } from './helpers/database';
-import { InventoryPage, ItemFormPage } from './helpers/page-objects';
+import { resetDatabase } from '../helpers/database';
+import { InventoryPage, ItemFormPage } from '../helpers/page-objects';
 
 test.describe('Touch Optimization - User Story 5', () => {
     test.beforeEach(async ({ page }) => {
