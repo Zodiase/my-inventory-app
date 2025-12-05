@@ -56,12 +56,12 @@ test.describe('App Smoke Tests', () => {
         // Modal should appear with form
         await expect(page.getByRole('heading', { name: 'Create New Item' })).toBeVisible();
 
-        // Should have form fields
-        await expect(page.getByLabel('Name')).toBeVisible();
+        // Should have form fields (use name attribute selectors, not getByLabel - Grommet incompatible)
+        await expect(page.locator('input[name="name"]')).toBeVisible();
 
         // Should have Cancel and Submit buttons
         await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
-        await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible();
+        await expect(page.getByRole('button', { name: /create item/i })).toBeVisible();
 
         // Close modal by clicking Cancel
         await page.getByRole('button', { name: 'Cancel' }).click();

@@ -50,9 +50,12 @@ export class InventoryPage {
 
     /**
      * Find an item in the list by name.
+     * Uses text content since Grommet List items don't have listitem role.
      */
     itemByName(name: string): Locator {
-        return this.page.getByRole('listitem').filter({ hasText: name });
+        // Items are rendered in a List but don't have listitem role
+        // Use text content with specific structure (item name in Box)
+        return this.page.locator(`text="${name}"`).first();
     }
 
     /**
