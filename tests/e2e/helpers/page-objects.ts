@@ -314,17 +314,19 @@ export class TagsPage {
     }
 
     /**
-     * Get the "Add Tag" button.
+     * Get the "Add Tag" button (+ button).
+     * Uses .new-child-action class since UI shows "+" not "Add Tag" text.
      */
     get addTagButton(): Locator {
-        return this.page.getByRole('button', { name: /add tag/i });
+        return this.page.locator('.new-child-action').first();
     }
 
     /**
      * Find a tag in the list by name.
+     * Uses .tag-body class since Grommet List doesn't use listitem roles.
      */
     tagByName(name: string): Locator {
-        return this.page.getByRole('listitem').filter({ hasText: name });
+        return this.page.locator('.tag-body').filter({ hasText: name });
     }
 
     /**
