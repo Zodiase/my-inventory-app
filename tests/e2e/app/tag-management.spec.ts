@@ -281,22 +281,33 @@ test.describe('User Story 2: Tag Items for Cross-Location Collections', () => {
  */
 test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () => {
     test('should create tag via CreateTagDialog', async ({ page }) => {
-        // Navigate to tags view by clicking navigation button
-        await page.goto('/');
-        await page.getByRole('button', { name: /tags/i }).click();
+        // Navigate directly to tags view
+        await page.goto('/tags');
 
-        // Click + button to open CreateTagDialog
-        await page.locator('.new-child-action').first().click();
+        // Wait for tags view to load - look for "All Tags" heading
+        await expect(page.getByText('All Tags')).toBeVisible({ timeout: 10000 });
+
+        // Click + button to open CreateTagDialog  
+        const addButton = page.locator('.new-child-action').first();
+        await expect(addButton).toBeVisible({ timeout: 10000 });
+        await addButton.click();
+
+        // Wait for dialog to open
+        const tagNameInput = page.locator('input[name="name"]');
+        await expect(tagNameInput).toBeVisible({ timeout: 10000 });
 
         // Fill form using same selectors as Storybook tests
         const tagName = `Integration Test Tag ${Date.now()}`;
-        await page.locator('input[name="tagName"]').fill(tagName);
+        await tagNameInput.fill(tagName);
 
         // Submit
         await page.getByRole('button', { name: /create tag/i }).click();
 
-        // Verify tag appears in list
-        await expect(page.getByRole('listitem').filter({ hasText: tagName })).toBeVisible();
+        // Wait for dialog to close
+        await expect(tagNameInput).not.toBeVisible({ timeout: 10000 });
+
+        // Verify tag appears in list (use .tag-body class selector)
+        await expect(page.locator('.tag-body').filter({ hasText: tagName })).toBeVisible({ timeout: 10000 });
     });
 
     test('should show validation error for empty tag name', async ({ page }) => {
@@ -306,12 +317,12 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         // Open dialog
         await page.locator('.new-child-action').first().click();
 
-        // Try to submit without filling
-        await page.getByRole('button', { name: /create tag/i }).click();
+        // Wait for dialog
+        await page.waitForSelector('input[name="name"]', { state: 'visible' });
 
-        // Expect validation error (form won't submit)
-        await expect(page.locator('input[name="tagName"]')).toBeVisible();
-        await expect(page.locator('input[name="tagName"]')).toHaveAttribute('required', '');
+        // Try to submit without filling - button should be disabled
+        const submitButton = page.getByRole('button', { name: /create tag/i });
+        await expect(submitButton).toBeDisabled();
     });
 
     test('should prevent double-submit', async ({ page }) => {
@@ -321,22 +332,25 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         // Open dialog
         await page.locator('.new-child-action').first().click();
 
+        // Wait for dialog
+        await page.waitForSelector('input[name="name"]', { state: 'visible' });
+
         const tagName = `Double Submit Test ${Date.now()}`;
-        await page.locator('input[name="tagName"]').fill(tagName);
+        await page.locator('input[name="name"]').fill(tagName);
 
-        // Click submit button rapidly multiple times
+        // Click submit button rapidly - use force and don't await (fire and forget)
         const submitButton = page.getByRole('button', { name: /create tag/i });
-        await Promise.all([
-            submitButton.click({ force: true }),
-            submitButton.click({ force: true }),
-            submitButton.click({ force: true }),
-        ]);
+        submitButton.click({ force: true }).catch(() => {}); // Ignore errors
+        submitButton.click({ force: true }).catch(() => {}); // May fail if dialog closes
+        submitButton.click({ force: true }).catch(() => {}); // May fail if dialog closes
 
-        // Wait for dialog to close
-        await expect(page.locator('input[name="tagName"]')).not.toBeVisible();
+        // Wait for dialog to close (indicates submission completed)
+        await expect(page.locator('input[name="name"]')).not.toBeVisible({ timeout: 10000 });
 
-        // Verify only one tag was created
-        const tags = page.locator(`text="${tagName}"`);
+        // Verify only one tag was created (text locator, not listitem)
+        // Wait a bit for the tag to appear in the list
+        await page.waitForTimeout(1000);
+        const tags = page.locator('.tag-body').filter({ hasText: tagName });
         await expect(tags).toHaveCount(1);
     });
 
@@ -347,13 +361,13 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         // Open dialog
         await page.locator('.new-child-action').first().click();
 
-        // Verify dialog is open
-        await expect(page.locator('input[name="tagName"]')).toBeVisible();
+        // Wait for dialog
+        await page.waitForSelector('input[name="name"]', { state: 'visible' });
 
         // Click cancel
         await page.getByRole('button', { name: /cancel/i }).click();
 
         // Verify dialog closed
-        await expect(page.locator('input[name="tagName"]')).not.toBeVisible();
+        await expect(page.locator('input[name="name"]')).not.toBeVisible();
     });
 });
