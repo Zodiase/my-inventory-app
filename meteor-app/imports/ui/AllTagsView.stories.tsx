@@ -112,9 +112,9 @@ export const Empty: Story = {
     args: {
         tags: [],
         usageCounts: {},
-        onAddChild: (parentTagId, tagName) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag, newName) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
+        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
+        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
     },
 };
 
@@ -127,9 +127,9 @@ export const FewTags: Story = {
             outdoor: 3,
             kitchen: 8,
         },
-        onAddChild: (parentTagId, tagName) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag, newName) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
+        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
+        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
     },
 };
 
@@ -145,9 +145,9 @@ export const NestedHierarchy: Story = {
             kitchen: 15,
             cookware: 10,
         },
-        onAddChild: (parentTagId, tagName) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag, newName) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
+        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
+        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
     },
 };
 
@@ -156,9 +156,9 @@ export const ManyTags: Story = {
     args: {
         tags: manyTags,
         usageCounts: Object.fromEntries(manyTags.map((tag) => [tag._id, Math.floor(Math.random() * 20)])),
-        onAddChild: (parentTagId, tagName) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag, newName) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
+        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
+        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
     },
 };
 
@@ -171,9 +171,9 @@ export const TagsWithNoUsage: Story = {
             outdoor: 0,
             kitchen: 0,
         },
-        onAddChild: (parentTagId, tagName) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag, newName) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
+        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
+        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
     },
 };
 
@@ -186,9 +186,9 @@ export const WithDetachedTagsUtility: Story = {
             outdoor: 3,
             kitchen: 8,
         },
-        onAddChild: (parentTagId, tagName) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag, newName) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
+        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
+        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
         detachedTags: {
             detachedTagIds: ['orphan1', 'orphan2'],
             isUpdating: false,
@@ -219,9 +219,9 @@ export const WithTagsWithoutPath: Story = {
             outdoor: 3,
             'broken-tag': 2,
         },
-        onAddChild: (parentTagId, tagName) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag, newName) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
+        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
+        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
         tagsWithoutPath: [tagWithoutPath],
     },
 };

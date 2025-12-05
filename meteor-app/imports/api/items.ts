@@ -151,8 +151,8 @@ export const updateInventoryItem = async (
  * ```
  */
 export const safelyUpdateInventoryItem = async (
-    item: InventoryItem,
-    updates: Partial<Pick<InventoryItem, 'name' | 'description' | 'isContainer' | 'tagIds' | 'properties'>>
+    _item: InventoryItem,
+    _updates: Partial<Pick<InventoryItem, 'name' | 'description' | 'isContainer' | 'tagIds' | 'properties'>>
 ): Promise<number> => {
     // TODO: Implement optimistic locking version
     // This will use strictSelector(item, ['name', 'isContainer', 'containerId'])
@@ -252,8 +252,8 @@ export const moveItem = async (itemId: string, targetContainerId: string | null 
  * ```
  */
 export const safelyMoveItem = async (
-    item: InventoryItem,
-    targetContainerId: string | null | undefined
+    _item: InventoryItem,
+    _targetContainerId: string | null | undefined
 ): Promise<number> => {
     // TODO: Implement optimistic locking version
     // This will use strictSelector(item, ['containerId'])
@@ -323,7 +323,7 @@ export const deleteInventoryItem = async (itemId: string): Promise<number> => {
  * }
  * ```
  */
-export const safelyDeleteInventoryItem = async (item: InventoryItem): Promise<number> => {
+export const safelyDeleteInventoryItem = async (_item: InventoryItem): Promise<number> => {
     // TODO: Implement optimistic locking version
     // This will use strictSelector(item, ['name', 'isContainer', 'containerId'])
     throw new Error('safelyDeleteInventoryItem not yet implemented');

@@ -50,6 +50,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const Basic: Story = {
     args: {
+        children: <div>Press and hold</div>,
         actions: [
             {
                 label: 'Edit',
@@ -97,6 +98,7 @@ export const Basic: Story = {
  * Item card with context menu - typical use case
  */
 export const ItemCard: Story = {
+    args: { children: <div />, actions: [] },
     render: () => (
         <Box pad="large" background="light-2" gap="medium">
             <LongPressContextMenu
@@ -167,6 +169,7 @@ export const ItemCard: Story = {
  * Multiple items with individual context menus
  */
 export const MultipleItems: Story = {
+    args: { children: <div />, actions: [] },
     render: () => {
         const items = [
             { id: 1, name: 'Item One', location: 'Shelf A' },
@@ -217,6 +220,7 @@ export const MultipleItems: Story = {
  */
 export const DisabledActions: Story = {
     args: {
+        children: <div>Press and hold</div>,
         actions: [
             {
                 label: 'Edit',
@@ -267,6 +271,7 @@ export const DisabledActions: Story = {
  */
 export const FastActivation: Story = {
     args: {
+        children: <div>Press and hold</div>,
         pressDuration: 200,
         actions: [
             {
@@ -300,6 +305,7 @@ export const FastActivation: Story = {
  */
 export const SensitiveScroll: Story = {
     args: {
+        children: <div>Press and hold</div>,
         moveThreshold: 5,
         actions: [
             {
@@ -334,6 +340,7 @@ export const SensitiveScroll: Story = {
  */
 export const WithCallbacks: Story = {
     args: {
+        children: <div>Press and hold</div>,
         actions: [
             {
                 label: 'Action',
@@ -372,6 +379,7 @@ export const WithCallbacks: Story = {
  */
 export const TouchTargets: Story = {
     args: {
+        children: <div>Press and hold</div>,
         actions: [
             { label: 'Short', onClick: () => {} },
             { label: 'Medium Length Action', onClick: () => {} },

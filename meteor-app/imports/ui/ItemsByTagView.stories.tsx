@@ -106,7 +106,7 @@ export const NoTagSelected: Story = {
     args: {
         selectedTag: undefined,
         items: [],
-        onSelectItem: (item) => console.log('Selected item:', item.name),
+        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
         onClearSelection: () => console.log('Clear selection'),
     },
 };
@@ -116,7 +116,7 @@ export const TagWithNoItems: Story = {
     args: {
         selectedTag: electronicsTag,
         items: [],
-        onSelectItem: (item) => console.log('Selected item:', item.name),
+        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
         onClearSelection: () => console.log('Clear selection'),
     },
 };
@@ -127,7 +127,7 @@ export const FewItems: Story = {
         selectedTag: campingTag,
         items: sampleItems,
         containerPaths,
-        onSelectItem: (item) => console.log('Selected item:', item.name),
+        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
         onClearSelection: () => console.log('Clear selection'),
     },
 };
@@ -137,7 +137,7 @@ export const ManyItems: Story = {
     args: {
         selectedTag: campingTag,
         items: manyItems,
-        onSelectItem: (item) => console.log('Selected item:', item.name),
+        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
         onClearSelection: () => console.log('Clear selection'),
     },
 };
@@ -168,7 +168,7 @@ export const ItemsWithLongNames: Story = {
                 modifiedAt: new Date('2024-01-11'),
             },
         ],
-        onSelectItem: (item) => console.log('Selected item:', item.name),
+        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
         onClearSelection: () => console.log('Clear selection'),
     },
 };
@@ -220,7 +220,7 @@ export const ItemsInContainers: Story = {
             item2: [{ _id: 'closet', name: 'Hall Closet' }],
             item3: [{ _id: 'shed', name: 'Backyard Shed' }],
         },
-        onSelectItem: (item) => console.log('Selected item:', item.name),
+        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
         onClearSelection: () => console.log('Clear selection'),
     },
 };
@@ -260,7 +260,7 @@ export const WithContainerItems: Story = {
         containerPaths: {
             item1: [{ _id: 'container1', name: 'Camping Gear Box' }],
         },
-        onSelectItem: (item) => console.log('Selected item:', item.name),
+        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
         onClearSelection: () => console.log('Clear selection'),
     },
 };

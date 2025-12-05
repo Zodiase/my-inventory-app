@@ -436,7 +436,7 @@ export const FullyInteractive: Story = {
                 )}
 
                 {/* Main View */}
-                <ItemDetailView
+                <ItemDetailViewPresentation
                     item={item}
                     containerPath={sampleContainerPath}
                     tags={tags}
@@ -444,7 +444,7 @@ export const FullyInteractive: Story = {
                     onDelete={handleDelete}
                     onMove={handleMove}
                     onRemoveTag={handleRemoveTag}
-                    onNavigateToContainer={(id) => showFeedback(`Navigating to: ${id}`)}
+                    onNavigateToContainer={(id: string) => showFeedback(`Navigating to: ${id}`)}
                 />
 
                 {/* Edit Dialog */}
