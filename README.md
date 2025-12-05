@@ -39,12 +39,54 @@ Features:
 
 ## Testing
 
-Run unit and full-app tests:
+This project uses a **two-phase E2E testing strategy** to ensure reliable test coverage:
+
+### Two-Phase Testing Strategy
+
+**Phase 1: Component Tests (Storybook)**
+
+- Test UI components in isolation using Storybook
+- Faster execution, clearer failure messages
+- Validates interaction patterns before full integration
+
+**Phase 2: Integration Tests (Full App)**
+
+- Port proven patterns to full Meteor app E2E tests
+- Verifies end-to-end functionality with backend
+- Uses same page objects as component tests
+
+### Running Tests
 
 ```bash
+# Run Storybook component tests (fast, isolated)
+npm run test:e2e:storybook
+
+# Run full app integration tests (complete E2E)
+npm run test:e2e:app
+
+# Run all E2E tests
+npm run test:e2e:all
+
+# Run unit tests
 npm test
 npm run test-app
 ```
+
+### Prerequisites
+
+Before running E2E tests, ensure:
+
+1. **Storybook is running**: `npm run storybook` (for component tests)
+2. **Meteor app is running**: `npm start` (for integration tests)
+
+### Quick Reference
+
+- **Component Tests**: Located in `tests/e2e/storybook/`
+- **Integration Tests**: Located in `tests/e2e/app/`
+- **Page Objects**: Shared helpers in `tests/e2e/helpers/page-objects.ts`
+- **Test Patterns**: Documented in `specs/002-storybook-e2e-testing/test-patterns.md`
+
+For detailed testing guidance, see [Testing Quickstart Guide](specs/002-storybook-e2e-testing/quickstart.md)
 
 ## Code Quality
 

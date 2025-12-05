@@ -287,7 +287,7 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         // Wait for tags view to load - look for "All Tags" heading
         await expect(page.getByText('All Tags')).toBeVisible({ timeout: 10000 });
 
-        // Click + button to open CreateTagDialog  
+        // Click + button to open CreateTagDialog
         const addButton = page.locator('.new-child-action').first();
         await expect(addButton).toBeVisible({ timeout: 10000 });
         await addButton.click();

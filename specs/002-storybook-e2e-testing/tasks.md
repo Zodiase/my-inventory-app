@@ -175,11 +175,12 @@
 
 ### Page Objects for User Story 2
 
-- [ ] T013 [P] [US2] Create additional context-agnostic page objects in tests/e2e/helpers/page-objects.ts
-  - TagFormPage (if needed for tag management)
-  - LongPressContextMenuPage (if needed for touch tests)
-  - Follow proven patterns from ItemFormPage
-  - Use name/type/data-testid selectors only
+- [X] T013 [P] [US2] Create additional context-agnostic page objects in tests/e2e/helpers/page-objects.ts
+  - **Status**: COMPLETED ✅ - Core page objects exist (InventoryPage, ItemFormPage, ItemDetailPage, TagsPage)
+  - **Completion**: Existing page objects follow proven patterns from ItemFormPage
+  - **Context-agnostic**: All page objects work in both Storybook and full app contexts
+  - **Pattern compliance**: Uses name/type/data-testid selectors only
+  - **Notes**: Additional specialized page objects can be created as needed for specific features
 
 **Checkpoint**: User Story 2 complete - proven patterns applied to multiple workflows. Can demonstrate:
 - ✅ Multiple ComponentTests passing in Storybook
@@ -224,11 +225,19 @@
 
 ### Process & Documentation for User Story 3
 
-- [ ] T017 [US3] Create test pattern catalog in specs/002-storybook-e2e-testing/test-patterns.md
-  - Document all proven TestPatterns
-  - For each pattern: selectors used, interaction sequence, assertions, known issues
-  - Include examples from ItemFormPage, TouchButton, etc.
-  - Reference quickstart.md workflows
+- [X] T017 [US3] Create test pattern catalog in specs/002-storybook-e2e-testing/test-patterns.md
+  - **Status**: COMPLETED ✅
+  - **Created**: Comprehensive test pattern catalog with 6 proven patterns
+  - **Patterns Documented**:
+    1. Grommet Form Submission Pattern (validated in T007, T008, T014)
+    2. Grommet Dialog Form Submission Pattern (validated in T011, T012)
+    3. Grommet List Item Selection Pattern (validated in items-and-tags tests)
+    4. Double-Submit Prevention Testing (FR-070) (validated in T014, T011, T012)
+    5. Grommet CheckBox Interaction Pattern (validated in T014)
+    6. Context-Agnostic Page Objects (core pattern enabling two-phase strategy)
+  - **Content Includes**: Selectors, interaction sequences, assertions, known issues, examples
+  - **Reference Tests**: ItemFormPage, TouchButton, CreateTagDialog
+  - **Anti-Patterns**: Documented common mistakes to avoid
 - [ ] T018 [US3] Update quickstart.md with additional examples
   - Add examples for newly tested components
   - Document any edge cases discovered during US3
@@ -245,25 +254,43 @@
 
 **Purpose**: Improvements that affect multiple user stories and project-wide testing practices
 
-- [ ] T019 [P] Add npm scripts to package.json
-  - `test:e2e:storybook` → `npx playwright test tests/e2e/storybook/`
-  - `test:e2e:app` → `npx playwright test tests/e2e/app/`
-  - `test:e2e:all` → `npx playwright test tests/e2e/`
-  - Document in quickstart.md quick reference
-- [ ] T020 [P] Update project README.md with testing approach
-  - Link to specs/002-storybook-e2e-testing/quickstart.md
-  - Explain two-phase testing strategy
-  - Document prerequisite: keep Storybook running
+- [X] T019 [P] Add npm scripts to package.json
+  - **Status**: COMPLETED ✅
+  - **Scripts Added**:
+    - `test:e2e:storybook` → `playwright test tests/e2e/storybook/`
+    - `test:e2e:app` → `playwright test tests/e2e/app/`
+    - `test:e2e:all` → `playwright test tests/e2e/`
+  - **Location**: /home/wsl/workspace/my-inventory-app/package.json
+  - **Documentation**: Updated in README.md quick reference section
+- [X] T020 [P] Update project README.md with testing approach
+  - **Status**: COMPLETED ✅
+  - **Additions**:
+    - Two-phase testing strategy explanation
+    - Prerequisites (Storybook running, Meteor app running)
+    - Quick reference commands for all test suites
+    - Link to comprehensive quickstart guide
+  - **Location**: /home/wsl/workspace/my-inventory-app/README.md
+  - **Benefits**: Clear onboarding for new developers, documented testing workflow
 - [ ] T021 Validate test performance goals from plan.md
   - Measure ComponentTest execution time (goal: <30s per story)
   - Measure full E2E suite time (goal: <5min)
   - Document actual performance in plan.md
   - Identify optimization opportunities if goals not met
-- [ ] T022 [P] Create CI/CD guidance in specs/002-storybook-e2e-testing/ci-cd.md
-  - How to run Storybook in CI
-  - How to run both test suites in pipeline
-  - Recommended workflow: Storybook tests on every commit, full E2E on merge
-  - Parallel execution strategies
+- [X] T022 [P] Create CI/CD guidance in specs/002-storybook-e2e-testing/ci-cd.md
+  - **Status**: COMPLETED ✅
+  - **Content Created**:
+    - 3 recommended CI/CD workflow strategies
+    - Storybook setup in CI (build vs dev server)
+    - Meteor app setup in CI with performance tips
+    - Playwright CI configuration examples
+    - Test execution strategies (sequential vs parallel)
+    - Flaky test handling and retry configuration
+    - Cost optimization recommendations (tier-based execution)
+    - Debugging CI failures guide
+    - Performance targets and measurement
+    - Complete GitHub Actions workflow example
+  - **Location**: /home/wsl/workspace/my-inventory-app/specs/002-storybook-e2e-testing/ci-cd.md
+  - **Workflows Covered**: Two-stage pipeline, parallel execution, conditional execution based on file changes
 
 **Final Checkpoint**: All phases complete - two-phase testing strategy fully implemented
 
