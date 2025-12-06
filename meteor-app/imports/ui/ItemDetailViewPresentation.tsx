@@ -4,7 +4,6 @@ import React from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
-
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
 import { TagChip } from '/imports/ui/TagChip';
 
@@ -98,7 +97,11 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
                     <BreadcrumbTrail
                         path={containerPath}
                         onNavigate={
-                            onNavigateToContainer ? (container) => onNavigateToContainer(container._id) : undefined
+                            onNavigateToContainer
+                                ? (container) => {
+                                      onNavigateToContainer(container._id);
+                                  }
+                                : undefined
                         }
                         showHomeIcon
                     />
@@ -126,7 +129,13 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
                             <TagChip
                                 key={tag._id}
                                 tagName={tag.name}
-                                onRemove={onRemoveTag ? () => onRemoveTag(tag._id) : undefined}
+                                onRemove={
+                                    onRemoveTag
+                                        ? () => {
+                                              onRemoveTag(tag._id);
+                                          }
+                                        : undefined
+                                }
                                 disabled={disabled}
                             />
                         ))}

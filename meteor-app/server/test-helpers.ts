@@ -5,9 +5,10 @@
 
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
+
+import { Attachments } from '/imports/api/attachments';
 import Items from '/imports/api/items';
 import Tags from '/imports/api/tags';
-import { Attachments } from '/imports/api/attachments';
 
 /**
  * Reset all collections to empty state.

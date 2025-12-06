@@ -215,7 +215,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                                     <FilterType>{display.type}:</FilterType>
                                     <FilterValue>{display.value}</FilterValue>
                                     <RemoveButton
-                                        onClick={() => handleRemoveFilter(index)}
+                                        onClick={() => {
+                                            handleRemoveFilter(index);
+                                        }}
                                         aria-label={`Remove ${display.type} filter`}
                                         type="button"
                                     >

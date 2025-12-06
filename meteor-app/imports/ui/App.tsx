@@ -1,27 +1,28 @@
-import React, { type ReactElement, useState, useEffect } from 'react';
 import { Box, Button, Grommet, Header, Heading, Layer, Main, Nav } from 'grommet';
 import { Apps, Tag as TagIcon, Close, Search as SearchIcon, Filter, Add } from 'grommet-icons';
+import { Meteor } from 'meteor/meteor';
+import React, { type ReactElement, useState, useEffect } from 'react';
 import { Route, Switch, Link, useLocation } from 'wouter';
+
+import Items, { InventoryItemsCollection } from '/imports/api/items';
+import Tags, { TagsCollection } from '/imports/api/tags';
+import type { InventoryItem } from '/imports/model/InventoryItem';
+import type { SearchFragment } from '/imports/model/SearchFragment';
+import type { TagRecord } from '/imports/model/TagRecord';
+import { useTracker } from '/imports/utility/reactMeteorData';
+import type RecordInput from '/imports/utility/RecordInput';
 
 import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';
-import { ItemsByTagView } from './ItemsByTagView';
-import { ItemForm } from './ItemForm';
 import { ItemDetailView, ItemDetailViewPresentation } from './ItemDetailView';
+import { ItemForm } from './ItemForm';
+import { ItemsByTagView } from './ItemsByTagView';
+import { NotFoundView } from './NotFoundView';
 import { SearchBar } from './SearchBar';
-import { SearchScopeSelector } from './SearchScopeSelector';
 import { SearchFragmentBuilder } from './SearchFragmentBuilder';
+import { SearchScopeSelector } from './SearchScopeSelector';
 import { SearchResultsView } from './SearchResultsView';
 import { FilterBar } from './FilterBar';
-import { NotFoundView } from './NotFoundView';
-import type { InventoryItem } from '/imports/model/InventoryItem';
-import type { TagRecord } from '/imports/model/TagRecord';
-import type { SearchFragment } from '/imports/model/SearchFragment';
-import Items, { InventoryItemsCollection } from '/imports/api/items';
-import Tags, { TagsCollection } from '/imports/api/tags';
-import { useTracker } from '/imports/utility/reactMeteorData';
-import type RecordInput from '/imports/utility/RecordInput';
-import { Meteor } from 'meteor/meteor';
 
 // Grommet theme with iOS-style design and touch-friendly sizing
 const theme = {
@@ -274,7 +275,9 @@ export const App = (): ReactElement => {
                                             <Button
                                                 icon={<Filter />}
                                                 label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
-                                                onClick={() => setShowFilterBuilder(!showFilterBuilder)}
+                                                onClick={() => {
+                                                    setShowFilterBuilder(!showFilterBuilder);
+                                                }}
                                                 secondary={!showFilterBuilder}
                                                 primary={showFilterBuilder}
                                             />
@@ -282,7 +285,9 @@ export const App = (): ReactElement => {
                                                 icon={<Add />}
                                                 label="Create Item"
                                                 primary
-                                                onClick={() => setShowCreateItem(true)}
+                                                onClick={() => {
+                                                    setShowCreateItem(true);
+                                                }}
                                             />
                                         </Box>
                                     </Box>
@@ -293,7 +298,9 @@ export const App = (): ReactElement => {
                                             <FilterBar
                                                 filters={itemsViewFilters}
                                                 onChange={setItemsViewFilters}
-                                                onClearAll={() => setItemsViewFilters([])}
+                                                onClearAll={() => {
+                                                    setItemsViewFilters([]);
+                                                }}
                                                 availableTags={allTags}
                                             />
                                         </Box>
@@ -332,7 +339,9 @@ export const App = (): ReactElement => {
                                             <Button
                                                 icon={<Filter />}
                                                 label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
-                                                onClick={() => setShowFilterBuilder(!showFilterBuilder)}
+                                                onClick={() => {
+                                                    setShowFilterBuilder(!showFilterBuilder);
+                                                }}
                                                 secondary={!showFilterBuilder}
                                                 primary={showFilterBuilder}
                                             />
@@ -340,7 +349,9 @@ export const App = (): ReactElement => {
                                                 icon={<Add />}
                                                 label="Create Item"
                                                 primary
-                                                onClick={() => setShowCreateItem(true)}
+                                                onClick={() => {
+                                                    setShowCreateItem(true);
+                                                }}
                                             />
                                         </Box>
                                     </Box>
@@ -351,7 +362,9 @@ export const App = (): ReactElement => {
                                             <FilterBar
                                                 filters={itemsViewFilters}
                                                 onChange={setItemsViewFilters}
-                                                onClearAll={() => setItemsViewFilters([])}
+                                                onClearAll={() => {
+                                                    setItemsViewFilters([]);
+                                                }}
                                                 availableTags={allTags}
                                             />
                                         </Box>
@@ -452,15 +465,32 @@ export const App = (): ReactElement => {
 
                 {/* Create Item Modal */}
                 {showCreateItem && (
-                    <Layer onEsc={() => setShowCreateItem(false)} onClickOutside={() => setShowCreateItem(false)}>
+                    <Layer
+                        onEsc={() => {
+                            setShowCreateItem(false);
+                        }}
+                        onClickOutside={() => {
+                            setShowCreateItem(false);
+                        }}
+                    >
                         <Box pad="medium" gap="medium" width="large">
                             <Box direction="row" justify="between" align="center">
                                 <Heading level="3" margin="none">
                                     Create New Item
                                 </Heading>
-                                <Button icon={<Close />} onClick={() => setShowCreateItem(false)} />
+                                <Button
+                                    icon={<Close />}
+                                    onClick={() => {
+                                        setShowCreateItem(false);
+                                    }}
+                                />
                             </Box>
-                            <ItemForm onSubmit={handleCreateItem} onCancel={() => setShowCreateItem(false)} />
+                            <ItemForm
+                                onSubmit={handleCreateItem}
+                                onCancel={() => {
+                                    setShowCreateItem(false);
+                                }}
+                            />
                         </Box>
                     </Layer>
                 )}

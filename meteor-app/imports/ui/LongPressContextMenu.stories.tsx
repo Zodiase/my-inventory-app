@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { Box, Card, CardBody, Text } from 'grommet';
 import { Edit, Trash, Copy, Share, Up, Down } from 'grommet-icons';
 import React from 'react';
-import { Box, Card, CardBody, Text } from 'grommet';
 
 import { LongPressContextMenu } from './LongPressContextMenu';
 

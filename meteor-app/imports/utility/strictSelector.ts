@@ -48,12 +48,12 @@ export const strictSelector = <T extends CollectionItem, F extends keyof T>(
         ...extraFields,
     ];
 
-    return allFields.reduce((acc, field) => {
+    return allFields.reduce<any>((acc, field) => {
         return {
             ...acc,
             [field]: doc[field],
         };
-    }, {} as any) as {
+    }, {}) as {
         [K in F | keyof CollectionItem]: T[K];
     };
 };

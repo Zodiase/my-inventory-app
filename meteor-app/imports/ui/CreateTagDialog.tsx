@@ -173,7 +173,9 @@ export const CreateTagForm: React.FC<CreateTagFormProps> = ({
                         name="name"
                         placeholder="Enter tag name"
                         value={tagName}
-                        onChange={(event) => setTagName(event.target.value)}
+                        onChange={(event) => {
+                            setTagName(event.target.value);
+                        }}
                         disabled={isActuallyLoading}
                         autoFocus
                     />

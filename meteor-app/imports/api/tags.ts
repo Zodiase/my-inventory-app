@@ -1,5 +1,4 @@
 import extend from 'lodash/extend';
-
 import { Meteor } from 'meteor/meteor';
 
 import { InventoryItemsCollection } from '/imports/api/items';

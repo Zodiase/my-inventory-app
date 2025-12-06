@@ -2,6 +2,7 @@
  * @file re-declares methods from 'meteor/react-meteor-data' to avoid TS errors.
  */
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Meteor package imports may not resolve correctly in all environments
 import { useTracker as _useTracker } from 'meteor/react-meteor-data';
 

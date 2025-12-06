@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 
-import { buildSearchQuery, buildContainerHierarchyQuery } from './searchQuery';
 import type SearchFragment from '/imports/model/SearchFragment';
+
+import { buildSearchQuery, buildContainerHierarchyQuery } from './searchQuery';
 
 // Use any for test assertions to avoid TypeScript compilation issues with MongoDB Filter types
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

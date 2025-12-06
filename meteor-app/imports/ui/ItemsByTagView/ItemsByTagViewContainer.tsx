@@ -1,13 +1,12 @@
+import { Box, Button, Heading, Text } from 'grommet';
 import React, { type ComponentProps, type ReactElement, useState } from 'react';
 import { useParams, Link } from 'wouter';
-import { Box, Button, Heading, Text } from 'grommet';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import { TagsCollection, type TagRecord } from '/imports/api/tags';
+import { ItemsByTagViewPresentation } from '/imports/ui/ItemsByTagView/ItemsByTagViewPresentation';
 import { useTracker } from '/imports/utility/reactMeteorData';
 import { usePageTitle } from '/imports/utility/usePageTitle';
-
-import { ItemsByTagViewPresentation } from '/imports/ui/ItemsByTagView/ItemsByTagViewPresentation';
 
 /**
  * ItemsByTagViewContainer - Route-aware wrapper that extracts tagId from URL parameters.

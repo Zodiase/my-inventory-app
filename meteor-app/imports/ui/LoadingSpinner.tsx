@@ -1,6 +1,6 @@
+import { Box, Text } from 'grommet';
 import React, { type ReactElement } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Box, Text } from 'grommet';
 
 /**
  * LoadingSpinner component optimized for mobile touch interfaces.

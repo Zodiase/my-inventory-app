@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useState } from 'react';
 import { Box, Button, Text } from 'grommet';
+import React, { useState } from 'react';
 
 import { CreateTagDialog, CreateTagForm } from '/imports/ui/CreateTagDialog';
 
@@ -47,8 +47,12 @@ type Story = StoryObj<typeof CreateTagDialog>;
 export const Closed: Story = {
     args: {
         isOpen: false,
-        onClose: () => console.log('Close clicked'),
-        onSubmit: (name) => console.log('Submit:', name),
+        onClose: () => {
+            console.log('Close clicked');
+        },
+        onSubmit: (name) => {
+            console.log('Submit:', name);
+        },
     },
 };
 
@@ -59,11 +63,21 @@ export const Open: Story = {
 
         return (
             <Box gap="medium" align="center" pad="large">
-                <Button label="Open Dialog" onClick={() => setIsOpen(true)} primary />
+                <Button
+                    label="Open Dialog"
+                    onClick={() => {
+                        setIsOpen(true);
+                    }}
+                    primary
+                />
                 <CreateTagDialog
                     isOpen={isOpen}
-                    onClose={() => setIsOpen(false)}
-                    onSubmit={(name) => console.log('Submit:', name)}
+                    onClose={() => {
+                        setIsOpen(false);
+                    }}
+                    onSubmit={(name) => {
+                        console.log('Submit:', name);
+                    }}
                 />
             </Box>
         );
@@ -78,7 +92,9 @@ export const WithLocalValidationError: Story = {
         return (
             <CreateTagDialog
                 isOpen
-                onClose={() => console.log('Close clicked')}
+                onClose={() => {
+                    console.log('Close clicked');
+                }}
                 onSubmit={(name) => {
                     if (name.trim().length === 0) {
                         setError('Tag name is required');
@@ -106,11 +122,21 @@ export const WithDuplicateNameError: Story = {
 
         return (
             <Box gap="medium" align="center" pad="large">
-                <Button label="Open Dialog (with error)" onClick={() => setIsOpen(true)} primary />
+                <Button
+                    label="Open Dialog (with error)"
+                    onClick={() => {
+                        setIsOpen(true);
+                    }}
+                    primary
+                />
                 <CreateTagDialog
                     isOpen={isOpen}
-                    onClose={() => setIsOpen(false)}
-                    onSubmit={(name) => console.log('Submit:', name)}
+                    onClose={() => {
+                        setIsOpen(false);
+                    }}
+                    onSubmit={(name) => {
+                        console.log('Submit:', name);
+                    }}
                     errorMessage="A tag with this name already exists"
                 />
             </Box>
@@ -125,11 +151,21 @@ export const WithNetworkError: Story = {
 
         return (
             <Box gap="medium" align="center" pad="large">
-                <Button label="Open Dialog (network error)" onClick={() => setIsOpen(true)} primary />
+                <Button
+                    label="Open Dialog (network error)"
+                    onClick={() => {
+                        setIsOpen(true);
+                    }}
+                    primary
+                />
                 <CreateTagDialog
                     isOpen={isOpen}
-                    onClose={() => setIsOpen(false)}
-                    onSubmit={(name) => console.log('Submit:', name)}
+                    onClose={() => {
+                        setIsOpen(false);
+                    }}
+                    onSubmit={(name) => {
+                        console.log('Submit:', name);
+                    }}
                     errorMessage="Network error: Unable to connect to server"
                 />
             </Box>
@@ -144,11 +180,21 @@ export const Loading: Story = {
 
         return (
             <Box gap="medium" align="center" pad="large">
-                <Button label="Open Dialog (loading)" onClick={() => setIsOpen(true)} primary />
+                <Button
+                    label="Open Dialog (loading)"
+                    onClick={() => {
+                        setIsOpen(true);
+                    }}
+                    primary
+                />
                 <CreateTagDialog
                     isOpen={isOpen}
-                    onClose={() => setIsOpen(false)}
-                    onSubmit={(name) => console.log('Submit:', name)}
+                    onClose={() => {
+                        setIsOpen(false);
+                    }}
+                    onSubmit={(name) => {
+                        console.log('Submit:', name);
+                    }}
                     isLoading={true}
                 />
             </Box>
@@ -163,11 +209,21 @@ export const WithSuccessMessage: Story = {
 
         return (
             <Box gap="medium" align="center" pad="large">
-                <Button label="Open Dialog (success)" onClick={() => setIsOpen(true)} primary />
+                <Button
+                    label="Open Dialog (success)"
+                    onClick={() => {
+                        setIsOpen(true);
+                    }}
+                    primary
+                />
                 <CreateTagDialog
                     isOpen={isOpen}
-                    onClose={() => setIsOpen(false)}
-                    onSubmit={(name) => console.log('Submit:', name)}
+                    onClose={() => {
+                        setIsOpen(false);
+                    }}
+                    onSubmit={(name) => {
+                        console.log('Submit:', name);
+                    }}
                     successMessage="Tag created successfully!"
                 />
             </Box>
@@ -182,11 +238,21 @@ export const WithLongTagName: Story = {
 
         return (
             <Box gap="medium" align="center" pad="large">
-                <Button label="Open Dialog (validation error)" onClick={() => setIsOpen(true)} primary />
+                <Button
+                    label="Open Dialog (validation error)"
+                    onClick={() => {
+                        setIsOpen(true);
+                    }}
+                    primary
+                />
                 <CreateTagDialog
                     isOpen={isOpen}
-                    onClose={() => setIsOpen(false)}
-                    onSubmit={(name) => console.log('Submit:', name)}
+                    onClose={() => {
+                        setIsOpen(false);
+                    }}
+                    onSubmit={(name) => {
+                        console.log('Submit:', name);
+                    }}
                     errorMessage="Tag name must be 50 characters or less"
                 />
             </Box>
@@ -239,7 +305,13 @@ export const FullyInteractive: Story = {
 
         return (
             <Box gap="medium" align="center" pad="large">
-                <Button label="Create New Tag" onClick={() => setIsOpen(true)} primary />
+                <Button
+                    label="Create New Tag"
+                    onClick={() => {
+                        setIsOpen(true);
+                    }}
+                    primary
+                />
 
                 {createdTags.length > 0 && (
                     <Box gap="small">
@@ -293,11 +365,21 @@ export const KeyboardNavigation: Story = {
         return (
             <Box gap="medium" align="center" pad="large">
                 <Text>Press Escape to close, or Tab to navigate between fields</Text>
-                <Button label="Open Dialog" onClick={() => setIsOpen(true)} primary />
+                <Button
+                    label="Open Dialog"
+                    onClick={() => {
+                        setIsOpen(true);
+                    }}
+                    primary
+                />
                 <CreateTagDialog
                     isOpen={isOpen}
-                    onClose={() => setIsOpen(false)}
-                    onSubmit={(name) => console.log('Submit:', name)}
+                    onClose={() => {
+                        setIsOpen(false);
+                    }}
+                    onSubmit={(name) => {
+                        console.log('Submit:', name);
+                    }}
                 />
             </Box>
         );
@@ -331,13 +413,21 @@ export const StateSequence: Story = {
                 }, 1500);
             } else {
                 setState('error');
-                setTimeout(() => setState('idle'), 3000);
+                setTimeout(() => {
+                    setState('idle');
+                }, 3000);
             }
         };
 
         return (
             <Box gap="medium" align="center" pad="large">
-                <Button label="Open Dialog (Random Success/Error)" onClick={() => setIsOpen(true)} primary />
+                <Button
+                    label="Open Dialog (Random Success/Error)"
+                    onClick={() => {
+                        setIsOpen(true);
+                    }}
+                    primary
+                />
 
                 <CreateTagDialog
                     isOpen={isOpen}

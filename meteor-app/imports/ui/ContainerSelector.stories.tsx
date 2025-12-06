@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
-
 import { ContainerSelector } from '/imports/ui/ContainerSelector';
 
 const meta: Meta<typeof ContainerSelector> = {
@@ -88,7 +87,9 @@ export const EmptyWithRoot: Story = {
     args: {
         containers: [],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -98,7 +99,9 @@ export const EmptyWithoutRoot: Story = {
     args: {
         containers: [],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: false,
     },
 };
@@ -108,7 +111,9 @@ export const SingleContainer: Story = {
     args: {
         containers: [home],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -118,7 +123,9 @@ export const FlatList: Story = {
     args: {
         containers: [home, garage, bedroom],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -128,7 +135,9 @@ export const TwoLevelHierarchy: Story = {
     args: {
         containers: [home, garage, bedroom],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -138,7 +147,9 @@ export const ThreeLevelHierarchy: Story = {
     args: {
         containers: [home, garage, bedroom, storage, closet],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -148,7 +159,9 @@ export const DeepHierarchy: Story = {
     args: {
         containers: [home, garage, bedroom, storage, closet, box],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -158,7 +171,9 @@ export const RootSelected: Story = {
     args: {
         containers: [home, garage, bedroom, storage],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -168,7 +183,9 @@ export const TopLevelSelected: Story = {
     args: {
         containers: [home, garage, bedroom, storage],
         selectedContainerId: 'home',
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -178,7 +195,9 @@ export const NestedContainerSelected: Story = {
     args: {
         containers: [home, garage, bedroom, storage, closet],
         selectedContainerId: 'storage',
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -188,7 +207,9 @@ export const DeepNestedSelected: Story = {
     args: {
         containers: [home, garage, bedroom, storage, closet, box],
         selectedContainerId: 'box',
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -198,7 +219,9 @@ export const WithoutRootOption: Story = {
     args: {
         containers: [home, garage, bedroom, storage],
         selectedContainerId: 'garage',
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: false,
     },
 };
@@ -208,7 +231,9 @@ export const Disabled: Story = {
     args: {
         containers: [home, garage, bedroom, storage],
         selectedContainerId: 'garage',
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
         disabled: true,
     },
@@ -236,7 +261,9 @@ export const LongContainerNames: Story = {
             },
         ],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -303,7 +330,9 @@ export const ManyContainers: Story = {
             },
         ],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -330,7 +359,9 @@ export const SpecialCharactersInNames: Story = {
             },
         ],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -357,7 +388,9 @@ export const UnicodeInNames: Story = {
             },
         ],
         selectedContainerId: undefined,
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };
@@ -414,7 +447,9 @@ export const ComplexHierarchy: Story = {
             box,
         ],
         selectedContainerId: 'storage',
-        onSelect: (id) => console.log('Selected:', id),
+        onSelect: (id) => {
+            console.log('Selected:', id);
+        },
         showRootOption: true,
     },
 };

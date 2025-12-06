@@ -4,8 +4,8 @@ import { useLocation } from 'wouter';
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
-import { buildSearchQuery } from '/imports/utility/searchQuery';
 import { useTracker } from '/imports/utility/reactMeteorData';
+import { buildSearchQuery } from '/imports/utility/searchQuery';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 /**

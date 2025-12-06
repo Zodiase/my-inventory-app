@@ -128,7 +128,12 @@ function DragDropDemo(): React.ReactElement {
                         <Text weight="bold" margin={{ bottom: 'small' }}>
                             Kitchen Counter
                         </Text>
-                        <DropZoneComponent items={containerA} onDrop={(item) => handleDrop('A', item)} />
+                        <DropZoneComponent
+                            items={containerA}
+                            onDrop={(item) => {
+                                handleDrop('A', item);
+                            }}
+                        />
                     </Box>
 
                     {/* Container B */}
@@ -136,7 +141,12 @@ function DragDropDemo(): React.ReactElement {
                         <Text weight="bold" margin={{ bottom: 'small' }}>
                             Cabinet
                         </Text>
-                        <DropZoneComponent items={containerB} onDrop={(item) => handleDrop('B', item)} />
+                        <DropZoneComponent
+                            items={containerB}
+                            onDrop={(item) => {
+                                handleDrop('B', item);
+                            }}
+                        />
                     </Box>
                 </Box>
             </Box>
@@ -281,7 +291,9 @@ export const NestedContainers: Story = {
                         const containerItems = items.filter((item) => item.container === container);
                         const dropRef = useRef<HTMLDivElement>(null);
                         const { isOver, canDrop } = useDropTarget<{ id: string; name: string }>(dropRef, {
-                            onDrop: (item) => handleMove(item.id, container),
+                            onDrop: (item) => {
+                                handleMove(item.id, container);
+                            },
                         });
 
                         return (

@@ -73,7 +73,9 @@ function SwipeNavigationDemo(): React.ReactElement {
                         pad="medium"
                         background="white"
                         round="small"
-                        onClick={() => setDepth(depth + 1)}
+                        onClick={() => {
+                            setDepth(depth + 1);
+                        }}
                         style={{
                             cursor: 'pointer',
                             minHeight: '44px',
@@ -89,7 +91,9 @@ function SwipeNavigationDemo(): React.ReactElement {
                             pad="medium"
                             background="rgba(255,255,255,0.3)"
                             round="small"
-                            onClick={() => setDepth(depth - 1)}
+                            onClick={() => {
+                                setDepth(depth - 1);
+                            }}
                             style={{
                                 cursor: 'pointer',
                                 minHeight: '44px',
@@ -139,7 +143,9 @@ function SwipeNavigationDemo(): React.ReactElement {
                                     opacity: level === depth ? 1 : 0.6,
                                     cursor: 'pointer',
                                 }}
-                                onClick={() => setDepth(level)}
+                                onClick={() => {
+                                    setDepth(level);
+                                }}
                             >
                                 Level {level}
                             </Text>

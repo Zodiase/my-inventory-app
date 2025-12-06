@@ -126,7 +126,9 @@ export const Interactive: Story = {
                     </p>
                     <div style={{ marginTop: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                         <button
-                            onClick={() => setScopeLabel('Kitchen')}
+                            onClick={() => {
+                                setScopeLabel('Kitchen');
+                            }}
                             style={{
                                 padding: '8px 12px',
                                 background: scopeLabel === 'Kitchen' ? '#007aff' : 'white',
@@ -139,7 +141,9 @@ export const Interactive: Story = {
                             Kitchen
                         </button>
                         <button
-                            onClick={() => setScopeLabel('Garage')}
+                            onClick={() => {
+                                setScopeLabel('Garage');
+                            }}
                             style={{
                                 padding: '8px 12px',
                                 background: scopeLabel === 'Garage' ? '#007aff' : 'white',
@@ -152,7 +156,9 @@ export const Interactive: Story = {
                             Garage
                         </button>
                         <button
-                            onClick={() => setScopeLabel('Basement')}
+                            onClick={() => {
+                                setScopeLabel('Basement');
+                            }}
                             style={{
                                 padding: '8px 12px',
                                 background: scopeLabel === 'Basement' ? '#007aff' : 'white',

@@ -35,7 +35,7 @@ export const buildSearchQuery = (fragments: SearchFragment[]): Filter<InventoryI
         return {};
     }
 
-    const conditions: Filter<InventoryItem>[] = [];
+    const conditions: Array<Filter<InventoryItem>> = [];
 
     for (const fragment of fragments) {
         switch (fragment.type) {

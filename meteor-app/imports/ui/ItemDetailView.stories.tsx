@@ -1,10 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useState } from 'react';
 import { Box, Button, Heading, Layer, Text } from 'grommet';
+import React, { useState } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
-
 import { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
 
 const meta: Meta<typeof ItemDetailViewPresentation> = {
@@ -81,11 +80,21 @@ export const WithAllFeatures: Story = {
         item: sampleItem,
         containerPath: sampleContainerPath,
         tags: sampleTags,
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
-        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
+        onRemoveTag: (tagId) => {
+            console.log('Remove tag:', tagId);
+        },
     },
 };
 
@@ -95,10 +104,18 @@ export const ContainerItem: Story = {
         item: containerItem,
         containerPath: [rootContainer],
         tags: [],
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
     },
 };
 
@@ -111,10 +128,18 @@ export const ItemAtRoot: Story = {
         },
         containerPath: [],
         tags: sampleTags,
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
-        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
+        onRemoveTag: (tagId) => {
+            console.log('Remove tag:', tagId);
+        },
     },
 };
 
@@ -127,11 +152,21 @@ export const WithoutDescription: Story = {
         },
         containerPath: sampleContainerPath,
         tags: sampleTags,
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
-        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
+        onRemoveTag: (tagId) => {
+            console.log('Remove tag:', tagId);
+        },
     },
 };
 
@@ -144,10 +179,18 @@ export const WithoutTags: Story = {
         },
         containerPath: sampleContainerPath,
         tags: [],
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
     },
 };
 
@@ -163,9 +206,15 @@ export const MinimalItem: Story = {
         },
         containerPath: [],
         tags: [],
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
     },
 };
 
@@ -212,11 +261,21 @@ export const ManyTags: Story = {
                 modifiedAt: new Date('2024-01-01'),
             },
         ],
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
-        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
+        onRemoveTag: (tagId) => {
+            console.log('Remove tag:', tagId);
+        },
     },
 };
 
@@ -258,11 +317,21 @@ export const DeepContainerPath: Story = {
             },
         ],
         tags: sampleTags,
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
-        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
+        onRemoveTag: (tagId) => {
+            console.log('Remove tag:', tagId);
+        },
     },
 };
 
@@ -282,11 +351,21 @@ export const LongDescription: Story = {
         },
         containerPath: sampleContainerPath,
         tags: sampleTags,
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
-        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
+        onRemoveTag: (tagId) => {
+            console.log('Remove tag:', tagId);
+        },
     },
 };
 
@@ -296,11 +375,21 @@ export const DisabledActions: Story = {
         item: sampleItem,
         containerPath: sampleContainerPath,
         tags: sampleTags,
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
-        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
+        onRemoveTag: (tagId) => {
+            console.log('Remove tag:', tagId);
+        },
         disabled: true,
     },
 };
@@ -311,8 +400,12 @@ export const ReadOnlyMode: Story = {
         item: sampleItem,
         containerPath: sampleContainerPath,
         tags: sampleTags,
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
-        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
+        onRemoveTag: (tagId) => {
+            console.log('Remove tag:', tagId);
+        },
     },
 };
 
@@ -322,9 +415,15 @@ export const EditOnly: Story = {
         item: sampleItem,
         containerPath: sampleContainerPath,
         tags: sampleTags,
-        onEdit: () => console.log('Edit clicked'),
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
-        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
+        onRemoveTag: (tagId) => {
+            console.log('Remove tag:', tagId);
+        },
     },
 };
 
@@ -337,11 +436,21 @@ export const LongItemName: Story = {
         },
         containerPath: sampleContainerPath,
         tags: sampleTags,
-        onEdit: () => console.log('Edit clicked'),
-        onDelete: () => console.log('Delete clicked'),
-        onMove: () => console.log('Move clicked'),
-        onNavigateToContainer: (id) => console.log('Navigate to:', id),
-        onRemoveTag: (tagId) => console.log('Remove tag:', tagId),
+        onEdit: () => {
+            console.log('Edit clicked');
+        },
+        onDelete: () => {
+            console.log('Delete clicked');
+        },
+        onMove: () => {
+            console.log('Move clicked');
+        },
+        onNavigateToContainer: (id) => {
+            console.log('Navigate to:', id);
+        },
+        onRemoveTag: (tagId) => {
+            console.log('Remove tag:', tagId);
+        },
     },
 };
 
@@ -359,7 +468,9 @@ export const FullyInteractive: Story = {
 
         const showFeedback = (message: string): void => {
             setFeedback(message);
-            setTimeout(() => setFeedback(''), 3000);
+            setTimeout(() => {
+                setFeedback('');
+            }, 3000);
         };
 
         const handleRemoveTag = (tagId: string): void => {
@@ -413,7 +524,13 @@ export const FullyInteractive: Story = {
                         Item Deleted
                     </Text>
                     <Text>The item has been removed from your inventory.</Text>
-                    <Button label="Undo Delete" onClick={() => setIsDeleted(false)} primary />
+                    <Button
+                        label="Undo Delete"
+                        onClick={() => {
+                            setIsDeleted(false);
+                        }}
+                        primary
+                    />
                 </Box>
             );
         }
@@ -444,12 +561,21 @@ export const FullyInteractive: Story = {
                     onDelete={handleDelete}
                     onMove={handleMove}
                     onRemoveTag={handleRemoveTag}
-                    onNavigateToContainer={(id: string) => showFeedback(`Navigating to: ${id}`)}
+                    onNavigateToContainer={(id: string) => {
+                        showFeedback(`Navigating to: ${id}`);
+                    }}
                 />
 
                 {/* Edit Dialog */}
                 {showEditDialog && (
-                    <Layer onEsc={() => setShowEditDialog(false)} onClickOutside={() => setShowEditDialog(false)}>
+                    <Layer
+                        onEsc={() => {
+                            setShowEditDialog(false);
+                        }}
+                        onClickOutside={() => {
+                            setShowEditDialog(false);
+                        }}
+                    >
                         <Box pad="medium" gap="medium" width="medium">
                             <Heading level={3} margin="none">
                                 Edit Item
@@ -488,7 +614,12 @@ export const FullyInteractive: Story = {
                                 />
                             </Box>
                             <Box direction="row" gap="small" justify="end">
-                                <Button label="Cancel" onClick={() => setShowEditDialog(false)} />
+                                <Button
+                                    label="Cancel"
+                                    onClick={() => {
+                                        setShowEditDialog(false);
+                                    }}
+                                />
                                 <Button
                                     label="Save"
                                     onClick={() => {
@@ -507,7 +638,14 @@ export const FullyInteractive: Story = {
 
                 {/* Move Dialog */}
                 {showMoveDialog && (
-                    <Layer onEsc={() => setShowMoveDialog(false)} onClickOutside={() => setShowMoveDialog(false)}>
+                    <Layer
+                        onEsc={() => {
+                            setShowMoveDialog(false);
+                        }}
+                        onClickOutside={() => {
+                            setShowMoveDialog(false);
+                        }}
+                    >
                         <Box pad="medium" gap="medium" width="medium">
                             <Heading level={3} margin="none">
                                 Move Item
@@ -518,14 +656,26 @@ export const FullyInteractive: Story = {
                                 <Button label="📦 Kitchen Cabinet" onClick={handleConfirmMove} />
                                 <Button label="📦 Bedroom Closet" onClick={handleConfirmMove} />
                             </Box>
-                            <Button label="Cancel" onClick={() => setShowMoveDialog(false)} />
+                            <Button
+                                label="Cancel"
+                                onClick={() => {
+                                    setShowMoveDialog(false);
+                                }}
+                            />
                         </Box>
                     </Layer>
                 )}
 
                 {/* Delete Confirmation */}
                 {showDeleteConfirm && (
-                    <Layer onEsc={() => setShowDeleteConfirm(false)} onClickOutside={() => setShowDeleteConfirm(false)}>
+                    <Layer
+                        onEsc={() => {
+                            setShowDeleteConfirm(false);
+                        }}
+                        onClickOutside={() => {
+                            setShowDeleteConfirm(false);
+                        }}
+                    >
                         <Box pad="medium" gap="medium" width="medium">
                             <Heading level={3} margin="none">
                                 Confirm Delete
@@ -534,7 +684,12 @@ export const FullyInteractive: Story = {
                                 Are you sure you want to delete &quot;{item.name}&quot;? This action cannot be undone.
                             </Text>
                             <Box direction="row" gap="small" justify="end">
-                                <Button label="Cancel" onClick={() => setShowDeleteConfirm(false)} />
+                                <Button
+                                    label="Cancel"
+                                    onClick={() => {
+                                        setShowDeleteConfirm(false);
+                                    }}
+                                />
                                 <Button label="Delete" onClick={handleConfirmDelete} color="status-critical" primary />
                             </Box>
                         </Box>

@@ -1,5 +1,5 @@
-import { NamedCollection } from '/imports/utility/NamedCollection';
 import type { Attachment } from '/imports/model/Attachment';
+import { NamedCollection } from '/imports/utility/NamedCollection';
 
 /**
  * Attachments collection for photos and PDF documents

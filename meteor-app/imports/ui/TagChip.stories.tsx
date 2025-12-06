@@ -55,7 +55,9 @@ export const Basic: Story = {
 export const WithRemoveButton: Story = {
     args: {
         tagName: 'Camping Gear',
-        onRemove: () => console.log('Tag removed'),
+        onRemove: () => {
+            console.log('Tag removed');
+        },
     },
 };
 
@@ -65,7 +67,9 @@ export const WithRemoveButton: Story = {
 export const Disabled: Story = {
     args: {
         tagName: 'Outdated Tag',
-        onRemove: () => console.log('Tag removed'),
+        onRemove: () => {
+            console.log('Tag removed');
+        },
         disabled: true,
     },
 };
@@ -77,7 +81,9 @@ export const CustomColor: Story = {
     args: {
         tagName: 'Important',
         color: 'status-error',
-        onRemove: () => console.log('Tag removed'),
+        onRemove: () => {
+            console.log('Tag removed');
+        },
     },
 };
 
@@ -88,7 +94,9 @@ export const CustomColorSuccess: Story = {
     args: {
         tagName: 'Verified',
         color: 'status-ok',
-        onRemove: () => console.log('Tag removed'),
+        onRemove: () => {
+            console.log('Tag removed');
+        },
     },
 };
 
@@ -98,7 +106,9 @@ export const CustomColorSuccess: Story = {
 export const LongTagName: Story = {
     args: {
         tagName: 'This is a very long tag name that might wrap or overflow',
-        onRemove: () => console.log('Tag removed'),
+        onRemove: () => {
+            console.log('Tag removed');
+        },
     },
 };
 
@@ -108,7 +118,9 @@ export const LongTagName: Story = {
 export const ShortTag: Story = {
     args: {
         tagName: 'A',
-        onRemove: () => console.log('Tag removed'),
+        onRemove: () => {
+            console.log('Tag removed');
+        },
     },
 };
 
@@ -118,7 +130,9 @@ export const ShortTag: Story = {
 export const WithEmoji: Story = {
     args: {
         tagName: '🏕️ Camping',
-        onRemove: () => console.log('Tag removed'),
+        onRemove: () => {
+            console.log('Tag removed');
+        },
     },
 };
 
@@ -128,7 +142,9 @@ export const WithEmoji: Story = {
 export const WithSpecialCharacters: Story = {
     args: {
         tagName: 'C++/C# Tools',
-        onRemove: () => console.log('Tag removed'),
+        onRemove: () => {
+            console.log('Tag removed');
+        },
     },
 };
 
@@ -138,11 +154,36 @@ export const WithSpecialCharacters: Story = {
 export const MultipleTagsInList: Story = {
     render: () => (
         <Box direction="row" gap="small" wrap>
-            <TagChip tagName="Electronics" onRemove={() => console.log('Tag removed')} />
-            <TagChip tagName="Tools" onRemove={() => console.log('Tag removed')} />
-            <TagChip tagName="Camping" onRemove={() => console.log('Tag removed')} />
-            <TagChip tagName="Kitchen" onRemove={() => console.log('Tag removed')} />
-            <TagChip tagName="Books" onRemove={() => console.log('Tag removed')} />
+            <TagChip
+                tagName="Electronics"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
+            <TagChip
+                tagName="Tools"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
+            <TagChip
+                tagName="Camping"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
+            <TagChip
+                tagName="Kitchen"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
+            <TagChip
+                tagName="Books"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
         </Box>
     ),
 };
@@ -153,11 +194,41 @@ export const MultipleTagsInList: Story = {
 export const ColorVariety: Story = {
     render: () => (
         <Box direction="row" gap="small" wrap>
-            <TagChip tagName="Brand" color="brand" onRemove={() => console.log('Tag removed')} />
-            <TagChip tagName="Accent 1" color="accent-1" onRemove={() => console.log('Tag removed')} />
-            <TagChip tagName="Accent 2" color="accent-2" onRemove={() => console.log('Tag removed')} />
-            <TagChip tagName="Accent 3" color="accent-3" onRemove={() => console.log('Tag removed')} />
-            <TagChip tagName="Accent 4" color="accent-4" onRemove={() => console.log('Tag removed')} />
+            <TagChip
+                tagName="Brand"
+                color="brand"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
+            <TagChip
+                tagName="Accent 1"
+                color="accent-1"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
+            <TagChip
+                tagName="Accent 2"
+                color="accent-2"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
+            <TagChip
+                tagName="Accent 3"
+                color="accent-3"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
+            <TagChip
+                tagName="Accent 4"
+                color="accent-4"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
         </Box>
     ),
 };
@@ -168,10 +239,27 @@ export const ColorVariety: Story = {
 export const MixedStates: Story = {
     render: () => (
         <Box direction="row" gap="small" wrap>
-            <TagChip tagName="Active" onRemove={() => console.log('Tag removed')} />
-            <TagChip tagName="Disabled" onRemove={() => console.log('Tag removed')} disabled />
+            <TagChip
+                tagName="Active"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
+            <TagChip
+                tagName="Disabled"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+                disabled
+            />
             <TagChip tagName="Read-only" />
-            <TagChip tagName="Important" color="status-warning" onRemove={() => console.log('Tag removed')} />
+            <TagChip
+                tagName="Important"
+                color="status-warning"
+                onRemove={() => {
+                    console.log('Tag removed');
+                }}
+            />
         </Box>
     ),
 };

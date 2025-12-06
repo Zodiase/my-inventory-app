@@ -1,6 +1,6 @@
-import React, { useState, useRef, type ReactElement } from 'react';
 import { Box, CheckBox, Form, FormField, Text, TextArea, TextInput } from 'grommet';
 import type { FormExtendedEvent } from 'grommet';
+import React, { useState, useRef, type ReactElement } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';

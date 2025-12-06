@@ -102,7 +102,9 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                             <CheckBox
                                 label={tag.name}
                                 checked={selectedTagIds.includes(tag._id)}
-                                onChange={(event) => handleToggle(tag._id, event.target.checked)}
+                                onChange={(event) => {
+                                    handleToggle(tag._id, event.target.checked);
+                                }}
                                 disabled={disabled}
                             />
                         </Box>

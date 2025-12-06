@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
-
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
 
 const meta: Meta<typeof BreadcrumbTrail> = {
@@ -65,7 +64,9 @@ const box: InventoryItem = {
 export const SingleItem: Story = {
     args: {
         path: [home],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
     },
 };
 
@@ -73,7 +74,9 @@ export const SingleItem: Story = {
 export const SingleItemWithHomeIcon: Story = {
     args: {
         path: [home],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
         showHomeIcon: true,
     },
 };
@@ -82,7 +85,9 @@ export const SingleItemWithHomeIcon: Story = {
 export const TwoLevels: Story = {
     args: {
         path: [home, garage],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
     },
 };
 
@@ -90,7 +95,9 @@ export const TwoLevels: Story = {
 export const TwoLevelsWithHomeIcon: Story = {
     args: {
         path: [home, garage],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
         showHomeIcon: true,
     },
 };
@@ -99,7 +106,9 @@ export const TwoLevelsWithHomeIcon: Story = {
 export const ThreeLevels: Story = {
     args: {
         path: [home, garage, storage],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
     },
 };
 
@@ -107,7 +116,9 @@ export const ThreeLevels: Story = {
 export const FourLevelsDeep: Story = {
     args: {
         path: [home, garage, storage, box],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
         showHomeIcon: true,
     },
 };
@@ -141,7 +152,9 @@ export const ManyLevels: Story = {
                 modifiedAt: new Date('2024-01-01'),
             },
         ],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
         showHomeIcon: true,
     },
 };
@@ -167,7 +180,9 @@ export const LongContainerNames: Story = {
                 name: 'Large Plastic Storage Container for Camping Equipment',
             },
         ],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
         showHomeIcon: true,
     },
 };
@@ -184,7 +199,9 @@ export const WithoutNavigation: Story = {
 export const EmptyPath: Story = {
     args: {
         path: [],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
     },
 };
 
@@ -200,7 +217,9 @@ export const DisplayOnly: Story = {
 export const WithCustomClass: Story = {
     args: {
         path: [home, garage, storage],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
         showHomeIcon: true,
         className: 'custom-breadcrumb',
     },
@@ -227,7 +246,9 @@ export const SpecialCharactersInNames: Story = {
                 name: 'Box #42',
             },
         ],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
     },
 };
 
@@ -252,7 +273,9 @@ export const UnicodeInNames: Story = {
                 name: '⛺ Camping Gear',
             },
         ],
-        onNavigate: (item) => console.log('Navigate to:', item.name),
+        onNavigate: (item) => {
+            console.log('Navigate to:', item.name);
+        },
         showHomeIcon: false,
     },
 };

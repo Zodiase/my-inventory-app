@@ -23,7 +23,7 @@ describe('circularReference', function () {
     // Helper to create test items
     const createTestItem = async (name: string, isContainer: boolean, containerId?: string): Promise<string> => {
         const now = new Date();
-        const item: NoId<InventoryItem> & { [key: string]: unknown } = {
+        const item: NoId<InventoryItem> & Record<string, unknown> = {
             name,
             isContainer,
             tagIds: [],

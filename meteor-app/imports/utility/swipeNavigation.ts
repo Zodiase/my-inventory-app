@@ -103,7 +103,6 @@ export function useSwipeNavigation(
             // Cancel if moved too much vertically (likely scrolling)
             if (deltaY > maxVerticalDeviation) {
                 isSwiping = false;
-                return;
             }
 
             // Visual feedback could be added here

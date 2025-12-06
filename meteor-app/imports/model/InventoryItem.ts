@@ -1,5 +1,6 @@
-import type CollectionItem from './CollectionItem';
 import type { PropertyValues } from '/imports/model/PropertyValues';
+
+import type CollectionItem from './CollectionItem';
 
 export interface InventoryItem extends CollectionItem {
     /**

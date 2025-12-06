@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useState } from 'react';
 import { Box, Button } from 'grommet';
+import React, { useState } from 'react';
 
 import { LoadingSpinner } from './LoadingSpinner';
 

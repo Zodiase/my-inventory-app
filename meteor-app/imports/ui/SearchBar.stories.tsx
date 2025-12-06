@@ -130,7 +130,9 @@ export const Interactive: Story = {
                     searchMode={mode}
                     scopeLabel="In: Garage"
                     onChange={setQuery}
-                    onSearch={(q) => setLastSearch(q)}
+                    onSearch={(q) => {
+                        setLastSearch(q);
+                    }}
                     onClear={() => {
                         setQuery('');
                         setLastSearch('');
@@ -147,7 +149,9 @@ export const Interactive: Story = {
                         <strong>Mode:</strong> {mode}
                     </p>
                     <button
-                        onClick={() => setMode(mode === 'global' ? 'scoped' : 'global')}
+                        onClick={() => {
+                            setMode(mode === 'global' ? 'scoped' : 'global');
+                        }}
                         style={{
                             marginTop: '8px',
                             padding: '8px 16px',

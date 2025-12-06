@@ -394,7 +394,9 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                                 <FragmentType>{display.type}:</FragmentType>
                                 <FragmentValue>{display.value}</FragmentValue>
                                 <RemoveButton
-                                    onClick={() => handleRemoveFragment(index)}
+                                    onClick={() => {
+                                        handleRemoveFragment(index);
+                                    }}
                                     aria-label="Remove filter"
                                     type="button"
                                 >
@@ -417,7 +419,9 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                         type="text"
                         placeholder="Search by name..."
                         value={nameInput}
-                        onChange={(e) => setNameInput(e.target.value)}
+                        onChange={(e) => {
+                            setNameInput(e.target.value);
+                        }}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 handleAddNameFragment();
@@ -432,7 +436,12 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                 {/* Tag include filter */}
                 {availableTags.length > 0 && (
                     <FormRow>
-                        <Select value={selectedIncludeTag} onChange={(e) => setSelectedIncludeTag(e.target.value)}>
+                        <Select
+                            value={selectedIncludeTag}
+                            onChange={(e) => {
+                                setSelectedIncludeTag(e.target.value);
+                            }}
+                        >
                             <option value="">Select tag to include...</option>
                             {availableIncludeTags.map((tag) => (
                                 <option key={tag._id} value={tag._id}>
@@ -449,7 +458,12 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                 {/* Tag exclude filter */}
                 {availableTags.length > 0 && (
                     <FormRow>
-                        <Select value={selectedExcludeTag} onChange={(e) => setSelectedExcludeTag(e.target.value)}>
+                        <Select
+                            value={selectedExcludeTag}
+                            onChange={(e) => {
+                                setSelectedExcludeTag(e.target.value);
+                            }}
+                        >
                             <option value="">Select tag to exclude...</option>
                             {availableExcludeTags.map((tag) => (
                                 <option key={tag._id} value={tag._id}>
@@ -465,7 +479,12 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
 
                 {/* Container type filter */}
                 <FormRow>
-                    <Select value={containerTypeValue} onChange={(e) => setContainerTypeValue(e.target.value as any)}>
+                    <Select
+                        value={containerTypeValue}
+                        onChange={(e) => {
+                            setContainerTypeValue(e.target.value as any);
+                        }}
+                    >
                         <option value="all">All types</option>
                         <option value="containers">Containers only</option>
                         <option value="items">Items only</option>

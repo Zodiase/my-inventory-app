@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 
+import { Attachments } from '/imports/api/attachments';
 import { InventoryItemsCollection, createInventoryItem } from '/imports/api/items';
 import { TagsCollection, createTag, watchAndFixMissingPath } from '/imports/api/tags';
-import { Attachments } from '/imports/api/attachments';
 import createLogger from '/imports/utility/Logger';
 
 // Import default exports to register Meteor methods via asMeteorMethods

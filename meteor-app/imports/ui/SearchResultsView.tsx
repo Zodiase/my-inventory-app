@@ -259,7 +259,13 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                     const breadcrumbPath = path.length > 0 ? path.slice(0, -1) : [];
 
                     return (
-                        <ResultCard key={item._id} onClick={() => handleItemClick(item._id)} type="button">
+                        <ResultCard
+                            key={item._id}
+                            onClick={() => {
+                                handleItemClick(item._id);
+                            }}
+                            type="button"
+                        >
                             <ItemHeader>
                                 <ItemInfo>
                                     <ItemName>{item.name}</ItemName>

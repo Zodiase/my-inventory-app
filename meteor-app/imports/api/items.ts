@@ -457,7 +457,8 @@ if (Meteor.isServer) {
         logger.log('Publishing items.byTags', { tagIds });
 
         if (!Array.isArray(tagIds) || tagIds.length === 0) {
-            return this.ready();
+            this.ready();
+            return;
         }
 
         return InventoryItemsCollection.find({

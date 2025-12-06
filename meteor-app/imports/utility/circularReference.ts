@@ -108,7 +108,7 @@ export const getAncestorChain = async (
     const ancestors: InventoryItem[] = [];
     const visited = new Set<string>();
 
-    let currentItem = await itemsCollection.findOneAsync({ _id: itemId });
+    const currentItem = await itemsCollection.findOneAsync({ _id: itemId });
 
     if (typeof currentItem === 'undefined') {
         return ancestors;

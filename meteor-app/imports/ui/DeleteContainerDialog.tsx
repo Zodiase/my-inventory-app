@@ -150,7 +150,9 @@ export const DeleteContainerDialog: React.FC<DeleteContainerDialogProps> = ({
                             },
                         ]}
                         value={selectedStrategy}
-                        onChange={(event) => setSelectedStrategy(event.target.value as DeletionStrategy)}
+                        onChange={(event) => {
+                            setSelectedStrategy(event.target.value as DeletionStrategy);
+                        }}
                         disabled={isDeleting}
                     />
                 </Box>

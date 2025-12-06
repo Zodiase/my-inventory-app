@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
-
 import { DeleteContainerDialog } from '/imports/ui/DeleteContainerDialog';
 import type { DeletionStrategy } from '/imports/ui/DeleteContainerDialog';
 
@@ -53,8 +52,12 @@ export const FewChildren: Story = {
         container: sampleContainer,
         childCount: 5,
         totalDescendants: 5,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
     },
 };
 
@@ -64,8 +67,12 @@ export const SingleChild: Story = {
         container: sampleContainer,
         childCount: 1,
         totalDescendants: 1,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
     },
 };
 
@@ -75,8 +82,12 @@ export const ManyChildren: Story = {
         container: sampleContainer,
         childCount: 50,
         totalDescendants: 50,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
     },
 };
 
@@ -86,8 +97,12 @@ export const NestedDescendants: Story = {
         container: sampleContainer,
         childCount: 12,
         totalDescendants: 45,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
     },
 };
 
@@ -97,8 +112,12 @@ export const RootLevelContainer: Story = {
         container: rootContainer,
         childCount: 8,
         totalDescendants: 8,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
     },
 };
 
@@ -108,9 +127,15 @@ export const WithContainerSelected: Story = {
         container: sampleContainer,
         childCount: 5,
         totalDescendants: 5,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
-        onSelectContainer: () => console.log('Select container'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
+        onSelectContainer: () => {
+            console.log('Select container');
+        },
         selectedTargetContainerId: 'bedroom-closet',
         selectedTargetContainerName: 'Bedroom Closet',
     },
@@ -122,9 +147,15 @@ export const WithoutContainerSelected: Story = {
         container: sampleContainer,
         childCount: 5,
         totalDescendants: 5,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
-        onSelectContainer: () => console.log('Select container'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
+        onSelectContainer: () => {
+            console.log('Select container');
+        },
     },
 };
 
@@ -134,8 +165,12 @@ export const DeletionInProgress: Story = {
         container: sampleContainer,
         childCount: 5,
         totalDescendants: 5,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
         isDeleting: true,
     },
 };
@@ -146,8 +181,12 @@ export const WithError: Story = {
         container: sampleContainer,
         childCount: 5,
         totalDescendants: 5,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
         error: 'Failed to delete container. Please try again.',
     },
 };
@@ -161,8 +200,12 @@ export const LongContainerName: Story = {
         },
         childCount: 15,
         totalDescendants: 15,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
     },
 };
 
@@ -188,8 +231,12 @@ export const Interactive: Story = {
         container: sampleContainer,
         childCount: 5,
         totalDescendants: 12,
-        onCancel: () => console.log('Cancel'),
-        onSelectContainer: () => console.log('Select container - simulating selection...'),
+        onCancel: () => {
+            console.log('Cancel');
+        },
+        onSelectContainer: () => {
+            console.log('Select container - simulating selection...');
+        },
     },
 };
 
@@ -199,8 +246,12 @@ export const EmptyContainer: Story = {
         container: sampleContainer,
         childCount: 0,
         totalDescendants: 0,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
     },
 };
 
@@ -210,8 +261,12 @@ export const LargeDescendantCount: Story = {
         container: sampleContainer,
         childCount: 25,
         totalDescendants: 250,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
     },
 };
 
@@ -224,8 +279,12 @@ export const SpecialCharactersInName: Story = {
         },
         childCount: 7,
         totalDescendants: 7,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
     },
 };
 
@@ -238,7 +297,11 @@ export const UnicodeInName: Story = {
         },
         childCount: 10,
         totalDescendants: 10,
-        onConfirm: (strategy: DeletionStrategy, targetId?: string) => console.log('Confirm:', strategy, targetId),
-        onCancel: () => console.log('Cancel'),
+        onConfirm: (strategy: DeletionStrategy, targetId?: string) => {
+            console.log('Confirm:', strategy, targetId);
+        },
+        onCancel: () => {
+            console.log('Cancel');
+        },
     },
 };

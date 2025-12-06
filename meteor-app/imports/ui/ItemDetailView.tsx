@@ -1,10 +1,11 @@
-import React from 'react';
 import { Box, Button, Heading, Text } from 'grommet';
+import React from 'react';
 import { useParams, Link } from 'wouter';
-import { useTracker } from '/imports/utility/reactMeteorData';
+
 import { InventoryItemsCollection } from '/imports/api/items';
 import { TagsCollection } from '/imports/api/tags';
 import { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
+import { useTracker } from '/imports/utility/reactMeteorData';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 export type { ItemDetailViewProps } from '/imports/ui/ItemDetailViewPresentation';

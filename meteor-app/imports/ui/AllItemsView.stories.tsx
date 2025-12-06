@@ -3,7 +3,6 @@ import { Box, Text as GrommetText } from 'grommet';
 import React, { useState } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
-
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
 
 const meta: Meta<typeof AllItemsViewPresentation> = {

@@ -3,6 +3,10 @@ import assert from 'assert';
 import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
 
+import type InventoryItem from '/imports/model/InventoryItem';
+import RecordNotFoundException from '/imports/model/RecordNotFoundException';
+import type NoId from '/imports/utility/NoId';
+
 import {
     InventoryItemsCollection,
     createInventoryItem,
@@ -11,9 +15,6 @@ import {
     deleteInventoryItem,
     getItemPath,
 } from './items';
-import RecordNotFoundException from '/imports/model/RecordNotFoundException';
-import type InventoryItem from '/imports/model/InventoryItem';
-import type NoId from '/imports/utility/NoId';
 
 describe('items', function () {
     const bindEnvironment = Meteor.bindEnvironment.bind(Meteor);
@@ -29,7 +30,7 @@ describe('items', function () {
     // Helper to create test items directly in DB
     const createTestItemDirect = async (name: string, isContainer: boolean, containerId?: string): Promise<string> => {
         const now = new Date();
-        const item: NoId<InventoryItem> & { [key: string]: unknown } = {
+        const item: NoId<InventoryItem> & Record<string, unknown> = {
             name,
             isContainer,
             tagIds: [],

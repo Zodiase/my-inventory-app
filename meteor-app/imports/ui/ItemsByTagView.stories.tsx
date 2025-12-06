@@ -9,8 +9,8 @@
  * items with long names, items in containers, loading state, and fully interactive scenarios.
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useState } from 'react';
 import { Box, Button, Text } from 'grommet';
+import React, { useState } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
@@ -106,8 +106,12 @@ export const NoTagSelected: Story = {
     args: {
         selectedTag: undefined,
         items: [],
-        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
-        onClearSelection: () => console.log('Clear selection'),
+        onSelectItem: (item: InventoryItem) => {
+            console.log('Selected item:', item.name);
+        },
+        onClearSelection: () => {
+            console.log('Clear selection');
+        },
     },
 };
 
@@ -116,8 +120,12 @@ export const TagWithNoItems: Story = {
     args: {
         selectedTag: electronicsTag,
         items: [],
-        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
-        onClearSelection: () => console.log('Clear selection'),
+        onSelectItem: (item: InventoryItem) => {
+            console.log('Selected item:', item.name);
+        },
+        onClearSelection: () => {
+            console.log('Clear selection');
+        },
     },
 };
 
@@ -127,8 +135,12 @@ export const FewItems: Story = {
         selectedTag: campingTag,
         items: sampleItems,
         containerPaths,
-        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
-        onClearSelection: () => console.log('Clear selection'),
+        onSelectItem: (item: InventoryItem) => {
+            console.log('Selected item:', item.name);
+        },
+        onClearSelection: () => {
+            console.log('Clear selection');
+        },
     },
 };
 
@@ -137,8 +149,12 @@ export const ManyItems: Story = {
     args: {
         selectedTag: campingTag,
         items: manyItems,
-        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
-        onClearSelection: () => console.log('Clear selection'),
+        onSelectItem: (item: InventoryItem) => {
+            console.log('Selected item:', item.name);
+        },
+        onClearSelection: () => {
+            console.log('Clear selection');
+        },
     },
 };
 
@@ -168,8 +184,12 @@ export const ItemsWithLongNames: Story = {
                 modifiedAt: new Date('2024-01-11'),
             },
         ],
-        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
-        onClearSelection: () => console.log('Clear selection'),
+        onSelectItem: (item: InventoryItem) => {
+            console.log('Selected item:', item.name);
+        },
+        onClearSelection: () => {
+            console.log('Clear selection');
+        },
     },
 };
 
@@ -220,8 +240,12 @@ export const ItemsInContainers: Story = {
             item2: [{ _id: 'closet', name: 'Hall Closet' }],
             item3: [{ _id: 'shed', name: 'Backyard Shed' }],
         },
-        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
-        onClearSelection: () => console.log('Clear selection'),
+        onSelectItem: (item: InventoryItem) => {
+            console.log('Selected item:', item.name);
+        },
+        onClearSelection: () => {
+            console.log('Clear selection');
+        },
     },
 };
 
@@ -260,8 +284,12 @@ export const WithContainerItems: Story = {
         containerPaths: {
             item1: [{ _id: 'container1', name: 'Camping Gear Box' }],
         },
-        onSelectItem: (item: InventoryItem) => console.log('Selected item:', item.name),
-        onClearSelection: () => console.log('Clear selection'),
+        onSelectItem: (item: InventoryItem) => {
+            console.log('Selected item:', item.name);
+        },
+        onClearSelection: () => {
+            console.log('Clear selection');
+        },
     },
 };
 
@@ -304,7 +332,9 @@ export const FullyInteractive: Story = {
 
         const handleSelectItem = (item: InventoryItem): void => {
             setSelectedItem(item);
-            setTimeout(() => setSelectedItem(null), 3000);
+            setTimeout(() => {
+                setSelectedItem(null);
+            }, 3000);
         };
 
         const handleClearSelection = (): void => {
@@ -322,7 +352,9 @@ export const FullyInteractive: Story = {
                         <Button
                             key={tag._id}
                             label={tag.name}
-                            onClick={() => handleSelectTag(tag)}
+                            onClick={() => {
+                                handleSelectTag(tag);
+                            }}
                             primary={selectedTag?._id === tag._id}
                             size="small"
                         />

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
-
 import StyledButton from '/imports/ui/StyledButton';
 
 /**

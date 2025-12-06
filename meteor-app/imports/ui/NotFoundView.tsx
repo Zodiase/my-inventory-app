@@ -1,6 +1,7 @@
-import React, { type ReactElement } from 'react';
 import { Box, Button, Heading } from 'grommet';
 import { Home } from 'grommet-icons';
+import React, { type ReactElement } from 'react';
+
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 /**

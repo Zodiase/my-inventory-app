@@ -9,8 +9,8 @@
  * and fully interactive management scenarios.
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useState } from 'react';
 import { Box } from 'grommet';
+import React, { useState } from 'react';
 
 import type { TagRecord } from '/imports/model/TagRecord';
 import { AllTagsViewPresentation } from '/imports/ui/AllTagsView/AllTagsViewPresentation';
@@ -112,9 +112,15 @@ export const Empty: Story = {
     args: {
         tags: [],
         usageCounts: {},
-        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => {
+            console.log('Add child', parentTagId, tagName);
+        },
+        onRename: (tag: TagRecord, newName: string) => {
+            console.log('Rename', tag.name, 'to', newName);
+        },
+        onDelete: (tag: TagRecord) => {
+            console.log('Delete', tag.name);
+        },
     },
 };
 
@@ -127,9 +133,15 @@ export const FewTags: Story = {
             outdoor: 3,
             kitchen: 8,
         },
-        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => {
+            console.log('Add child', parentTagId, tagName);
+        },
+        onRename: (tag: TagRecord, newName: string) => {
+            console.log('Rename', tag.name, 'to', newName);
+        },
+        onDelete: (tag: TagRecord) => {
+            console.log('Delete', tag.name);
+        },
     },
 };
 
@@ -145,9 +157,15 @@ export const NestedHierarchy: Story = {
             kitchen: 15,
             cookware: 10,
         },
-        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => {
+            console.log('Add child', parentTagId, tagName);
+        },
+        onRename: (tag: TagRecord, newName: string) => {
+            console.log('Rename', tag.name, 'to', newName);
+        },
+        onDelete: (tag: TagRecord) => {
+            console.log('Delete', tag.name);
+        },
     },
 };
 
@@ -156,9 +174,15 @@ export const ManyTags: Story = {
     args: {
         tags: manyTags,
         usageCounts: Object.fromEntries(manyTags.map((tag) => [tag._id, Math.floor(Math.random() * 20)])),
-        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => {
+            console.log('Add child', parentTagId, tagName);
+        },
+        onRename: (tag: TagRecord, newName: string) => {
+            console.log('Rename', tag.name, 'to', newName);
+        },
+        onDelete: (tag: TagRecord) => {
+            console.log('Delete', tag.name);
+        },
     },
 };
 
@@ -171,9 +195,15 @@ export const TagsWithNoUsage: Story = {
             outdoor: 0,
             kitchen: 0,
         },
-        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => {
+            console.log('Add child', parentTagId, tagName);
+        },
+        onRename: (tag: TagRecord, newName: string) => {
+            console.log('Rename', tag.name, 'to', newName);
+        },
+        onDelete: (tag: TagRecord) => {
+            console.log('Delete', tag.name);
+        },
     },
 };
 
@@ -186,17 +216,27 @@ export const WithDetachedTagsUtility: Story = {
             outdoor: 3,
             kitchen: 8,
         },
-        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => {
+            console.log('Add child', parentTagId, tagName);
+        },
+        onRename: (tag: TagRecord, newName: string) => {
+            console.log('Rename', tag.name, 'to', newName);
+        },
+        onDelete: (tag: TagRecord) => {
+            console.log('Delete', tag.name);
+        },
         detachedTags: {
             detachedTagIds: ['orphan1', 'orphan2'],
             isUpdating: false,
             isRemoving: false,
             removedCount: 0,
             lastUpdated: new Date('2024-10-29T12:00:00'),
-            onCheck: () => console.log('Check detached tags'),
-            onRemoveAll: () => console.log('Remove all detached tags'),
+            onCheck: () => {
+                console.log('Check detached tags');
+            },
+            onRemoveAll: () => {
+                console.log('Remove all detached tags');
+            },
         },
     },
 };
@@ -219,9 +259,15 @@ export const WithTagsWithoutPath: Story = {
             outdoor: 3,
             'broken-tag': 2,
         },
-        onAddChild: (parentTagId: string, tagName: string) => console.log('Add child', parentTagId, tagName),
-        onRename: (tag: TagRecord, newName: string) => console.log('Rename', tag.name, 'to', newName),
-        onDelete: (tag: TagRecord) => console.log('Delete', tag.name),
+        onAddChild: (parentTagId: string, tagName: string) => {
+            console.log('Add child', parentTagId, tagName);
+        },
+        onRename: (tag: TagRecord, newName: string) => {
+            console.log('Rename', tag.name, 'to', newName);
+        },
+        onDelete: (tag: TagRecord) => {
+            console.log('Delete', tag.name);
+        },
         tagsWithoutPath: [tagWithoutPath],
     },
 };

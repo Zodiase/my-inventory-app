@@ -2,7 +2,6 @@ import React, { type ComponentProps, type ReactElement, useState } from 'react';
 import styled from 'styled-components';
 
 import type { TagRecord } from '/imports/model/TagRecord';
-
 import { CreateTagDialog } from '/imports/ui/CreateTagDialog';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
 import StyledButton from '/imports/ui/StyledButton';

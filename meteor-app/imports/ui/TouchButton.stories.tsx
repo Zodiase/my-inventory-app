@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { Box } from 'grommet';
 import { Add, Trash, Edit, Checkmark, Close } from 'grommet-icons';
 import React from 'react';
-import { Box } from 'grommet';
 
 import { TouchButton } from './TouchButton';
 

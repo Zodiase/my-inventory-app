@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useState } from 'react';
 import { Box, Text } from 'grommet';
+import React, { useState } from 'react';
 
 import type { TagRecord } from '/imports/model/TagRecord';
-
 import { TagSelector } from '/imports/ui/TagSelector';
 
 const meta: Meta<typeof TagSelector> = {
@@ -76,8 +75,12 @@ export const Empty: Story = {
     args: {
         availableTags: [],
         selectedTagIds: [],
-        onToggleTag: (tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected),
-        onCreateNewTag: () => console.log('Create new tag'),
+        onToggleTag: (tagId, isSelected) => {
+            console.log('Toggle tag:', tagId, isSelected);
+        },
+        onCreateNewTag: () => {
+            console.log('Create new tag');
+        },
     },
 };
 
@@ -87,8 +90,12 @@ export const EmptyWithCustomMessage: Story = {
         availableTags: [],
         selectedTagIds: [],
         emptyMessage: 'Create your first tag to get started!',
-        onToggleTag: (tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected),
-        onCreateNewTag: () => console.log('Create new tag'),
+        onToggleTag: (tagId, isSelected) => {
+            console.log('Toggle tag:', tagId, isSelected);
+        },
+        onCreateNewTag: () => {
+            console.log('Create new tag');
+        },
     },
 };
 
@@ -97,8 +104,12 @@ export const WithTagsNoneSelected: Story = {
     args: {
         availableTags: sampleTags,
         selectedTagIds: [],
-        onToggleTag: (tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected),
-        onCreateNewTag: () => console.log('Create new tag'),
+        onToggleTag: (tagId, isSelected) => {
+            console.log('Toggle tag:', tagId, isSelected);
+        },
+        onCreateNewTag: () => {
+            console.log('Create new tag');
+        },
     },
 };
 
@@ -107,8 +118,12 @@ export const WithSomeSelected: Story = {
     args: {
         availableTags: sampleTags,
         selectedTagIds: ['tag1', 'tag3'],
-        onToggleTag: (tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected),
-        onCreateNewTag: () => console.log('Create new tag'),
+        onToggleTag: (tagId, isSelected) => {
+            console.log('Toggle tag:', tagId, isSelected);
+        },
+        onCreateNewTag: () => {
+            console.log('Create new tag');
+        },
     },
 };
 
@@ -117,8 +132,12 @@ export const WithAllSelected: Story = {
     args: {
         availableTags: sampleTags,
         selectedTagIds: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5'],
-        onToggleTag: (tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected),
-        onCreateNewTag: () => console.log('Create new tag'),
+        onToggleTag: (tagId, isSelected) => {
+            console.log('Toggle tag:', tagId, isSelected);
+        },
+        onCreateNewTag: () => {
+            console.log('Create new tag');
+        },
     },
 };
 
@@ -127,8 +146,12 @@ export const Disabled: Story = {
     args: {
         availableTags: sampleTags,
         selectedTagIds: ['tag1', 'tag3'],
-        onToggleTag: (tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected),
-        onCreateNewTag: () => console.log('Create new tag'),
+        onToggleTag: (tagId, isSelected) => {
+            console.log('Toggle tag:', tagId, isSelected);
+        },
+        onCreateNewTag: () => {
+            console.log('Create new tag');
+        },
         disabled: true,
     },
 };
@@ -138,7 +161,9 @@ export const WithoutCreateButton: Story = {
     args: {
         availableTags: sampleTags,
         selectedTagIds: ['tag2'],
-        onToggleTag: (tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected),
+        onToggleTag: (tagId, isSelected) => {
+            console.log('Toggle tag:', tagId, isSelected);
+        },
         // No onCreateNewTag callback
     },
 };
@@ -148,8 +173,12 @@ export const ManyTags: Story = {
     args: {
         availableTags: manyTags,
         selectedTagIds: ['tag1', 'tag5', 'tag10', 'tag15'],
-        onToggleTag: (tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected),
-        onCreateNewTag: () => console.log('Create new tag'),
+        onToggleTag: (tagId, isSelected) => {
+            console.log('Toggle tag:', tagId, isSelected);
+        },
+        onCreateNewTag: () => {
+            console.log('Create new tag');
+        },
     },
 };
 
@@ -158,8 +187,12 @@ export const SingleTag: Story = {
     args: {
         availableTags: [sampleTags[0]],
         selectedTagIds: [],
-        onToggleTag: (tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected),
-        onCreateNewTag: () => console.log('Create new tag'),
+        onToggleTag: (tagId, isSelected) => {
+            console.log('Toggle tag:', tagId, isSelected);
+        },
+        onCreateNewTag: () => {
+            console.log('Create new tag');
+        },
     },
 };
 
@@ -193,8 +226,12 @@ export const TagsWithSpecialCharacters: Story = {
             },
         ],
         selectedTagIds: ['tag1'],
-        onToggleTag: (tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected),
-        onCreateNewTag: () => console.log('Create new tag'),
+        onToggleTag: (tagId, isSelected) => {
+            console.log('Toggle tag:', tagId, isSelected);
+        },
+        onCreateNewTag: () => {
+            console.log('Create new tag');
+        },
     },
 };
 
@@ -208,12 +245,16 @@ export const FullyInteractive: Story = {
             setSelectedTagIds(isSelected ? [...selectedTagIds, tagId] : selectedTagIds.filter((id) => id !== tagId));
             const tagName = sampleTags.find((t) => t._id === tagId)?.name;
             setShowFeedback(isSelected ? `Added tag: ${tagName}` : `Removed tag: ${tagName}`);
-            setTimeout(() => setShowFeedback(''), 2000);
+            setTimeout(() => {
+                setShowFeedback('');
+            }, 2000);
         };
 
         const handleCreateNewTag = (): void => {
             setShowFeedback('Opening create tag dialog...');
-            setTimeout(() => setShowFeedback(''), 2000);
+            setTimeout(() => {
+                setShowFeedback('');
+            }, 2000);
         };
 
         return (
@@ -258,8 +299,12 @@ export const InDialogContext: Story = {
                 <TagSelector
                     availableTags={sampleTags}
                     selectedTagIds={['tag2']}
-                    onToggleTag={(tagId, isSelected) => console.log('Toggle tag:', tagId, isSelected)}
-                    onCreateNewTag={() => console.log('Create new tag')}
+                    onToggleTag={(tagId, isSelected) => {
+                        console.log('Toggle tag:', tagId, isSelected);
+                    }}
+                    onCreateNewTag={() => {
+                        console.log('Create new tag');
+                    }}
                 />
             </Box>
         </Box>

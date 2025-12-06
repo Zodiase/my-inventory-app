@@ -152,7 +152,9 @@ export const Interactive: Story = {
                     </p>
                     {fragments.length > 0 && (
                         <button
-                            onClick={() => setFragments([])}
+                            onClick={() => {
+                                setFragments([]);
+                            }}
                             style={{
                                 marginTop: '12px',
                                 padding: '8px 16px',

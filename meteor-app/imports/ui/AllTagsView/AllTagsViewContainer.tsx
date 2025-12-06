@@ -2,11 +2,10 @@ import React, { type ComponentProps, type ReactElement, useCallback, useState } 
 import { useLocation } from 'wouter';
 
 import TagsCollection, { type TagRecord } from '/imports/api/tags';
+import { AllTagsViewPresentation } from '/imports/ui/AllTagsView/AllTagsViewPresentation';
 import { SCROLL_DELAY_MS } from '/imports/utility/constants';
 import { useTracker } from '/imports/utility/reactMeteorData';
 import { usePageTitle } from '/imports/utility/usePageTitle';
-
-import { AllTagsViewPresentation } from '/imports/ui/AllTagsView/AllTagsViewPresentation';
 
 /**
  * AllTagsViewContainer is a container component that fetches tag data from Meteor
