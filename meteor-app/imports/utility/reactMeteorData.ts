@@ -2,7 +2,7 @@
  * @file re-declares methods from 'meteor/react-meteor-data' to avoid TS errors.
  */
 
-// @ts-expect-error: No type definitions for 'meteor/react-meteor-data'
+// @ts-ignore: Meteor package imports may not resolve correctly in all environments
 import { useTracker as _useTracker } from 'meteor/react-meteor-data';
 
 type UseTrackerType<R> = (reactiveFn: () => R, deps?: unknown[]) => R;
