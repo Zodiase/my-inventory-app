@@ -147,6 +147,21 @@ export default (async () => {
             files: ['**/*.test.{js,ts,tsx}', '**/tests/**/*.{js,ts,tsx}'],
             rules: {
                 '@typescript-eslint/no-magic-numbers': 'off', // Allow magic numbers in test files
+                '@typescript-eslint/strict-boolean-expressions': 'off', // Allow loose boolean checks in tests
+                '@typescript-eslint/no-unnecessary-condition': 'off', // Allow extra safety checks in tests
+                '@typescript-eslint/unbound-method': 'off', // Allow passing methods as callbacks in tests
+            },
+        },
+
+        // 4.5. Story file specific configuration - relax rules for Storybook examples
+        {
+            files: ['**/*.stories.{ts,tsx}'],
+            rules: {
+                '@typescript-eslint/no-magic-numbers': 'off', // Allow magic numbers in stories
+                '@typescript-eslint/no-empty-function': 'off', // Allow placeholder callbacks
+                '@typescript-eslint/strict-boolean-expressions': 'off', // Allow loose checks in examples
+                '@typescript-eslint/no-dynamic-delete': 'off', // Allow dynamic operations in demos
+                '@typescript-eslint/no-loop-func': 'off', // Allow closures in example loops
             },
         },
 
@@ -160,6 +175,7 @@ export default (async () => {
                 '*.html', // HTML files
                 '.meteor/**', // Meteor build files
                 'eslint.config.mjs', // This config file itself
+                '.storybook/**', // Storybook config files (not in tsconfig)
             ],
         },
     ];

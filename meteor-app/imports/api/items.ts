@@ -16,6 +16,10 @@ export type { InventoryItem } from '/imports/model/InventoryItem';
 
 const logger = createLogger(module);
 
+// Validation constants
+const MAX_ITEM_NAME_LENGTH = 500;
+const MAX_ITEM_DESCRIPTION_LENGTH = 5000;
+
 export const InventoryItemsCollection = new NamedCollection<InventoryItem>('items');
 
 export const createInventoryItem = async (itemInput: RecordInput<InventoryItem>): Promise<string> => {
@@ -26,13 +30,13 @@ export const createInventoryItem = async (itemInput: RecordInput<InventoryItem>)
     }
 
     // Validate name length
-    if (name.length > 500) {
-        throw new Error('Item name must be 500 characters or less.');
+    if (name.length > MAX_ITEM_NAME_LENGTH) {
+        throw new Error(`Item name must be ${MAX_ITEM_NAME_LENGTH} characters or less.`);
     }
 
     // Validate description length if provided
-    if (typeof description !== 'undefined' && description.length > 5000) {
-        throw new Error('Item description must be 5000 characters or less.');
+    if (typeof description !== 'undefined' && description.length > MAX_ITEM_DESCRIPTION_LENGTH) {
+        throw new Error(`Item description must be ${MAX_ITEM_DESCRIPTION_LENGTH} characters or less.`);
     }
 
     // Validate containerId if provided
@@ -94,13 +98,13 @@ export const updateInventoryItem = async (
         if (updates.name.trim() === '') {
             throw new Error('Item name cannot be empty.');
         }
-        if (updates.name.length > 500) {
-            throw new Error('Item name must be 500 characters or less.');
+        if (updates.name.length > MAX_ITEM_NAME_LENGTH) {
+            throw new Error(`Item name must be ${MAX_ITEM_NAME_LENGTH} characters or less.`);
         }
     }
 
-    if (typeof updates.description !== 'undefined' && updates.description.length > 5000) {
-        throw new Error('Item description must be 5000 characters or less.');
+    if (typeof updates.description !== 'undefined' && updates.description.length > MAX_ITEM_DESCRIPTION_LENGTH) {
+        throw new Error(`Item description must be ${MAX_ITEM_DESCRIPTION_LENGTH} characters or less.`);
     }
 
     // Prepare the update object
@@ -398,8 +402,7 @@ export const searchItems = async (fragments: SearchFragment[]): Promise<Inventor
     logger.log('Searching items', { fragments, query });
 
     // Execute query and return results
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return await InventoryItemsCollection.find(query as any).fetchAsync();
+    return await InventoryItemsCollection.find(query).fetchAsync();
 };
 
 // Publications (server-side only)

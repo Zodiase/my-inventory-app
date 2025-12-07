@@ -8,6 +8,8 @@ import { useTracker } from '/imports/utility/reactMeteorData';
 import { buildSearchQuery } from '/imports/utility/searchQuery';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
+const REFRESH_VISUAL_DELAY_MS = 500;
+
 /**
  * AllItemsViewContainer is a container component that fetches data from Meteor and passes it
  * to AllItemsViewPresentation.
@@ -63,13 +65,14 @@ export const AllItemsViewContainer = ({
 
         // Small delay for visual feedback
         await new Promise((resolve) => {
-            setTimeout(resolve, 500);
+            setTimeout(resolve, REFRESH_VISUAL_DELAY_MS);
         });
     }, []);
 
     // Fetch items at current level with optional filters
     const items = useTracker(() => {
         // Start with base query for current container level
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const baseQuery: any = {
             containerId: currentContainerId,
         };
@@ -79,8 +82,9 @@ export const AllItemsViewContainer = ({
             const filterQuery = buildSearchQuery(filters);
 
             // Combine base query (container scoping) with filter query (AND logic)
-            const combinedQuery = {
-                $and: [baseQuery, filterQuery as any],
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const combinedQuery: any = {
+                $and: [baseQuery, filterQuery],
             };
 
             return InventoryItemsCollection.find(combinedQuery, {
