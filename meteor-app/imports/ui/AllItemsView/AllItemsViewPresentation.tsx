@@ -10,6 +10,15 @@ import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
 import { usePullToRefresh } from '/imports/utility/pullToRefresh';
 import { useSwipeNavigation } from '/imports/utility/swipeNavigation';
 
+// Pull-to-refresh and navigation constants
+const PULL_TRIGGER_DISTANCE_PX = 80;
+const PULL_MAX_VISUAL_DISTANCE_PX = 60;
+const ROTATION_MAX_DEGREES = 360;
+const SWIPE_THRESHOLD_PX = 100;
+const SWIPE_EDGE_THRESHOLD_PX = 50;
+const SWIPE_MAX_VERTICAL_DEVIATION_PX = 50;
+const ICON_ROTATION_DIVISOR = 2;
+
 /**
  * Scrollable container for items list
  */
@@ -62,7 +71,8 @@ const RefreshIcon = styled.svg.attrs<{ isTriggered: boolean; pullDistance: numbe
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transform: rotate(${(props) => Math.min((props.pullDistance / 80) * 360, 360)}deg);
+    transform: rotate(${(props) =>
+        Math.min((props.pullDistance / PULL_TRIGGER_DISTANCE_PX) * ROTATION_MAX_DEGREES, ROTATION_MAX_DEGREES)}deg);
     transition: stroke 0.2s ease-out;
 
     ${(props) =>
@@ -153,7 +163,7 @@ export const AllItemsViewPresentation = ({
     const { isRefreshing, pullDistance, isTriggered } = usePullToRefresh({
         containerRef,
         onRefresh: onRefresh ?? (async () => {}),
-        triggerDistance: 80,
+        triggerDistance: PULL_TRIGGER_DISTANCE_PX,
         enabled: onRefresh !== undefined,
     });
 
@@ -166,9 +176,9 @@ export const AllItemsViewPresentation = ({
         containerRef,
         {
             enabled: hasParent,
-            threshold: 100, // 100px swipe distance
-            edgeThreshold: 50, // Must start within 50px of left edge
-            maxVerticalDeviation: 50, // Max 50px vertical movement
+            threshold: SWIPE_THRESHOLD_PX,
+            edgeThreshold: SWIPE_EDGE_THRESHOLD_PX,
+            maxVerticalDeviation: SWIPE_MAX_VERTICAL_DEVIATION_PX,
         },
         () => {
             // Navigate to parent container
@@ -182,8 +192,11 @@ export const AllItemsViewPresentation = ({
             {onRefresh !== undefined && (
                 <PullToRefreshIndicator
                     style={{
-                        transform: `translateY(${Math.min(pullDistance, 60)}px) translateX(-50%)`,
-                        opacity: Math.min(pullDistance / 80, 1),
+                        transform: `translateY(${Math.min(
+                            pullDistance,
+                            PULL_MAX_VISUAL_DISTANCE_PX
+                        )}px) translateX(-50%)`,
+                        opacity: Math.min(pullDistance / PULL_TRIGGER_DISTANCE_PX, 1),
                     }}
                 >
                     {isRefreshing ? (

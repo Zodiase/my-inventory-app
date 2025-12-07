@@ -17,8 +17,8 @@ export type { InventoryItem } from '/imports/model/InventoryItem';
 const logger = createLogger(module);
 
 // Validation constants
-const MAX_ITEM_NAME_LENGTH = 500;
-const MAX_ITEM_DESCRIPTION_LENGTH = 5000;
+export const MAX_ITEM_NAME_LENGTH = 500;
+export const MAX_ITEM_DESCRIPTION_LENGTH = 5000;
 
 export const InventoryItemsCollection = new NamedCollection<InventoryItem>('items');
 

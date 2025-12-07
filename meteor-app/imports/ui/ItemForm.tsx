@@ -2,6 +2,7 @@ import { Box, CheckBox, Form, FormField, Text, TextArea, TextInput } from 'gromm
 import type { FormExtendedEvent } from 'grommet';
 import React, { useState, useRef, type ReactElement } from 'react';
 
+import { MAX_ITEM_NAME_LENGTH, MAX_ITEM_DESCRIPTION_LENGTH } from '/imports/api/items';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { TouchButton } from '/imports/ui/TouchButton';
@@ -96,16 +97,16 @@ export const ItemForm = ({
             return;
         }
 
-        if (name.length > 500) {
-            setValidationError('Item name must be 500 characters or less.');
+        if (name.length > MAX_ITEM_NAME_LENGTH) {
+            setValidationError(`Item name must be ${MAX_ITEM_NAME_LENGTH} characters or less.`);
             setInternalSubmitting(false);
             isSubmittingRef.current = false;
             return;
         }
 
         // Validate description if provided
-        if (description.length > 5000) {
-            setValidationError('Item description must be 5000 characters or less.');
+        if (description.length > MAX_ITEM_DESCRIPTION_LENGTH) {
+            setValidationError(`Item description must be ${MAX_ITEM_DESCRIPTION_LENGTH} characters or less.`);
             setInternalSubmitting(false);
             isSubmittingRef.current = false;
             return;
@@ -142,10 +143,17 @@ export const ItemForm = ({
         }
     };
 
-    const displayError = validationError || error;
+    const hasValidationError = validationError !== '' && validationError !== null && validationError !== undefined;
+    const hasError = error !== '' && error !== null && error !== undefined;
+    const displayError = hasValidationError ? validationError : hasError ? error : '';
 
     return (
-        <Form onSubmit={handleSubmit} validate="blur">
+        <Form
+            onSubmit={(event) => {
+                void handleSubmit(event);
+            }}
+            validate="blur"
+        >
             <Box gap="medium" pad="medium" width="large">
                 {/* Show loading spinner overlay during submission */}
                 {isActuallySubmitting && (
@@ -187,9 +195,15 @@ export const ItemForm = ({
                     help={
                         <Text
                             size="small"
-                            color={nameLength > 500 ? 'status-error' : nameLength > 450 ? 'status-warning' : 'dark-6'}
+                            color={
+                                nameLength > MAX_ITEM_NAME_LENGTH
+                                    ? 'status-error'
+                                    : nameLength > MAX_ITEM_NAME_LENGTH * 0.9
+                                    ? 'status-warning'
+                                    : 'dark-6'
+                            }
                         >
-                            {nameLength} / 500 characters
+                            {nameLength} / {MAX_ITEM_NAME_LENGTH} characters
                         </Text>
                     }
                 >
@@ -202,7 +216,7 @@ export const ItemForm = ({
                         placeholder="Enter item name"
                         disabled={isActuallySubmitting}
                         autoFocus
-                        maxLength={550}
+                        maxLength={MAX_ITEM_NAME_LENGTH + 50}
                     />
                 </FormField>
 
@@ -213,14 +227,14 @@ export const ItemForm = ({
                         <Text
                             size="small"
                             color={
-                                descriptionLength > 5000
+                                descriptionLength > MAX_ITEM_DESCRIPTION_LENGTH
                                     ? 'status-error'
-                                    : descriptionLength > 4500
+                                    : descriptionLength > MAX_ITEM_DESCRIPTION_LENGTH * 0.9
                                     ? 'status-warning'
                                     : 'dark-6'
                             }
                         >
-                            {descriptionLength} / 5000 characters
+                            {descriptionLength} / {MAX_ITEM_DESCRIPTION_LENGTH} characters
                         </Text>
                     }
                 >
