@@ -1,13 +1,19 @@
 import { Meteor } from 'meteor/meteor';
 
 import { Attachments } from '/imports/api/attachments';
-import { InventoryItemsCollection, createInventoryItem } from '/imports/api/items';
-import { TagsCollection, createTag, watchAndFixMissingPath } from '/imports/api/tags';
+// Import specific exports AND register methods via side-effect imports
+import {
+    InventoryItemsCollection,
+    createInventoryItem,
+    // Side-effect: registers createItem, updateItem, deleteItem, etc.
+} from '/imports/api/items';
+import {
+    TagsCollection,
+    createTag,
+    watchAndFixMissingPath,
+    // Side-effect: registers createTag, updateTag, deleteTag, etc.
+} from '/imports/api/tags';
 import createLogger from '/imports/utility/Logger';
-
-// Import default exports to register Meteor methods via asMeteorMethods
-import '/imports/api/items'; // Registers createItem, updateItem, deleteItem, etc.
-import '/imports/api/tags'; // Registers createTag, updateTag, deleteTag, etc.
 
 import { initializeGridFS } from './gridfs';
 import './test-helpers'; // Test helper methods for E2E testing

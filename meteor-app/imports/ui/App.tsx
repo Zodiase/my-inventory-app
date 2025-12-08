@@ -14,15 +14,15 @@ import type RecordInput from '/imports/utility/RecordInput';
 
 import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';
+import { FilterBar } from './FilterBar';
 import { ItemDetailView, ItemDetailViewPresentation } from './ItemDetailView';
 import { ItemForm } from './ItemForm';
 import { ItemsByTagView } from './ItemsByTagView';
 import { NotFoundView } from './NotFoundView';
 import { SearchBar } from './SearchBar';
 import { SearchFragmentBuilder } from './SearchFragmentBuilder';
-import { SearchScopeSelector } from './SearchScopeSelector';
 import { SearchResultsView } from './SearchResultsView';
-import { FilterBar } from './FilterBar';
+import { SearchScopeSelector } from './SearchScopeSelector';
 
 // Grommet theme with iOS-style design and touch-friendly sizing
 const theme = {

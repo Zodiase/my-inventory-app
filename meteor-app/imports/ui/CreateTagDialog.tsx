@@ -73,7 +73,7 @@ export const CreateTagForm: React.FC<CreateTagFormProps> = ({
     const isActuallyLoading = isLoading || internalLoading;
 
     // Use external error OR local error
-    const displayError = errorMessage || localError;
+    const displayError = errorMessage ?? localError;
 
     const handleClose = (): void => {
         if (!isActuallyLoading) {
@@ -96,7 +96,8 @@ export const CreateTagForm: React.FC<CreateTagFormProps> = ({
             return;
         }
 
-        if (trimmedName.length > 100) {
+        const MAX_TAG_NAME_LENGTH = 100;
+        if (trimmedName.length > MAX_TAG_NAME_LENGTH) {
             setLocalError('Tag name cannot exceed 100 characters');
             return;
         }

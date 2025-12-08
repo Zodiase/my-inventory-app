@@ -5,12 +5,12 @@ import React, { useState, useRef, type ReactElement } from 'react';
 import { MAX_ITEM_NAME_LENGTH, MAX_ITEM_DESCRIPTION_LENGTH } from '/imports/api/items';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
+import { TouchButton } from '/imports/ui/TouchButton';
+import type RecordInput from '/imports/utility/RecordInput';
 
 // Warning threshold as percentage of max length
 const WARNING_THRESHOLD_PERCENT = 0.9;
 const MAX_LENGTH_BUFFER = 50;
-import { TouchButton } from '/imports/ui/TouchButton';
-import type RecordInput from '/imports/utility/RecordInput';
 
 /**
  * Form for creating or editing inventory items.
