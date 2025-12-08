@@ -5,6 +5,12 @@ import React from 'react';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 
 /**
+ * Spacing constants for container hierarchy display
+ */
+const CONTAINER_INDENT_PX = 24; // Pixels to indent each level of container depth
+const CONTAINER_BASE_PADDING_PX = 12; // Base left padding for container items
+
+/**
  * ContainerSelector component for selecting a parent container when moving items.
  *
  * @remarks
@@ -70,16 +76,17 @@ export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
     // Calculate depth for each container
     const calculateDepth = (container: InventoryItem): number => {
         if (depthMap.has(container._id)) {
-            return depthMap.get(container._id)!;
+            const existingDepth = depthMap.get(container._id);
+            return existingDepth ?? 0;
         }
 
-        if (!container.containerId) {
+        if (container.containerId === '' || container.containerId === undefined) {
             depthMap.set(container._id, 0);
             return 0;
         }
 
         const parent = containers.find((c) => c._id === container.containerId);
-        if (!parent) {
+        if (parent === undefined) {
             depthMap.set(container._id, 0);
             return 0;
         }
@@ -94,8 +101,8 @@ export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
 
     // Sort containers by hierarchy (parents before children)
     const sortedContainers = [...containers].sort((a, b) => {
-        const depthA = depthMap.get(a._id) || 0;
-        const depthB = depthMap.get(b._id) || 0;
+        const depthA = depthMap.get(a._id) ?? 0;
+        const depthB = depthMap.get(b._id) ?? 0;
 
         if (depthA !== depthB) {
             return depthA - depthB;
@@ -119,7 +126,7 @@ export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
         listData.push({
             id: container._id,
             name: container.name,
-            depth: depthMap.get(container._id) || 0,
+            depth: depthMap.get(container._id) ?? 0,
         });
     });
 
@@ -142,7 +149,7 @@ export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
                 {(datum: { id: string | undefined; name: string; depth: number }) => {
                     const isSelected = datum.id === selectedContainerId;
                     const isRoot = datum.id === undefined;
-                    const indentPx = datum.depth * 24;
+                    const indentPx = datum.depth * CONTAINER_INDENT_PX;
 
                     return (
                         <Box
@@ -154,7 +161,7 @@ export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
                             style={{
                                 minHeight: '44px',
                                 cursor: disabled ? 'not-allowed' : 'pointer',
-                                paddingLeft: `${12 + indentPx}px`,
+                                paddingLeft: `${CONTAINER_BASE_PADDING_PX + indentPx}px`,
                             }}
                         >
                             <Box width="24px" margin={{ right: 'small' }}>

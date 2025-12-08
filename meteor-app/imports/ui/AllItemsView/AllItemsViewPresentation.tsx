@@ -290,11 +290,13 @@ export const AllItemsViewPresentation = ({
                                         {/* Item name */}
                                         <Box flex>
                                             <Text weight={item.isContainer ? 'bold' : 'normal'}>{item.name}</Text>
-                                            {item.description && (
-                                                <Text size="small" color="text-weak" truncate>
-                                                    {item.description}
-                                                </Text>
-                                            )}
+                                            {item.description !== '' &&
+                                                item.description !== null &&
+                                                item.description !== undefined && (
+                                                    <Text size="small" color="text-weak" truncate>
+                                                        {item.description}
+                                                    </Text>
+                                                )}
                                         </Box>
 
                                         {/* Navigation arrow for containers */}
