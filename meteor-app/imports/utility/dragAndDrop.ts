@@ -1,5 +1,12 @@
 import { type RefObject, useEffect, useState } from 'react';
 
+// Drag and drop constants
+const DRAG_MOVE_THRESHOLD_PX = 10; // Movement threshold to cancel drag start
+const DRAG_START_DELAY_MS = 200; // Default delay before drag starts
+const DRAG_OPACITY = 0.5; // Opacity of dragged element
+const DROP_HOVER_OPACITY = 0.9; // Opacity when draggable is over drop target
+const DROP_HIGHLIGHT_OFFSET_PX = 16; // Visual offset for drop highlight
+
 /**
  * Drag state information
  */
@@ -101,7 +108,7 @@ export interface DropTargetOptions<T = unknown> {
  * ```
  */
 export function useDraggable(elementRef: RefObject<HTMLElement>, options: DraggableOptions): DragState {
-    const { data, enabled = true, delay = 200 } = options;
+    const { data, enabled = true, delay = DRAG_START_DELAY_MS } = options;
     const [isDragging, setIsDragging] = useState(false);
     const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
 
@@ -140,7 +147,7 @@ export function useDraggable(elementRef: RefObject<HTMLElement>, options: Dragga
                 if (touch !== undefined && startPos !== null) {
                     const dx = Math.abs(touch.clientX - startPos.x);
                     const dy = Math.abs(touch.clientY - startPos.y);
-                    if (dx > 10 || dy > 10) {
+                    if (dx > DRAG_MOVE_THRESHOLD_PX || dy > DRAG_MOVE_THRESHOLD_PX) {
                         clearTimeout(dragTimer);
                         dragTimer = null;
                     }
