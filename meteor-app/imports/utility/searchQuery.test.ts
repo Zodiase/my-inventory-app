@@ -4,6 +4,11 @@ import type SearchFragment from '/imports/model/SearchFragment';
 
 import { buildSearchQuery, buildContainerHierarchyQuery } from './searchQuery';
 
+// Test file: MongoDB query assertions require accessing dynamic properties on query objects
+// which TypeScript types as `any`. These are test-only assertions, not production code.
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 // Use any for test assertions to avoid TypeScript compilation issues with MongoDB Filter types
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyQuery = any;

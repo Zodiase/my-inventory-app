@@ -3,9 +3,11 @@ import { type RefObject, useEffect, useState } from 'react';
 // Drag and drop constants
 const DRAG_MOVE_THRESHOLD_PX = 10; // Movement threshold to cancel drag start
 const DRAG_START_DELAY_MS = 200; // Default delay before drag starts
-const DRAG_OPACITY = 0.5; // Opacity of dragged element
-const DROP_HOVER_OPACITY = 0.9; // Opacity when draggable is over drop target
-const DROP_HIGHLIGHT_OFFSET_PX = 16; // Visual offset for drop highlight
+
+// Visual constants exported for use in drag/drop styling
+export const DRAG_OPACITY = 0.5; // Opacity of dragged element
+export const DROP_HOVER_OPACITY = 0.9; // Opacity when draggable is over drop target
+export const DROP_HIGHLIGHT_OFFSET_PX = 16; // Visual offset for drop highlight
 
 /**
  * Drag state information
@@ -144,6 +146,8 @@ export function useDraggable(elementRef: RefObject<HTMLElement>, options: Dragga
             if (dragTimer !== null) {
                 // Movement before delay cancels drag
                 const touch = event.touches[0];
+                // Defensive check: TypeScript types this as always defined, but runtime may differ
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 if (touch !== undefined && startPos !== null) {
                     const dx = Math.abs(touch.clientX - startPos.x);
                     const dy = Math.abs(touch.clientY - startPos.y);
@@ -156,6 +160,8 @@ export function useDraggable(elementRef: RefObject<HTMLElement>, options: Dragga
 
             if (isDragging) {
                 const touch = event.touches[0];
+                // Defensive check: TypeScript types this as always defined, but runtime may differ
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 if (touch !== undefined) {
                     setPosition({ x: touch.clientX, y: touch.clientY });
                     // Prevent scrolling during drag
@@ -183,6 +189,8 @@ export function useDraggable(elementRef: RefObject<HTMLElement>, options: Dragga
 
             if (isDragging) {
                 const touch = event.changedTouches[0];
+                // Defensive check: TypeScript types this as always defined, but runtime may differ
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 if (touch !== undefined) {
                     // Dispatch drop event
                     window.dispatchEvent(
@@ -278,6 +286,8 @@ export function useDropTarget<T = unknown>(
 
         const handleDragStart = (event: Event): void => {
             const customEvent = event as CustomEvent;
+            // CustomEvent detail is typed as any by the DOM API
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             setDragData(customEvent.detail.data as T);
         };
 

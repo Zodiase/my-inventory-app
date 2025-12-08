@@ -81,6 +81,8 @@ export function useSwipeNavigation(
 
         const handleTouchStart = (event: TouchEvent): void => {
             const touch = event.touches[0];
+            // Defensive check: TypeScript types this as always defined, but runtime may differ
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (touch === undefined) return;
 
             // Only start tracking if touch begins near left edge
@@ -95,9 +97,10 @@ export function useSwipeNavigation(
             if (!isSwiping) return;
 
             const touch = event.touches[0];
+            // Defensive check: TypeScript types this as always defined, but runtime may differ
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (touch === undefined) return;
 
-            const deltaX = touch.clientX - startX;
             const deltaY = Math.abs(touch.clientY - startY);
 
             // Cancel if moved too much vertically (likely scrolling)
@@ -113,6 +116,8 @@ export function useSwipeNavigation(
             if (!isSwiping) return;
 
             const touch = event.changedTouches[0];
+            // Defensive check: TypeScript types this as always defined, but runtime may differ
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (touch === undefined) {
                 isSwiping = false;
                 return;
