@@ -10,6 +10,11 @@ import { Attachments } from '/imports/api/attachments';
 import Items from '/imports/api/items';
 import Tags from '/imports/api/tags';
 
+// HTTP status codes
+const HTTP_OK = 200;
+const HTTP_METHOD_NOT_ALLOWED = 405;
+const HTTP_INTERNAL_SERVER_ERROR = 500;
+
 /**
  * Reset all collections to empty state.
  * WARNING: This deletes ALL data! Only use in test environments.
@@ -48,17 +53,17 @@ if (!Meteor.isProduction) {
     WebApp.connectHandlers.use('/api/test/reset-database', async (req, res) => {
         // Only allow POST requests
         if (req.method !== 'POST') {
-            res.writeHead(405, { 'Content-Type': 'application/json' });
+            res.writeHead(HTTP_METHOD_NOT_ALLOWED, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Method not allowed. Use POST.' }));
             return;
         }
 
         try {
             await resetDatabase();
-            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.writeHead(HTTP_OK, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true }));
         } catch (error) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.writeHead(HTTP_INTERNAL_SERVER_ERROR, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }));
         }
     });

@@ -5,6 +5,10 @@ import React, { useState, useRef, type ReactElement } from 'react';
 import { MAX_ITEM_NAME_LENGTH, MAX_ITEM_DESCRIPTION_LENGTH } from '/imports/api/items';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
+
+// Warning threshold as percentage of max length
+const WARNING_THRESHOLD_PERCENT = 0.9;
+const MAX_LENGTH_BUFFER = 50;
 import { TouchButton } from '/imports/ui/TouchButton';
 import type RecordInput from '/imports/utility/RecordInput';
 
@@ -229,7 +233,7 @@ export const ItemForm = ({
                             color={
                                 descriptionLength > MAX_ITEM_DESCRIPTION_LENGTH
                                     ? 'status-error'
-                                    : descriptionLength > MAX_ITEM_DESCRIPTION_LENGTH * 0.9
+                                    : descriptionLength > MAX_ITEM_DESCRIPTION_LENGTH * WARNING_THRESHOLD_PERCENT
                                     ? 'status-warning'
                                     : 'dark-6'
                             }

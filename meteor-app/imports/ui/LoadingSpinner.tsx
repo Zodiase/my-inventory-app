@@ -51,6 +51,13 @@ const spin = keyframes`
     }
 `;
 
+// Size constants in pixels
+const SPINNER_SIZE_SMALL_PX = 20;
+const SPINNER_SIZE_MEDIUM_PX = 40;
+const SPINNER_SIZE_LARGE_PX = 60;
+const MIN_BORDER_WIDTH_PX = 2;
+const BORDER_WIDTH_DIVISOR = 10;
+
 interface SpinnerCircleProps {
     $size: LoadingSpinnerSize;
     $color: string;
@@ -59,20 +66,21 @@ interface SpinnerCircleProps {
 const getSizePx = (size: LoadingSpinnerSize): number => {
     switch (size) {
         case 'small':
-            return 20;
+            return SPINNER_SIZE_SMALL_PX;
         case 'medium':
-            return 40;
+            return SPINNER_SIZE_MEDIUM_PX;
         case 'large':
-            return 60;
+            return SPINNER_SIZE_LARGE_PX;
         default:
-            return 40;
+            return SPINNER_SIZE_MEDIUM_PX;
     }
 };
 
 const SpinnerCircle = styled.div<SpinnerCircleProps>`
     width: ${(props) => getSizePx(props.$size)}px;
     height: ${(props) => getSizePx(props.$size)}px;
-    border: ${(props) => Math.max(2, getSizePx(props.$size) / 10)}px solid rgba(0, 0, 0, 0.1);
+    border: ${(props) =>
+        Math.max(MIN_BORDER_WIDTH_PX, getSizePx(props.$size) / BORDER_WIDTH_DIVISOR)}px solid rgba(0, 0, 0, 0.1);
     border-top-color: ${(props) => props.$color};
     border-radius: 50%;
     animation: ${spin} 0.8s linear infinite;

@@ -1,5 +1,9 @@
 import { type RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
+// Pull-to-refresh rubber-band effect threshold
+const RUBBER_BAND_THRESHOLD_PX = 50;
+const RUBBER_BAND_DAMPING_FACTOR = 0.5; // Reduces pull distance after threshold
+
 /**
  * Pull-to-refresh utility for iOS-style gesture-based refresh.
  *
@@ -188,8 +192,11 @@ export function usePullToRefresh({
                 // Prevent default scroll
                 e.preventDefault();
 
-                // Apply rubber-band effect (diminishing returns after 50px)
-                const rubberBandedDistance = deltaY < 50 ? deltaY : 50 + (deltaY - 50) * 0.5;
+                // Apply rubber-band effect (diminishing returns after threshold)
+                const rubberBandedDistance =
+                    deltaY < RUBBER_BAND_THRESHOLD_PX
+                        ? deltaY
+                        : RUBBER_BAND_THRESHOLD_PX + (deltaY - RUBBER_BAND_THRESHOLD_PX) * RUBBER_BAND_DAMPING_FACTOR;
 
                 setIsPulling(true);
                 setPullDistance(rubberBandedDistance);

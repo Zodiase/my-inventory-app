@@ -2,6 +2,15 @@ import { Layer, Box } from 'grommet';
 import React, { type ReactElement, type ReactNode, useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 
+// Touch interaction constants
+const LONG_PRESS_DURATION_MS = 500;
+const TOUCH_MOVE_THRESHOLD_PX = 10;
+const MENU_WIDTH_PX = 200;
+const MENU_PADDING_PX = 10;
+const PRESS_SCALE_FACTOR = 0.95; // Visual feedback for press state
+const MENU_BACKGROUND_OPACITY = 0.95;
+const HAPTIC_VIBRATION_DURATION_MS = 50;
+
 /**
  * LongPressContextMenu component providing iOS-style context menus on long-press.
  *
@@ -58,19 +67,19 @@ export interface LongPressContextMenuProps {
 const Wrapper = styled.div<{ $isPressed: boolean }>`
     display: inline-block;
     transition: transform 0.15s ease-out;
-    transform: scale(${(props) => (props.$isPressed ? 0.95 : 1)});
+    transform: scale(${(props) => (props.$isPressed ? PRESS_SCALE_FACTOR : 1)});
     user-select: none;
     -webkit-user-select: none;
     cursor: pointer;
 `;
 
 const MenuContainer = styled(Box)`
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, ${MENU_BACKGROUND_OPACITY});
     backdrop-filter: blur(20px);
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    min-width: 200px;
+    min-width: ${MENU_WIDTH_PX}px;
 `;
 
 const MenuItem = styled.button<{ $variant: 'default' | 'danger' }>`
@@ -79,7 +88,7 @@ const MenuItem = styled.button<{ $variant: 'default' | 'danger' }>`
     gap: 12px;
     width: 100%;
     min-height: 44px;
-    padding: 12px 16px;
+    padding: ${MENU_PADDING_PX}px 16px;
     border: none;
     background: transparent;
     color: ${(props) => (props.$variant === 'danger' ? '#ff3b30' : '#000000')};
@@ -126,8 +135,8 @@ const IconWrapper = styled.span`
 export const LongPressContextMenu = ({
     children,
     actions,
-    pressDuration = 500,
-    moveThreshold = 10,
+    pressDuration = LONG_PRESS_DURATION_MS,
+    moveThreshold = TOUCH_MOVE_THRESHOLD_PX,
     onMenuOpen,
     onMenuClose,
 }: LongPressContextMenuProps): ReactElement => {
@@ -155,10 +164,10 @@ export const LongPressContextMenu = ({
 
                     // Haptic feedback simulation (if supported)
                     if ('vibrate' in navigator) {
-                        navigator.vibrate(50);
+                        navigator.vibrate(HAPTIC_VIBRATION_DURATION_MS);
                     }
                 }
-            }, pressDuration);
+            }, LONG_PRESS_DURATION_MS);
         },
         [pressDuration, onMenuOpen]
     );

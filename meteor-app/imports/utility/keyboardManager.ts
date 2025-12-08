@@ -13,6 +13,9 @@
 
 import { useState, useEffect } from 'react';
 
+// Keyboard detection threshold (px difference to consider keyboard visible)
+const KEYBOARD_HEIGHT_THRESHOLD_PX = 100;
+
 /**
  * Scroll an element into view with keyboard-safe padding.
  * Ensures the element remains visible even when keyboard appears.
@@ -99,7 +102,7 @@ export function isKeyboardVisible(): boolean {
     if ('visualViewport' in window && window.visualViewport !== null) {
         const viewport = window.visualViewport;
         const keyboardHeight = window.innerHeight - viewport.height;
-        return keyboardHeight > 100; // Keyboard likely visible if >100px difference
+        return keyboardHeight > KEYBOARD_HEIGHT_THRESHOLD_PX; // Keyboard likely visible if >100px difference
     }
 
     // Fallback: assume keyboard is visible if input is focused
@@ -134,7 +137,7 @@ export function onKeyboardVisibilityChange(callback: (visible: boolean) => void)
             const keyboardHeight = window.innerHeight - currentHeight;
 
             // Keyboard visible if viewport shrunk by >100px
-            const isVisible = keyboardHeight > 100;
+            const isVisible = keyboardHeight > KEYBOARD_HEIGHT_THRESHOLD_PX;
 
             // Only call callback if state changed
             if (currentHeight !== previousHeight) {
