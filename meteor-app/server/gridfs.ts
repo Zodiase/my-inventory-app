@@ -14,7 +14,7 @@ const logger = createLogger(module);
  *
  * @see https://www.mongodb.com/docs/manual/core/gridfs/
  */
-let gridFSBucket: GridFSBucketType | undefined;
+let gridFSBucket: GridFSBucketType | undefined = undefined;
 
 /**
  * Initialize the GridFS bucket.
