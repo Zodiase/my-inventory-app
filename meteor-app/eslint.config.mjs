@@ -162,6 +162,10 @@ export default (async () => {
                 '@typescript-eslint/strict-boolean-expressions': 'off', // Allow loose checks in examples
                 '@typescript-eslint/no-dynamic-delete': 'off', // Allow dynamic operations in demos
                 '@typescript-eslint/no-loop-func': 'off', // Allow closures in example loops
+                '@typescript-eslint/no-unsafe-member-access': 'off', // Allow unsafe access in example code
+                '@typescript-eslint/no-unsafe-assignment': 'off', // Allow unsafe assignments in examples
+                '@typescript-eslint/explicit-function-return-type': 'off', // Allow implicit return types in story code
+                '@typescript-eslint/no-explicit-any': 'off', // Allow any types in example/demo code
             },
         },
 
