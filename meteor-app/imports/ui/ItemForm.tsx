@@ -8,6 +8,12 @@ import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { TouchButton } from '/imports/ui/TouchButton';
 import type RecordInput from '/imports/utility/RecordInput';
 
+/**
+ * UI constants for touch-friendly interface
+ */
+const SCROLL_THRESHOLD_RATIO = 0.9; // When scrolled 90% down, consider near bottom
+const SCROLL_PADDING_PX = 50; // Pixels to scroll past element for visibility
+
 // Warning threshold as percentage of max length
 const WARNING_THRESHOLD_PERCENT = 0.9;
 const MAX_LENGTH_BUFFER = 50;
@@ -202,7 +208,7 @@ export const ItemForm = ({
                             color={
                                 nameLength > MAX_ITEM_NAME_LENGTH
                                     ? 'status-error'
-                                    : nameLength > MAX_ITEM_NAME_LENGTH * 0.9
+                                    : nameLength > MAX_ITEM_NAME_LENGTH * SCROLL_THRESHOLD_RATIO
                                     ? 'status-warning'
                                     : 'dark-6'
                             }
@@ -220,7 +226,7 @@ export const ItemForm = ({
                         placeholder="Enter item name"
                         disabled={isActuallySubmitting}
                         autoFocus
-                        maxLength={MAX_ITEM_NAME_LENGTH + 50}
+                        maxLength={MAX_ITEM_NAME_LENGTH + SCROLL_PADDING_PX}
                     />
                 </FormField>
 

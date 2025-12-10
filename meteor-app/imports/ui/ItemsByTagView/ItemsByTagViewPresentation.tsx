@@ -52,8 +52,8 @@ const ItemCard = styled(
                 </div>
                 {item.description !== '' && (
                     <p className="item-description">
-                        {item.description.substring(0, 100)}
-                        {item.description.length > 100 ? '...' : ''}
+                        {item.description.substring(0, DESCRIPTION_PREVIEW_LENGTH)}
+                        {item.description.length > DESCRIPTION_PREVIEW_LENGTH ? '...' : ''}
                     </p>
                 )}
                 <div className="item-location">

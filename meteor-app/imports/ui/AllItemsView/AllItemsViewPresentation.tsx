@@ -49,6 +49,11 @@ const PullToRefreshIndicator = styled.div`
 /**
  * Rotation animation for refresh icon
  */
+/**
+ * Animation and rotation constants
+ */
+const ROTATION_DIVISOR_FOR_ICON = 2; // Divide rotation by 2 for icon animation
+
 const rotate = keyframes`
     from {
         transform: rotate(0deg);
