@@ -95,9 +95,14 @@ export const DeleteContainerDialog: React.FC<DeleteContainerDialogProps> = ({
     const [selectedStrategy, setSelectedStrategy] = useState<DeletionStrategy>('moveToParent');
 
     const handleConfirm = (): void => {
-        if (selectedStrategy === 'selectContainer' && !selectedTargetContainerId) {
+        if (
+            selectedStrategy === 'selectContainer' &&
+            (selectedTargetContainerId === '' ||
+                selectedTargetContainerId === null ||
+                selectedTargetContainerId === undefined)
+        ) {
             // Need to select a container first
-            if (onSelectContainer) {
+            if (onSelectContainer !== null && onSelectContainer !== undefined) {
                 onSelectContainer();
             }
             return;
@@ -162,8 +167,10 @@ export const DeleteContainerDialog: React.FC<DeleteContainerDialogProps> = ({
                     <Box background="light-2" pad="small" round="small" border={{ color: 'border', size: 'small' }}>
                         <Text size="small">
                             All items will be moved to the parent container
-                            {container.containerId ? '' : ' (root level)'} and tagged to indicate they lost their
-                            container.
+                            {container.containerId === '' || container.containerId === undefined
+                                ? ' (root level)'
+                                : ''}{' '}
+                            and tagged to indicate they lost their container.
                         </Text>
                     </Box>
                 )}
@@ -174,7 +181,9 @@ export const DeleteContainerDialog: React.FC<DeleteContainerDialogProps> = ({
                         <Box background="light-2" pad="small" round="small" border={{ color: 'border', size: 'small' }}>
                             <Text size="small">All items will be moved to a container you select.</Text>
                         </Box>
-                        {selectedTargetContainerId ? (
+                        {selectedTargetContainerId !== '' &&
+                        selectedTargetContainerId !== null &&
+                        selectedTargetContainerId !== undefined ? (
                             <Box
                                 direction="row"
                                 align="center"
@@ -183,7 +192,7 @@ export const DeleteContainerDialog: React.FC<DeleteContainerDialogProps> = ({
                                 background="brand"
                                 round="small"
                             >
-                                <Text color="white">Target: {selectedTargetContainerName || 'Selected Container'}</Text>
+                                <Text color="white">Target: {selectedTargetContainerName ?? 'Selected Container'}</Text>
                                 <Button label="Change" onClick={onSelectContainer} size="small" disabled={isDeleting} />
                             </Box>
                         ) : (
@@ -213,7 +222,7 @@ export const DeleteContainerDialog: React.FC<DeleteContainerDialogProps> = ({
                 )}
 
                 {/* Error message */}
-                {error && (
+                {error !== '' && error !== null && error !== undefined && (
                     <Box
                         background="status-critical"
                         pad="small"

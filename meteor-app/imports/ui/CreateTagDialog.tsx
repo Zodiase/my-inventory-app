@@ -183,7 +183,7 @@ export const CreateTagForm: React.FC<CreateTagFormProps> = ({
                 </FormField>
 
                 {/* Error Message */}
-                {displayError && (
+                {displayError !== '' && (
                     <Box background="status-error" pad="small" round="xsmall" margin={{ bottom: 'small' }}>
                         <Text color="white" size="small">
                             {displayError}
@@ -192,7 +192,7 @@ export const CreateTagForm: React.FC<CreateTagFormProps> = ({
                 )}
 
                 {/* Success Message */}
-                {successMessage && (
+                {successMessage !== '' && successMessage !== null && successMessage !== undefined && (
                     <Box background="status-ok" pad="small" round="xsmall" margin={{ bottom: 'small' }}>
                         <Text color="white" size="small">
                             {successMessage}

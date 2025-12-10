@@ -39,18 +39,18 @@ export const ItemDetailView: React.FC = () => {
 
     // Fetch item from database
     const item = useTracker(() => {
-        if (!itemId) return undefined;
+        if (itemId === '' || itemId === undefined) return undefined;
         return InventoryItemsCollection.findOne({ _id: itemId });
     }, [itemId]);
 
     // Fetch tags for the item
     const tags = useTracker(() => {
-        if (!item) return [];
+        if (item === null || item === undefined) return [];
         return TagsCollection.find({ _id: { $in: item.tagIds ?? [] } }).fetch();
     }, [item?.tagIds?.join(',')]);
 
     // Validate itemId exists
-    if (!itemId) {
+    if (itemId === '' || itemId === undefined) {
         return (
             <Box fill align="center" justify="center" gap="medium" pad="large">
                 <Heading level={3} color="status-error">
