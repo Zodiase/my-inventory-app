@@ -269,7 +269,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                             <ItemHeader>
                                 <ItemInfo>
                                     <ItemName>{item.name}</ItemName>
-                                    {item.description && <ItemDescription>{item.description}</ItemDescription>}
+                                    {item.description !== '' && <ItemDescription>{item.description}</ItemDescription>}
                                 </ItemInfo>
                                 <ContainerBadge isContainer={item.isContainer}>
                                     {item.isContainer ? '📦 Container' : '📄 Item'}
@@ -284,7 +284,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                                 </Breadcrumb>
                             )}
 
-                            {item.tagIds && item.tagIds.length > 0 && (
+                            {item.tagIds.length > 0 && (
                                 <TagList>
                                     {item.tagIds.map((tagId) => (
                                         <TagChip key={tagId}>{tagId}</TagChip>

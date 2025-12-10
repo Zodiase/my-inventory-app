@@ -40,7 +40,9 @@ const ItemCard = styled(
         };
 
         const containerPathString =
-            containerPath && containerPath.length > 0 ? containerPath.map((c) => c.name).join(' > ') : 'Root';
+            containerPath !== undefined && containerPath.length > 0
+                ? containerPath.map((c) => c.name).join(' > ')
+                : 'Root';
 
         return (
             <div {...rootElementProps} onClick={handleClick} data-item-id={item._id}>
@@ -48,7 +50,7 @@ const ItemCard = styled(
                     <h3 className="item-name">{item.name}</h3>
                     {item.isContainer && <span className="container-badge">📁</span>}
                 </div>
-                {item.description && (
+                {item.description !== '' && (
                     <p className="item-description">
                         {item.description.substring(0, 100)}
                         {item.description.length > 100 ? '...' : ''}

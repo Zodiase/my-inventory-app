@@ -281,14 +281,14 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
     );
 
     const handleAddNameFragment = useCallback(() => {
-        if (nameInput.trim()) {
+        if (nameInput.trim() !== '') {
             onChange?.([...fragments, { type: 'name', value: nameInput.trim() }]);
             setNameInput('');
         }
     }, [nameInput, fragments, onChange]);
 
     const handleAddTagInclude = useCallback(() => {
-        if (selectedIncludeTag) {
+        if (selectedIncludeTag !== '') {
             // Check if this tag is already excluded
             const isExcluded = fragments.some((f) => f.type === 'tagExclude' && f.tagIds.includes(selectedIncludeTag));
 
@@ -304,7 +304,7 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
     }, [selectedIncludeTag, fragments, onChange]);
 
     const handleAddTagExclude = useCallback(() => {
-        if (selectedExcludeTag) {
+        if (selectedExcludeTag !== '') {
             // Check if this tag is already included
             const isIncluded = fragments.some((f) => f.type === 'tagInclude' && f.tagIds.includes(selectedExcludeTag));
 
@@ -428,7 +428,7 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                             }
                         }}
                     />
-                    <AddButton onClick={handleAddNameFragment} disabled={!nameInput.trim()} type="button">
+                    <AddButton onClick={handleAddNameFragment} disabled={nameInput.trim() === ''} type="button">
                         + Name
                     </AddButton>
                 </FormRow>
@@ -449,7 +449,7 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                                 </option>
                             ))}
                         </Select>
-                        <AddButton onClick={handleAddTagInclude} disabled={!selectedIncludeTag} type="button">
+                        <AddButton onClick={handleAddTagInclude} disabled={selectedIncludeTag === ''} type="button">
                             + Has Tag
                         </AddButton>
                     </FormRow>
@@ -471,7 +471,7 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                                 </option>
                             ))}
                         </Select>
-                        <AddButton onClick={handleAddTagExclude} disabled={!selectedExcludeTag} type="button">
+                        <AddButton onClick={handleAddTagExclude} disabled={selectedExcludeTag === ''} type="button">
                             + Not Tag
                         </AddButton>
                     </FormRow>

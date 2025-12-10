@@ -30,13 +30,13 @@ export const ItemsByTagViewContainer = (): ReactElement => {
 
     // Fetch selected tag reactively
     const selectedTag = useTracker(() => {
-        if (!tagId) return undefined;
+        if (tagId === '') return undefined;
         return TagsCollection.findOne({ _id: tagId });
     }, [tagId]);
 
     // Fetch items with selected tag reactively
     const items = useTracker(() => {
-        if (!tagId) return [];
+        if (tagId === '') return [];
 
         return InventoryItemsCollection.find(
             { tagIds: { $in: [tagId] } },
@@ -66,7 +66,7 @@ export const ItemsByTagViewContainer = (): ReactElement => {
     }, [items]);
 
     // Validate tagId exists
-    if (!tagId) {
+    if (tagId === '') {
         return (
             <Box fill align="center" justify="center" gap="medium" pad="large">
                 <Heading level={3} color="status-error">

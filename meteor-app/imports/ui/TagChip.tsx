@@ -42,7 +42,7 @@ export function TagChip({ tagName, onRemove, disabled = false, color = 'brand', 
             >
                 {tagName}
             </Box>
-            {onRemove && (
+            {onRemove !== undefined && (
                 <Button
                     icon={<Close size="small" color={disabled ? 'light-6' : 'dark-3'} />}
                     onClick={onRemove}

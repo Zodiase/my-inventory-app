@@ -97,7 +97,7 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
                     <BreadcrumbTrail
                         path={containerPath}
                         onNavigate={
-                            onNavigateToContainer
+                            onNavigateToContainer !== undefined
                                 ? (container) => {
                                       onNavigateToContainer(container._id);
                                   }
@@ -109,7 +109,7 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
             )}
 
             {/* Description */}
-            {item.description && (
+            {item.description !== '' && (
                 <Box>
                     <Text size="small" color="dark-3" margin={{ bottom: 'xsmall' }}>
                         Description:
@@ -130,7 +130,7 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
                                 key={tag._id}
                                 tagName={tag.name}
                                 onRemove={
-                                    onRemoveTag
+                                    onRemoveTag !== undefined
                                         ? () => {
                                               onRemoveTag(tag._id);
                                           }
@@ -145,9 +145,11 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
 
             {/* Action buttons */}
             <Box direction="row" gap="small" margin={{ top: 'medium' }}>
-                {onEdit && <Button icon={<Edit />} label="Edit" onClick={onEdit} disabled={disabled} primary />}
-                {onMove && <Button icon={<Up />} label="Move" onClick={onMove} disabled={disabled} />}
-                {onDelete && (
+                {onEdit !== undefined && (
+                    <Button icon={<Edit />} label="Edit" onClick={onEdit} disabled={disabled} primary />
+                )}
+                {onMove !== undefined && <Button icon={<Up />} label="Move" onClick={onMove} disabled={disabled} />}
+                {onDelete !== undefined && (
                     <Button
                         icon={<Trash />}
                         label="Delete"
