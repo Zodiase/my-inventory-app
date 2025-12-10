@@ -174,7 +174,7 @@ const TagList = styled(
                             ) : (
                                 <span>
                                     {tagName}
-                                    {tagId !== '' && <span className="tag-item-count"> ({itemCount})</span>}
+                                    <span className="tag-item-count"> ({itemCount})</span>
                                 </span>
                             )}
                         </label>

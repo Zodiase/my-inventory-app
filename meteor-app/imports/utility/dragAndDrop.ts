@@ -125,7 +125,6 @@ export function useDraggable(elementRef: RefObject<HTMLElement>, options: Dragga
 
         const handleTouchStart = (event: TouchEvent): void => {
             const touch = event.touches[0];
-            if (touch === undefined) return;
 
             startPos = { x: touch.clientX, y: touch.clientY };
 

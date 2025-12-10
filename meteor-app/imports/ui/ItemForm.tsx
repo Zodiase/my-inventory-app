@@ -153,8 +153,8 @@ export const ItemForm = ({
         }
     };
 
-    const hasValidationError = validationError !== '' && validationError !== null && validationError !== undefined;
-    const hasError = error !== '' && error !== null && error !== undefined;
+    const hasValidationError = validationError !== '' && validationError !== undefined;
+    const hasError = error !== '' && error !== undefined;
     const displayError = hasValidationError ? validationError : hasError ? error : '';
 
     return (

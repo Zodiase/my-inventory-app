@@ -192,7 +192,7 @@ export const CreateTagForm: React.FC<CreateTagFormProps> = ({
                 )}
 
                 {/* Success Message */}
-                {successMessage !== '' && successMessage !== null && successMessage !== undefined && (
+                {successMessage !== '' && successMessage !== undefined && (
                     <Box background="status-ok" pad="small" round="xsmall" margin={{ bottom: 'small' }}>
                         <Text color="white" size="small">
                             {successMessage}

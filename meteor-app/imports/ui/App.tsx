@@ -105,8 +105,8 @@ export const App = (): ReactElement => {
     // Fetch tags for selected item
     const selectedItemTags = useTracker(() => {
         if (selectedItem === undefined) return [];
-        return TagsCollection.find({ _id: { $in: selectedItem.tagIds ?? [] } }).fetch();
-    }, [selectedItem?.tagIds?.join(',')]);
+        return TagsCollection.find({ _id: { $in: selectedItem.tagIds } }).fetch();
+    }, [selectedItem?.tagIds.join(',')]);
 
     // Fetch all tags for search components
     const allTags = useTracker(() => {
