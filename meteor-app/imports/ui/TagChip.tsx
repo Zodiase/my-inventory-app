@@ -21,7 +21,13 @@ export interface TagChipProps extends Omit<BoxProps, 'onClick'> {
  * Suitable for displaying tags on items, in lists, or tag selectors.
  * iOS-optimized with 44px minimum tap target for remove button.
  */
-export function TagChip({ tagName, onRemove, disabled = false, color = 'brand', ...boxProps }: TagChipProps) {
+export function TagChip({
+    tagName,
+    onRemove,
+    disabled = false,
+    color = 'brand',
+    ...boxProps
+}: TagChipProps): React.ReactElement {
     return (
         <Box
             direction="row"

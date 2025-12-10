@@ -407,7 +407,10 @@ export const App = (): ReactElement => {
                                         <SearchBar
                                             value={searchQuery}
                                             onChange={setSearchQuery}
-                                            onSearch={() => void handleSearch()}
+                                            onSearch={() => {
+                                                void handleSearch();
+                                                return undefined;
+                                            }}
                                             onClear={handleClearSearch}
                                             searchMode={searchScope}
                                             scopeLabel="Current Location"
@@ -436,7 +439,10 @@ export const App = (): ReactElement => {
                                         <Button
                                             label="Search"
                                             primary
-                                            onClick={() => void handleSearch()}
+                                            onClick={() => {
+                                                void handleSearch();
+                                                return undefined;
+                                            }}
                                             disabled={searchQuery.trim() === '' && searchFragments.length === 0}
                                         />
                                     </Box>
@@ -517,8 +523,14 @@ export const App = (): ReactElement => {
                                 onEdit={() => {
                                     /* TODO: Edit modal */
                                 }}
-                                onDelete={() => void handleDeleteItem()}
-                                onRemoveTag={(tagId) => void handleRemoveTagFromItem(tagId)}
+                                onDelete={() => {
+                                    void handleDeleteItem();
+                                    return undefined;
+                                }}
+                                onRemoveTag={(tagId) => {
+                                    void handleRemoveTagFromItem(tagId);
+                                    return undefined;
+                                }}
                             />
                         </Box>
                     </Layer>
