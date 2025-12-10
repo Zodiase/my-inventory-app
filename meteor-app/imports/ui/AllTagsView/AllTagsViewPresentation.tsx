@@ -160,9 +160,7 @@ const TagList = styled(
                     <div
                         className="tag-body"
                         data-tag-id={tagId}
-                        data-tag-path={
-                            tag !== null && tag !== undefined ? tag.path.map(({ name }) => name).join(',') : undefined
-                        }
+                        data-tag-path={tag !== undefined ? tag.path.map(({ name }) => name).join(',') : undefined}
                     >
                         <label className="tag-name-label">
                             {tagId !== '' ? (
@@ -356,7 +354,7 @@ export const AllTagsViewPresentation = styled(
 
         return (
             <div {...rootElementProps}>
-                {detachedTags !== null && detachedTags !== undefined && (
+                {detachedTags !== undefined && (
                     <DetachedTagsView
                         detachedTagIds={detachedTags.detachedTagIds}
                         totalTagsCount={totalTagsCount}
@@ -368,7 +366,7 @@ export const AllTagsViewPresentation = styled(
                         onRemoveAll={detachedTags.onRemoveAll}
                     />
                 )}
-                {tagsWithoutPath !== null && tagsWithoutPath !== undefined && tagsWithoutPath.length > 0 && (
+                {tagsWithoutPath !== undefined && tagsWithoutPath.length > 0 && (
                     <TagsWithoutPathView tagsWithoutPath={tagsWithoutPath} />
                 )}
                 <TagList

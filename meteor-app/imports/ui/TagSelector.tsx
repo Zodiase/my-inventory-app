@@ -62,7 +62,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
     emptyMessage = 'No tags available',
 }) => {
     const handleToggle = (tagId: string, checked: boolean): void => {
-        if (onToggleTag !== null && onToggleTag !== undefined && !disabled) {
+        if (onToggleTag !== undefined && !disabled) {
             onToggleTag(tagId, checked);
         }
     };
@@ -72,7 +72,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
             {/* Header */}
             <Box direction="row" justify="between" align="center">
                 <Text weight="bold">Select Tags</Text>
-                {onCreateNewTag !== null && onCreateNewTag !== undefined && (
+                {onCreateNewTag !== undefined && (
                     <Button
                         icon={<Add size="small" />}
                         label="New Tag"

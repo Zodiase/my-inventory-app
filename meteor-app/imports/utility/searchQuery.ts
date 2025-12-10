@@ -41,45 +41,50 @@ export const buildSearchQuery = (fragments: SearchFragment[]): Filter<InventoryI
         switch (fragment.type) {
             case 'name': {
                 // Partial match, case-insensitive
-                conditions.push({
+                const condition: Filter<InventoryItem> = {
                     name: {
                         $regex: fragment.value,
                         $options: 'i',
                     },
-                } as Filter<InventoryItem>);
+                };
+                conditions.push(condition);
                 break;
             }
 
             case 'tagInclude': {
                 // Has ANY of the specified tags (OR logic within this fragment)
-                conditions.push({
+                const condition: Filter<InventoryItem> = {
                     tagIds: {
                         $in: fragment.tagIds,
                     },
-                } as Filter<InventoryItem>);
+                };
+                conditions.push(condition);
                 break;
             }
 
             case 'tagExclude': {
                 // Does NOT have any of the specified tags (NOR logic)
-                conditions.push({
+                const condition: Filter<InventoryItem> = {
                     tagIds: {
                         $nin: fragment.tagIds,
                     },
-                } as Filter<InventoryItem>);
+                };
+                conditions.push(condition);
                 break;
             }
 
             case 'containerType': {
                 // Filter by container type
                 if (fragment.value === 'containers') {
-                    conditions.push({
+                    const condition: Filter<InventoryItem> = {
                         isContainer: true,
-                    } as Filter<InventoryItem>);
+                    };
+                    conditions.push(condition);
                 } else if (fragment.value === 'items') {
-                    conditions.push({
+                    const condition: Filter<InventoryItem> = {
                         isContainer: false,
-                    } as Filter<InventoryItem>);
+                    };
+                    conditions.push(condition);
                 }
                 // 'all' means no filtering - don't add condition
                 break;
@@ -88,9 +93,10 @@ export const buildSearchQuery = (fragments: SearchFragment[]): Filter<InventoryI
             case 'containerScope': {
                 // Search within a specific container
                 if (fragment.containerRootId !== null && fragment.containerRootId !== '') {
-                    conditions.push({
+                    const condition: Filter<InventoryItem> = {
                         containerId: fragment.containerRootId,
-                    } as Filter<InventoryItem>);
+                    };
+                    conditions.push(condition);
                 }
                 // Null or empty means search all items - don't add condition
                 break;
@@ -102,17 +108,19 @@ export const buildSearchQuery = (fragments: SearchFragment[]): Filter<InventoryI
 
                 if (typeof fragment.value === 'number') {
                     // Exact match for numbers
-                    conditions.push({
+                    const condition: Filter<InventoryItem> = {
                         [fieldPath]: fragment.value,
-                    } as Filter<InventoryItem>);
+                    };
+                    conditions.push(condition);
                 } else {
                     // Partial match, case-insensitive for strings
-                    conditions.push({
+                    const condition: Filter<InventoryItem> = {
                         [fieldPath]: {
                             $regex: fragment.value,
                             $options: 'i',
                         },
-                    } as Filter<InventoryItem>);
+                    };
+                    conditions.push(condition);
                 }
                 break;
             }
@@ -128,9 +136,10 @@ export const buildSearchQuery = (fragments: SearchFragment[]): Filter<InventoryI
         return conditions[0];
     }
 
-    return {
+    const query: Filter<InventoryItem> = {
         $and: conditions,
-    } as Filter<InventoryItem>;
+    };
+    return query;
 };
 
 /**
@@ -155,9 +164,10 @@ export const buildSearchQuery = (fragments: SearchFragment[]): Filter<InventoryI
 export const buildContainerHierarchyQuery = (containerRootId: string): Filter<InventoryItem> => {
     // TODO: Implement recursive container search when container hierarchy depth tracking is added
     // For now, only searches direct children
-    return {
+    const query: Filter<InventoryItem> = {
         containerId: containerRootId,
-    } as Filter<InventoryItem>;
+    };
+    return query;
 };
 
 export default buildSearchQuery;
