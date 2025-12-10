@@ -407,7 +407,7 @@ export const App = (): ReactElement => {
                                         <SearchBar
                                             value={searchQuery}
                                             onChange={setSearchQuery}
-                                            onSearch={handleSearch}
+                                            onSearch={() => void handleSearch()}
                                             onClear={handleClearSearch}
                                             searchMode={searchScope}
                                             scopeLabel="Current Location"
@@ -436,7 +436,7 @@ export const App = (): ReactElement => {
                                         <Button
                                             label="Search"
                                             primary
-                                            onClick={handleSearch}
+                                            onClick={() => void handleSearch()}
                                             disabled={searchQuery.trim() === '' && searchFragments.length === 0}
                                         />
                                     </Box>
@@ -517,8 +517,8 @@ export const App = (): ReactElement => {
                                 onEdit={() => {
                                     /* TODO: Edit modal */
                                 }}
-                                onDelete={handleDeleteItem}
-                                onRemoveTag={handleRemoveTagFromItem}
+                                onDelete={() => void handleDeleteItem()}
+                                onRemoveTag={(tagId) => void handleRemoveTagFromItem(tagId)}
                             />
                         </Box>
                     </Layer>
