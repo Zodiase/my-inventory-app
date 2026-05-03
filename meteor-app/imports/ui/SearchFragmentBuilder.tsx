@@ -482,6 +482,8 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                     <Select
                         value={containerTypeValue}
                         onChange={(e) => {
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+                            // DOM event value is typed as string, cast needed for ContainerFilterType union
                             setContainerTypeValue(e.target.value as any);
                         }}
                     >

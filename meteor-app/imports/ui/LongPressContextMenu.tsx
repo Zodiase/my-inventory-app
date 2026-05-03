@@ -206,7 +206,7 @@ export const LongPressContextMenu = ({
 
     const handleActionClick = useCallback(
         (action: ContextMenuAction) => {
-            if (action.disabled) return;
+            if (action.disabled === true) return;
             action.onClick();
             handleMenuClose();
         },

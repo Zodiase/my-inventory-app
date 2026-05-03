@@ -17,7 +17,11 @@ const ROTATION_MAX_DEGREES = 360;
 const SWIPE_THRESHOLD_PX = 100;
 const SWIPE_EDGE_THRESHOLD_PX = 50;
 const SWIPE_MAX_VERTICAL_DEVIATION_PX = 50;
-const ICON_ROTATION_DIVISOR = 2;
+/**
+ * Divisor for calculating icon size from rotation angle.
+ * Used to scale icon dimensions based on pull distance progress.
+ */
+const ICON_SIZE_ROTATION_DIVISOR = 2;
 
 /**
  * Scrollable container for items list
@@ -49,11 +53,6 @@ const PullToRefreshIndicator = styled.div`
 /**
  * Rotation animation for refresh icon
  */
-/**
- * Animation and rotation constants
- */
-const ROTATION_DIVISOR_FOR_ICON = 2; // Divide rotation by 2 for icon animation
-
 const rotate = keyframes`
     from {
         transform: rotate(0deg);
@@ -82,6 +81,8 @@ const RefreshIcon = styled.svg.attrs<{ isTriggered: boolean; pullDistance: numbe
 
     ${(props) =>
         props.isTriggered &&
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
+        // Keyframes objects are intentionally stringified by styled-components for CSS animation
         `
         animation: ${rotate} 0.6s linear infinite;
     `}
@@ -167,6 +168,8 @@ export const AllItemsViewPresentation = ({
     // Pull-to-refresh hook
     const { isRefreshing, pullDistance, isTriggered } = usePullToRefresh({
         containerRef,
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        // Empty function is intentional fallback when onRefresh is undefined
         onRefresh: onRefresh ?? (async () => {}),
         triggerDistance: PULL_TRIGGER_DISTANCE_PX,
         enabled: onRefresh !== undefined,

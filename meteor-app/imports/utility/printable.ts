@@ -32,6 +32,8 @@ function printableRecursionHelper(path: Path, x: unknown): Array<{ path: Path; v
         return [
             {
                 path,
+                // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
+                // Intentional stringification of unknown primitive for debugging output
                 value: `[unrecognized primitive]${x}`,
             },
         ];
