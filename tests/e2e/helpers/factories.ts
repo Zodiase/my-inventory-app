@@ -6,6 +6,8 @@
 import type { Page } from '@playwright/test';
 import { callMeteorMethod } from './database';
 
+export { callMeteorMethod };
+
 /**
  * Factory for creating test items with consistent data.
  */
