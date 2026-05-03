@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
 import StyledButton from '/imports/ui/StyledButton';
+import { DESCRIPTION_PREVIEW_LENGTH } from '/imports/utility/constants';
 
 /**
  * ItemsByTagViewPresentation is a pure presentation component that displays items filtered by a selected tag.
@@ -50,7 +51,7 @@ const ItemCard = styled(
                     <h3 className="item-name">{item.name}</h3>
                     {item.isContainer && <span className="container-badge">📁</span>}
                 </div>
-                {item.description !== '' && (
+                {typeof item.description === 'string' && item.description !== '' && (
                     <p className="item-description">
                         {item.description.substring(0, DESCRIPTION_PREVIEW_LENGTH)}
                         {item.description.length > DESCRIPTION_PREVIEW_LENGTH ? '...' : ''}

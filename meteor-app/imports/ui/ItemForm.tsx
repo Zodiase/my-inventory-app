@@ -2,7 +2,7 @@ import { Box, CheckBox, Form, FormField, Text, TextArea, TextInput } from 'gromm
 import type { FormExtendedEvent } from 'grommet';
 import React, { useState, useRef, type ReactElement } from 'react';
 
-import { MAX_ITEM_NAME_LENGTH, MAX_ITEM_DESCRIPTION_LENGTH } from '/imports/api/items';
+import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from '/imports/model/ItemConstants';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { TouchButton } from '/imports/ui/TouchButton';

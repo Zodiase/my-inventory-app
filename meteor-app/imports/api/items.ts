@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 
 import type InventoryItem from '/imports/model/InventoryItem';
+import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from '/imports/model/ItemConstants';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import detectCircularReference, { getAncestorChain } from '/imports/utility/circularReference';
@@ -15,10 +17,6 @@ import { buildSearchQuery } from '/imports/utility/searchQuery';
 export type { InventoryItem } from '/imports/model/InventoryItem';
 
 const logger = createLogger(module);
-
-// Validation constants
-export const MAX_ITEM_NAME_LENGTH = 500;
-export const MAX_ITEM_DESCRIPTION_LENGTH = 5000;
 
 export const InventoryItemsCollection = new NamedCollection<InventoryItem>('items');
 
@@ -402,7 +400,7 @@ export const searchItems = async (fragments: SearchFragment[]): Promise<Inventor
     logger.log('Searching items', { fragments, query });
 
     // Execute query and return results
-    return await InventoryItemsCollection.find(query).fetchAsync();
+    return await InventoryItemsCollection.find(query as Mongo.Selector<InventoryItem>).fetchAsync();
 };
 
 // Publications (server-side only)

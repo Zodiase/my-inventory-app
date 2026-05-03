@@ -13,6 +13,8 @@
 
 import { useState, useEffect } from 'react';
 
+import { IOS_MIN_FONT_SIZE_PX, KEYBOARD_BLUR_CHECK_DELAY_MS } from '/imports/utility/constants';
+
 // Keyboard detection threshold (px difference to consider keyboard visible)
 const KEYBOARD_HEIGHT_THRESHOLD_PX = 100;
 
@@ -155,7 +157,10 @@ export function onKeyboardVisibilityChange(callback: (visible: boolean) => void)
 
     // Fallback: monitor focus/blur on input elements
     const handleFocus = (): void => {
-        callback(true);
+        const isKeyboardVisible = true;
+        // eslint-disable-next-line n/no-callback-literal
+        // Boolean literal is the expected parameter type for keyboard visibility callback
+        callback(isKeyboardVisible);
     };
 
     const handleBlur = (): void => {
@@ -167,9 +172,12 @@ export function onKeyboardVisibilityChange(callback: (visible: boolean) => void)
                 (document.activeElement instanceof HTMLElement && document.activeElement.isContentEditable);
 
             if (!stillFocused) {
-                callback(false);
+                const isKeyboardVisible = false;
+                // eslint-disable-next-line n/no-callback-literal
+                // Boolean literal is the expected parameter type for keyboard visibility callback
+                callback(isKeyboardVisible);
             }
-        }, 100);
+        }, KEYBOARD_BLUR_CHECK_DELAY_MS);
     };
 
     document.addEventListener('focusin', handleFocus);
@@ -206,8 +214,8 @@ export function preventInputZoom(element: HTMLInputElement | HTMLTextAreaElement
     const currentFontSize = window.getComputedStyle(element).fontSize;
     const fontSize = parseFloat(currentFontSize);
 
-    if (fontSize < 16) {
-        element.style.fontSize = '16px';
+    if (fontSize < IOS_MIN_FONT_SIZE_PX) {
+        element.style.fontSize = `${IOS_MIN_FONT_SIZE_PX}px`;
     }
 }
 
