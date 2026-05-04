@@ -13,7 +13,7 @@ Primary goal: finish the inventory app while keeping progress measurable through
 ## Current Status Snapshot
 
 - Storybook build issue fixed by extracting shared validation constants into `meteor-app/imports/model/ItemConstants.ts`.
-- Storybook E2E status: **21 passed, 3 skipped**.
+- Storybook E2E status: **21 passed, 3 skipped** (auto-started via updated Playwright webServer array).
 - Full app E2E status: **44 passed, 0 failed** on Chromium.
 - Search / filter app suite status: **12 passed, 0 failed**.
 - TypeScript check now passes.
@@ -39,7 +39,9 @@ Primary goal: finish the inventory app while keeping progress measurable through
 - Fixed touch/mobile flows by switching swipe-back to pointer events, hardening pull-to-refresh trigger state, adding stable touch test IDs, and correcting breadcrumb display for root-level containers.
 - Re-ran focused tag/item suites successfully: **13/13 tag-management**, **4/4 items-and-tags**, and **21/21 item-creation** across the focused command.
 - Re-ran `tests/e2e/app/touch-optimization.spec.ts` successfully: **8 passed**.
+- Updated Playwright config to use a `webServer` array so both the Meteor app and the Storybook dev server auto-start for E2E.
 - Re-ran the full Chromium app E2E suite successfully: **44 passed, 0 failed**.
+- Re-ran Storybook E2E suite successfully: **21 passed, 3 skipped**.
 
 ## Verified Commands
 
@@ -110,13 +112,13 @@ Observed pattern:
 - `npm test` → pass (**115 passing**)
 - `npx playwright test tests/e2e/app/search-and-filter.spec.ts --project=chromium` → pass (**12 passed**)
 - `npx playwright test tests/e2e/app/touch-optimization.spec.ts --project=chromium --workers=1 --reporter=line` → pass (**8 passed**)
+- `npx playwright test tests/e2e/storybook/ --project=storybook-chromium --workers=1 --reporter=line` → pass (**21 passed, 3 skipped**)
 - `npx playwright test tests/e2e/app/ --project=chromium --workers=1 --reporter=line` → pass (**44 passed**)
 
 ## Recommended Repair Order
 
-1. Push the final local commits for the now-green tag/item/touch buckets.
-2. Re-run Storybook E2E in CI or before merge to confirm the earlier **21 passed, 3 skipped** baseline still holds.
-3. Run CI for the branch and verify the single-worker Playwright configuration behaves in the CI environment.
+1. Run CI for the branch to verify the single-worker Playwright configuration and the auto-starting webServer array behave correctly in the CI environment.
+2. Merge if CI passes.
 
 ## Definition of Done for This Phase
 
