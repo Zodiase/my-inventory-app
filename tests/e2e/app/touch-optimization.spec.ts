@@ -14,7 +14,7 @@
 
 import { expect, test } from '@playwright/test';
 
-import { resetDatabase } from '../helpers/database';
+import { callMeteorMethod, resetDatabase, waitForMeteorReady } from '../helpers/database';
 import { InventoryPage, ItemFormPage } from '../helpers/page-objects';
 
 test.describe('Touch Optimization - User Story 5', () => {
@@ -24,6 +24,7 @@ test.describe('Touch Optimization - User Story 5', () => {
 
         // Navigate to app
         await page.goto('/');
+        await waitForMeteorReady(page);
     });
 
     /**
@@ -105,20 +106,13 @@ test.describe('Touch Optimization - User Story 5', () => {
      * - Works on both items and containers
      */
     test('T053b: Long-press on item reveals context menu', async ({ page }) => {
-        const inventoryPage = new InventoryPage(page);
-        const itemForm = new ItemFormPage(page);
-
         // Set viewport to iPhone size
         await page.setViewportSize({ width: 375, height: 667 });
 
-        // Create a test item first
-        await inventoryPage.goto();
-        await page.waitForSelector('text=Inventory App');
-
-        // Create an item using page objects
-        await inventoryPage.clickAddItem();
-        await page.waitForSelector('text=Create New Item');
-        await itemForm.createItem({ name: 'Test Item for Long Press' });
+        // Seed a test item; creation form behavior is covered by item-creation specs.
+        await callMeteorMethod<string>(page, 'items.createItem', { name: 'Test Item for Long Press' });
+        await page.reload();
+        await waitForMeteorReady(page);
 
         // Wait for item to appear in the list
         await page.waitForSelector('text=Test Item for Long Press');
@@ -126,16 +120,12 @@ test.describe('Touch Optimization - User Story 5', () => {
         // Find the item in the list
         const itemLocator = page.locator('text=Test Item for Long Press').first();
 
-        // Long-press on the item (500ms+ to trigger context menu)
-        // Playwright doesn't have native long-press, so we simulate with touchscreen API
+        // Long-press on the item (500ms+ to trigger context menu).
         const box = await itemLocator.boundingBox();
         if (!box) throw new Error('Item not found');
 
-        // Simulate touch start and hold
-        await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
-
-        // Context menu should appear after long press
-        // LongPressContextMenu component uses 500ms delay
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.mouse.down();
         await page.waitForTimeout(600);
 
         // Check if context menu is visible with expected actions
@@ -145,6 +135,7 @@ test.describe('Touch Optimization - User Story 5', () => {
 
         // At least one context menu action should be visible
         await expect(contextMenu.first()).toBeVisible({ timeout: 1000 });
+        await page.mouse.up();
     });
 
     /**
@@ -176,9 +167,6 @@ test.describe('Touch Optimization - User Story 5', () => {
         const startX = box.x + box.width / 2;
         const startY = box.y + 10;
 
-        // Touch start at top
-        await page.touchscreen.tap(startX, startY);
-
         // The pull-to-refresh uses 80px trigger distance
         // We need to drag down more than that
         await page.mouse.move(startX, startY);
@@ -192,6 +180,7 @@ test.describe('Touch Optimization - User Story 5', () => {
             .or(page.locator('svg').filter({ hasText: '' }));
 
         // Wait briefly for indicator (may appear during drag)
+        await expect(refreshIndicator.first()).toBeVisible();
         await page.waitForTimeout(200);
 
         // Release the drag
@@ -219,22 +208,22 @@ test.describe('Touch Optimization - User Story 5', () => {
         await page.goto('/');
         await page.waitForSelector('text=Inventory App');
 
-        // Create a nested container structure first
-        // 1. Create parent container
-        await page.click('button:has-text("Create Item")');
-        await page.waitForSelector('text=Create New Item');
-        await page.fill('input[name="name"]', 'Parent Container');
-        await page.click('text=This item is a container');
-        await page.click('button[type="submit"]:has-text("Create Item")');
+        // Seed a container; item creation behavior is covered by item-creation specs.
+        await callMeteorMethod<string>(page, 'items.createItem', {
+            name: 'Parent Container',
+            isContainer: true,
+        });
+        await page.reload();
+        await waitForMeteorReady(page);
 
         // Wait for container to appear
-        await page.waitForSelector('text=Parent Container');
+        await expect(page.getByText('Parent Container', { exact: true })).toBeVisible({ timeout: 5000 });
 
         // 2. Navigate into the parent container
-        await page.click('text=Parent Container');
+        await page.getByText('Parent Container', { exact: true }).click();
 
         // Should see breadcrumb showing we're inside
-        await page.waitForSelector('text=Parent Container', { timeout: 2000 });
+        await expect(page.locator('nav').filter({ hasText: 'Parent Container' })).toBeVisible({ timeout: 5000 });
 
         // 3. Now test swipe-back navigation
         // Swipe from left edge (within 50px) to the right (100px+ movement)
@@ -247,7 +236,6 @@ test.describe('Touch Optimization - User Story 5', () => {
         const endY = startY; // Minimal vertical movement
 
         // Perform swipe gesture
-        await page.touchscreen.tap(startX, startY);
         await page.mouse.move(startX, startY);
         await page.mouse.down();
         await page.mouse.move(endX, endY, { steps: 10 });
@@ -259,7 +247,7 @@ test.describe('Touch Optimization - User Story 5', () => {
 
         // Check that we're back at root by looking for the "All Items" context
         // The parent container should now be visible as an item in the list
-        await expect(page.locator('text=Parent Container')).toBeVisible({
+        await expect(page.getByText('Parent Container', { exact: true })).toBeVisible({
             timeout: 2000,
         });
     });
@@ -416,14 +404,14 @@ test.describe('Touch Optimization - User Story 5', () => {
         await page.goto('/');
         await page.waitForSelector('text=Inventory App');
 
-        // Create multiple items to ensure scrollable list
+        // Create multiple items to ensure scrollable list. Use methods so this test
+        // only verifies scrolling behavior, not repeated create-form timing.
         for (let i = 1; i <= 15; i++) {
-            await page.locator('button:has-text("Create Item")').first().click({ force: true });
-            await page.waitForSelector('text=Create New Item');
-            await page.fill('input[name="name"]', `Scroll Test Item ${i}`);
-            await page.click('button[type="submit"]:has-text("Create Item")');
-            await page.waitForTimeout(100);
+            await callMeteorMethod<string>(page, 'items.createItem', { name: `Scroll Test Item ${i}` });
         }
+        await page.reload();
+        await waitForMeteorReady(page);
+        await expect(page.getByText('Scroll Test Item 1', { exact: true })).toBeVisible({ timeout: 5000 });
 
         // Find a scrollable container
         // The -webkit-overflow-scrolling: touch property enables momentum
@@ -461,6 +449,6 @@ test.describe('Touch Optimization - User Story 5', () => {
         await page.waitForTimeout(300);
 
         // Verify scroll happened by checking if later items are visible
-        await expect(page.locator('text=Scroll Test Item 10')).toBeVisible({ timeout: 2000 });
+        await expect(page.getByText('Scroll Test Item 10', { exact: true })).toBeVisible({ timeout: 2000 });
     });
 });

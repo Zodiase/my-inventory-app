@@ -79,29 +79,21 @@ export function useSwipeNavigation(
         let startY = 0;
         let isSwiping = false;
 
-        const handleTouchStart = (event: TouchEvent): void => {
-            const touch = event.touches[0];
-            // Defensive check: TypeScript types this as always defined, but runtime may differ
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (touch === undefined) return;
+        const handlePointerDown = (event: PointerEvent): void => {
+            if (event.pointerType === 'mouse' && event.button !== 0) return;
 
-            // Only start tracking if touch begins near left edge
-            if (touch.clientX > edgeThreshold) return;
+            // Only start tracking if the pointer begins near the left edge.
+            if (event.clientX > edgeThreshold) return;
 
-            startX = touch.clientX;
-            startY = touch.clientY;
+            startX = event.clientX;
+            startY = event.clientY;
             isSwiping = true;
         };
 
-        const handleTouchMove = (event: TouchEvent): void => {
+        const handlePointerMove = (event: PointerEvent): void => {
             if (!isSwiping) return;
 
-            const touch = event.touches[0];
-            // Defensive check: TypeScript types this as always defined, but runtime may differ
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (touch === undefined) return;
-
-            const deltaY = Math.abs(touch.clientY - startY);
+            const deltaY = Math.abs(event.clientY - startY);
 
             // Cancel if moved too much vertically (likely scrolling)
             if (deltaY > maxVerticalDeviation) {
@@ -112,19 +104,11 @@ export function useSwipeNavigation(
             // (e.g., translate the view slightly with deltaX)
         };
 
-        const handleTouchEnd = (event: TouchEvent): void => {
+        const handlePointerUp = (event: PointerEvent): void => {
             if (!isSwiping) return;
 
-            const touch = event.changedTouches[0];
-            // Defensive check: TypeScript types this as always defined, but runtime may differ
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (touch === undefined) {
-                isSwiping = false;
-                return;
-            }
-
-            const deltaX = touch.clientX - startX;
-            const deltaY = Math.abs(touch.clientY - startY);
+            const deltaX = event.clientX - startX;
+            const deltaY = Math.abs(event.clientY - startY);
 
             // Valid swipe-back: moved right enough, stayed horizontal
             if (deltaX > threshold && deltaY < maxVerticalDeviation) {
@@ -134,20 +118,20 @@ export function useSwipeNavigation(
             isSwiping = false;
         };
 
-        const handleTouchCancel = (): void => {
+        const handlePointerCancel = (): void => {
             isSwiping = false;
         };
 
-        element.addEventListener('touchstart', handleTouchStart, { passive: true });
-        element.addEventListener('touchmove', handleTouchMove, { passive: true });
-        element.addEventListener('touchend', handleTouchEnd, { passive: true });
-        element.addEventListener('touchcancel', handleTouchCancel, { passive: true });
+        element.addEventListener('pointerdown', handlePointerDown);
+        element.addEventListener('pointermove', handlePointerMove);
+        element.addEventListener('pointerup', handlePointerUp);
+        element.addEventListener('pointercancel', handlePointerCancel);
 
         return () => {
-            element.removeEventListener('touchstart', handleTouchStart);
-            element.removeEventListener('touchmove', handleTouchMove);
-            element.removeEventListener('touchend', handleTouchEnd);
-            element.removeEventListener('touchcancel', handleTouchCancel);
+            element.removeEventListener('pointerdown', handlePointerDown);
+            element.removeEventListener('pointermove', handlePointerMove);
+            element.removeEventListener('pointerup', handlePointerUp);
+            element.removeEventListener('pointercancel', handlePointerCancel);
         };
     }, [elementRef, threshold, maxVerticalDeviation, edgeThreshold, enabled, onSwipeBack]);
 }

@@ -199,6 +199,7 @@ export const AllItemsViewPresentation = ({
             {/* Pull-to-refresh indicator */}
             {onRefresh !== undefined && (
                 <PullToRefreshIndicator
+                    data-testid="pull-to-refresh-indicator"
                     style={{
                         transform: `translateY(${Math.min(
                             pullDistance,
@@ -219,7 +220,7 @@ export const AllItemsViewPresentation = ({
             )}
 
             {/* Scrollable container */}
-            <ScrollableContainer ref={containerRef}>
+            <ScrollableContainer ref={containerRef} data-testid="items-list">
                 {/* Breadcrumb trail for navigation */}
                 <BreadcrumbTrail
                     path={containerPath}

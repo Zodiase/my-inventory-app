@@ -167,7 +167,7 @@ export const LongPressContextMenu = ({
                         navigator.vibrate(HAPTIC_VIBRATION_DURATION_MS);
                     }
                 }
-            }, LONG_PRESS_DURATION_MS);
+            }, pressDuration);
         },
         [pressDuration, onMenuOpen]
     );
@@ -268,7 +268,7 @@ export const LongPressContextMenu = ({
                     plain
                     animation="fadeIn"
                 >
-                    <MenuContainer pad="none" elevation="medium">
+                    <MenuContainer data-testid="context-menu" pad="none" elevation="medium">
                         {actions.map((action, index) => (
                             <MenuItem
                                 key={index}

@@ -134,6 +134,7 @@ export function usePullToRefresh({
     const startY = useRef<number>(0);
     const currentY = useRef<number>(0);
     const isDragging = useRef(false);
+    const isTriggeredRef = useRef(false);
 
     /**
      * Handle refresh trigger
@@ -198,11 +199,14 @@ export function usePullToRefresh({
                         ? deltaY
                         : RUBBER_BAND_THRESHOLD_PX + (deltaY - RUBBER_BAND_THRESHOLD_PX) * RUBBER_BAND_DAMPING_FACTOR;
 
+                const nextIsTriggered = rubberBandedDistance >= triggerDistance;
+                isTriggeredRef.current = nextIsTriggered;
                 setIsPulling(true);
                 setPullDistance(rubberBandedDistance);
-                setIsTriggered(rubberBandedDistance >= triggerDistance);
+                setIsTriggered(nextIsTriggered);
             } else {
                 // Reset if pulling up
+                isTriggeredRef.current = false;
                 setIsPulling(false);
                 setPullDistance(0);
                 setIsTriggered(false);
@@ -219,15 +223,16 @@ export function usePullToRefresh({
 
         isDragging.current = false;
 
-        if (isTriggered) {
+        if (isTriggeredRef.current) {
             void triggerRefresh();
         } else {
             // Spring back
+            isTriggeredRef.current = false;
             setIsPulling(false);
             setPullDistance(0);
             setIsTriggered(false);
         }
-    }, [enabled, isTriggered, triggerRefresh]);
+    }, [enabled, triggerRefresh]);
 
     /**
      * Set up event listeners

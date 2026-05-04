@@ -125,7 +125,7 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
             {path.map((item, index) => {
                 const isLast = index === path.length - 1;
                 const isFirst = index === 0;
-                const showHome = showHomeIcon && isFirst;
+                const showHome = showHomeIcon && isFirst && !isLast;
 
                 return (
                     <React.Fragment key={item._id}>
