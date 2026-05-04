@@ -1,6 +1,6 @@
 # Implementation Tracker
 
-Last updated: 2026-05-03
+Last updated: 2026-05-04
 
 ## Purpose
 
@@ -14,7 +14,7 @@ Primary goal: finish the inventory app while keeping progress measurable through
 
 - Storybook build issue fixed by extracting shared validation constants into `meteor-app/imports/model/ItemConstants.ts`.
 - Storybook E2E status: **21 passed, 3 skipped**.
-- Full app E2E status: **27 passed, 17 failed** after method-registration and serial-worker fixes.
+- Full app E2E status: **44 passed, 0 failed** on Chromium.
 - Search / filter app suite status: **12 passed, 0 failed**.
 - TypeScript check now passes.
 - Unit test status: **115 passing** via `npm test`.
@@ -34,19 +34,25 @@ Primary goal: finish the inventory app while keeping progress measurable through
 - Re-ran `npm run check:type` successfully.
 - Re-ran `npm test` successfully.
 - Re-ran `tests/e2e/app/search-and-filter.spec.ts` successfully: **12 passed**.
-- Re-ran the full Chromium app E2E suite: **27 passed, 17 failed**.
+- Fixed tag-management UI flows by adding missing `tags.findOne`, `tags.rename`, and `tags.delete` method coverage, using the `CreateTagDialog` flow, making tag rows/actions click-safe, and making tag usage counts reactive.
+- Fixed item creation/navigation stability by keeping newly created items visible in the list instead of immediately navigating to detail view.
+- Fixed touch/mobile flows by switching swipe-back to pointer events, hardening pull-to-refresh trigger state, adding stable touch test IDs, and correcting breadcrumb display for root-level containers.
+- Re-ran focused tag/item suites successfully: **13/13 tag-management**, **4/4 items-and-tags**, and **21/21 item-creation** across the focused command.
+- Re-ran `tests/e2e/app/touch-optimization.spec.ts` successfully: **8 passed**.
+- Re-ran the full Chromium app E2E suite successfully: **44 passed, 0 failed**.
 
 ## Verified Commands
 
 - Storybook dev server: `cd meteor-app && npm run storybook`
 - Storybook E2E: `PLAYWRIGHT_SKIP_WEBSERVER=1 npx playwright test tests/e2e/storybook/ --project=storybook-chromium`
 - Meteor app server: `cd meteor-app && npm start`
-- App E2E: `PLAYWRIGHT_SKIP_WEBSERVER=1 npx playwright test tests/e2e/app/ --project=chromium`
+- App E2E: `npx playwright test tests/e2e/app/ --project=chromium --workers=1 --reporter=line`
 - Type check: `cd meteor-app && npm run check:type`
+- Unit tests: `cd meteor-app && npm test`
 
 ## TypeScript Status
 
-- `npm run check:type` passes as of 2026-05-03.
+- `npm run check:type` passes as of 2026-05-04.
 - The previous missing constants and selector typing issues are resolved.
 
 ## App E2E Failure Buckets
@@ -71,10 +77,8 @@ Files:
 
 Observed pattern:
 
-- Expected tags or items do not appear after creation.
-- Some clicks are blocked by an overlay.
-- Some tests still call methods that do not exist under the expected names (for example `tags.findOne`, `tags.delete`).
-- One helper import issue was fixed by re-exporting `callMeteorMethod`.
+- Resolved: tag creation uses `CreateTagDialog`, tag row/action clicks no longer conflict, usage counts update reactively, and expected tag methods are available.
+- Current focused result: `tests/e2e/app/tag-management.spec.ts` passes completely.
 
 ### 3. Item creation / navigation stability
 
@@ -86,8 +90,8 @@ Files:
 
 Observed pattern:
 
-- Created items/containers are not consistently visible after creation.
-- Some flows time out waiting for `Create Item` or list entries.
+- Resolved: newly created items stay in the list view so reactive list assertions and repeated create flows remain stable.
+- Current focused result: item-creation and items-and-tags suites pass completely.
 
 ### 4. Touch/mobile Playwright configuration gaps
 
@@ -97,31 +101,32 @@ Files:
 
 Observed pattern:
 
-- `page.touchscreen` is used without `hasTouch` enabled in the browser context.
-- Some touch tests likely need project/config changes before product fixes can be trusted.
+- Resolved: touch tests use deterministic pointer gestures, swipe-back supports pointer events, pull-to-refresh uses current trigger state on release, and breadcrumb labels render correctly for root-level containers.
+- Current focused result: `tests/e2e/app/touch-optimization.spec.ts` passes completely.
 
 ## Latest Validation Results
 
 - `npm run check:type` → pass
 - `npm test` → pass (**115 passing**)
 - `npx playwright test tests/e2e/app/search-and-filter.spec.ts --project=chromium` → pass (**12 passed**)
-- `npx playwright test tests/e2e/app/ --project=chromium` → **27 passed, 17 failed**
+- `npx playwright test tests/e2e/app/touch-optimization.spec.ts --project=chromium --workers=1 --reporter=line` → pass (**8 passed**)
+- `npx playwright test tests/e2e/app/ --project=chromium --workers=1 --reporter=line` → pass (**44 passed**)
 
 ## Recommended Repair Order
 
-1. Fix tag creation / visibility flows and any overlay interaction issues.
-2. Stabilize item creation/navigation tests.
-3. Repair Playwright touch configuration, then re-evaluate true touch-product failures.
+1. Push the final local commits for the now-green tag/item/touch buckets.
+2. Re-run Storybook E2E in CI or before merge to confirm the earlier **21 passed, 3 skipped** baseline still holds.
+3. Run CI for the branch and verify the single-worker Playwright configuration behaves in the CI environment.
 
 ## Definition of Done for This Phase
 
 - `npm run check:type` passes
 - Storybook suite remains green
-- App E2E failures are reduced by fixing product issues or clearly documenting test issues
+- App E2E suite passes on Chromium
 - This tracker is updated after each major fix batch
 
 ## Notes for the Next Session
 
-- Storybook is now the healthiest measurement layer and should stay green while app-level work continues.
-- When picking the next implementation target, prefer fixing a whole failure bucket rather than isolated individual tests.
+- App-level E2E is now green locally; preserve single-worker execution because tests share a resettable database.
+- Storybook remains the isolated component baseline; re-run it before merge if CI does not cover it.
 - Update this file whenever a command result materially changes status.
