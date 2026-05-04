@@ -1,5 +1,6 @@
 import extend from 'lodash/extend';
 import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 
 import { InventoryItemsCollection } from '/imports/api/items';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
@@ -415,8 +416,18 @@ export const getTagUsageCounts = async (): Promise<Record<string, number>> => {
     return counts;
 };
 
+export const findOneTag = async (selector: Mongo.Selector<TagRecord>): Promise<TagRecord | undefined> => {
+    return await TagsCollection.findOneAsync(selector);
+};
+
 // Publications (server-side only)
 if (Meteor.isServer) {
+    Meteor.methods({
+        'tags.findOne': findOneTag,
+        'tags.rename': renameTag,
+        'tags.delete': deleteTag,
+    });
+
     /**
      * Publish all tags.
      *

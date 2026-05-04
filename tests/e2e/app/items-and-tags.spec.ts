@@ -99,11 +99,10 @@ test.describe('Tags view', () => {
         await page.getByRole('button', { name: 'Tags' }).click();
 
         const tagName = `Tag ${Date.now()}`;
-        page.once('dialog', async (dialog) => {
-            expect(dialog.type()).toBe('prompt');
-            await dialog.accept(tagName);
-        });
         await page.locator('[data-tag-id=""]').locator('.new-child-action').click();
+        await page.locator('input[name="name"]').fill(tagName);
+        await page.getByRole('button', { name: /create tag/i }).click();
+        await expect(page.locator('input[name="name"]')).not.toBeVisible({ timeout: 10000 });
         const tagRow = page.locator('.tag-body', { hasText: tagName }).first();
         await expect(tagRow).toBeVisible();
 

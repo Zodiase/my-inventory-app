@@ -1,6 +1,6 @@
 import { Box, Button, type BoxProps } from 'grommet';
 import { Close } from 'grommet-icons';
-import type { ComponentProps } from 'react';
+import React, { type ReactElement } from 'react';
 
 export interface TagChipProps extends Omit<BoxProps, 'onClick'> {
     /** The name of the tag to display */
@@ -27,7 +27,7 @@ export function TagChip({
     disabled = false,
     color = 'brand',
     ...boxProps
-}: TagChipProps): React.ReactElement {
+}: TagChipProps): ReactElement {
     return (
         <Box
             direction="row"

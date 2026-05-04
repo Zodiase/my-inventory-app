@@ -63,7 +63,7 @@ interface TagListProps {
     tag?: TagWithChildren;
     tagChildren: TagWithChildren[];
     usageCounts: Record<string, number>;
-    onAddChild: (parentTagId: string, tagName: string) => void;
+    onAddChild: (parentTagId: string, tagName: string) => void | Promise<void>;
     onRename: (tag: TagRecord, newName: string) => void;
     onDelete: (tag: TagRecord) => void;
     onTagClick?: (tagId: string) => void;
@@ -93,8 +93,8 @@ const TagList = styled(
             setCreateDialogState({ isOpen: true, parentTagId: tagId });
         };
 
-        const handleCreateTagSubmit = (tagName: string): void => {
-            onAddChild(createDialogState.parentTagId, tagName);
+        const handleCreateTagSubmit = async (tagName: string): Promise<void> => {
+            await onAddChild(createDialogState.parentTagId, tagName);
             setCreateDialogState({ isOpen: false, parentTagId: '' });
         };
 
@@ -161,13 +161,15 @@ const TagList = styled(
                         className="tag-body"
                         data-tag-id={tagId}
                         data-tag-path={tag !== undefined ? tag.path.map(({ name }) => name).join(',') : undefined}
+                        onClick={() => {
+                            if (tagId !== '') {
+                                onTagClick?.(tagId);
+                            }
+                        }}
                     >
                         <label className="tag-name-label">
                             {tagId !== '' ? (
-                                <span
-                                    onClick={() => onTagClick?.(tagId)}
-                                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                                >
+                                <span style={{ cursor: 'pointer', textDecoration: 'underline' }}>
                                     {tagName}
                                     <span className="tag-item-count"> ({itemCount})</span>
                                 </span>
@@ -179,13 +181,31 @@ const TagList = styled(
                             )}
                         </label>
                         <span className="tag-actions-container">
-                            <StyledButton className="new-child-action" onClick={handleAddChild}>
+                            <StyledButton
+                                className="new-child-action"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleAddChild();
+                                }}
+                            >
                                 +
                             </StyledButton>
-                            <StyledButton className="rename-tag-action" onClick={handleRename}>
+                            <StyledButton
+                                className="rename-tag-action"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleRename();
+                                }}
+                            >
                                 Rename
                             </StyledButton>
-                            <StyledButton className="remove-tag-action" onClick={handleDelete}>
+                            <StyledButton
+                                className="remove-tag-action"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleDelete();
+                                }}
+                            >
                                 Delete
                             </StyledButton>
                         </span>
@@ -212,7 +232,25 @@ const TagList = styled(
             </div>
         );
     }
-)``;
+)`
+    .tag-body {
+        align-items: center;
+        display: flex;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .tag-name-label {
+        flex: 1;
+    }
+
+    .tag-actions-container {
+        display: inline-flex;
+        gap: 0.25rem;
+        position: relative;
+        z-index: 1;
+    }
+`;
 
 interface DetachedTagsViewProps {
     detachedTagIds: string[];
@@ -298,7 +336,7 @@ export interface AllTagsViewPresentationProps {
     /**
      * Callback when adding a child tag
      */
-    onAddChild: (parentTagId: string, tagName: string) => void;
+    onAddChild: (parentTagId: string, tagName: string) => void | Promise<void>;
 
     /**
      * Callback when renaming a tag
@@ -346,10 +384,10 @@ export const AllTagsViewPresentation = styled(
         tagsWithoutPath,
         ...rootElementProps
     }: AllTagsViewPresentationProps & ComponentProps<'div'>): ReactElement => {
-        // Build hierarchy once when tags actually change (by ID list), not array reference
+        // Build hierarchy once when tag identity or display fields change, not array reference.
         // This handles useTracker creating new array references on every render
-        const tagIds = tags.map((t) => t._id).join(',');
-        const tagHierarchy = React.useMemo(() => buildHierarchy(tags), [tagIds]);
+        const tagSignature = tags.map((t) => `${t._id}:${t.name}:${t.parentTagId}`).join(',');
+        const tagHierarchy = React.useMemo(() => buildHierarchy(tags), [tagSignature]);
         const totalTagsCount = tags.length;
 
         return (

@@ -31,17 +31,10 @@ test.describe('User Story 2: Tag Items for Cross-Location Collections', () => {
         // Click "Add Tag" button
         await tagsPage.addTagButton.click();
 
-        // Fill in tag name via dialog/form
+        // Fill in tag name via CreateTagDialog
         const tagName = `Test Tag ${Date.now()}`;
-
-        // Handle dialog if it's a prompt-based UI
-        page.once('dialog', async (dialog) => {
-            expect(dialog.type()).toBe('prompt');
-            await dialog.accept(tagName);
-        });
-
-        // Trigger the tag creation
-        await tagsPage.addTagButton.click();
+        await page.locator('input[name="name"]').fill(tagName);
+        await page.getByRole('button', { name: /create tag/i }).click();
 
         // Verify tag appears in the list
         await expect(tagsPage.tagByName(tagName)).toBeVisible();

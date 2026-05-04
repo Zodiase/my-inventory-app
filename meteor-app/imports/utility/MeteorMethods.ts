@@ -24,10 +24,12 @@ export function asMeteorMethods<
         return acc;
     }, {});
 
-    // Register legacy unprefixed methods for backward compatibility.
-    Meteor.methods(methods);
-    // Register namespaced methods to match the API contract and current app/test usage.
-    Meteor.methods(namespacedMethods);
+    if (Meteor.isServer) {
+        // Register legacy unprefixed methods for backward compatibility.
+        Meteor.methods(methods);
+        // Register namespaced methods to match the API contract and current app/test usage.
+        Meteor.methods(namespacedMethods);
+    }
 
     return methodNames.reduce((col, funcName) => {
         if (Object.prototype.hasOwnProperty.call(col, funcName)) {

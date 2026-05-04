@@ -1,6 +1,7 @@
 import React, { type ComponentProps, type ReactElement, useCallback, useState } from 'react';
 import { useLocation } from 'wouter';
 
+import { InventoryItemsCollection } from '/imports/api/items';
 import TagsCollection, { type TagRecord } from '/imports/api/tags';
 import { AllTagsViewPresentation } from '/imports/ui/AllTagsView/AllTagsViewPresentation';
 import { SCROLL_DELAY_MS } from '/imports/utility/constants';
@@ -29,19 +30,16 @@ export const AllTagsViewContainer = (): ReactElement => {
     // Fetch all tags
     const tags = useTracker(() => TagsCollection.find({}).fetch(), []);
 
-    // Fetch tag usage counts
-    const [tagUsageCounts, setTagUsageCounts] = useState<Record<string, number>>({});
-
-    React.useEffect(() => {
-        TagsCollection.getTagUsageCounts().then(
-            (counts) => {
-                setTagUsageCounts(counts);
-            },
-            (error) => {
-                console.error('Failed to fetch tag usage counts:', error);
+    // Fetch tag usage counts reactively so counts update when items change.
+    const tagUsageCounts = useTracker(() => {
+        const counts: Record<string, number> = {};
+        for (const item of InventoryItemsCollection.find({}).fetch()) {
+            for (const tagId of item.tagIds) {
+                counts[tagId] = (counts[tagId] ?? 0) + 1;
             }
-        );
-    }, [tags.length]); // Refetch when tags change
+        }
+        return counts;
+    }, []);
 
     // Detached tags state
     const [detachedTagsData, setDetachedTagsData] = useState<{
@@ -65,21 +63,15 @@ export const AllTagsViewContainer = (): ReactElement => {
     );
 
     // Tag operations
-    const onAddChild = useCallback(
-        (parentTagId: string, tagName: string) => {
-            TagsCollection.createTag({ name: tagName, parentTagId }).then(
-                (newTagId) => {
-                    console.log(`New tag "${tagName}" created.`, newTagId);
-                    // Navigate to the newly created tag's filter view
-                    setLocation(`/tags/${newTagId}`);
-                },
-                (reason) => {
-                    console.warn(`Creation of tag "${tagName}" failed:`, reason);
-                }
-            );
-        },
-        [setLocation]
-    );
+    const onAddChild = useCallback(async (parentTagId: string, tagName: string) => {
+        try {
+            const newTagId = await TagsCollection.createTag({ name: tagName, parentTagId });
+            console.log(`New tag "${tagName}" created.`, newTagId);
+        } catch (reason) {
+            console.warn(`Creation of tag "${tagName}" failed:`, reason);
+            throw reason;
+        }
+    }, []);
 
     const onRename = useCallback((tag: TagRecord, newName: string) => {
         TagsCollection.renameTag(tag, newName).then(

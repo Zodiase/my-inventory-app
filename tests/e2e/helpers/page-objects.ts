@@ -333,7 +333,7 @@ export class TagsPage {
      * Click on a tag to view items with that tag.
      */
     async openTag(name: string): Promise<void> {
-        await this.tagByName(name).click();
+        await this.tagByName(name).locator('.tag-name-label').click();
     }
 }
 
