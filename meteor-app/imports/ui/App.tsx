@@ -8,7 +8,6 @@ import Items, { InventoryItemsCollection } from '/imports/api/items';
 import Tags, { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { SearchFragment } from '/imports/model/SearchFragment';
-import type { TagRecord } from '/imports/model/TagRecord';
 import { useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
 
@@ -81,7 +80,7 @@ const theme = {
 };
 
 export const App = (): ReactElement => {
-    const [location, setLocation] = useLocation();
+    const [location] = useLocation();
     const [showCreateItem, setShowCreateItem] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
     const [currentItemsContainerId, setCurrentItemsContainerId] = useState<string | undefined>();
@@ -123,10 +122,6 @@ export const App = (): ReactElement => {
         }
     }, [location]);
 
-    const handleSelectItem = (item: InventoryItem): void => {
-        setSelectedItemId(item._id);
-    };
-
     const handleCloseItemDetail = (): void => {
         setSelectedItemId(undefined);
     };
@@ -145,15 +140,6 @@ export const App = (): ReactElement => {
         }
     };
 
-    const handleEditItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
-        if (selectedItem === undefined) return;
-        try {
-            await Items.updateItem(selectedItem._id, itemData);
-        } catch (error) {
-            console.error('Failed to update item:', error);
-        }
-    };
-
     const handleDeleteItem = async (): Promise<void> => {
         if (selectedItem === undefined) return;
         try {
@@ -161,15 +147,6 @@ export const App = (): ReactElement => {
             handleCloseItemDetail();
         } catch (error) {
             console.error('Failed to delete item:', error);
-        }
-    };
-
-    const handleAddTagToItem = async (tagId: string): Promise<void> => {
-        if (selectedItem === undefined) return;
-        try {
-            await Tags.addToItem(selectedItem._id, tagId);
-        } catch (error) {
-            console.error('Failed to add tag to item:', error);
         }
     };
 
@@ -194,8 +171,8 @@ export const App = (): ReactElement => {
             }
 
             // Call search method
-            const results = await Meteor.callAsync('items.search', fragments);
-            setSearchResults(results as InventoryItem[]);
+            const results = await Meteor.callAsync<InventoryItem[]>('items.search', fragments);
+            setSearchResults(results);
         } catch (error) {
             console.error('Search failed:', error);
             setSearchResults([]);

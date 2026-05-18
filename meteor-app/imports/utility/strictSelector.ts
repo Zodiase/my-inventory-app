@@ -48,15 +48,9 @@ export const strictSelector = <T extends CollectionItem, F extends keyof T>(
         ...extraFields,
     ];
 
-    // Using `any` as accumulator type is necessary for dynamic property mapping
-    // The return type is properly typed via the function signature
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return
-    return allFields.reduce<any>((acc, field) => {
-        return {
-            ...acc,
-            [field]: doc[field],
-        };
-    }, {}) as {
+    const selectorEntries = allFields.map((field) => [field, doc[field]] as const);
+
+    return Object.fromEntries(selectorEntries) as {
         [K in F | keyof CollectionItem]: T[K];
     };
 };

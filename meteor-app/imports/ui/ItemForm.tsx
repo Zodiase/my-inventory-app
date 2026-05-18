@@ -2,8 +2,8 @@ import { Box, CheckBox, Form, FormField, Text, TextArea, TextInput } from 'gromm
 import type { FormExtendedEvent } from 'grommet';
 import React, { useState, useRef, type ReactElement } from 'react';
 
-import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from '/imports/model/ItemConstants';
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from '/imports/model/ItemConstants';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { TouchButton } from '/imports/ui/TouchButton';
 import type RecordInput from '/imports/utility/RecordInput';
@@ -16,7 +16,6 @@ const SCROLL_PADDING_PX = 50; // Pixels to scroll past element for visibility
 
 // Warning threshold as percentage of max length
 const WARNING_THRESHOLD_PERCENT = 0.9;
-const MAX_LENGTH_BUFFER = 50;
 
 /**
  * Form for creating or editing inventory items.
@@ -153,8 +152,8 @@ export const ItemForm = ({
         }
     };
 
-    const hasValidationError = validationError !== '' && validationError !== undefined;
-    const hasError = error !== '' && error !== undefined;
+    const hasValidationError = validationError !== '';
+    const hasError = typeof error === 'string' && error !== '';
     const displayError = hasValidationError ? validationError : hasError ? error : '';
 
     return (
@@ -185,7 +184,7 @@ export const ItemForm = ({
                     </Box>
                 )}
 
-                {displayError !== undefined && displayError !== '' && (
+                {displayError !== '' && (
                     <Box
                         background="status-error"
                         pad="small"

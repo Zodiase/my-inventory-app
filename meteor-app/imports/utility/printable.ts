@@ -28,13 +28,29 @@ function printableRecursionHelper(path: Path, x: unknown): Array<{ path: Path; v
         ];
     }
 
-    if (typeof x !== 'object') {
+    if (typeof x === 'bigint') {
         return [
             {
                 path,
-                // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
-                // Intentional stringification of unknown primitive for debugging output
-                value: `[unrecognized primitive]${x}`,
+                value: `[bigint]${x.toString()}`,
+            },
+        ];
+    }
+
+    if (typeof x === 'symbol') {
+        return [
+            {
+                path,
+                value: `[symbol]${x.toString()}`,
+            },
+        ];
+    }
+
+    if (typeof x === 'function') {
+        return [
+            {
+                path,
+                value: `[function]`,
             },
         ];
     }

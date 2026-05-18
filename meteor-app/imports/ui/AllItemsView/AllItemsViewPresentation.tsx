@@ -1,7 +1,7 @@
 import { Box, List, Text } from 'grommet';
 import { Folder, Next } from 'grommet-icons';
 import React, { type ComponentProps, type ReactElement, useRef } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
@@ -17,11 +17,11 @@ const ROTATION_MAX_DEGREES = 360;
 const SWIPE_THRESHOLD_PX = 100;
 const SWIPE_EDGE_THRESHOLD_PX = 50;
 const SWIPE_MAX_VERTICAL_DEVIATION_PX = 50;
-/**
- * Divisor for calculating icon size from rotation angle.
- * Used to scale icon dimensions based on pull distance progress.
- */
-const ICON_SIZE_ROTATION_DIVISOR = 2;
+const PARENT_CONTAINER_OFFSET = 2;
+
+const noopRefresh = async (): Promise<void> => {
+    return undefined;
+};
 
 /**
  * Scrollable container for items list
@@ -80,12 +80,11 @@ const RefreshIcon = styled.svg.attrs<{ isTriggered: boolean; pullDistance: numbe
     transition: stroke 0.2s ease-out;
 
     ${(props) =>
-        props.isTriggered &&
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
-        // Keyframes objects are intentionally stringified by styled-components for CSS animation
-        `
-        animation: ${rotate} 0.6s linear infinite;
-    `}
+        props.isTriggered
+            ? css`
+                  animation: ${rotate} 0.6s linear infinite;
+              `
+            : undefined}
 `;
 
 /**
@@ -168,9 +167,7 @@ export const AllItemsViewPresentation = ({
     // Pull-to-refresh hook
     const { isRefreshing, pullDistance, isTriggered } = usePullToRefresh({
         containerRef,
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        // Empty function is intentional fallback when onRefresh is undefined
-        onRefresh: onRefresh ?? (async () => {}),
+        onRefresh: onRefresh ?? noopRefresh,
         triggerDistance: PULL_TRIGGER_DISTANCE_PX,
         enabled: onRefresh !== undefined,
     });
@@ -178,7 +175,10 @@ export const AllItemsViewPresentation = ({
     // Swipe-back navigation hook
     // Navigate to parent container (second-to-last in breadcrumb path)
     const hasParent = containerPath.length > 0;
-    const parentContainerId = containerPath.length > 1 ? containerPath[containerPath.length - 2]?._id : undefined;
+    const parentContainerId =
+        containerPath.length >= PARENT_CONTAINER_OFFSET
+            ? containerPath[containerPath.length - PARENT_CONTAINER_OFFSET]?._id
+            : undefined;
 
     useSwipeNavigation(
         containerRef,
@@ -269,9 +269,6 @@ export const AllItemsViewPresentation = ({
                                     variant: 'danger' as const,
                                 });
                             }
-
-                            const hasContextMenu = menuActions.length > 0;
-
                             return (
                                 <LongPressContextMenu key={item._id} actions={menuActions}>
                                     <Box

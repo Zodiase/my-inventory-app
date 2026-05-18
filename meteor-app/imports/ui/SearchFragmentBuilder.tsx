@@ -32,6 +32,12 @@ interface SearchFragmentBuilderProps extends Omit<ComponentProps<'div'>, 'onChan
     availableTags?: Array<{ _id: string; name: string }>;
 }
 
+type ContainerTypeValue = 'all' | 'containers' | 'items';
+
+const isContainerTypeValue = (value: string): value is ContainerTypeValue => {
+    return value === 'all' || value === 'containers' || value === 'items';
+};
+
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -266,7 +272,7 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
     const [nameInput, setNameInput] = useState('');
     const [selectedIncludeTag, setSelectedIncludeTag] = useState('');
     const [selectedExcludeTag, setSelectedExcludeTag] = useState('');
-    const [containerTypeValue, setContainerTypeValue] = useState<'containers' | 'items' | 'all'>('all');
+    const [containerTypeValue, setContainerTypeValue] = useState<ContainerTypeValue>('all');
 
     // Validate fragments for contradictions
     const validationWarnings = validateFragments(fragments, availableTags);
@@ -482,9 +488,9 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                     <Select
                         value={containerTypeValue}
                         onChange={(e) => {
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
-                            // DOM event value is typed as string, cast needed for ContainerFilterType union
-                            setContainerTypeValue(e.target.value as any);
+                            if (isContainerTypeValue(e.target.value)) {
+                                setContainerTypeValue(e.target.value);
+                            }
                         }}
                     >
                         <option value="all">All types</option>

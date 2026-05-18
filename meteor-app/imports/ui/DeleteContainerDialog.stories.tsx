@@ -212,14 +212,12 @@ export const LongContainerName: Story = {
 // Story: Interactive - can change strategies
 export const Interactive: Story = {
     render: (args) => {
-        const [strategy, setStrategy] = useState<DeletionStrategy>('moveToParent');
         const [targetId, setTargetId] = useState<string | undefined>();
 
         return (
             <DeleteContainerDialog
                 {...args}
                 onConfirm={(newStrategy, newTargetId) => {
-                    setStrategy(newStrategy);
                     setTargetId(newTargetId);
                     console.log('Confirm:', newStrategy, newTargetId);
                 }}

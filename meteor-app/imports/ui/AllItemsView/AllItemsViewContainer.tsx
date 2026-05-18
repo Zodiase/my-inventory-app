@@ -1,3 +1,4 @@
+import type { Mongo } from 'meteor/mongo';
 import React, { type ComponentProps, type ReactElement, useState, useCallback } from 'react';
 import { useLocation } from 'wouter';
 
@@ -72,18 +73,16 @@ export const AllItemsViewContainer = ({
     // Fetch items at current level with optional filters
     const items = useTracker(() => {
         // Start with base query for current container level
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const baseQuery: any = {
+        const baseQuery: Mongo.Selector<InventoryItem> = {
             containerId: currentContainerId,
         };
 
         // If filters are provided, merge them with base query
         if (filters.length > 0) {
-            const filterQuery = buildSearchQuery(filters);
+            const filterQuery = buildSearchQuery(filters) as Mongo.Selector<InventoryItem>;
 
             // Combine base query (container scoping) with filter query (AND logic)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const combinedQuery: any = {
+            const combinedQuery: Mongo.Selector<InventoryItem> = {
                 $and: [baseQuery, filterQuery],
             };
 

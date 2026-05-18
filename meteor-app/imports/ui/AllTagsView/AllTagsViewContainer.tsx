@@ -1,4 +1,4 @@
-import React, { type ComponentProps, type ReactElement, useCallback, useState } from 'react';
+import React, { type ReactElement, useCallback, useState } from 'react';
 import { useLocation } from 'wouter';
 
 import { InventoryItemsCollection } from '/imports/api/items';
@@ -56,7 +56,6 @@ export const AllTagsViewContainer = (): ReactElement => {
         removedCount: 0,
     }));
 
-    const totalTagsCount: number = useTracker(() => TagsCollection.find({}).count(), []);
     const tagsWithoutPath: TagRecord[] = useTracker(
         () => TagsCollection.find({ path: { $exists: false } }).fetch(),
         []
