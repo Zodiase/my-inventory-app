@@ -2,9 +2,13 @@
     "name": "my-inventory-app-root",
     "private": true,
     "scripts": {
+        "check:ci": "cd meteor-app && npm ci && meteor lint && npm run check:type && npm run check:code-style",
+        "check:ci:fresh": "npm run clean:generated && npm run check:ci",
+        "clean:generated": "node scripts/cleanup-meteor-generated.mjs",
         "prepare": "cd meteor-app && npm run prepare",
         "start": "cd meteor-app && npm start",
         "storybook": "cd meteor-app && npm run storybook",
+        "test:scripts": "node --test scripts/*.test.mjs",
         "format": "prettier --write . && (cd meteor-app && npm run format)",
         "format:check": "prettier --check . && (cd meteor-app && npm run format:check)",
         "test:e2e": "playwright test",

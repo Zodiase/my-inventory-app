@@ -3,10 +3,13 @@
     "private": true,
     "scripts": {
         "prepare": "cd .. && husky meteor-app/.husky",
+        "check:ci": "npm ci && meteor lint && npm run check:type && npm run check:code-style",
+        "check:ci:fresh": "npm run clean:generated && npm run check:ci",
         "check:code-style": "npm run check:code-style:prettier && npm run check:code-style:lint",
         "check:code-style:lint": "eslint .",
         "check:code-style:prettier": "prettier --check .",
         "check:type": "tsc --version && tsc --noEmit",
+        "clean:generated": "node ../scripts/cleanup-meteor-generated.mjs --app-dir .",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "start:nasdb:run": "export MONGO_URL=\"${NAS_MONGO_URL}\" && npm start",

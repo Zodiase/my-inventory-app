@@ -97,6 +97,14 @@ npm run check:code-style    # Prettier + ESLint
 npm run check:type          # TypeScript compilation
 ```
 
+To reproduce CI quality checks from a clean generated-Meteor state while preserving the local dev database:
+
+```bash
+npm run check:ci:fresh
+```
+
+For a categorized list of npm scripts and when to use them, see [`docs/NPM_SCRIPTS.md`](docs/NPM_SCRIPTS.md).
+
 ### Current Status
 
 - ✅ **TypeScript**: Clean compilation (0 errors)

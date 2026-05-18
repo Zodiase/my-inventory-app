@@ -17,7 +17,7 @@ These notes capture migration context and operational learnings gathered during 
 ## 3. CI Pipeline Adjustments
 
 - Previous workflows targeted Node 14 and Meteor 2.12.
-- Updated GitHub Actions (`.github/workflows/node.js.yml`) to test Node 22 and Node 24, and install `meteor@3.3.2` explicitly in the tests job.
+- Updated GitHub Actions (`.github/workflows/node.js.yml`) to test Node 22 and Node 24, install `meteor@3.3.2` explicitly, cache `~/.meteor`, and run `meteor lint` before type/style checks so generated Meteor types exist in clean CI checkouts.
 - Matrix intentionally excludes odd-numbered/non-LTS Node releases and older Node versions.
 - Follow‑up idea: add a nightly job to test against `meteor@latest` for early detection of upstream changes.
 
@@ -36,19 +36,23 @@ These notes capture migration context and operational learnings gathered during 
 
 ## 6. Local Development Commands
 
-| Purpose             | Command                    |
-| ------------------- | -------------------------- |
-| Install deps        | `meteor npm install`       |
-| Start dev app       | `meteor run`               |
-| Unit tests          | `npm test`                 |
-| Full app tests      | `npm run test-app`         |
-| Lint + format check | `npm run check:code-style` |
-| Type check          | `npm run check:type`       |
+| Purpose                                    | Command                    |
+| ------------------------------------------ | -------------------------- |
+| Install deps                               | `meteor npm install`       |
+| Start dev app                              | `meteor run`               |
+| Unit tests                                 | `npm test`                 |
+| Full app tests                             | `npm run test-app`         |
+| Lint + format check                        | `npm run check:code-style` |
+| Type check                                 | `npm run check:type`       |
+| CI-like check                              | `npm run check:ci`         |
+| Fresh CI-like check                        | `npm run check:ci:fresh`   |
+| Clean generated app state without DB reset | `npm run clean:generated`  |
+
+See `docs/NPM_SCRIPTS.md` for the categorized script reference.
 
 ## 7. Suggested Follow-Ups
 
 - Add `CHANGELOG.md` beginning with this upgrade.
-- Introduce CI caching for Meteor release directory (`~/.meteor`) to speed up installs.
 - Add automated production image build test (attempt `meteor build` inside CI) to catch bundle regressions earlier.
 - Evaluate enabling ESLint rule escalation (treat warnings as errors) once outstanding warnings are resolved.
 - Add security scanning of final Docker image (e.g. Trivy or Grype) in pipeline.
@@ -108,15 +112,16 @@ npm run test-app           # Full application tests (server + client)
 
 ## 9. Troubleshooting Tips
 
-| Symptom                       | Likely Cause                           | Fix                                    |
-| ----------------------------- | -------------------------------------- | -------------------------------------- |
-| `util._extend` warning        | Meteor tool dependency                 | Ignore / track upstream issue          |
-| `timers/promises` warning     | Test framework in browser context      | Safe to ignore (documented)            |
-| ESLint flat config errors     | Missing dynamic imports or wrong order | Check `eslint.config.mjs` structure    |
-| TypeScript third-party errors | Missing skipLibCheck                   | Add `"skipLibCheck": true` to tsconfig |
-| Fibers build error            | Leftover install step                  | Remove `fibers` (done)                 |
-| Lint misused-promises error   | Async callback to sync iterator        | Prefetch then loop (implemented)       |
-| Docker build slow             | No layer caching of Meteor deps        | Consider caching `.meteor` & npm cache |
+| Symptom                        | Likely Cause                           | Fix                                    |
+| ------------------------------ | -------------------------------------- | -------------------------------------- |
+| `util._extend` warning         | Meteor tool dependency                 | Ignore / track upstream issue          |
+| `timers/promises` warning      | Test framework in browser context      | Safe to ignore (documented)            |
+| ESLint flat config errors      | Missing dynamic imports or wrong order | Check `eslint.config.mjs` structure    |
+| TypeScript third-party errors  | Missing skipLibCheck                   | Add `"skipLibCheck": true` to tsconfig |
+| Fibers build error             | Leftover install step                  | Remove `fibers` (done)                 |
+| Lint misused-promises error    | Async callback to sync iterator        | Prefetch then loop (implemented)       |
+| Docker build slow              | No layer caching of Meteor deps        | Consider caching `.meteor` & npm cache |
+| Local checks pass but CI fails | Stale/generated Meteor local types     | Run `npm run check:ci:fresh`           |
 
 ## 10. Conventions Adopted
 
