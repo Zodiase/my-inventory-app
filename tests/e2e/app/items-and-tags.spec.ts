@@ -56,6 +56,34 @@ test.describe('Items view', () => {
         await expect(page.locator(`text="${itemName}"`)).toBeVisible();
     });
 
+    test('creates new items inside the current container via the UI', async ({ page }) => {
+        const containerName = `Garage Shelf ${Date.now()}`;
+        const nestedItemName = `Power Drill ${Date.now()}`;
+
+        await page.getByRole('button', { name: 'Create Item' }).first().click();
+        await page.locator('input[name="name"]').fill(containerName);
+        const containerForm = page.locator('form');
+        await containerForm.locator('input[name="isContainer"]').scrollIntoViewIfNeeded();
+        await containerForm.getByText('This item is a container (can hold other items)').click();
+        await containerForm.evaluate((form: HTMLFormElement) => {
+            form.requestSubmit();
+        });
+        await expect(page.getByRole('heading', { name: 'Create New Item' })).not.toBeVisible({ timeout: 10000 });
+
+        await getListItemLocator(page, containerName).click();
+        await expect(page.getByText('No items at this level')).toBeVisible();
+
+        await page.getByRole('button', { name: 'Create Item' }).first().click();
+        await page.locator('input[name="name"]').fill(nestedItemName);
+        const nestedItemForm = page.locator('form');
+        await nestedItemForm.evaluate((form: HTMLFormElement) => {
+            form.requestSubmit();
+        });
+        await expect(page.getByRole('heading', { name: 'Create New Item' })).not.toBeVisible({ timeout: 10000 });
+
+        await expect(getListItemLocator(page, nestedItemName)).toBeVisible();
+    });
+
     test('navigates nested containers with breadcrumb support', async ({ page }) => {
         const rootContainerName = `Storage ${Date.now()}`;
         const childContainerName = `Box ${Date.now()}`;

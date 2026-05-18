@@ -84,6 +84,7 @@ export const App = (): ReactElement => {
     const [location, setLocation] = useLocation();
     const [showCreateItem, setShowCreateItem] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
+    const [currentItemsContainerId, setCurrentItemsContainerId] = useState<string | undefined>();
 
     // Search state
     const [searchQuery, setSearchQuery] = useState('');
@@ -117,6 +118,9 @@ export const App = (): ReactElement => {
     useEffect(() => {
         setItemsViewFilters([]);
         setShowFilterBuilder(false);
+        if (location !== '/' && location !== '/items') {
+            setCurrentItemsContainerId(undefined);
+        }
     }, [location]);
 
     const handleSelectItem = (item: InventoryItem): void => {
@@ -129,7 +133,12 @@ export const App = (): ReactElement => {
 
     const handleCreateItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
         try {
-            await Items.createItem(itemData);
+            const itemDataWithCurrentContainer: RecordInput<InventoryItem> =
+                typeof currentItemsContainerId !== 'undefined' && typeof itemData.containerId === 'undefined'
+                    ? { ...itemData, containerId: currentItemsContainerId }
+                    : itemData;
+
+            await Items.createItem(itemDataWithCurrentContainer);
             setShowCreateItem(false);
         } catch (error) {
             console.error('Failed to create item:', error);
@@ -213,7 +222,8 @@ export const App = (): ReactElement => {
         return [];
     };
 
-    const handleItemsViewNavigate = (_containerId: string | undefined): void => {
+    const handleItemsViewNavigate = (containerId: string | undefined): void => {
+        setCurrentItemsContainerId(containerId);
         // Clear filters when navigating to a different container
         setItemsViewFilters([]);
         setShowFilterBuilder(false);
