@@ -500,7 +500,6 @@ Before committing new tests:
 
 After mastering this workflow:
 
-	1. **Finish touch-optimization refactor (T012b)**: Port the proven Storybook selector and touch-target patterns into `tests/e2e/app/touch-optimization.spec.ts`.
-	2. **Measure performance goals (T021)**: Record Storybook and full-app execution times back in `tasks.md`/`plan.md` when measured.
-	3. **Repair/expand full-app E2E**: Keep porting proven Storybook selectors/page objects into `tests/e2e/app/` and record current app-suite status separately.
-	4. **Maintain documentation**: Update `test-patterns.md`, this quickstart, and the story inventory whenever new patterns or stories become part of the testing contract.
+	1. **Measure performance goals (T021)**: Record Storybook and full-app execution times back in `tasks.md`/`plan.md` when measured.
+	2. **Repair/expand full-app E2E**: Keep porting proven Storybook selectors/page objects into `tests/e2e/app/` and record current app-suite status separately.
+	3. **Maintain documentation**: Update `test-patterns.md`, this quickstart, and the story inventory whenever new patterns or stories become part of the testing contract.

@@ -3,7 +3,7 @@
  * Provides reusable methods for interacting with the inventory app UI.
  */
 
-import type { Page, Locator } from '@playwright/test';
+import { expect, type Page, type Locator } from '@playwright/test';
 
 /**
  * Page Object for the main inventory view.
@@ -30,7 +30,7 @@ export class InventoryPage {
      * Get the "Create Item" button locator.
      */
     get addItemButton(): Locator {
-        return this.page.getByRole('button', { name: /create item/i });
+        return this.page.getByRole('main').getByRole('button', { name: /create item/i });
     }
 
     /**
@@ -158,13 +158,20 @@ export class ItemFormPage {
     }
 
     /**
-     * Get the "Is Container" checkbox.
+     * Get the hidden native "Is Container" checkbox input.
      *
-     * NOTE: This uses getByLabel which may not work with Grommet FormField.
-     * If this fails, refactor to use `input[name="isContainer"]` or similar.
+     * Grommet CheckBox renders a hidden native input plus a visible label.
+     * Assert checked state through this input, but use setIsContainer() for interaction.
      */
     get isContainerCheckbox(): Locator {
-        return this.page.getByLabel(/container|location/i);
+        return this.page.locator('input[name="isContainer"]');
+    }
+
+    /**
+     * Get the visible label/touch target for the "Is Container" checkbox.
+     */
+    get isContainerTouchTarget(): Locator {
+        return this.page.getByText('This item is a container (can hold other items)', { exact: true });
     }
 
     /**
@@ -203,6 +210,19 @@ export class ItemFormPage {
     }
 
     /**
+     * Set the "Is Container" checkbox via the visible Grommet label/touch target.
+     */
+    async setIsContainer(isContainer: boolean): Promise<void> {
+        const isCurrentlyChecked = await this.isContainerCheckbox.isChecked();
+
+        if (isCurrentlyChecked !== isContainer) {
+            await this.isContainerTouchTarget.click();
+        }
+
+        await expect(this.isContainerCheckbox).toBeChecked({ checked: isContainer });
+    }
+
+    /**
      * Submit the form using the submit button.
      * Uses Playwright's auto-waiting to ensure button is clickable.
      */
@@ -221,12 +241,8 @@ export class ItemFormPage {
      * if context-specific verification needed.
      */
     async expectSuccess(): Promise<void> {
-        // Default: check that name field is empty (form was cleared after submit)
-        await this.page.waitForTimeout(500); // Brief wait for form to process
-        const nameValue = await this.nameInput.inputValue();
-        if (nameValue !== '') {
-            throw new Error(`Expected form to clear after submission, but name field still contains: "${nameValue}"`);
-        }
+        // Default: check that name field is empty (form was cleared after submit).
+        await expect(this.nameInput).toHaveValue('');
     }
 
     /**
@@ -242,7 +258,7 @@ export class ItemFormPage {
         }
 
         if (data.isContainer) {
-            await this.isContainerCheckbox.check();
+            await this.setIsContainer(true);
         }
     }
 

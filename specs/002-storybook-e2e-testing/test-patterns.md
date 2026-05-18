@@ -560,7 +560,7 @@ test('should submit form', async ({ page }) => {
 
 ## Pattern 7: TouchButton Interaction Pattern
 
-**Status**: ✅ Validated in Storybook (T010) | 🔄 Full touch-optimization refactor remains tracked separately (T012b)
+**Status**: ✅ Validated in Storybook (T010) | ✅ Ported to touch-optimization app coverage (T012b)
 
 **Use Case**: Testing touch-optimized button states and variants without coupling to layout-specific visual details.
 
@@ -662,7 +662,7 @@ expect(box?.height).toBeGreaterThanOrEqual(44);
 | Double-Submit Prevention | ✅ Validated | T014, T011 | T012 | Requires realistic delays |
 | Grommet CheckBox | ✅ Validated | T014 | N/A | Hidden native input |
 | Context-Agnostic Page Objects | ✅ Core Pattern | All | All | Navigation differences |
-| TouchButton Interaction | ✅ Validated | T010 | T012b pending | Separate semantic behavior from visual/touch metrics |
+| TouchButton Interaction | ✅ Validated | T010 | T012b | Separate semantic behavior from visual/touch metrics |
 | Deterministic Interaction Harness | ✅ Validated | T015, T016 | N/A | DOM-visible callback assertions |
 | Grommet CheckBox Touch Target | ✅ Validated | T016 | N/A | Hidden native input and undersized visible labels |
 

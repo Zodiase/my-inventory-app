@@ -167,12 +167,12 @@
   - **Follow-up Watchpoint**: keep selectors aligned if the UI button copy/icon treatment changes again
   - **Notes**: Core routing functionality verified in T017 (spec-003) - URL navigation works correctly
 
-- [ ] T012b [US2] Port proven patterns to touch optimization tests in tests/e2e/app/touch-optimization.spec.ts
-  - Refactor existing tests to use proven selector patterns
-  - Replace any getByLabel() with name attribute selectors
-  - Ensure tests use Playwright auto-waiting (no fixed timeouts)
-  - Test: "Long-press context menu"
-  - Test: "Swipe-back navigation"
+- [x] T012b [US2] Port proven patterns to touch optimization tests in tests/e2e/app/touch-optimization.spec.ts
+  - Refactored touch optimization tests to use shared page objects, role/name selectors, and `data-testid` selectors for touch-specific probes
+  - Removed the remaining actual `getByLabel()` usage from `ItemFormPage`; Grommet checkbox interaction now uses the visible label/touch target while asserting checked state through `input[name="isContainer"]`
+  - Replaced arbitrary fixed waits with Playwright assertions/auto-waiting; the only remaining timeout is encapsulated in the long-press helper because it models the component's gesture threshold
+  - Revalidated long-press context menu and swipe-back navigation in `tests/e2e/app/touch-optimization.spec.ts`
+  - Focused app touch suite passing: 8/8 tests (Green)
 
 ### Page Objects for User Story 2
 
@@ -183,10 +183,10 @@
   - **Pattern compliance**: Uses name/type/data-testid selectors only
   - **Notes**: Additional specialized page objects can be created as needed for specific features
 
-**Checkpoint**: User Story 2 is largely implemented - proven patterns are applied to multiple workflows. Can demonstrate:
+**Checkpoint**: User Story 2 is implemented - proven patterns are applied to multiple workflows. Can demonstrate:
 - ✅ Multiple ComponentTests passing in Storybook
 - ✅ Multiple IntegrationTests using same page objects
-- 🔄 Remaining work captured for touch/mobile interaction coverage (T012b)
+- ✅ Touch/mobile interaction coverage uses proven selector and auto-waiting patterns (T012b)
 
 ---
 
