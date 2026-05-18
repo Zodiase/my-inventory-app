@@ -99,7 +99,7 @@
 - `ui-longpresscontextmenu--touch-targets`
 - `ui-longpresscontextmenu--test-interactions` (deterministic Playwright harness)
 
-**Recommended for US3 Testing** (T015). No Playwright Storybook spec exists yet.
+**Current Playwright coverage**: `tests/e2e/storybook/LongPressContextMenu.spec.ts` (T015 ✅)
 
 ## Additional Available Stories
 
@@ -121,6 +121,15 @@ All stories located in `meteor-app/imports/ui/*.stories.tsx`:
 - SwipeNavigation
 - TagChip
 - TagSelector
+
+### T016 Coverage Additions
+
+- `SearchBar`
+  - Story IDs include `ui-searchbar--test-interactions` for deterministic Playwright coverage
+  - Current Playwright coverage: `tests/e2e/storybook/SearchBar.spec.ts`
+- `TagSelector`
+  - Story IDs include `ui-tagselector--test-interactions` for deterministic Playwright coverage
+  - Current Playwright coverage: `tests/e2e/storybook/TagSelector.spec.ts`
 
 ## Story ID Format
 
@@ -152,4 +161,4 @@ await gotoStory(page, 'ui-itemform', 'create-mode');
 
 - MVP stories exist and are covered for ItemForm; TouchButton and CreateTagDialog also have Storybook Playwright specs.
 - LongPressContextMenu stories are complete; Playwright coverage added via `TestInteractions` harness (T015 ✅).
-- Additional stories remain available for comprehensive coverage in T016; prioritize critical user workflows before visual-only states.
+- SearchBar and TagSelector coverage added for T016; remaining uncovered stories can be prioritized by critical user workflow before visual-only states.

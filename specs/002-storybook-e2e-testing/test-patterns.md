@@ -4,7 +4,7 @@
 
 **Status**: Living document - update as new patterns are discovered
 
-**Last synced**: 2026-05-18 against current Storybook specs (`ItemForm`, `CreateTagDialog`, `TouchButton`) and app E2E helpers.
+**Last synced**: 2026-05-18 against current Storybook specs (`ItemForm`, `CreateTagDialog`, `TouchButton`, `LongPressContextMenu`, `SearchBar`, `TagSelector`) and app E2E helpers.
 
 ---
 
@@ -586,6 +586,72 @@ await page.locator('.sc-aXZVg').click();
 
 ---
 
+## Pattern 8: Deterministic Interaction Harness Stories
+
+**Status**: ✅ Validated in Storybook (T015, T016)
+
+**Use Case**: Testing callback-driven components that do not naturally render callback state in the DOM.
+
+**Problem Solved**: Storybook actions and console logs are useful for humans, but Playwright needs deterministic DOM-visible state for assertions.
+
+### Selectors Used
+
+```typescript
+await gotoStory(page, 'ui-searchbar', 'test-interactions');
+await page.getByRole('textbox', { name: 'Search query' }).fill('camp stove');
+await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
+await expect(page.getByTestId('last-search')).toHaveText('camp stove');
+```
+
+### Harness Requirements
+
+1. Render callback counts and last callback payloads with `data-testid` attributes.
+2. Keep the component under test realistic; do not bypass normal user interactions.
+3. Use accessible selectors for user-facing controls, and `data-testid` only for harness state or intentional touch-target probes.
+
+### References
+
+- Validated in: `tests/e2e/storybook/LongPressContextMenu.spec.ts` (T015)
+- Validated in: `tests/e2e/storybook/SearchBar.spec.ts` (T016)
+- Validated in: `tests/e2e/storybook/TagSelector.spec.ts` (T016)
+
+---
+
+## Pattern 9: Grommet CheckBox Touch Target Pattern
+
+**Status**: ✅ Validated in Storybook (T016)
+
+**Use Case**: Verifying touch-friendly checkbox rows when Grommet renders the native checkbox input as hidden.
+
+**Problem Solved**: `getByRole('checkbox').check()` can resolve to a hidden native input. The visible label may also be smaller than the required 44px touch target unless the label content is explicitly sized.
+
+### Selectors Used
+
+```typescript
+await page.getByTestId('tag-touch-target-tag2').click();
+const box = await page.getByTestId('tag-touch-target-tag2').boundingBox();
+expect(box?.height).toBeGreaterThanOrEqual(44);
+```
+
+### Component Pattern
+
+```tsx
+<CheckBox
+  label={
+    <Box data-testid={`tag-touch-target-${tag._id}`} justify="center" style={{ minHeight: '44px' }}>
+      <Text>{tag.name}</Text>
+    </Box>
+  }
+/>
+```
+
+### References
+
+- Validated in: `tests/e2e/storybook/TagSelector.spec.ts` (T016)
+- Component: `meteor-app/imports/ui/TagSelector.tsx`
+
+---
+
 ## Pattern Summary Table
 
 | Pattern | Status | Storybook Test | Integration Test | Key Challenge |
@@ -597,6 +663,8 @@ await page.locator('.sc-aXZVg').click();
 | Grommet CheckBox | ✅ Validated | T014 | N/A | Hidden native input |
 | Context-Agnostic Page Objects | ✅ Core Pattern | All | All | Navigation differences |
 | TouchButton Interaction | ✅ Validated | T010 | T012b pending | Separate semantic behavior from visual/touch metrics |
+| Deterministic Interaction Harness | ✅ Validated | T015, T016 | N/A | DOM-visible callback assertions |
+| Grommet CheckBox Touch Target | ✅ Validated | T016 | N/A | Hidden native input and undersized visible labels |
 
 ---
 

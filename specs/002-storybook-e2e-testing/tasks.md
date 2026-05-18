@@ -218,11 +218,12 @@
   - Added `TestInteractions` story to `LongPressContextMenu.stories.tsx` as deterministic test harness
   - Tests: show menu on long press, hide menu on outside click, execute menu action on selection
   - All 3 tests passing (Green)
-- [ ] T016 [P] [US3] Create additional critical component tests
-  - Identify remaining critical components from meteor-app/imports/ui/*.stories.tsx
-  - Create ComponentTests for each
-  - Follow proven patterns from US1 and US2
-  - Document any new patterns discovered
+- [x] T016 [P] [US3] Create additional critical component tests
+  - Added `tests/e2e/storybook/SearchBar.spec.ts` for query updates, Enter search, clear behavior, scoped label, and clear-button touch target
+  - Added `tests/e2e/storybook/TagSelector.spec.ts` for tag toggling, create callback, and 44px tag touch targets
+  - Added deterministic `TestInteractions` stories for SearchBar and TagSelector
+  - Improved TagSelector label touch targets to expose a real 44px clickable area
+  - All 6 tests passing (Green)
 
 ### Process & Documentation for User Story 3
 
@@ -246,8 +247,9 @@
 
 **Checkpoint Target**: Once T015, T016, and T018 are complete, User Story 3 will provide comprehensive component coverage. Current state:
 - ✅ ItemForm has extended Storybook coverage
+- ✅ LongPressContextMenu, SearchBar, and TagSelector have Storybook Playwright coverage
 - ✅ Pattern documentation exists for newly proven workflows
-- 🔄 Additional component coverage and quickstart refresh remain open
+- 🔄 Quickstart refresh remains open
 
 ---
 

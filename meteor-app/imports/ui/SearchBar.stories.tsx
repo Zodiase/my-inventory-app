@@ -171,6 +171,43 @@ export const Interactive: Story = {
 };
 
 /**
+ * Deterministic test harness for Playwright component tests.
+ */
+export const TestInteractions: Story = {
+    render: () => {
+        const [query, setQuery] = useState('');
+        const [lastSearch, setLastSearch] = useState('');
+        const [searchCount, setSearchCount] = useState(0);
+        const [clearCount, setClearCount] = useState(0);
+
+        return (
+            <div style={{ maxWidth: '600px' }}>
+                <SearchBar
+                    value={query}
+                    searchMode="scoped"
+                    scopeLabel="In: Garage"
+                    onChange={setQuery}
+                    onSearch={(nextQuery) => {
+                        setLastSearch(nextQuery);
+                        setSearchCount((count) => count + 1);
+                    }}
+                    onClear={() => {
+                        setQuery('');
+                        setClearCount((count) => count + 1);
+                    }}
+                />
+                <div style={{ marginTop: '16px' }}>
+                    <div data-testid="current-query">{query || '(empty)'}</div>
+                    <div data-testid="last-search">{lastSearch || '(none)'}</div>
+                    <div data-testid="search-count">{searchCount}</div>
+                    <div data-testid="clear-count">{clearCount}</div>
+                </div>
+            </div>
+        );
+    },
+};
+
+/**
  * Long scope label to test text wrapping
  */
 export const LongScopeLabel: Story = {

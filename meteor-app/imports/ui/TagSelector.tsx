@@ -100,7 +100,15 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                             style={{ minHeight: '44px' }}
                         >
                             <CheckBox
-                                label={tag.name}
+                                label={
+                                    <Box
+                                        data-testid={`tag-touch-target-${tag._id}`}
+                                        justify="center"
+                                        style={{ minHeight: '44px' }}
+                                    >
+                                        <Text>{tag.name}</Text>
+                                    </Box>
+                                }
                                 checked={selectedTagIds.includes(tag._id)}
                                 onChange={(event) => {
                                     handleToggle(tag._id, event.target.checked);
