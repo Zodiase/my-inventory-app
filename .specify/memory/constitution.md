@@ -1,26 +1,21 @@
 <!--
-Sync Impact Report - v1.0.0 Initial Constitution
-=================================================
-Version Change: [TEMPLATE] → 1.0.0
-Date: 2025-10-20
-Rationale: MINOR bump - Initial constitution establishment with 5 core principles
+Sync Impact Report - v1.1.0 Constitution Update
+===============================================
+Version Change: 1.0.0 → 1.1.0
+Date: 2026-05-18
+Rationale: MINOR bump - clarify the multi-layer testing strategy now used in the project and align quality gates with documented npm workflows
 
 Modified Principles:
-- Added: I. Type Safety & Strict Typing (NON-NEGOTIABLE)
-- Added: II. Test-Driven Development
-- Added: III. User Experience Consistency
-- Added: IV. Performance Requirements
-- Added: V. Code Documentation & Maintainability
+- Updated: II. Test-Driven Development
 
-Added Sections:
+Modified Sections:
 - Technology Stack Standards
 - Quality Gates & Review Process
-- Governance
 
 Templates Status:
-- ✅ plan-template.md: Technical Context fields aligned with principles
-- ✅ spec-template.md: Requirements sections support all principles
-- ✅ tasks-template.md: Task categorization supports principle-driven tasks
+- ✅ plan-template.md: Technical Context fields remain aligned with principles
+- ✅ spec-template.md: Requirements sections still support principle-driven testing decisions
+- ✅ tasks-template.md: Task categorization still supports test-first execution
 
 Follow-up TODOs: None
 -->
@@ -45,17 +40,18 @@ Follow-up TODOs: None
 
 ### II. Test-Driven Development
 
-**Rule**: All business logic and data transformations MUST have test coverage:
+**Rule**: All business logic and user-critical workflows MUST have test coverage appropriate to the layer being exercised:
 - **Unit tests**: Pure functions, utility methods, data transformations
 - **Integration tests**: Meteor Methods, Collection operations, reactive data flows
-- **Test framework**: Mocha + Chai + Sinon following Meteor best practices
+- **Browser workflow tests**: Playwright for Storybook component-isolation tests and full-app E2E flows
+- **Test framework selection**: Use Mocha + Chai + Sinon for Meteor/unit-style coverage and Playwright for browser-driven UI coverage
 
 **Rationale**: Tests provide confidence during refactoring, document expected behavior, and catch regressions early. The hierarchical tag system and optimistic locking patterns require robust testing.
 
 **Enforcement**:
 - New features MUST include tests before implementation approval
 - Bug fixes MUST include regression tests
-- Tests MUST be runnable via `npm test` and pass consistently
+- Tests MUST be runnable through documented npm scripts and pass consistently in the relevant scope (`npm test` for Meteor tests, `npm run test:e2e:*` for Playwright suites)
 - Magic numbers are allowed in tests (per ESLint config)
 
 ### III. User Experience Consistency
@@ -113,7 +109,7 @@ Follow-up TODOs: None
 - **Language**: TypeScript (strict mode)
 - **UI**: React 18+ with functional components and hooks
 - **Styling**: styled-components + Grommet
-- **Testing**: Mocha + Chai + Sinon
+- **Testing**: Mocha + Chai + Sinon for Meteor tests; Playwright for browser automation, Storybook-first component testing, and full-app E2E
 - **Linting**: ESLint (flat config) with eslint-config-love
 - **Formatting**: Prettier
 
@@ -133,11 +129,13 @@ Follow-up TODOs: None
 **Pre-Commit Requirements**:
 1. `npm run check:type` passes (TypeScript compilation)
 2. `npm run check:code-style` passes (Prettier + ESLint)
-3. `npm test` passes (all unit tests)
+3. Relevant automated tests pass for the change scope:
+   - `npm test` for Meteor/unit/integration logic changes
+   - `npm run test:e2e:storybook` and/or `npm run test:e2e:app` for browser/UI workflow changes
 
 **Code Review Checklist**:
 - [ ] Type safety: No `any` without justification
-- [ ] Testing: New functionality has test coverage
+- [ ] Testing: New functionality has coverage at the appropriate layer (Meteor tests and/or Playwright)
 - [ ] Performance: Updates use `strictSelector`, queries are efficient
 - [ ] UX: User actions have feedback, errors are handled gracefully
 - [ ] Documentation: Complex logic has comments/JSDoc
@@ -171,4 +169,4 @@ Any introduction of new patterns or deviation from conventions MUST be:
 
 **Runtime Guidance**: See `.github/copilot-instructions.md` for AI-assisted development guidance aligned with these principles.
 
-**Version**: 1.0.0 | **Ratified**: 2025-10-20 | **Last Amended**: 2025-10-20
+**Version**: 1.1.0 | **Ratified**: 2025-10-20 | **Last Amended**: 2026-05-18

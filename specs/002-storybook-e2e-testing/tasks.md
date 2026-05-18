@@ -7,6 +7,8 @@
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story. Each user story can be implemented and verified independently.
 
+**Status Note**: This file was re-synced on 2026-05-18 after significant implementation work landed outside the original Speckit command flow.
+
 ## Format: `[ID] [P?] [Story] Description`
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
@@ -21,7 +23,7 @@
 - [X] T001 Configure Playwright with Storybook project in playwright.config.js
   - Add `storybook-chromium` project targeting http://localhost:6006
   - Set testMatch pattern: `/tests\/e2e\/storybook\/.*\.spec\.ts/`
-  - Do NOT add webServer config (Storybook runs manually per research.md Q1)
+  - Support both Playwright-managed webServer startup and manual `PLAYWRIGHT_SKIP_WEBSERVER` local workflows
 - [X] T002 Create test directory structure
   - Create `tests/e2e/storybook/` for component tests
   - Create `tests/e2e/app/` (if doesn't exist) for integration tests
@@ -74,18 +76,17 @@
 
 - [X] T007 [P] [US1] Create ItemForm component test in tests/e2e/storybook/ItemForm.spec.ts
   - Test: "should fill and submit form successfully"
-    - Navigate to `http://localhost:6006/iframe.html?id=itemform--default&viewMode=story`
+    - Navigate to `http://localhost:6006/iframe.html?id=ui-itemform--test-submit-behavior&viewMode=story`
     - Use ItemFormPage page object
     - Fill name and description
     - Submit form
     - Verify success (DOM assertion or Storybook action)
-  - Test: "should show validation error for empty name"
+  - Test: "should show validation state for empty name"
     - Navigate to story
-    - Submit without filling
-    - Expect validation error message
-  - Test: "should clear form after successful submission"
-    - Submit valid form
-    - Expect fields cleared
+    - Verify submit is disabled until required input is provided
+  - Test: "should prevent double-submission in isolation"
+    - Use the test story with delayed submit handling
+    - Verify repeated clicks only invoke the submit callback once
 
 ### Integration Tests for User Story 1 (Porting Proven Patterns)
 
@@ -141,14 +142,14 @@
   - Document any new patterns discovered
   - **COMPLETED**: 5 passing tests validate button interactions, variants, disabled state, and icon support
 
-### Integration Tests for User Story 2
+### Additional Storybook and Integration Coverage for User Story 2
 
-- [x] T011 [US2] CreateTagForm Component Tests (Storybook)
+- [X] T011 [US2] CreateTagForm Component Tests (Storybook)
   - **Status**: Complete ✅ (6/6 tests passing)
   - **Test File**: `tests/e2e/storybook/CreateTagDialog.spec.ts`
   - **Key Achievement**: Separated CreateTagForm (testable component) from CreateTagDialog (Layer wrapper)
   - **Pattern**: Grommet Dialog Form Submission Pattern
-  - **Implemented**: FR-070 double-submit prevention with useRef
+  - **Implemented**: double-submit prevention with `useRef`
   - **Fixed**: Grommet form validation (matching name attributes on FormField/TextInput)
   - **Tests**: Form submission ✅ | Empty validation ✅ | Double-submit prevention ✅ | Error display ✅ | Loading state ✅ | Cancel ✅
 
@@ -163,15 +164,15 @@
     - **Resolution**: Spec-003 implemented Wouter v3 client-side routing
     - Tests can now use `tagsPage.goto('/tags')` successfully
     - Navigation buttons use `<Link>` components with proper href attributes
-  - **Remaining Work**: UI selector maintenance (tests expect "Add Tag" button but UI shows "+")
+  - **Follow-up Watchpoint**: keep selectors aligned if the UI button copy/icon treatment changes again
   - **Notes**: Core routing functionality verified in T017 (spec-003) - URL navigation works correctly
 
 - [ ] T012b [US2] Port proven patterns to touch optimization tests in tests/e2e/app/touch-optimization.spec.ts
   - Refactor existing tests to use proven selector patterns
   - Replace any getByLabel() with name attribute selectors
   - Ensure tests use Playwright auto-waiting (no fixed timeouts)
-  - Test: "Long-press context menu" (T053b from existing spec)
-  - Test: "Swipe-back navigation" (T053d from existing spec)
+  - Test: "Long-press context menu"
+  - Test: "Swipe-back navigation"
 
 ### Page Objects for User Story 2
 
@@ -182,10 +183,10 @@
   - **Pattern compliance**: Uses name/type/data-testid selectors only
   - **Notes**: Additional specialized page objects can be created as needed for specific features
 
-**Checkpoint**: User Story 2 complete - proven patterns applied to multiple workflows. Can demonstrate:
+**Checkpoint**: User Story 2 is largely implemented - proven patterns are applied to multiple workflows. Can demonstrate:
 - ✅ Multiple ComponentTests passing in Storybook
 - ✅ Multiple IntegrationTests using same page objects
-- ✅ Test development time reduced (measured against previous debugging time)
+- 🔄 Remaining work captured for touch/mobile interaction coverage (T012b)
 
 ---
 
@@ -232,7 +233,7 @@
     1. Grommet Form Submission Pattern (validated in T007, T008, T014)
     2. Grommet Dialog Form Submission Pattern (validated in T011, T012)
     3. Grommet List Item Selection Pattern (validated in items-and-tags tests)
-    4. Double-Submit Prevention Testing (FR-070) (validated in T014, T011, T012)
+    4. Double-Submit Prevention Testing (validated in T014, T011, T012)
     5. Grommet CheckBox Interaction Pattern (validated in T014)
     6. Context-Agnostic Page Objects (core pattern enabling two-phase strategy)
   - **Content Includes**: Selectors, interaction sequences, assertions, known issues, examples
@@ -243,10 +244,10 @@
   - Document any edge cases discovered during US3
   - Update debugging section with new common issues
 
-**Checkpoint**: User Story 3 complete - comprehensive component coverage established. Can demonstrate:
-- ✅ All critical UI components have Storybook tests
-- ✅ Component regressions caught immediately
-- ✅ New component workflow documented and followed
+**Checkpoint Target**: Once T015, T016, and T018 are complete, User Story 3 will provide comprehensive component coverage. Current state:
+- ✅ ItemForm has extended Storybook coverage
+- ✅ Pattern documentation exists for newly proven workflows
+- 🔄 Additional component coverage and quickstart refresh remain open
 
 ---
 
@@ -292,7 +293,7 @@
   - **Location**: /home/wsl/workspace/my-inventory-app/specs/002-storybook-e2e-testing/ci-cd.md
   - **Workflows Covered**: Two-stage pipeline, parallel execution, conditional execution based on file changes
 
-**Final Checkpoint**: All phases complete - two-phase testing strategy fully implemented
+**Implementation Snapshot**: Core two-phase testing strategy is implemented, with a small follow-up backlog still open in this file
 
 ---
 
@@ -362,7 +363,7 @@ graph TD
 
 ### Full Implementation:
 **All Phases (US1 + US2 + US3 + Polish)**
-- Total tasks: T001-T022 (22 tasks)
+- Total tasks: 23 tracked tasks (T001-T022 plus T012b)
 - Delivers: Complete two-phase testing strategy with comprehensive coverage
 - Validates: All success criteria (SC-001 through SC-007)
 - Timeline: ~1-2 weeks
@@ -371,11 +372,11 @@ graph TD
 
 ## Task Summary
 
-**Total Tasks**: 22
+**Total Tasks**: 23
 - Phase 1 (Setup): 3 tasks
 - Phase 2 (Foundation): 3 tasks
 - Phase 3 (US1 - MVP): 3 tasks
-- Phase 4 (US2): 4 tasks
+- Phase 4 (US2): 5 tasks
 - Phase 5 (US3): 5 tasks
 - Phase 6 (Polish): 4 tasks
 
@@ -383,7 +384,7 @@ graph TD
 
 **User Story Breakdown**:
 - US1 (Validate Approach): 3 tasks (T007-T009)
-- US2 (Port Patterns): 4 tasks (T010-T013)
+- US2 (Port Patterns): 5 tasks (T010-T013, T012b)
 - US3 (Establish Coverage): 5 tasks (T014-T018)
 - Shared infrastructure: 6 tasks (T001-T006)
 - Polish: 4 tasks (T019-T022)

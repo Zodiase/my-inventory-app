@@ -1,8 +1,8 @@
 # Feature Specification: Storybook-First E2E Testing Strategy
 
-**Feature Branch**: `002-storybook-e2e-testing`  
-**Created**: November 27, 2025  
-**Status**: Draft  
+**Feature Branch**: `002-storybook-e2e-testing`
+**Created**: November 27, 2025
+**Status**: In Progress (implementation partially completed outside Speckit workflows)
 **Input**: User description: "Create a two-phase testing strategy for E2E tests: Phase 1 tests isolated components in Storybook using Playwright to validate testing strategies and selectors work in isolation. Phase 2 ports proven testing code to test the full Meteor app. This addresses current E2E test failures where we can't determine if issues are component bugs, Playwright selector problems, or app integration issues. The goal is to establish reliable component-level tests in Storybook first, then confidently apply those patterns to full end-to-end testing."
 
 ## User Scenarios & Testing *(mandatory)*
@@ -69,7 +69,7 @@ As a test engineer, I need comprehensive Storybook tests for all critical UI com
 - **FR-001**: Test framework MUST be able to run Playwright tests against both Storybook and Meteor app using the same test code structure
 - **FR-002**: Storybook stories MUST provide isolated test environments where components can be tested without full app dependencies
 - **FR-003**: Tests MUST clearly distinguish between component failures and integration failures through error messages and test organization
-- **FR-004**: Test selectors MUST be consistent between Storybook and full app environments
+- **FR-004**: Test selectors MUST be reusable between Storybook and full app environments, or any exceptions MUST be documented in the shared test pattern catalog
 - **FR-005**: Component tests MUST verify all critical interactions: form submission, button clicks, input filling, checkbox toggling
 - **FR-006**: Test suite MUST include both component-level tests (Storybook) and integration tests (full app) for critical user paths
 - **FR-007**: Test failures MUST provide clear context about which layer failed (component vs integration vs test infrastructure)
@@ -89,10 +89,10 @@ As a test engineer, I need comprehensive Storybook tests for all critical UI com
 ### Measurable Outcomes
 
 - **SC-001**: Component-level tests in Storybook have 100% pass rate for all tested interaction patterns before porting to full E2E tests
-- **SC-002**: Test development time reduces by 50% when using proven Storybook patterns vs debugging failing E2E tests directly
-- **SC-003**: 90% of selectors and interaction patterns that work in Storybook successfully work in full app tests without modification
-- **SC-004**: Test failure root cause identification time reduces from hours to minutes by isolating failures to component vs integration layer
-- **SC-005**: Zero ambiguity about whether test failures indicate component bugs, selector issues, or integration problems
+- **SC-002**: Each workflow considered "ported" has at least one Storybook test and one full-app test using the same page object or documented selector pattern
+- **SC-003**: At least 90% of selectors and interaction patterns validated in Storybook work in the corresponding full-app tests without modification; any exceptions are documented in `test-patterns.md`
+- **SC-004**: For each covered workflow, the failing layer can be identified from a single test run by whether the Storybook suite, the full-app suite, or shared test helpers fail
+- **SC-005**: Covered workflows are organized so component-level failures and integration-level failures are reported in separate suites without requiring manual repro in both environments
 - **SC-006**: All critical user paths have both component-level and integration-level test coverage
 - **SC-007**: New components include Storybook tests before integration into full app, preventing untested code from reaching E2E tests
 
@@ -101,7 +101,7 @@ As a test engineer, I need comprehensive Storybook tests for all critical UI com
 ### In Scope
 
 - Setting up Playwright to test Storybook pages
-- Creating component-level tests for existing critical components (ItemForm, TouchButton, LongPressContextMenu)
+- Creating component-level tests for existing critical components and dialog/form workflows (ItemForm, TouchButton, CreateTagDialog, LongPressContextMenu)
 - Documenting test patterns that work reliably in both Storybook and full app
 - Converting proven Storybook test code to full E2E tests for critical user paths
 - Establishing test organization structure that clearly separates component and integration tests
