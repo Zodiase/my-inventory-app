@@ -167,12 +167,12 @@
   - **Follow-up Watchpoint**: keep selectors aligned if the UI button copy/icon treatment changes again
   - **Notes**: Core routing functionality verified in T017 (spec-003) - URL navigation works correctly
 
-- [ ] T012b [US2] Port proven patterns to touch optimization tests in tests/e2e/app/touch-optimization.spec.ts
-  - Refactor existing tests to use proven selector patterns
-  - Replace any getByLabel() with name attribute selectors
-  - Ensure tests use Playwright auto-waiting (no fixed timeouts)
-  - Test: "Long-press context menu"
-  - Test: "Swipe-back navigation"
+- [x] T012b [US2] Port proven patterns to touch optimization tests in tests/e2e/app/touch-optimization.spec.ts
+  - Refactored touch optimization tests to use shared page objects, role/name selectors, and `data-testid` selectors for touch-specific probes
+  - Removed the remaining actual `getByLabel()` usage from `ItemFormPage`; Grommet checkbox interaction now uses the visible label/touch target while asserting checked state through `input[name="isContainer"]`
+  - Replaced arbitrary fixed waits with Playwright assertions/auto-waiting; the only remaining timeout is encapsulated in the long-press helper because it models the component's gesture threshold
+  - Revalidated long-press context menu and swipe-back navigation in `tests/e2e/app/touch-optimization.spec.ts`
+  - Focused app touch suite passing: 8/8 tests (Green)
 
 ### Page Objects for User Story 2
 
@@ -183,10 +183,10 @@
   - **Pattern compliance**: Uses name/type/data-testid selectors only
   - **Notes**: Additional specialized page objects can be created as needed for specific features
 
-**Checkpoint**: User Story 2 is largely implemented - proven patterns are applied to multiple workflows. Can demonstrate:
+**Checkpoint**: User Story 2 is implemented - proven patterns are applied to multiple workflows. Can demonstrate:
 - ✅ Multiple ComponentTests passing in Storybook
 - ✅ Multiple IntegrationTests using same page objects
-- 🔄 Remaining work captured for touch/mobile interaction coverage (T012b)
+- ✅ Touch/mobile interaction coverage uses proven selector and auto-waiting patterns (T012b)
 
 ---
 
@@ -218,11 +218,12 @@
   - Added `TestInteractions` story to `LongPressContextMenu.stories.tsx` as deterministic test harness
   - Tests: show menu on long press, hide menu on outside click, execute menu action on selection
   - All 3 tests passing (Green)
-- [ ] T016 [P] [US3] Create additional critical component tests
-  - Identify remaining critical components from meteor-app/imports/ui/*.stories.tsx
-  - Create ComponentTests for each
-  - Follow proven patterns from US1 and US2
-  - Document any new patterns discovered
+- [x] T016 [P] [US3] Create additional critical component tests
+  - Added `tests/e2e/storybook/SearchBar.spec.ts` for query updates, Enter search, clear behavior, scoped label, and clear-button touch target
+  - Added `tests/e2e/storybook/TagSelector.spec.ts` for tag toggling, create callback, and 44px tag touch targets
+  - Added deterministic `TestInteractions` stories for SearchBar and TagSelector
+  - Improved TagSelector label touch targets to expose a real 44px clickable area
+  - All 6 tests passing (Green)
 
 ### Process & Documentation for User Story 3
 
@@ -239,15 +240,16 @@
   - **Content Includes**: Selectors, interaction sequences, assertions, known issues, examples
   - **Reference Tests**: ItemFormPage, TouchButton, CreateTagDialog
   - **Anti-Patterns**: Documented common mistakes to avoid
-- [ ] T018 [US3] Update quickstart.md with additional examples
-  - Add examples for newly tested components
-  - Document any edge cases discovered during US3
-  - Update debugging section with new common issues
+- [x] T018 [US3] Update quickstart.md with additional examples
+  - Added SearchBar and TagSelector examples showing deterministic harness-story assertions and visible touch-target validation
+  - Documented US3 edge cases for callback-driven stories, Grommet hidden checkbox inputs, and long-press gesture timing
+  - Updated debugging, best-practices, quick-reference, and next-step guidance to reflect T015/T016 outcomes
 
-**Checkpoint Target**: Once T015, T016, and T018 are complete, User Story 3 will provide comprehensive component coverage. Current state:
+**Checkpoint Target**: T015, T016, and T018 are complete; User Story 3 now provides comprehensive component coverage. Current state:
 - ✅ ItemForm has extended Storybook coverage
+- ✅ LongPressContextMenu, SearchBar, and TagSelector have Storybook Playwright coverage
 - ✅ Pattern documentation exists for newly proven workflows
-- 🔄 Additional component coverage and quickstart refresh remain open
+- ✅ Quickstart examples and debugging guidance are refreshed
 
 ---
 
@@ -272,11 +274,12 @@
     - Link to comprehensive quickstart guide
   - **Location**: /home/wsl/workspace/my-inventory-app/README.md
   - **Benefits**: Clear onboarding for new developers, documented testing workflow
-- [ ] T021 Validate test performance goals from plan.md
-  - Measure ComponentTest execution time (goal: <30s per story)
-  - Measure full E2E suite time (goal: <5min)
-  - Document actual performance in plan.md
-  - Identify optimization opportunities if goals not met
+- [X] T021 Validate test performance goals from plan.md
+  - **Status**: COMPLETED ✅
+  - **Storybook suite**: `npx playwright test tests/e2e/storybook --project=storybook-chromium --reporter=line` → 30 passed, 3 skipped; 51.5s reported / 52s wall-clock
+  - **Per-story check**: JSON reporter parse found slowest individual Storybook test/story at 1.36s (`LongPressContextMenu` action-selection test), below the <30s goal
+  - **Full app suite**: `npx playwright test tests/e2e/app --project=chromium --reporter=line` → 45 passed; 1.9m reported / 113s wall-clock, below the <5min goal
+  - **Optimization notes**: No blocking optimization needed; optional future improvement is splitting Playwright `webServer` startup by project so app-only runs do not start Storybook
 - [X] T022 [P] Create CI/CD guidance in specs/002-storybook-e2e-testing/ci-cd.md
   - **Status**: COMPLETED ✅
   - **Content Created**:
@@ -293,7 +296,7 @@
   - **Location**: /home/wsl/workspace/my-inventory-app/specs/002-storybook-e2e-testing/ci-cd.md
   - **Workflows Covered**: Two-stage pipeline, parallel execution, conditional execution based on file changes
 
-**Implementation Snapshot**: Core two-phase testing strategy is implemented, with a small follow-up backlog still open in this file
+**Implementation Snapshot**: Core two-phase testing strategy and tracked spec 002 follow-up backlog are complete; draft PR review/merge remains outside this task list
 
 ---
 

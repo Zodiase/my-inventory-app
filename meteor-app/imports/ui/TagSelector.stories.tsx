@@ -286,6 +286,44 @@ Click checkboxes to select/deselect tags in real-time. The selection count updat
     },
 };
 
+// Story: Deterministic test harness for Playwright component tests
+export const TestInteractions: Story = {
+    render: () => {
+        const testTags = sampleTags.slice(0, 3);
+        const [selectedTagIds, setSelectedTagIds] = useState<string[]>(['tag1']);
+        const [lastToggle, setLastToggle] = useState('');
+        const [createCount, setCreateCount] = useState(0);
+
+        const handleToggleTag = (tagId: string, isSelected: boolean): void => {
+            setSelectedTagIds((current) =>
+                isSelected ? [...current, tagId] : current.filter((selectedTagId) => selectedTagId !== tagId)
+            );
+            setLastToggle(`${tagId}:${isSelected}`);
+        };
+
+        return (
+            <Box gap="medium" width="medium">
+                <TagSelector
+                    availableTags={testTags}
+                    selectedTagIds={selectedTagIds}
+                    onToggleTag={handleToggleTag}
+                    onCreateNewTag={() => {
+                        setCreateCount((count) => count + 1);
+                    }}
+                />
+                <Box gap="small">
+                    <Text size="small" data-testid="last-toggle">
+                        {lastToggle || '(none)'}
+                    </Text>
+                    <Text size="small" data-testid="create-count">
+                        {createCount}
+                    </Text>
+                </Box>
+            </Box>
+        );
+    },
+};
+
 // Story: In a dialog context
 export const InDialogContext: Story = {
     render: () => (

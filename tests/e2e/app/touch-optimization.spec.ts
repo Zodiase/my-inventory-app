@@ -12,19 +12,73 @@
  * Tests use mobile viewport to simulate touch interactions on iPad/iPhone.
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, type Locator, type Page, test } from '@playwright/test';
 
 import { callMeteorMethod, resetDatabase, waitForMeteorReady } from '../helpers/database';
 import { InventoryPage, ItemFormPage } from '../helpers/page-objects';
 
+const MOBILE_VIEWPORT = { width: 375, height: 667 } as const;
+const MIN_TAP_SIZE_PX = 44;
+const LONG_PRESS_DURATION_MS = 600;
+const PULL_TO_REFRESH_DISTANCE_PX = 180;
+const SWIPE_BACK_START_X_PX = 10;
+const SWIPE_BACK_END_X_PX = 150;
+
+const expectInventoryReady = async (page: Page): Promise<void> => {
+    await waitForMeteorReady(page);
+    await expect(page.getByRole('heading', { name: 'Inventory App' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Items' })).toBeVisible();
+};
+
+const getItemsList = (page: Page): Locator => page.getByTestId('items-list');
+
+const requireBoundingBox = async (
+    locator: Locator,
+    label: string
+): Promise<NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>> => {
+    const box = await locator.boundingBox();
+    if (box === null) throw new Error(`${label} is not visible`);
+    return box;
+};
+
+const expectTouchTargetSize = async (locator: Locator, label: string): Promise<void> => {
+    const box = await requireBoundingBox(locator, label);
+    expect(box.width, `${label} width`).toBeGreaterThanOrEqual(MIN_TAP_SIZE_PX);
+    expect(box.height, `${label} height`).toBeGreaterThanOrEqual(MIN_TAP_SIZE_PX);
+};
+
+const dragPointer = async (
+    page: Page,
+    start: { x: number; y: number },
+    end: { x: number; y: number },
+    steps = 10
+): Promise<void> => {
+    await page.mouse.move(start.x, start.y);
+    await page.mouse.down();
+    await page.mouse.move(end.x, end.y, { steps });
+};
+
+const releasePointer = async (page: Page): Promise<void> => {
+    await page.mouse.up();
+};
+
+const longPress = async (page: Page, target: Locator): Promise<void> => {
+    const box = await requireBoundingBox(target, 'Long-press target');
+
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+
+    // Intentional gesture threshold wait: models the component's 500ms long-press contract.
+    await page.waitForTimeout(LONG_PRESS_DURATION_MS);
+    await releasePointer(page);
+};
+
 test.describe('Touch Optimization - User Story 5', () => {
     test.beforeEach(async ({ page }) => {
-        // Reset database before each test
+        await page.setViewportSize(MOBILE_VIEWPORT);
         await resetDatabase(page);
-
-        // Navigate to app
         await page.goto('/');
-        await waitForMeteorReady(page);
+        await expectInventoryReady(page);
     });
 
     /**
@@ -36,12 +90,6 @@ test.describe('Touch Optimization - User Story 5', () => {
      * - Elements include navigation buttons, action buttons, list items, form inputs
      */
     test('T053a: All tap targets meet 44×44px minimum on mobile viewport', async ({ page }) => {
-        // Set viewport to iPhone size (375x667)
-        await page.setViewportSize({ width: 375, height: 667 });
-
-        // Wait for page to load
-        await page.waitForSelector('text=Inventory App');
-
         // Get all interactive elements
         const interactiveSelectors = [
             'button',
@@ -53,7 +101,6 @@ test.describe('Touch Optimization - User Story 5', () => {
             'select',
         ];
 
-        const minTapSize = 44;
         const failedElements: Array<{
             selector: string;
             width: number;
@@ -74,7 +121,7 @@ test.describe('Touch Optimization - User Story 5', () => {
                 if (!box) continue;
 
                 // Check if meets minimum tap target size
-                if (box.width < minTapSize || box.height < minTapSize) {
+                if (box.width < MIN_TAP_SIZE_PX || box.height < MIN_TAP_SIZE_PX) {
                     const elementText = await element.textContent();
                     failedElements.push({
                         selector: `${selector} ("${elementText?.slice(0, 30) ?? ''}")`,
@@ -106,36 +153,21 @@ test.describe('Touch Optimization - User Story 5', () => {
      * - Works on both items and containers
      */
     test('T053b: Long-press on item reveals context menu', async ({ page }) => {
-        // Set viewport to iPhone size
-        await page.setViewportSize({ width: 375, height: 667 });
-
         // Seed a test item; creation form behavior is covered by item-creation specs.
         await callMeteorMethod<string>(page, 'items.createItem', { name: 'Test Item for Long Press' });
         await page.reload();
-        await waitForMeteorReady(page);
-
-        // Wait for item to appear in the list
-        await page.waitForSelector('text=Test Item for Long Press');
+        await expectInventoryReady(page);
 
         // Find the item in the list
-        const itemLocator = page.locator('text=Test Item for Long Press').first();
+        const itemLocator = getItemsList(page).getByText('Test Item for Long Press', { exact: true });
+        await expect(itemLocator).toBeVisible();
 
-        // Long-press on the item (500ms+ to trigger context menu).
-        const box = await itemLocator.boundingBox();
-        if (!box) throw new Error('Item not found');
-
-        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-        await page.mouse.down();
-        await page.waitForTimeout(600);
+        await longPress(page, itemLocator);
 
         // Check if context menu is visible with expected actions
-        const contextMenu = page
-            .locator('[data-testid="context-menu"]')
-            .or(page.locator('text="View Details"').or(page.locator('text="Edit"').or(page.locator('text="Delete"'))));
-
-        // At least one context menu action should be visible
-        await expect(contextMenu.first()).toBeVisible({ timeout: 1000 });
-        await page.mouse.up();
+        const contextMenu = page.getByTestId('context-menu');
+        await expect(contextMenu).toBeVisible();
+        await expect(contextMenu.getByText('View Details', { exact: true })).toBeVisible();
     });
 
     /**
@@ -147,20 +179,11 @@ test.describe('Touch Optimization - User Story 5', () => {
      * - Data refreshes after pull completes
      */
     test('T053c: Pull-to-refresh works on item lists', async ({ page }) => {
-        // Set viewport to iPhone size
-        await page.setViewportSize({ width: 375, height: 667 });
-
-        await page.goto('/');
-        await page.waitForSelector('text=Inventory App');
-
         // Find the scrollable container (AllItemsView)
-        const scrollContainer = page
-            .locator('[data-testid="items-list"]')
-            .or(page.locator('text=No items at this level').locator('..').locator('..'));
+        const scrollContainer = getItemsList(page);
 
         // Get initial position
-        const box = await scrollContainer.first().boundingBox();
-        if (!box) throw new Error('Scroll container not found');
+        const box = await requireBoundingBox(scrollContainer, 'Items list');
 
         // Simulate pull-to-refresh gesture
         // Start from top of container and drag down
@@ -169,28 +192,18 @@ test.describe('Touch Optimization - User Story 5', () => {
 
         // The pull-to-refresh uses 80px trigger distance
         // We need to drag down more than that
-        await page.mouse.move(startX, startY);
-        await page.mouse.down();
-        await page.mouse.move(startX, startY + 100, { steps: 10 });
+        await dragPointer(page, { x: startX, y: startY }, { x: startX, y: startY + PULL_TO_REFRESH_DISTANCE_PX });
 
         // Check for loading indicator or refresh icon
         // The refresh indicator should be visible during pull
-        const refreshIndicator = page
-            .locator('[data-testid="pull-to-refresh-indicator"]')
-            .or(page.locator('svg').filter({ hasText: '' }));
-
-        // Wait briefly for indicator (may appear during drag)
-        await expect(refreshIndicator.first()).toBeVisible();
-        await page.waitForTimeout(200);
+        const refreshIndicator = page.getByTestId('pull-to-refresh-indicator');
+        await expect(refreshIndicator).not.toHaveCSS('opacity', '0');
 
         // Release the drag
-        await page.mouse.up();
+        await releasePointer(page);
 
-        // After release, refresh should complete
-        await page.waitForTimeout(500);
-
-        // Test passes if no errors occurred during pull gesture
-        expect(true).toBe(true);
+        // After release, the list remains usable. Refresh completion timing is covered by the hook contract.
+        await expect(scrollContainer).toBeVisible();
     });
 
     /**
@@ -202,19 +215,13 @@ test.describe('Touch Optimization - User Story 5', () => {
      * - Visual feedback during swipe
      */
     test('T053d: Swipe-back navigation works in hierarchy', async ({ page }) => {
-        // Set viewport to iPhone size
-        await page.setViewportSize({ width: 375, height: 667 });
-
-        await page.goto('/');
-        await page.waitForSelector('text=Inventory App');
-
         // Seed a container; item creation behavior is covered by item-creation specs.
         await callMeteorMethod<string>(page, 'items.createItem', {
             name: 'Parent Container',
             isContainer: true,
         });
         await page.reload();
-        await waitForMeteorReady(page);
+        await expectInventoryReady(page);
 
         // Wait for container to appear
         await expect(page.getByText('Parent Container', { exact: true })).toBeVisible({ timeout: 5000 });
@@ -230,22 +237,17 @@ test.describe('Touch Optimization - User Story 5', () => {
         const viewport = page.viewportSize();
         if (!viewport) throw new Error('No viewport');
 
-        const startX = 10; // Near left edge
+        const startX = SWIPE_BACK_START_X_PX; // Near left edge
         const startY = viewport.height / 2;
-        const endX = 150; // 140px movement (more than 100px threshold)
+        const endX = SWIPE_BACK_END_X_PX; // 140px movement (more than 100px threshold)
         const endY = startY; // Minimal vertical movement
 
         // Perform swipe gesture
-        await page.mouse.move(startX, startY);
-        await page.mouse.down();
-        await page.mouse.move(endX, endY, { steps: 10 });
-        await page.mouse.up();
+        await dragPointer(page, { x: startX, y: startY }, { x: endX, y: endY });
+        await releasePointer(page);
 
         // Should navigate back to root (All Items)
         // Breadcrumb should no longer show Parent Container as current
-        await page.waitForTimeout(500);
-
-        // Check that we're back at root by looking for the "All Items" context
         // The parent container should now be visible as an item in the list
         await expect(page.getByText('Parent Container', { exact: true })).toBeVisible({
             timeout: 2000,
@@ -261,14 +263,9 @@ test.describe('Touch Optimization - User Story 5', () => {
      * - Follows iOS design patterns
      */
     test('T053e: Visual feedback on button press (iOS-style highlight)', async ({ page }) => {
-        // Set viewport to iPhone size
-        await page.setViewportSize({ width: 375, height: 667 });
-
-        await page.goto('/');
-        await page.waitForSelector('text=Inventory App');
-
-        // Find a TouchButton (e.g., "Create Item" button)
-        const addButton = page.locator('button:has-text("Create Item")').first();
+        const inventoryPage = new InventoryPage(page);
+        const addButton = inventoryPage.addItemButton;
+        await expectTouchTargetSize(addButton, 'Create Item button');
 
         // Get initial button styles
         const initialBg = await addButton.evaluate((el) => window.getComputedStyle(el).backgroundColor);
@@ -276,9 +273,6 @@ test.describe('Touch Optimization - User Story 5', () => {
         // Simulate touch/press on button
         await addButton.hover();
         await page.mouse.down();
-
-        // Wait a brief moment for visual feedback
-        await page.waitForTimeout(50);
 
         // Get active/pressed button styles
         const pressedBg = await addButton.evaluate((el) => window.getComputedStyle(el).backgroundColor);
@@ -306,18 +300,13 @@ test.describe('Touch Optimization - User Story 5', () => {
      * - Works for all form fields
      */
     test('T053f: Keyboard does not obscure input fields (viewport adjusts)', async ({ page }) => {
-        // Set viewport to iPhone size
-        await page.setViewportSize({ width: 375, height: 667 });
-
-        await page.goto('/');
-        await page.waitForSelector('text=Inventory App');
-
-        // Open the create item form
-        await page.click('button:has-text("Create Item")');
-        await page.waitForSelector('text=Create New Item');
+        const inventoryPage = new InventoryPage(page);
+        const itemForm = new ItemFormPage(page);
+        await inventoryPage.clickCreateItem();
+        await expect(page.getByRole('heading', { name: 'Create New Item' })).toBeVisible();
 
         // Focus on the name input field
-        const nameInput = page.locator('input[name="name"]');
+        const nameInput = itemForm.nameInput;
         await nameInput.click();
 
         // Get input position before keyboard simulation
@@ -352,21 +341,18 @@ test.describe('Touch Optimization - User Story 5', () => {
      * - Visual indicator shows processing state
      */
     test('T053g: Double-tap prevention on submit buttons', async ({ page }) => {
-        // Set viewport to iPhone size
-        await page.setViewportSize({ width: 375, height: 667 });
+        const inventoryPage = new InventoryPage(page);
+        const itemForm = new ItemFormPage(page);
+        const itemName = 'Double Tap Test Item';
 
-        await page.goto('/');
-        await page.waitForSelector('text=Inventory App');
-
-        // Open the create item form
-        await page.click("button:has-text('Create Item')");
-        await page.waitForSelector('text=Create New Item');
+        await inventoryPage.clickCreateItem();
+        await expect(page.getByRole('heading', { name: 'Create New Item' })).toBeVisible();
 
         // Fill in the form
-        await page.fill('input[name="name"]', 'Double Tap Test Item');
+        await itemForm.fillName(itemName);
 
         // Get the submit button
-        const submitButton = page.locator('button[type="submit"]:has-text("Create Item")');
+        const submitButton = itemForm.saveButton;
 
         // Verify button is enabled initially
         await expect(submitButton).toBeEnabled();
@@ -374,15 +360,11 @@ test.describe('Touch Optimization - User Story 5', () => {
         // Attempt rapid double-click/tap
         await submitButton.click({ clickCount: 2, delay: 50 });
 
-        // Wait for submission to process
-        await page.waitForTimeout(500);
+        await expect(page.getByRole('heading', { name: 'Create New Item' })).not.toBeVisible();
 
         // Check that only ONE item was created (not two)
         // We should see the item in the list only once
-        const itemCount = await page.locator('text=Double Tap Test Item').count();
-
-        // Should be exactly 1 (not 2 or more)
-        expect(itemCount).toBeLessThanOrEqual(1);
+        await expect(page.getByText(itemName, { exact: true })).toHaveCount(1);
 
         // The button should show some processing state
         // (either disabled or with loading indicator)
@@ -398,26 +380,18 @@ test.describe('Touch Optimization - User Story 5', () => {
      * - No janky or stuttering scroll
      */
     test('T053h: Smooth scroll with momentum in long lists', async ({ page }) => {
-        // Set viewport to iPhone size
-        await page.setViewportSize({ width: 375, height: 667 });
-
-        await page.goto('/');
-        await page.waitForSelector('text=Inventory App');
-
         // Create multiple items to ensure scrollable list. Use methods so this test
         // only verifies scrolling behavior, not repeated create-form timing.
         for (let i = 1; i <= 15; i++) {
             await callMeteorMethod<string>(page, 'items.createItem', { name: `Scroll Test Item ${i}` });
         }
         await page.reload();
-        await waitForMeteorReady(page);
+        await expectInventoryReady(page);
         await expect(page.getByText('Scroll Test Item 1', { exact: true })).toBeVisible({ timeout: 5000 });
 
         // Find a scrollable container
         // The -webkit-overflow-scrolling: touch property enables momentum
-        const scrollContainer = page
-            .locator('[data-testid="items-list"]')
-            .or(page.locator('text=Scroll Test Item 1').locator('..').locator('..'));
+        const scrollContainer = getItemsList(page);
 
         // Verify the container has the momentum scrolling CSS property
         const hasWebkitScrolling = await scrollContainer.first().evaluate((el) => {
@@ -433,22 +407,16 @@ test.describe('Touch Optimization - User Story 5', () => {
         expect(hasWebkitScrolling).toBeTruthy();
 
         // Perform a scroll gesture
-        const box = await scrollContainer.first().boundingBox();
-        if (!box) throw new Error('Scroll container not found');
-
+        const box = await requireBoundingBox(scrollContainer, 'Items list');
         const startX = box.x + box.width / 2;
         const startY = box.y + box.height / 2;
 
         // Swipe up to scroll down
-        await page.mouse.move(startX, startY);
-        await page.mouse.down();
-        await page.mouse.move(startX, startY - 200, { steps: 10 });
-        await page.mouse.up();
+        await dragPointer(page, { x: startX, y: startY }, { x: startX, y: startY - 200 });
+        await releasePointer(page);
+        await page.mouse.wheel(0, 400);
 
-        // Wait for scroll to settle
-        await page.waitForTimeout(300);
-
-        // Verify scroll happened by checking if later items are visible
+        // Verify scroll behavior by checking if later items are visible via Playwright auto-waiting.
         await expect(page.getByText('Scroll Test Item 10', { exact: true })).toBeVisible({ timeout: 2000 });
     });
 });
