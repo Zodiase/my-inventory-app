@@ -117,10 +117,24 @@ This feature establishes a two-phase E2E testing strategy to address the inabili
 **Status**: COMPLETED - `tasks.md` exists and implementation work has progressed substantially outside the original Speckit command flow
 
 **Current execution snapshot (2026-05-18)**:
-- Completed: Playwright Storybook project/config, shared Storybook helpers, context-agnostic page objects, touch-optimization app refactor, ItemForm/TouchButton/CreateTagDialog/LongPressContextMenu/SearchBar/TagSelector test coverage, test pattern catalog, CI/CD guidance, and root-level npm scripts/README updates
-- Still open in `tasks.md`: performance measurement
+- Completed: Playwright Storybook project/config, shared Storybook helpers, context-agnostic page objects, touch-optimization app refactor, ItemForm/TouchButton/CreateTagDialog/LongPressContextMenu/SearchBar/TagSelector test coverage, test pattern catalog, performance measurement, CI/CD guidance, and root-level npm scripts/README updates
+- Still open in `tasks.md`: none for spec 002 implementation; draft PR review/merge remains outside the task list
 
-**Next Action**: Keep `tasks.md` current as implementation continues; use `/speckit.analyze spec 002` or manual artifact updates to re-sync after major work lands outside the workflow
+**Next Action**: Review draft PR #73 and keep `tasks.md` current if any review follow-ups are requested
+
+### Performance Measurement Results (T021)
+
+Measured on 2026-05-18 using Playwright-managed local servers from the repository root.
+
+| Suite | Command | Result | Reported duration | Wall-clock duration | Goal | Status |
+|-------|---------|--------|-------------------|---------------------|------|--------|
+| Storybook component tests | `npx playwright test tests/e2e/storybook --project=storybook-chromium --reporter=line` | 30 passed, 3 skipped | 51.5s suite total | 52s | <30s per component story | ✅ Pass |
+| Storybook slowest individual test/story | JSON reporter parse of the same Storybook project | `LongPressContextMenu` action-selection test | 1.36s | N/A | <30s per component story | ✅ Pass |
+| Full app E2E tests | `npx playwright test tests/e2e/app --project=chromium --reporter=line` | 45 passed | 1.9m suite total | 113s | <5min full E2E suite | ✅ Pass |
+
+**Optimization notes**:
+- No blocking optimization is required; both measured goals pass comfortably.
+- Optional future improvement: app-only runs currently still pay the shared Playwright `webServer` startup cost for Storybook because both servers are configured globally. If app suite runtime becomes tight, split server startup by project or use `PLAYWRIGHT_SKIP_WEBSERVER=1` with already-running local servers for faster iteration.
 
 ## Project Structure
 
@@ -181,8 +195,8 @@ playwright.config.js              # Storybook + app projects with optional auto-
 ## Planning Summary
 
 **Branch**: `002-storybook-e2e-testing`
-**Status**: 🔄 Implementation underway; artifacts synced with out-of-band work on 2026-05-18
-**Next Step**: Finish the remaining open tasks in `tasks.md` and keep these artifacts updated as the implementation evolves
+**Status**: ✅ Implementation complete for the tracked spec 002 follow-up tasks; artifacts synced with out-of-band work on 2026-05-18
+**Next Step**: Review draft PR #73 and keep these artifacts updated if review follow-ups change scope or status
 
 **Artifacts Created**:
 - ✅ `plan.md` - This file, comprehensive implementation plan
@@ -203,8 +217,7 @@ playwright.config.js              # Storybook + app projects with optional auto-
 5. **Practical debugging guide**: quickstart.md and ci-cd.md address local and CI pain points
 6. **Flexible execution modes**: auto-start works for convenience; skip-server mode supports rapid local iteration
 
-**Remaining Critical Path**:
-1. Measure and record actual execution times against the performance goals (T021)
+**Remaining Critical Path**: Complete for the tracked spec 002 implementation tasks. Draft PR review/merge remains the next project workflow step.
 
 **Tracking Source of Truth**: `tasks.md` is the execution tracker for the remaining work; keep it synchronized when implementation lands outside Speckit commands
 

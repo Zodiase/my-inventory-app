@@ -274,11 +274,12 @@
     - Link to comprehensive quickstart guide
   - **Location**: /home/wsl/workspace/my-inventory-app/README.md
   - **Benefits**: Clear onboarding for new developers, documented testing workflow
-- [ ] T021 Validate test performance goals from plan.md
-  - Measure ComponentTest execution time (goal: <30s per story)
-  - Measure full E2E suite time (goal: <5min)
-  - Document actual performance in plan.md
-  - Identify optimization opportunities if goals not met
+- [X] T021 Validate test performance goals from plan.md
+  - **Status**: COMPLETED ✅
+  - **Storybook suite**: `npx playwright test tests/e2e/storybook --project=storybook-chromium --reporter=line` → 30 passed, 3 skipped; 51.5s reported / 52s wall-clock
+  - **Per-story check**: JSON reporter parse found slowest individual Storybook test/story at 1.36s (`LongPressContextMenu` action-selection test), below the <30s goal
+  - **Full app suite**: `npx playwright test tests/e2e/app --project=chromium --reporter=line` → 45 passed; 1.9m reported / 113s wall-clock, below the <5min goal
+  - **Optimization notes**: No blocking optimization needed; optional future improvement is splitting Playwright `webServer` startup by project so app-only runs do not start Storybook
 - [X] T022 [P] Create CI/CD guidance in specs/002-storybook-e2e-testing/ci-cd.md
   - **Status**: COMPLETED ✅
   - **Content Created**:
@@ -295,7 +296,7 @@
   - **Location**: /home/wsl/workspace/my-inventory-app/specs/002-storybook-e2e-testing/ci-cd.md
   - **Workflows Covered**: Two-stage pipeline, parallel execution, conditional execution based on file changes
 
-**Implementation Snapshot**: Core two-phase testing strategy is implemented, with a small follow-up backlog still open in this file
+**Implementation Snapshot**: Core two-phase testing strategy and tracked spec 002 follow-up backlog are complete; draft PR review/merge remains outside this task list
 
 ---
 
