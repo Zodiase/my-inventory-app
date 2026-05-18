@@ -62,7 +62,7 @@ This occurs because the `@sinonjs/fake-timers` package (used by the Mocha testin
 
 - **Meteor**: 3.3.2
 - **meteor-node-stubs**: 1.2.24 (latest available)
-- **Node.js**: 22.x
+- **Node.js**: 22.x or 24.x
 - **ESLint Config**: Flat configuration with eslint-config-love
 
 ### Impact

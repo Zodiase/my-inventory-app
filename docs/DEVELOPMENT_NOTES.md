@@ -5,8 +5,8 @@ These notes capture migration context and operational learnings gathered during 
 ## 1. Meteor 3 Upgrade Summary
 
 - Upgraded from Meteor 2.x (previous CI referenced `meteor@2.12`) to `METEOR@3.3.2`.
-- Removed legacy Fiber dependency: `fibers` is no longer required (and fails to build under Node 22). Dockerfile line installing `fibers@4` was deleted.
-- Node runtime now aligns with Meteor 3 expectation: Node 22 (per official changelog guidance).
+- Removed legacy Fiber dependency: `fibers` is no longer required (and fails to build under modern Node releases). Dockerfile line installing `fibers@4` was deleted.
+- Supported Node runtimes are now limited to Node 22 and Node 24 via `engines` and CI matrix coverage.
 
 ## 2. Deprecated `util._extend` Warning
 
@@ -17,8 +17,8 @@ These notes capture migration context and operational learnings gathered during 
 ## 3. CI Pipeline Adjustments
 
 - Previous workflows targeted Node 14 and Meteor 2.12.
-- Updated GitHub Actions (`.github/workflows/node.js.yml`) to use Node 22 and install `meteor@3.3.2` explicitly in the tests job.
-- Matrix simplified (single modern Node version) for faster feedback; can reintroduce multi-version testing if desired.
+- Updated GitHub Actions (`.github/workflows/node.js.yml`) to test Node 22 and Node 24, and install `meteor@3.3.2` explicitly in the tests job.
+- Matrix intentionally excludes odd-numbered/non-LTS Node releases and older Node versions.
 - Follow‑up idea: add a nightly job to test against `meteor@latest` for early detection of upstream changes.
 
 ## 4. Lint & Type Issues Encountered
@@ -31,7 +31,7 @@ These notes capture migration context and operational learnings gathered during 
 
 - Base image: `geoffreybooth/meteor-base:3.3.2` retained as first stage for build.
 - Multi-stage approach preserved, but removed obsolete fibers install.
-- Runs on `node:22-alpine` final stage. Consider pinning a digest for reproducibility.
+- Runs on `node:22-alpine` final stage while CI validates both Node 22 and Node 24. Consider pinning a digest for reproducibility.
 - Potential enhancement: add build arg for Meteor version to reduce duplication.
 
 ## 6. Local Development Commands
