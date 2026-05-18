@@ -1,0 +1,9 @@
+{
+  "ai": "auggie",
+  "branch_numbering": "sequential",
+  "context_file": ".augment/rules/specify-rules.md",
+  "here": true,
+  "integration": "auggie",
+  "script": "sh",
+  "speckit_version": "0.8.11"
+}
