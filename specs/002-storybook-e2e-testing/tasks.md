@@ -214,10 +214,10 @@
     - Special character handling (unicode, emojis, quotes)
     - Cancel callback invocation without form submission
   - **Tests**: 7 passing (special chars ✅ | container checkbox ✅ | cancel ✅ | submission ✅ | validation ✅ | double-submit ✅ | description field ✅)
-- [ ] T015 [P] [US3] Create LongPressContextMenu component test in tests/e2e/storybook/LongPressContextMenu.spec.ts (if story exists)
-  - Test: "should show menu on long press"
-  - Test: "should hide menu on outside click"
-  - Test: "should execute menu action on selection"
+- [x] T015 [P] [US3] Create LongPressContextMenu component test in tests/e2e/storybook/LongPressContextMenu.spec.ts
+  - Added `TestInteractions` story to `LongPressContextMenu.stories.tsx` as deterministic test harness
+  - Tests: show menu on long press, hide menu on outside click, execute menu action on selection
+  - All 3 tests passing (Green)
 - [ ] T016 [P] [US3] Create additional critical component tests
   - Identify remaining critical components from meteor-app/imports/ui/*.stories.tsx
   - Create ComponentTests for each

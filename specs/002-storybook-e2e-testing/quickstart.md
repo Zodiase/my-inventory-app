@@ -1,20 +1,29 @@
 # Quickstart: Storybook-First E2E Testing
 
-**Date**: November 27, 2025  
+**Date**: November 27, 2025
 **Feature**: How to write and run component and integration tests using the two-phase approach
+
+**Last synced**: 2026-05-18 after the Storybook/App E2E implementation landed outside the original Speckit command flow.
+
+**Current coverage snapshot**:
+- Storybook project/config exists in `playwright.config.js` as `storybook-chromium`.
+- Storybook component tests exist for `ItemForm`, `CreateTagDialog`, `TouchButton`, and Storybook helper behavior.
+- Full-app tests exist under `tests/e2e/app/`; their current repair status is tracked in `tasks.md` and implementation tracker docs, not assumed green here.
 
 ## Prerequisites
 
-**IMPORTANT**: Keep Storybook running in a dedicated terminal throughout your testing session. Do not start/stop it for each test run.
+Playwright can either auto-start Meteor and Storybook through `webServer` entries in `playwright.config.js`, or run against already-started local servers when `PLAYWRIGHT_SKIP_WEBSERVER=1` is set.
+
+**Manual fast-iteration workflow**: keep Storybook and/or Meteor running in dedicated terminals throughout a testing session. Do not start/stop them for each test run.
 
 ```bash
-# Terminal 1: Start Storybook (keep this running)
-cd meteor-app && npm run storybook
-# Wait for: "Storybook 7.x.x started"
+# Terminal 1: Start Storybook from the repo root (keep this running)
+npm run storybook
+# Wait for Storybook 10.x to report it is ready
 # Access at: http://localhost:6006
 
-# Terminal 2: Run tests
-npx playwright test tests/e2e/storybook/
+# Terminal 2: Run Storybook tests against the existing server
+npm run test:e2e:skip-server:headless -- tests/e2e/storybook/ --project=storybook-chromium
 ```
 
 **Why keep it running?**
@@ -22,9 +31,9 @@ npx playwright test tests/e2e/storybook/
 - Running tests repeatedly is much faster (no startup overhead)
 - Matches existing workflow where Meteor app also stays running
 
-**Additional Prerequisites**:
-- Meteor app running (for integration tests only): `cd meteor-app && npm start` (default: http://localhost:3000)
-- Playwright installed: `npm install` (already done at workspace root)
+**Additional prerequisites**:
+- Meteor app running for manual full-app integration tests: `npm start` from the repo root (default: http://localhost:3000)
+- Dependencies installed at the repo root and in `meteor-app/` via the documented setup/CI workflow
 
 ## Quick Reference
 
@@ -33,16 +42,19 @@ npx playwright test tests/e2e/storybook/
 npm run test:e2e
 
 # Run ONLY Storybook component tests (fast iteration)
-npx playwright test tests/e2e/storybook/
+npm run test:e2e:storybook -- --project=storybook-chromium
 
 # Run ONLY full app integration tests
-npx playwright test tests/e2e/app/
+npm run test:e2e:app -- --project=chromium
 
 # Run specific component test
-npx playwright test tests/e2e/storybook/ItemForm.spec.ts
+npm run test:e2e:storybook -- tests/e2e/storybook/ItemForm.spec.ts --project=storybook-chromium
 
 # Run with UI (headed mode) for debugging
-npx playwright test --headed --project=chromium tests/e2e/storybook/ItemForm.spec.ts
+npm run test:e2e:headed -- tests/e2e/storybook/ItemForm.spec.ts --project=storybook-chromium
+
+# Run against already-started local servers
+npm run test:e2e:skip-server:headless -- tests/e2e/storybook/ --project=storybook-chromium
 
 # Generate test code (Playwright codegen)
 npx playwright codegen http://localhost:6006
@@ -69,8 +81,8 @@ If no story exists, create one first (see Storybook docs). **Don't test componen
 2. Navigate to your component story (e.g., "ItemForm" → "Default")
 3. Look at browser URL - the ID is after `id=`:
    ```
-   http://localhost:6006/?path=/story/itemform--default
-   Story ID: itemform--default
+   http://localhost:6006/?path=/story/ui-itemform--test-submit-behavior
+   Story ID: ui-itemform--test-submit-behavior
    ```
 
 ### Step 3: Create Test File
@@ -80,31 +92,35 @@ Create test file matching component name in `tests/e2e/storybook/`:
 ```typescript
 // tests/e2e/storybook/ItemForm.spec.ts
 import { test, expect } from '@playwright/test';
+import { gotoStory } from '../helpers/storybook-helpers';
 import { ItemFormPage } from '../helpers/page-objects';
 
 test.describe('ItemForm Component', () => {
   test('should fill and submit form successfully', async ({ page }) => {
     // Navigate to story iframe
-    await page.goto('http://localhost:6006/iframe.html?id=itemform--default&viewMode=story');
-    
+    await gotoStory(page, 'ui-itemform', 'test-submit-behavior');
+
     // Use page object (create if doesn't exist)
     const form = new ItemFormPage(page);
     await form.fillName('Test Item Name');
     await form.fillDescription('Test Description');
     await form.submit();
-    
+
     // Verify interaction succeeded
     // NOTE: In Storybook, verify DOM state or console actions
-    await expect(page.locator('.success-message')).toBeVisible();
+    await expect(page.locator('[data-testid="submit-count"]')).toHaveText('1');
   });
-  
+
   test('should show validation error for empty name', async ({ page }) => {
-    await page.goto('http://localhost:6006/iframe.html?id=itemform--default&viewMode=story');
-    
+    await gotoStory(page, 'ui-itemform', 'test-submit-behavior');
+
     const form = new ItemFormPage(page);
-    await form.submit(); // Submit without filling
-    
-    await expect(page.locator('.error-message')).toContainText('Name is required');
+    await expect(form.saveButton).toBeDisabled();
+
+    await form.fillName('a');
+    await expect(form.saveButton).toBeEnabled();
+    await form.nameInput.clear();
+    await expect(form.saveButton).toBeDisabled();
   });
 });
 ```
@@ -117,15 +133,15 @@ If page object doesn't exist, add it to `tests/e2e/helpers/page-objects.ts`:
 // tests/e2e/helpers/page-objects.ts
 export class ItemFormPage {
   constructor(private page: Page) {}
-  
+
   async fillName(name: string) {
     await this.page.fill('input[name="name"]', name);
   }
-  
+
   async fillDescription(description: string) {
     await this.page.fill('textarea[name="description"]', description);
   }
-  
+
   async submit() {
     await this.page.click('button[type="submit"]');
   }
@@ -143,10 +159,10 @@ export class ItemFormPage {
 
 ```bash
 # Run test
-npx playwright test tests/e2e/storybook/ItemForm.spec.ts
+npm run test:e2e:storybook -- tests/e2e/storybook/ItemForm.spec.ts --project=storybook-chromium
 
 # Run with UI for debugging
-npx playwright test --headed tests/e2e/storybook/ItemForm.spec.ts
+npm run test:e2e:headed -- tests/e2e/storybook/ItemForm.spec.ts --project=storybook-chromium
 ```
 
 **Goal**: Achieve 100% pass rate before porting to integration test.
@@ -176,8 +192,8 @@ export class ItemFormPage {
 
 ```bash
 # Verify component test passes
-npx playwright test tests/e2e/storybook/ItemForm.spec.ts
-# Should show: 2 passed
+npm run test:e2e:storybook -- tests/e2e/storybook/ItemForm.spec.ts --project=storybook-chromium
+# Should pass the file's active tests; skipped tests must remain intentional and documented.
 ```
 
 ### Step 2: Identify User Journey
@@ -200,17 +216,17 @@ test.describe('Item Creation User Journey', () => {
   test('User can create new item from main screen', async ({ page }) => {
     // Navigate to full app
     await page.goto('http://localhost:3000');
-    
+
     // Open create dialog (app-specific navigation)
     const inventory = new InventoryPage(page);
     await inventory.clickCreateItem();
-    
+
     // Use PROVEN page object from ComponentTest
     const form = new ItemFormPage(page);
     await form.fillName('Integration Test Item');
     await form.fillDescription('Created in full app');
     await form.submit();
-    
+
     // Verify in full app context (data persistence)
     await inventory.expectItemInList('Integration Test Item');
   });
@@ -221,7 +237,7 @@ test.describe('Item Creation User Journey', () => {
 
 ```bash
 # Run integration test
-npx playwright test tests/e2e/app/item-creation.spec.ts
+npm run test:e2e:app -- tests/e2e/app/item-creation.spec.ts --project=chromium
 ```
 
 **If it fails**:
@@ -260,10 +276,10 @@ export class ItemFormPage {
 3. Use `iframe.html` view, not main Storybook UI:
    ```typescript
    // ✅ Correct
-   await page.goto('http://localhost:6006/iframe.html?id=itemform--default&viewMode=story');
-   
+   await page.goto('http://localhost:6006/iframe.html?id=ui-itemform--test-submit-behavior&viewMode=story');
+
    // ❌ Wrong
-   await page.goto('http://localhost:6006/?path=/story/itemform--default');
+   await page.goto('http://localhost:6006/?path=/story/ui-itemform--test-submit-behavior');
    ```
 
 **Common mistake**: Starting tests without Storybook running. Always verify http://localhost:6006 is accessible first.
@@ -277,7 +293,7 @@ export class ItemFormPage {
 2. Check if element is in iframe/modal/shadow DOM in full app
 3. Use Playwright Inspector to find working selector:
    ```bash
-   npx playwright test --debug tests/e2e/app/item-creation.spec.ts
+   npm run test:e2e:debug -- tests/e2e/app/item-creation.spec.ts --project=chromium
    ```
 4. If selector needs to change, update page object AND re-verify ComponentTest
 
@@ -314,7 +330,7 @@ export class ItemFormPage {
    await page.click('button');
    await page.waitForTimeout(1000);
    await expect(page.locator('.result')).toBeVisible();
-   
+
    // ✅ Reliable
    await page.click('button');
    await expect(page.locator('.result')).toBeVisible(); // Auto-retries
@@ -324,7 +340,7 @@ export class ItemFormPage {
    // ❌ Manual waiting
    await page.waitForSelector('input[name="name"]');
    await page.fill('input[name="name"]', 'Test');
-   
+
    // ✅ Auto-waiting
    await page.fill('input[name="name"]', 'Test'); // Waits automatically
    ```
@@ -374,7 +390,7 @@ Before committing new tests:
 
 After mastering this workflow:
 
-1. **Expand coverage**: Add ComponentTests for more components (TouchButton, LongPressContextMenu, etc.)
-2. **Refactor existing tests**: Port existing IntegrationTests to use proven patterns from ComponentTests
-3. **CI/CD integration**: Run Storybook tests on every commit, full E2E on merge to main
-4. **Test documentation**: Maintain list of proven test patterns in this guide
+	1. **Finish open Storybook backlog**: Add `LongPressContextMenu` coverage and any additional critical component tests identified in `storybook-stories-inventory.md`.
+	2. **Repair/expand full-app E2E**: Keep porting proven Storybook selectors/page objects into `tests/e2e/app/` and record current app-suite status separately.
+	3. **Measure performance goals**: Record Storybook and full-app execution times back in `tasks.md`/`plan.md` when measured.
+	4. **Maintain documentation**: Update `test-patterns.md`, this quickstart, and the story inventory whenever new patterns or stories become part of the testing contract.

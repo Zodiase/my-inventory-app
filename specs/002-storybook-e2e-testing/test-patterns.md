@@ -4,6 +4,8 @@
 
 **Status**: Living document - update as new patterns are discovered
 
+**Last synced**: 2026-05-18 against current Storybook specs (`ItemForm`, `CreateTagDialog`, `TouchButton`) and app E2E helpers.
+
 ---
 
 ## Pattern 1: Grommet Form Submission Pattern
@@ -66,7 +68,7 @@ test('should submit form', async ({ page }) => {
 
 - **Successful submission**: Form clears, callback fires with correct data
 - **Validation errors**: Error messages appear in DOM when data is invalid
-- **Double-submission prevention** (FR-070): useRef guard prevents multiple submissions
+- **Double-submission prevention**: useRef guard prevents multiple submissions
 - **Field state**: Input values persist during interaction until submit
 
 ### Known Limitations
@@ -297,7 +299,7 @@ export class TagsPage {
 
 ---
 
-## Pattern 4: Double-Submit Prevention Testing (FR-070)
+## Pattern 4: Double-Submit Prevention Testing
 
 **Status**: ✅ Validated in Storybook (T014, T011) | ✅ Ported to Integration (T012)
 
@@ -418,7 +420,7 @@ test('should prevent double-submission', async ({ page }) => {
 ### References
 
 - Validated in: `tests/e2e/storybook/ItemForm.spec.ts`, `tests/e2e/storybook/CreateTagDialog.spec.ts`
-- Pattern documented in: `.github/copilot-instructions.md` → Double-Submit Prevention (FR-070)
+- Pattern documented in: `.github/copilot-instructions.md` → Double-Submit Prevention
 
 ---
 
@@ -517,7 +519,7 @@ export class ItemFormPage {
 
 // Component Test Usage (Storybook)
 test('should submit form', async ({ page }) => {
-    await gotoStory(page, 'itemform--default');  // Test handles navigation
+    await gotoStory(page, 'ui-itemform', 'test-submit-behavior');  // Test handles navigation
 
     const form = new ItemFormPage(page);  // Same page object
     await form.fillName('Test');
@@ -556,6 +558,34 @@ test('should submit form', async ({ page }) => {
 
 ---
 
+## Pattern 7: TouchButton Interaction Pattern
+
+**Status**: ✅ Validated in Storybook (T010) | 🔄 Full touch-optimization refactor remains tracked separately (T012b)
+
+**Use Case**: Testing touch-optimized button states and variants without coupling to layout-specific visual details.
+
+**Problem Solved**: Touch components often mix semantic button behavior with visual/touch-target requirements. The reliable test layer should first prove clickability, disabled state, variants, and accessible names before adding lower-level mobile/touch measurements.
+
+### Selectors Used
+
+```typescript
+// ✅ CORRECT - Prefer accessible button roles/names when stories expose them
+const button = page.getByRole('button', { name: /primary button/i });
+
+// ✅ CORRECT - Use the Storybook story as the state boundary
+await gotoStory(page, 'ui-touchbutton', 'disabled');
+
+// ❌ AVOID - Do not couple tests to Grommet/styled-components generated class names
+await page.locator('.sc-aXZVg').click();
+```
+
+### References
+
+- Validated in: `tests/e2e/storybook/TouchButton.spec.ts`
+- Candidate follow-up: `tests/e2e/app/touch-optimization.spec.ts`
+
+---
+
 ## Pattern Summary Table
 
 | Pattern | Status | Storybook Test | Integration Test | Key Challenge |
@@ -566,6 +596,7 @@ test('should submit form', async ({ page }) => {
 | Double-Submit Prevention | ✅ Validated | T014, T011 | T012 | Requires realistic delays |
 | Grommet CheckBox | ✅ Validated | T014 | N/A | Hidden native input |
 | Context-Agnostic Page Objects | ✅ Core Pattern | All | All | Navigation differences |
+| TouchButton Interaction | ✅ Validated | T010 | T012b pending | Separate semantic behavior from visual/touch metrics |
 
 ---
 

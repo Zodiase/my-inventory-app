@@ -124,7 +124,7 @@ export class InventoryPage {
  * **Behavior Validation**:
  * - onSubmit callback receives correct data (verify via DOM or network)
  * - Validation errors appear in DOM when data is invalid
- * - Double-submission is prevented (FR-070) via useRef guard
+ * - Double-submission is prevented via a synchronous useRef guard
  * - Form fields maintain values during interaction
  *
  * **Known Limitations**:
@@ -348,7 +348,9 @@ export async function verifyTouchTargets(page: Page): Promise<void> {
         if (box) {
             if (box.width < 44 || box.height < 44) {
                 throw new Error(
-                    `Button "${await button.textContent()}" is too small: ${box.width}×${box.height}px (minimum 44×44px)`
+                    `Button "${await button.textContent()}" is too small: ${box.width}×${
+                        box.height
+                    }px (minimum 44×44px)`
                 );
             }
         }

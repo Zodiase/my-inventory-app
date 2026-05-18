@@ -375,6 +375,59 @@ export const WithCallbacks: Story = {
 };
 
 /**
+ * Deterministic test harness for Playwright component tests.
+ * Tracks open/close counts and last selected action.
+ */
+export const TestInteractions: Story = {
+    args: { children: <div />, actions: [] },
+    render: () => {
+        const [openCount, setOpenCount] = React.useState(0);
+        const [closeCount, setCloseCount] = React.useState(0);
+        const [lastAction, setLastAction] = React.useState<string>('');
+
+        return (
+            <Box pad="large" background="light-2" justify="center" align="center">
+                <LongPressContextMenu
+                    actions={[
+                        {
+                            label: 'Archive',
+                            onClick: () => {
+                                setLastAction('Archive');
+                            },
+                        },
+                    ]}
+                    onMenuOpen={() => {
+                        setOpenCount((c) => c + 1);
+                    }}
+                    onMenuClose={() => {
+                        setCloseCount((c) => c + 1);
+                    }}
+                >
+                    <Card background="white" pad="medium" elevation="small" data-testid="long-press-target">
+                        <CardBody>
+                            <Text size="large" weight="bold">
+                                Test Target
+                            </Text>
+                        </CardBody>
+                    </Card>
+                </LongPressContextMenu>
+                <Box gap="small" margin={{ top: 'medium' }}>
+                    <Text size="small" data-testid="open-count">
+                        {openCount}
+                    </Text>
+                    <Text size="small" data-testid="close-count">
+                        {closeCount}
+                    </Text>
+                    <Text size="small" data-testid="last-action">
+                        {lastAction}
+                    </Text>
+                </Box>
+            </Box>
+        );
+    },
+};
+
+/**
  * Touch target verification - menu items meet 44px minimum
  */
 export const TouchTargets: Story = {
