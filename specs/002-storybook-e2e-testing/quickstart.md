@@ -7,7 +7,7 @@
 
 **Current coverage snapshot**:
 - Storybook project/config exists in `playwright.config.js` as `storybook-chromium`.
-- Storybook component tests exist for `ItemForm`, `CreateTagDialog`, `TouchButton`, and Storybook helper behavior.
+- Storybook component tests exist for `ItemForm`, `CreateTagDialog`, `TouchButton`, `LongPressContextMenu`, `SearchBar`, and `TagSelector`, plus Storybook helper behavior.
 - Full-app tests exist under `tests/e2e/app/`; their current repair status is tracked in `tasks.md` and implementation tracker docs, not assumed green here.
 
 ## Prerequisites
@@ -49,6 +49,12 @@ npm run test:e2e:app -- --project=chromium
 
 # Run specific component test
 npm run test:e2e:storybook -- tests/e2e/storybook/ItemForm.spec.ts --project=storybook-chromium
+
+# Run a callback-driven harness example
+npm run test:e2e:storybook -- tests/e2e/storybook/SearchBar.spec.ts --project=storybook-chromium
+
+# Run a touch-target example
+npm run test:e2e:storybook -- tests/e2e/storybook/TagSelector.spec.ts --project=storybook-chromium
 
 # Run with UI (headed mode) for debugging
 npm run test:e2e:headed -- tests/e2e/storybook/ItemForm.spec.ts --project=storybook-chromium
@@ -184,6 +190,71 @@ export class ItemFormPage {
 
 ---
 
+## US3 Examples: Callback Harnesses and Touch Targets
+
+### Example: SearchBar callback-driven behavior
+
+`SearchBar` is a good example of a component whose important behavior is mostly callback-driven. The `TestInteractions` story keeps the component realistic while rendering callback results into the DOM.
+
+```typescript
+test('should update query and execute search on Enter', async ({ page }) => {
+  await gotoStory(page, 'ui-searchbar', 'test-interactions');
+
+  const input = page.getByRole('textbox', { name: 'Search query' });
+  await input.fill('camp stove');
+  await input.press('Enter');
+
+  await expect(page.getByTestId('last-search')).toHaveText('camp stove');
+  await expect(page.getByTestId('search-count')).toHaveText('1');
+});
+```
+
+**Why this pattern matters**:
+- Storybook action logs are useful for manual inspection, but Playwright needs deterministic DOM-visible state.
+- The harness keeps selectors user-facing (`role`, accessible name) and reserves `data-testid` for test-only state.
+- The same story also validates scoped search UI and clear-button touch targets.
+
+### Example: TagSelector hidden-input + touch-target behavior
+
+`TagSelector` uses Grommet `CheckBox`, which renders a hidden native input. The reliable test target is the visible label/touch area, not the hidden input itself.
+
+```typescript
+test('should keep tag rows touch-friendly', async ({ page }) => {
+  await gotoStory(page, 'ui-tagselector', 'test-interactions');
+
+  const touchTarget = page.getByTestId('tag-touch-target-tag3');
+  const box = await touchTarget.boundingBox();
+
+  if (box === null) throw new Error('Tag touch target is not visible');
+  expect(box.height).toBeGreaterThanOrEqual(44);
+});
+```
+
+**What changed after T016**:
+- The visible label content now exposes a real 44px touch target.
+- Tests click the visible row/test harness target instead of trying to `check()` the hidden native input.
+- This is the pattern to reuse when porting touch-heavy checkbox interactions into full-app tests.
+
+### Example: LongPressContextMenu gesture timing
+
+`LongPressContextMenu` is the main US3 example where one intentional gesture delay is still appropriate. Keep the threshold wait inside a single helper that matches the component's long-press contract instead of scattering arbitrary waits throughout the test.
+
+```typescript
+const longPress = async (page: Page, target: Locator): Promise<void> => {
+  const box = await target.boundingBox();
+  if (box === null) throw new Error('Long-press target is not visible');
+
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(600);
+  await page.mouse.up();
+};
+```
+
+**Rule of thumb**: fixed waits are still an anti-pattern for general readiness checks, but gesture-threshold waits are acceptable when they model the product behavior directly and stay encapsulated in one helper.
+
+---
+
 ## Workflow: Porting to Integration Test
 
 ### Step 1: Verify Component Test Passes
@@ -299,6 +370,18 @@ export class ItemFormPage {
 
 **Common cause**: Element inside modal in full app, but not in Storybook. Usually selectors still work - verify with Inspector.
 
+### Issue: Callback-driven story works manually, but test has nothing stable to assert
+
+**Symptom**: You can see Storybook actions firing, but Playwright has no deterministic DOM change to assert.
+
+**Debug steps**:
+1. Add a dedicated `TestInteractions` story instead of overloading the visual/default story.
+2. Render callback counts and last payloads with `data-testid` values like `last-search`, `search-count`, or `last-toggle`.
+3. Keep the component interaction realistic - user-facing controls should still use `getByRole()` / accessible names.
+4. Re-run the Storybook test before porting anything to the full app.
+
+**Common cause**: Relying on Storybook actions or console logging instead of DOM-visible harness state.
+
 ### Issue: Form doesn't submit in test
 
 **Symptom**: Button clicks, but form doesn't submit (modal stays open)
@@ -318,6 +401,30 @@ export class ItemFormPage {
 4. Check browser console for JavaScript errors (run with `--headed`)
 
 **Common cause**: In Grommet forms, sometimes Enter key doesn't work - always click button explicitly.
+
+### Issue: Grommet checkbox exists, but clicking/checking is flaky or misses the touch target
+
+**Symptom**: `getByRole('checkbox')` resolves, but the interaction is unreliable, or the measured touch area is smaller than 44px.
+
+**Debug steps**:
+1. Confirm whether the component uses Grommet `CheckBox` with a hidden native input.
+2. Target the visible label/touch area instead of the hidden input.
+3. Measure the visible interactive element with `boundingBox()` - not just a surrounding container.
+4. If the visible label is undersized, fix the component so the label content itself reaches the 44px minimum.
+
+**Common cause**: The native checkbox input is hidden, and the visually large row is not the real clickable element.
+
+### Issue: Long-press menu never opens in Storybook
+
+**Symptom**: The menu is never shown even though the pointer is over the correct target.
+
+**Debug steps**:
+1. Verify the story renders a deterministic long-press target such as `data-testid="long-press-target"`.
+2. Use a helper that presses down, waits for the component's configured threshold, and then releases.
+3. Keep that delay isolated to the long-press helper; do not translate it into generic waits elsewhere.
+4. Assert the menu container directly (`context-menu`) after the gesture.
+
+**Common cause**: The test releases too quickly, so it performs a click/tap instead of a long press.
 
 ### Issue: Test is flaky (passes sometimes, fails sometimes)
 
@@ -358,6 +465,8 @@ export class ItemFormPage {
 - **Test one interaction pattern at a time** in ComponentTest
 - **Document known issues** when selectors/patterns differ between contexts
 - **Run tests frequently** during development (fast iteration on Storybook tests)
+- **Use deterministic harness stories** for callback-driven components instead of asserting Storybook actions
+- **Measure the visible interactive element** when validating 44px touch targets
 
 ### DON'T ❌
 
@@ -367,6 +476,7 @@ export class ItemFormPage {
 - **Don't test Storybook UI chrome** - always use `iframe.html` view
 - **Don't assume component behavior** - run tests to verify, don't claim "it works" without proof
 - **Don't mix component and integration concerns** - keep test files separated
+- **Don't assert against hidden native inputs** when Grommet renders a separate visible label target
 
 ---
 
@@ -390,7 +500,7 @@ Before committing new tests:
 
 After mastering this workflow:
 
-	1. **Finish open Storybook backlog**: Add `LongPressContextMenu` coverage and any additional critical component tests identified in `storybook-stories-inventory.md`.
-	2. **Repair/expand full-app E2E**: Keep porting proven Storybook selectors/page objects into `tests/e2e/app/` and record current app-suite status separately.
-	3. **Measure performance goals**: Record Storybook and full-app execution times back in `tasks.md`/`plan.md` when measured.
+	1. **Finish touch-optimization refactor (T012b)**: Port the proven Storybook selector and touch-target patterns into `tests/e2e/app/touch-optimization.spec.ts`.
+	2. **Measure performance goals (T021)**: Record Storybook and full-app execution times back in `tasks.md`/`plan.md` when measured.
+	3. **Repair/expand full-app E2E**: Keep porting proven Storybook selectors/page objects into `tests/e2e/app/` and record current app-suite status separately.
 	4. **Maintain documentation**: Update `test-patterns.md`, this quickstart, and the story inventory whenever new patterns or stories become part of the testing contract.

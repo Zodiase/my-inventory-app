@@ -240,16 +240,16 @@
   - **Content Includes**: Selectors, interaction sequences, assertions, known issues, examples
   - **Reference Tests**: ItemFormPage, TouchButton, CreateTagDialog
   - **Anti-Patterns**: Documented common mistakes to avoid
-- [ ] T018 [US3] Update quickstart.md with additional examples
-  - Add examples for newly tested components
-  - Document any edge cases discovered during US3
-  - Update debugging section with new common issues
+- [x] T018 [US3] Update quickstart.md with additional examples
+  - Added SearchBar and TagSelector examples showing deterministic harness-story assertions and visible touch-target validation
+  - Documented US3 edge cases for callback-driven stories, Grommet hidden checkbox inputs, and long-press gesture timing
+  - Updated debugging, best-practices, quick-reference, and next-step guidance to reflect T015/T016 outcomes
 
-**Checkpoint Target**: Once T015, T016, and T018 are complete, User Story 3 will provide comprehensive component coverage. Current state:
+**Checkpoint Target**: T015, T016, and T018 are complete; User Story 3 now provides comprehensive component coverage. Current state:
 - ✅ ItemForm has extended Storybook coverage
 - ✅ LongPressContextMenu, SearchBar, and TagSelector have Storybook Playwright coverage
 - ✅ Pattern documentation exists for newly proven workflows
-- 🔄 Quickstart refresh remains open
+- ✅ Quickstart examples and debugging guidance are refreshed
 
 ---
 

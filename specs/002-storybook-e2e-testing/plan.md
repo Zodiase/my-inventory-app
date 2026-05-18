@@ -118,7 +118,7 @@ This feature establishes a two-phase E2E testing strategy to address the inabili
 
 **Current execution snapshot (2026-05-18)**:
 - Completed: Playwright Storybook project/config, shared Storybook helpers, context-agnostic page objects, ItemForm/TouchButton/CreateTagDialog/LongPressContextMenu/SearchBar/TagSelector test coverage, test pattern catalog, CI/CD guidance, and root-level npm scripts/README updates
-- Still open in `tasks.md`: touch-optimization refactor, quickstart refresh, and performance measurement
+- Still open in `tasks.md`: touch-optimization refactor and performance measurement
 
 **Next Action**: Keep `tasks.md` current as implementation continues; use `/speckit.analyze spec 002` or manual artifact updates to re-sync after major work lands outside the workflow
 
@@ -205,8 +205,7 @@ playwright.config.js              # Storybook + app projects with optional auto-
 
 **Remaining Critical Path**:
 1. Finish touch-optimization refactor (T012b)
-2. Refresh quickstart examples based on shipped patterns (T018)
-3. Measure and record actual execution times against the performance goals (T021)
+2. Measure and record actual execution times against the performance goals (T021)
 
 **Tracking Source of Truth**: `tasks.md` is the execution tracker for the remaining work; keep it synchronized when implementation lands outside Speckit commands
 
