@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from 'eslint-plugin-storybook';
+
 /**
  * ESLint Flat Configuration for Meteor + TypeScript + React Project
  *
@@ -144,6 +147,25 @@ export default (async () => {
             files: ['**/*.test.{js,ts,tsx}', '**/tests/**/*.{js,ts,tsx}'],
             rules: {
                 '@typescript-eslint/no-magic-numbers': 'off', // Allow magic numbers in test files
+                '@typescript-eslint/strict-boolean-expressions': 'off', // Allow loose boolean checks in tests
+                '@typescript-eslint/no-unnecessary-condition': 'off', // Allow extra safety checks in tests
+                '@typescript-eslint/unbound-method': 'off', // Allow passing methods as callbacks in tests
+            },
+        },
+
+        // 4.5. Story file specific configuration - relax rules for Storybook examples
+        {
+            files: ['**/*.stories.{ts,tsx}'],
+            rules: {
+                '@typescript-eslint/no-magic-numbers': 'off', // Allow magic numbers in stories
+                '@typescript-eslint/no-empty-function': 'off', // Allow placeholder callbacks
+                '@typescript-eslint/strict-boolean-expressions': 'off', // Allow loose checks in examples
+                '@typescript-eslint/no-dynamic-delete': 'off', // Allow dynamic operations in demos
+                '@typescript-eslint/no-loop-func': 'off', // Allow closures in example loops
+                '@typescript-eslint/no-unsafe-member-access': 'off', // Allow unsafe access in example code
+                '@typescript-eslint/no-unsafe-assignment': 'off', // Allow unsafe assignments in examples
+                '@typescript-eslint/explicit-function-return-type': 'off', // Allow implicit return types in story code
+                '@typescript-eslint/no-explicit-any': 'off', // Allow any types in example/demo code
             },
         },
 
@@ -157,6 +179,7 @@ export default (async () => {
                 '*.html', // HTML files
                 '.meteor/**', // Meteor build files
                 'eslint.config.mjs', // This config file itself
+                '.storybook/**', // Storybook config files (not in tsconfig)
             ],
         },
     ];

@@ -1,0 +1,256 @@
+import React, { type ComponentProps, type ReactElement, useState, useCallback } from 'react';
+import styled from 'styled-components';
+
+/**
+ * TouchButton component providing iOS-style visual feedback for touch interactions.
+ *
+ * Features:
+ * - 44x44px minimum touch target size
+ * - iOS-style highlight on active state
+ * - Smooth transitions for visual feedback
+ * - Configurable variants (primary, secondary, danger)
+ * - Support for icons and labels
+ * - Disabled state handling
+ *
+ * @example
+ * ```tsx
+ * <TouchButton variant="primary" onClick={handleClick}>
+ *   Save
+ * </TouchButton>
+ *
+ * <TouchButton variant="danger" icon={<Trash />} onClick={handleDelete}>
+ *   Delete
+ * </TouchButton>
+ * ```
+ */
+
+type TouchButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
+
+export interface TouchButtonProps extends Omit<ComponentProps<'button'>, 'type' | 'ref'> {
+    /** Button variant determining visual style */
+    variant?: TouchButtonVariant;
+    /** Icon to display before the label */
+    icon?: ReactElement;
+    /** Whether the button is in a loading state */
+    isLoading?: boolean;
+    /** Button type for forms */
+    type?: 'button' | 'submit' | 'reset';
+    /** Full width button */
+    fullWidth?: boolean;
+}
+
+interface StyledButtonProps {
+    $variant: TouchButtonVariant;
+    $isPressed: boolean;
+    $fullWidth: boolean;
+}
+
+const StyledButton = styled.button<StyledButtonProps>`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s ease-out;
+    width: ${(props) => (props.$fullWidth ? '100%' : 'auto')};
+
+    /* Variant: Primary */
+    ${(props) =>
+        props.$variant === 'primary' &&
+        `
+        background: #007aff;
+        color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+
+        &:hover:not(:disabled) {
+            background: #0051d5;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        &:active:not(:disabled), &.pressed {
+            background: #004bb8;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            transform: scale(0.98);
+        }
+    `}
+
+    /* Variant: Secondary */
+    ${(props) =>
+        props.$variant === 'secondary' &&
+        `
+        background: #f2f2f7;
+        color: #007aff;
+        box-shadow: none;
+
+        &:hover:not(:disabled) {
+            background: #e5e5ea;
+        }
+
+        &:active:not(:disabled), &.pressed {
+            background: #d1d1d6;
+            transform: scale(0.98);
+        }
+    `}
+
+    /* Variant: Danger */
+    ${(props) =>
+        props.$variant === 'danger' &&
+        `
+        background: #ff3b30;
+        color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+
+        &:hover:not(:disabled) {
+            background: #e60000;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        &:active:not(:disabled), &.pressed {
+            background: #cc0000;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            transform: scale(0.98);
+        }
+    `}
+
+    /* Variant: Ghost */
+    ${(props) =>
+        props.$variant === 'ghost' &&
+        `
+        background: transparent;
+        color: #007aff;
+        box-shadow: none;
+
+        &:hover:not(:disabled) {
+            background: rgba(0, 122, 255, 0.08);
+        }
+
+        &:active:not(:disabled), &.pressed {
+            background: rgba(0, 122, 255, 0.15);
+            transform: scale(0.98);
+        }
+    `}
+
+    /* Disabled state */
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    /* iOS-style active highlight */
+    ${(props) =>
+        props.$isPressed &&
+        `
+        opacity: 0.85;
+    `}
+`;
+
+const IconWrapper = styled.span`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+`;
+
+const LoadingSpinner = styled.span`
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+`;
+
+/**
+ * TouchButton component with iOS-style visual feedback.
+ *
+ * Provides a consistent, touch-friendly button experience across the app
+ * with proper visual feedback and accessibility support.
+ */
+export const TouchButton = ({
+    variant = 'primary',
+    icon,
+    isLoading = false,
+    type = 'button',
+    fullWidth = false,
+    disabled = false,
+    children,
+    onPointerDown,
+    onPointerUp,
+    onPointerCancel,
+    onPointerLeave,
+    ...props
+}: TouchButtonProps): ReactElement => {
+    const [isPressed, setIsPressed] = useState(false);
+
+    const handlePointerDown = useCallback(
+        (event: React.PointerEvent<HTMLButtonElement>) => {
+            setIsPressed(true);
+            onPointerDown?.(event);
+        },
+        [onPointerDown]
+    );
+
+    const handlePointerUp = useCallback(
+        (event: React.PointerEvent<HTMLButtonElement>) => {
+            setIsPressed(false);
+            onPointerUp?.(event);
+        },
+        [onPointerUp]
+    );
+
+    const handlePointerCancel = useCallback(
+        (event: React.PointerEvent<HTMLButtonElement>) => {
+            setIsPressed(false);
+            onPointerCancel?.(event);
+        },
+        [onPointerCancel]
+    );
+
+    const handlePointerLeave = useCallback(
+        (event: React.PointerEvent<HTMLButtonElement>) => {
+            setIsPressed(false);
+            onPointerLeave?.(event);
+        },
+        [onPointerLeave]
+    );
+
+    return (
+        <StyledButton
+            type={type}
+            disabled={disabled || isLoading}
+            $variant={variant}
+            $isPressed={isPressed}
+            $fullWidth={fullWidth}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
+            onPointerLeave={handlePointerLeave}
+            {...props}
+        >
+            {isLoading ? (
+                <LoadingSpinner />
+            ) : (
+                <>
+                    {icon !== undefined && <IconWrapper>{icon}</IconWrapper>}
+                    {children}
+                </>
+            )}
+        </StyledButton>
+    );
+};

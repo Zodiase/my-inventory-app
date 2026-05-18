@@ -48,12 +48,9 @@ export const strictSelector = <T extends CollectionItem, F extends keyof T>(
         ...extraFields,
     ];
 
-    return allFields.reduce((acc, field) => {
-        return {
-            ...acc,
-            [field]: doc[field],
-        };
-    }, {} as any) as {
+    const selectorEntries = allFields.map((field) => [field, doc[field]] as const);
+
+    return Object.fromEntries(selectorEntries) as {
         [K in F | keyof CollectionItem]: T[K];
     };
 };

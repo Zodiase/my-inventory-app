@@ -1,0 +1,487 @@
+# Route Definitions Contract
+
+**Version**: 1.0.0
+**Date**: 2025-11-30
+**Format**: YAML
+**Purpose**: Define all application routes with parameters, validation, and error handling
+
+---
+
+## Route Configuration
+
+### Base Routes (No Parameters)
+
+#### Home Route
+```yaml
+route:
+  path: /
+  exact: true
+  component: AllItemsView
+  description: Default landing page showing all items
+  params: none
+  query_params: none
+  redirects: null
+  authorization: public
+```
+
+#### Items List Route
+```yaml
+route:
+  path: /items
+  exact: true
+  component: AllItemsView
+  description: Explicit items list view (same as home)
+  params: none
+  query_params: none
+  redirects: null
+  authorization: public
+```
+
+#### Tags List Route
+```yaml
+route:
+  path: /tags
+  exact: true
+  component: AllTagsView
+  description: View all tags in hierarchical structure
+  params: none
+  query_params: none
+  redirects: null
+  authorization: public
+  notes: |
+    CRITICAL: This route unblocks T012 integration tests
+    Tests expect tagsPage.goto('/tags') to work
+```
+
+#### Search Route
+```yaml
+route:
+  path: /search
+  exact: true
+  component: SearchResultsView
+  description: Search interface for finding items
+  params: none
+  query_params:
+    - name: q
+      type: string
+      required: false
+      description: Search query (future enhancement, not MVP)
+  redirects: null
+  authorization: public
+```
+
+---
+
+### Parameterized Routes
+
+#### Item Detail Route
+```yaml
+route:
+  path: /items/:itemId
+  exact: true
+  component: ItemDetailView
+  description: Display single item details by ID
+  params:
+    - name: itemId
+      type: string
+      pattern: ^[a-f0-9]{17,24}$  # MongoDB ObjectId pattern
+      required: true
+      description: MongoDB _id of the item
+      validation:
+        - Must be valid MongoDB ObjectId format
+        - Must exist in InventoryItem collection
+      error_handling:
+        invalid_format: Show "Invalid item ID" error
+        not_found: Show "Item not found" error with link to /items
+  redirects: null
+  authorization: public
+  example: /items/507f1f77bcf86cd799439011
+```
+
+#### Tag Filter Route
+```yaml
+route:
+  path: /tags/:tagId
+  exact: true
+  component: ItemsByTagView
+  description: Display items filtered by specific tag
+  params:
+    - name: tagId
+      type: string
+      pattern: ^[a-f0-9]{17,24}$  # MongoDB ObjectId pattern
+      required: true
+      description: MongoDB _id of the tag
+      validation:
+        - Must be valid MongoDB ObjectId format
+        - Must exist in TagRecord collection
+      error_handling:
+        invalid_format: Show "Invalid tag ID" error
+        not_found: Show "Tag not found" error with link to /tags
+  redirects: null
+  authorization: public
+  example: /tags/507f1f77bcf86cd799439012
+```
+
+---
+
+### Catchall Route
+
+#### Not Found Route
+```yaml
+route:
+  path: /:rest*
+  exact: false
+  component: NotFoundView
+  description: Catch-all for invalid URLs
+  params:
+    - name: rest
+      type: string
+      required: false
+      description: Any unmatched path segments
+  redirects: null
+  authorization: public
+  error_handling:
+    display: Show "Page not found" message with links to home/items/tags
+  examples:
+    - /invalid/path
+    - /items/tags/mixed
+    - /users/profile  # No users feature exists
+```
+
+---
+
+## Route Precedence
+
+**Order matters** - routes matched top to bottom:
+
+1. `/` (exact match)
+2. `/items` (exact match)
+3. `/tags` (exact match)
+4. `/search` (exact match)
+5. `/items/:itemId` (parameterized)
+6. `/tags/:tagId` (parameterized)
+7. `/:rest*` (catchall)
+
+**Example**:
+- URL `/items` → Matches #2 (AllItemsView)
+- URL `/items/abc123` → Matches #5 (ItemDetailView with itemId param)
+- URL `/items/new` → Matches #5 (itemId = "new", likely shows not found)
+- URL `/invalid` → Matches #7 (NotFoundView)
+
+---
+
+## Navigation Actions
+
+### Link-Based Navigation (Declarative)
+
+```yaml
+action: navigate_to_items
+  method: declarative
+  implementation: <Link href="/items">Items</Link>
+  trigger: User clicks navigation button
+  effect: Updates URL, renders AllItemsView
+  history: Adds entry to browser history stack
+
+action: navigate_to_tags
+  method: declarative
+  implementation: <Link href="/tags">Tags</Link>
+  trigger: User clicks navigation button
+  effect: Updates URL, renders AllTagsView
+  history: Adds entry to browser history stack
+  notes: Unblocks T012 tests
+
+action: navigate_to_item_detail
+  method: declarative
+  implementation: <Link href={`/items/${item._id}`}>View Item</Link>
+  trigger: User clicks item in list
+  effect: Updates URL with item ID, renders ItemDetailView
+  history: Adds entry to browser history stack
+```
+
+### Programmatic Navigation (Imperative)
+
+```yaml
+action: programmatic_navigation
+  method: imperative
+  implementation: |
+    const [, setLocation] = useLocation();
+    setLocation('/tags');
+  trigger: After form submission, delete action, etc.
+  effect: Updates URL, renders new view
+  history: Adds entry to browser history stack
+  use_cases:
+    - Redirect after creating item → setLocation(`/items/${newItemId}`)
+    - Redirect after deleting item → setLocation('/items')
+    - Navigate on search submit → setLocation('/search')
+```
+
+### Browser Navigation
+
+```yaml
+action: browser_back
+  method: browser_native
+  implementation: Browser back button or swipe gesture
+  trigger: User clicks back or swipes from edge
+  effect: Pops history stack, navigates to previous URL
+  history: Moves backward in stack
+
+action: browser_forward
+  method: browser_native
+  implementation: Browser forward button
+  trigger: User clicks forward button
+  effect: Moves forward in history stack if available
+  history: Moves forward in stack
+
+action: page_refresh
+  method: browser_native
+  implementation: F5, Cmd+R, or refresh button
+  trigger: User refreshes page
+  effect: Reloads HTML, re-mounts app, re-navigates to current URL
+  history: Maintains current position in stack
+```
+
+---
+
+## Error Responses
+
+### Invalid Route
+```yaml
+error: invalid_route
+  url_pattern: /:rest*
+  status: 404 (semantic, not HTTP - SPA returns 200)
+  display: NotFoundView component
+  message: "Page not found"
+  actions:
+    - label: "Go to Items"
+      link: /items
+    - label: "Go to Tags"
+      link: /tags
+  example: User navigates to /admin/users (not implemented)
+```
+
+### Invalid Parameter Format
+```yaml
+error: invalid_param_format
+  url_pattern: /items/:itemId or /tags/:tagId
+  validation: itemId/tagId doesn't match MongoDB ObjectId pattern
+  status: 400 (semantic)
+  display: Error message within view component
+  message: "Invalid {item|tag} ID format"
+  actions:
+    - label: "Back to {Items|Tags}"
+      link: /items or /tags
+  example: /items/not-a-valid-id
+```
+
+### Resource Not Found
+```yaml
+error: resource_not_found
+  url_pattern: /items/:itemId or /tags/:tagId
+  validation: Valid ID format but resource doesn't exist in DB
+  status: 404 (semantic)
+  display: Error message within view component
+  message: "{Item|Tag} not found"
+  actions:
+    - label: "Back to {Items|Tags}"
+      link: /items or /tags
+  example: /items/507f1f77bcf86cd799439011 (item was deleted)
+```
+
+---
+
+## State Management
+
+### URL as Source of Truth
+
+```yaml
+pattern: url_driven_state
+  principle: URL determines what user sees
+  implementation: |
+    // URL controls view
+    <Route path="/items" component={AllItemsView} />
+
+    // URL controls detail view
+    <Route path="/items/:itemId">
+      <ItemDetailView />
+    </Route>
+  benefits:
+    - Bookmarkable URLs work automatically
+    - Browser back/forward work automatically
+    - Shareable URLs work automatically
+    - Page refresh preserves state
+  migration: |
+    Before: const [currentView, setCurrentView] = useState('items');
+    After: URL /items determines AllItemsView renders
+```
+
+### Component-Local State Preserved
+
+```yaml
+pattern: non_url_state
+  principle: Not all state needs to be in URL
+  preserved_state:
+    - searchQuery: String (within SearchResultsView)
+    - itemsViewFilters: SearchFragment[] (within AllItemsView)
+    - showFilterBuilder: Boolean (UI toggle)
+    - showCreateItem: Boolean (modal state)
+  behavior: Lost on navigation (acceptable per spec)
+  future_enhancement: |
+    Could add to URL query params:
+    - /search?q=camping
+    - /items?container=true
+    But not in MVP scope
+```
+
+---
+
+## TypeScript Type Contracts
+
+```typescript
+// Route parameter types
+interface RouteParams {
+  itemId?: string;
+  tagId?: string;
+}
+
+// Route component props
+interface RouteComponentProps {
+  // Components read params via useParams hook
+  // No props passed by router
+}
+
+// Navigation function type
+type SetLocation = (path: string) => void;
+
+// Location hook return type
+type UseLocationReturn = [
+  location: string,
+  setLocation: SetLocation
+];
+
+// Params hook return type
+type UseParamsReturn<T> = Partial<T>;
+
+// Example usage
+const ItemDetailView: React.FC = () => {
+  const { itemId } = useParams<{ itemId: string }>();
+  // itemId: string | undefined
+};
+```
+
+---
+
+## Performance Characteristics
+
+### Navigation Speed
+
+```yaml
+metric: url_update_latency
+  target: <100ms from click to URL update
+  implementation: Wouter uses synchronous History API
+  measurement: Time from Link click to location.pathname change
+
+metric: component_render_latency
+  target: <50ms from route match to component mount
+  implementation: React re-render triggered by location change
+  measurement: Time from location change to component onMount
+
+metric: total_navigation_time
+  target: <200ms from click to view displayed (no data fetch)
+  calculation: url_update + component_render + initial_render
+  notes: Excludes Meteor data subscription time
+```
+
+### Bundle Size Impact
+
+```yaml
+metric: routing_library_size
+  library: wouter@3.x
+  gzipped: 2.1 KB
+  impact: <0.5% of typical app bundle
+  comparison:
+    react_router_v6: 18.7 KB (8.9x larger)
+    tanstack_router: 12.5 KB (5.9x larger)
+```
+
+---
+
+## Testing Contract
+
+### E2E Test Expectations
+
+```yaml
+test_category: page_object_navigation
+  pattern: |
+    const tagsPage = new TagsPage(page);
+    await tagsPage.goto();  // Navigates to /tags
+  expectation: URL changes to /tags, AllTagsView renders
+  blocked_tests: T012 (currently blocked, will pass after routing)
+
+test_category: browser_navigation
+  scenarios:
+    - Click Items → back button → should show previous view
+    - Navigate to item detail → refresh → should show same item
+    - Navigate to /tags → forward → should move forward in history
+
+test_category: deep_linking
+  scenarios:
+    - Open /items/abc123 in new tab → shows item detail
+    - Bookmark /tags → opening bookmark shows tags
+    - Share /search link → recipient sees search view
+```
+
+### Route Validation Tests
+
+```yaml
+test_case: invalid_route
+  url: /admin/users
+  expected: NotFoundView renders
+
+test_case: invalid_item_id
+  url: /items/not-valid-id
+  expected: "Invalid item ID" or "Item not found" error
+
+test_case: deleted_resource
+  setup: Create item, navigate to detail, delete item, refresh
+  expected: "Item not found" error with link to /items
+```
+
+---
+
+## Migration Checklist
+
+### Code Changes Required
+
+- [ ] Install wouter: `npm install wouter@^3.0.0`
+- [ ] Update App.tsx: Replace useState with Route components
+- [ ] Update navigation buttons: Wrap in Link or use setLocation
+- [ ] Remove unused state: currentView, selectedItemId, selectedTagId
+- [ ] Add NotFoundView component (simple error display)
+- [ ] Update ItemDetailView: Use useParams to get itemId
+- [ ] Update ItemsByTagView: Use useParams to get tagId
+- [ ] Test browser back/forward buttons
+- [ ] Test page refresh at each route
+- [ ] Test bookmarking/deep linking
+
+### Testing Validation
+
+- [ ] Run T012 integration tests (should pass)
+- [ ] Run all tag-management.spec.ts tests
+- [ ] Verify tagsPage.goto('/tags') works
+- [ ] Verify browser back button works
+- [ ] Verify browser forward button works
+- [ ] Verify page refresh preserves route
+- [ ] Verify invalid routes show NotFound
+- [ ] Verify invalid IDs show error message
+
+---
+
+## Version History
+
+**v1.0.0** (2025-11-30)
+- Initial route contract
+- 7 routes defined (/, /items, /tags, /search, /items/:id, /tags/:id, catchall)
+- Wouter library selected
+- TypeScript type contracts defined
+- Error handling specified
+- Testing expectations documented

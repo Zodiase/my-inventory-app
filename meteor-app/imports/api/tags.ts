@@ -1,5 +1,8 @@
 import extend from 'lodash/extend';
+import { Meteor } from 'meteor/meteor';
+import type { Mongo } from 'meteor/mongo';
 
+import { InventoryItemsCollection } from '/imports/api/items';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import type TagRecord from '/imports/model/TagRecord';
 import createLogger from '/imports/utility/Logger';
@@ -65,6 +68,15 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
         throw new Error('Tag must have a name.');
     }
 
+    // Check for case-insensitive duplicate
+    const existingTag = await TagsCollection.findOneAsync({
+        name: { $regex: `^${name}$`, $options: 'i' },
+    });
+
+    if (typeof existingTag !== 'undefined') {
+        throw new Error(`Tag with name "${name}" already exists.`);
+    }
+
     if (parentTagId !== '') {
         await assertParentTag(parentTagId);
     }
@@ -91,6 +103,16 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
  */
 export const renameTag = async (tag: TagRecord, newName: string): Promise<boolean> => {
     logger.log('renameTag <=', { tag, newName });
+
+    // Check for case-insensitive duplicate (excluding the current tag)
+    const existingTag = await TagsCollection.findOneAsync({
+        _id: { $ne: tag._id },
+        name: { $regex: `^${newName}$`, $options: 'i' },
+    });
+
+    if (typeof existingTag !== 'undefined') {
+        throw new Error(`Tag with name "${newName}" already exists.`);
+    }
 
     const selector = extend(strictSelector(tag, ['name']), {
         path: {
@@ -311,12 +333,126 @@ export const watchAndFixMissingPath = async (): Promise<true> => {
     return true;
 };
 
+/**
+ * Delete a tag and remove it from all items that reference it.
+ * @param tagId - The ID of the tag to delete
+ * @returns true if tag was deleted, false if tag didn't exist
+ */
+export const deleteTag = async (tagId: string): Promise<boolean> => {
+    // First, remove this tag from all items
+    await InventoryItemsCollection.updateAsync({ tagIds: tagId }, { $pull: { tagIds: tagId } }, { multi: true });
+
+    // Then delete the tag
+    const removed = await TagsCollection.removeAsync(tagId);
+    return removed > 0;
+};
+
+/**
+ * Add a tag to an item.
+ * @param itemId - The ID of the item
+ * @param tagId - The ID of the tag to add
+ * @returns true on success
+ * @throws RecordNotFoundException if item or tag doesn't exist
+ */
+export const addToItem = async (itemId: string, tagId: string): Promise<boolean> => {
+    // Verify item exists
+    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+    if (typeof item === 'undefined') {
+        throw new RecordNotFoundException('Item not found', { _id: itemId });
+    }
+
+    // Verify tag exists
+    const tag = await TagsCollection.findOneAsync({ _id: tagId });
+    if (typeof tag === 'undefined') {
+        throw new RecordNotFoundException('Tag not found', { _id: tagId });
+    }
+
+    // Add tag to item (idempotent - $addToSet only adds if not present)
+    await InventoryItemsCollection.updateAsync({ _id: itemId }, { $addToSet: { tagIds: tagId } });
+
+    return true;
+};
+
+/**
+ * Remove a tag from an item.
+ * @param itemId - The ID of the item
+ * @param tagId - The ID of the tag to remove
+ * @returns true (operation is idempotent)
+ */
+export const removeFromItem = async (itemId: string, tagId: string): Promise<boolean> => {
+    // Remove tag from item (idempotent - $pull is safe even if tag not present)
+    await InventoryItemsCollection.updateAsync({ _id: itemId }, { $pull: { tagIds: tagId } });
+
+    return true;
+};
+
+/**
+ * Get usage counts for all tags (how many items have each tag).
+ *
+ * @returns Record mapping tagId to count of items with that tag
+ *
+ * @remarks
+ * This aggregates across all inventory items to count tag usage.
+ * Returns a map where each key is a tag ID and the value is the number
+ * of items that have that tag in their tagIds array.
+ *
+ * @example
+ * ```typescript
+ * const counts = await getTagUsageCounts();
+ * // { "tag1": 5, "tag2": 12, "tag3": 0 }
+ * ```
+ */
+export const getTagUsageCounts = async (): Promise<Record<string, number>> => {
+    const items = await InventoryItemsCollection.find({}).fetchAsync();
+    const counts: Record<string, number> = {};
+
+    // Count how many items have each tag
+    for (const item of items) {
+        for (const tagId of item.tagIds) {
+            counts[tagId] = (counts[tagId] ?? 0) + 1;
+        }
+    }
+
+    return counts;
+};
+
+export const findOneTag = async (selector: Mongo.Selector<TagRecord>): Promise<TagRecord | undefined> => {
+    return await TagsCollection.findOneAsync(selector);
+};
+
+// Publications (server-side only)
+if (Meteor.isServer) {
+    Meteor.methods({
+        'tags.findOne': findOneTag,
+        'tags.rename': renameTag,
+        'tags.delete': deleteTag,
+    });
+
+    /**
+     * Publish all tags.
+     *
+     * @returns Cursor for all tags
+     *
+     * @remarks
+     * Tags are published with all fields including path information.
+     * Used for tag selection, filtering, and management interfaces.
+     */
+    Meteor.publish('tags.all', function publishAllTags() {
+        logger.log('Publishing tags.all');
+        return TagsCollection.find({});
+    });
+}
+
 export default asMeteorMethods(TagsCollection, {
     createTag,
     renameTag,
     setTagParent,
     removeTag,
+    deleteTag,
+    addToItem,
+    removeFromItem,
     getDetachedTags,
+    getTagUsageCounts,
     fixPath,
     watchAndFixMissingPath,
 });

@@ -2,76 +2,104 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: App Tests
+permissions:
+    contents: read
+
+env:
+    METEOR_VERSION: 3.3.2
 
 on:
-  push:
-    branches: [ 'master' ]
-  pull_request:
-    branches:
-    - 'master'
-    - 'twig/**'
+    push:
+        branches: ['master']
+    pull_request:
+        branches:
+            - 'master'
+            - 'twig/**'
 
 jobs:
-  type-check:
-    name: Check types
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [ '22.x' ]
-    defaults:
-      run:
-        working-directory: meteor-app
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: 'meteor-app'
-    - run: npm ci
-    - run: npm run check:type
+    type-check:
+        name: Check types
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: ['22.x', '24.x']
+        defaults:
+            run:
+                shell: bash -l {0}
+                working-directory: meteor-app
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+                  cache-dependency-path: 'meteor-app/package-lock.json'
+            - name: Cache Meteor installation
+              uses: actions/cache@v4
+              with:
+                  path: ~/.meteor
+                  key: ${{ runner.os }}-meteor-${{ env.METEOR_VERSION }}
+            - name: Install Meteor ${{ env.METEOR_VERSION }}
+              run: npm install -g meteor@${METEOR_VERSION}
+            - run: npm ci
+            - run: meteor lint
+            - run: npm run check:type
 
-  code-style-check:
-    name: Check coding styles
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [ '22.x' ]
-    defaults:
-      run:
-        working-directory: meteor-app
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: 'meteor-app'
-    - run: npm ci
-    - run: npm run check:code-style
+    code-style-check:
+        name: Check coding styles
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: ['22.x', '24.x']
+        defaults:
+            run:
+                shell: bash -l {0}
+                working-directory: meteor-app
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+                  cache-dependency-path: 'meteor-app/package-lock.json'
+            - name: Cache Meteor installation
+              uses: actions/cache@v4
+              with:
+                  path: ~/.meteor
+                  key: ${{ runner.os }}-meteor-${{ env.METEOR_VERSION }}
+            - name: Install Meteor ${{ env.METEOR_VERSION }}
+              run: npm install -g meteor@${METEOR_VERSION}
+            - run: npm ci
+            - run: meteor lint
+            - run: npm run check:code-style
 
-  tests:
-    name: Unit tests
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [ '22.x' ]
-    defaults:
-      run:
-        shell: bash -l {0}
-        working-directory: meteor-app
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: 'meteor-app'
-    - name: Install Meteor 3.3.2
-      run: npm install -g meteor@3.3.2
-    - run: meteor npm ci
-    - run: meteor npm run build --if-present
-    - run: meteor npm test
+    tests:
+        name: Unit tests
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: ['22.x', '24.x']
+        defaults:
+            run:
+                shell: bash -l {0}
+                working-directory: meteor-app
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+                  cache-dependency-path: 'meteor-app/package-lock.json'
+            - name: Cache Meteor installation
+              uses: actions/cache@v4
+              with:
+                  path: ~/.meteor
+                  key: ${{ runner.os }}-meteor-${{ env.METEOR_VERSION }}
+            - name: Install Meteor ${{ env.METEOR_VERSION }}
+              run: npm install -g meteor@${METEOR_VERSION}
+            - run: meteor npm ci
+            - run: meteor npm run build --if-present
+            - run: meteor npm test

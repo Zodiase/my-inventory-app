@@ -1,0 +1,15 @@
+# Meteor app has its own Prettier config
+meteor-app/
+
+# AI-specific files with intentional formatting
+.github/prompts/
+.specify/
+specs/
+
+# Build outputs and dependencies
+node_modules/
+test-results/
+playwright-report/
+
+# Generated files
+package-lock.json

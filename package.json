@@ -1,0 +1,41 @@
+{
+    "name": "my-inventory-app-root",
+    "private": true,
+    "scripts": {
+        "check:ci": "cd meteor-app && npm ci && meteor lint && npm run check:type && npm run check:code-style",
+        "check:ci:fresh": "npm run clean:generated && npm run check:ci",
+        "clean:generated": "node scripts/cleanup-meteor-generated.mjs",
+        "prepare": "cd meteor-app && npm run prepare",
+        "start": "cd meteor-app && npm start",
+        "storybook": "cd meteor-app && npm run storybook",
+        "test:scripts": "node --test scripts/*.test.mjs",
+        "format": "prettier --write . && (cd meteor-app && npm run format)",
+        "format:check": "prettier --check . && (cd meteor-app && npm run format:check)",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test --ui",
+        "test:e2e:headed": "playwright test --headed",
+        "test:e2e:debug": "playwright test --debug",
+        "test:e2e:chromium": "playwright test --project=chromium",
+        "test:e2e:ipad": "playwright test --project=iPad",
+        "test:e2e:iphone": "playwright test --project=iPhone",
+        "test:e2e:headless": "playwright test --reporter=line",
+        "test:e2e:skip-server": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test",
+        "test:e2e:skip-server:ui": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --ui",
+        "test:e2e:skip-server:headed": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --headed",
+        "test:e2e:skip-server:debug": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --debug",
+        "test:e2e:skip-server:headless": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test --reporter=line",
+        "test:e2e:storybook": "playwright test tests/e2e/storybook/",
+        "test:e2e:app": "playwright test tests/e2e/app/",
+        "test:e2e:all": "playwright test tests/e2e/",
+        "debug:check-meteor": "curl -s http://localhost:3000 | head -20",
+        "debug:check-storybook": "curl -s http://localhost:6006 | head -20"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.56.1",
+        "prettier": "^3.6.2"
+    },
+    "engines": {
+        "node": "22.x || 24.x",
+        "npm": ">=10.0.0"
+    }
+}
