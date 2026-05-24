@@ -246,7 +246,11 @@ export const App = (): ReactElement => {
                 </Header>
 
                 {/* Main content area */}
-                <Main pad="medium" overflow="auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <Main
+                    pad="medium"
+                    overflow="hidden"
+                    style={{ WebkitOverflowScrolling: 'touch', minHeight: 0, flex: '1 1 0%' }}
+                >
                     <Switch>
                         {/* Home route - Items view */}
                         <Route path="/">

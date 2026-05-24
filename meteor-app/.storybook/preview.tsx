@@ -1,3 +1,5 @@
+import '../client/main.css';
+
 import type { Preview } from '@storybook/react-webpack5';
 import { Grommet } from 'grommet';
 import React from 'react';

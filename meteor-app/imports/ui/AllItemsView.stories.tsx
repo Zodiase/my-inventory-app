@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Box, Text as GrommetText } from 'grommet';
+import { Box, Button, Header, Heading, Main, Nav, Text as GrommetText } from 'grommet';
+import { Add, Apps, Filter, Search as SearchIcon, Tag as TagIcon } from 'grommet-icons';
 import React, { useState } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
@@ -13,11 +14,14 @@ const meta: Meta<typeof AllItemsViewPresentation> = {
     },
     tags: ['autodocs'],
     decorators: [
-        (Story) => (
-            <Box fill pad="medium" background="background-back">
+        (Story, context) =>
+            context.parameters.appShellLayout === true ? (
                 <Story />
-            </Box>
-        ),
+            ) : (
+                <Box fill pad="medium" background="background-back">
+                    <Story />
+                </Box>
+            ),
     ],
 };
 
@@ -101,6 +105,17 @@ const bike: InventoryItem = {
     createdAt: new Date('2024-01-07'),
     modifiedAt: new Date('2024-01-07'),
 };
+
+const scrollRegressionItems: InventoryItem[] = [
+    garage,
+    ...Array.from({ length: 24 }, (_, index) => ({
+        ...hammer,
+        _id: `scroll-item-${index + 1}`,
+        name: `Scroll Test Item ${index + 1}`,
+        description: `Regression item ${index + 1}`,
+        containerId: undefined,
+    })),
+];
 
 /**
  * Empty root level - no items at all
@@ -404,6 +419,62 @@ export const PullToRefresh: Story = {
                     }}
                     onRefresh={handleRefresh}
                 />
+            </Box>
+        );
+    },
+};
+
+/**
+ * Regression story for app-shell overflow.
+ */
+export const AppShellScrollRegression: Story = {
+    parameters: {
+        appShellLayout: true,
+    },
+    render: () => {
+        return (
+            <Box fill style={{ height: '100vh' }} data-testid="app-shell-scroll-regression">
+                <Header background="brand" pad="small">
+                    <Heading level="3" margin="none" color="white">
+                        Inventory App
+                    </Heading>
+                    <Nav direction="row" gap="small">
+                        <Button icon={<Apps />} label="Items" primary style={{ minHeight: '44px' }} />
+                        <Button icon={<TagIcon />} label="Tags" plain style={{ minHeight: '44px' }} />
+                        <Button icon={<SearchIcon />} label="Search" plain style={{ minHeight: '44px' }} />
+                    </Nav>
+                </Header>
+
+                <Main
+                    data-testid="app-main-scroll-container"
+                    pad="medium"
+                    overflow="hidden"
+                    style={{ WebkitOverflowScrolling: 'touch', minHeight: 0, flex: '1 1 0%' }}
+                >
+                    <Box>
+                        <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }}>
+                            <Heading level="2" margin="none">
+                                Items
+                            </Heading>
+                            <Box direction="row" gap="small">
+                                <Button icon={<Filter />} label="Add Filters" secondary />
+                                <Button icon={<Add />} label="Create Item" primary />
+                            </Box>
+                        </Box>
+
+                        <AllItemsViewPresentation
+                            items={scrollRegressionItems}
+                            containerPath={[]}
+                            showHomeIcon
+                            onNavigateToContainer={() => {
+                                console.log('Navigate to container');
+                            }}
+                            onBreadcrumbNavigate={() => {
+                                console.log('Breadcrumb navigate');
+                            }}
+                        />
+                    </Box>
+                </Main>
             </Box>
         );
     },
