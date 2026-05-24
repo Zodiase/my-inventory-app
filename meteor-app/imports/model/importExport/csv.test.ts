@@ -218,18 +218,7 @@ describe('importExport/csv', function () {
 
     describe('UMR sample fixture', function () {
         it('parses without errors when present on disk', function () {
-            let contents = '';
-            try {
-                contents = loadFixture('under-my-roof-sample.csv');
-            } catch (err) {
-                console.error('FAILED TO LOAD FIXTURE:', err);
-                this.skip();
-                return;
-            }
-            if (contents.trim() === '') {
-                this.skip();
-                return;
-            }
+            const contents = loadFixture('under-my-roof-sample.csv');
             const rows: ParsedRow[] = parseCsv(contents);
             assert.ok(rows.length > 0, 'expected at least one row from fixture');
             for (const r of rows) {

@@ -1,4 +1,5 @@
 import assert from 'assert';
+import { Meteor } from 'meteor/meteor';
 
 import { loadFixture } from '/imports/api/importExport/fixtureLoader';
 import { InventoryItemsCollection } from '/imports/api/items';
@@ -51,6 +52,12 @@ describe('importExport/import', function () {
             assert.ok(catRoot, 'Category root tag exists');
             const categories = await TagsCollection.find({ parentTagId: catRoot._id }).fetchAsync();
             assert.strictEqual(categories.length >= 10, true, '>= 10 unique categories');
+
+            // Collection tags check
+            const colRoot = await TagsCollection.findOneAsync({ name: 'Collection' });
+            assert.ok(colRoot, 'Collection root tag exists');
+            const collections = await TagsCollection.find({ parentTagId: colRoot._id }).fetchAsync();
+            assert.strictEqual(collections.length >= 1, true, '>= 1 unique collections');
         });
     });
 
@@ -83,6 +90,25 @@ describe('importExport/import', function () {
             const newlyCreated = await InventoryItemsCollection.findOneAsync({ name: 'Test Timestamp' });
             assert.ok(newlyCreated);
             assert.strictEqual(newlyCreated.createdAt.toISOString(), exactDate.toISOString(), 'timestamp preserved');
+        });
+
+        it('exercises the inventory.export.json method wrapper', async function () {
+            const exactDate = new Date('2024-01-01T10:00:00.000Z');
+            await InventoryItemsCollection.insertAsync({
+                name: 'Method Wrapper Test',
+                createdAt: exactDate,
+                modifiedAt: exactDate,
+                isContainer: false,
+                tagIds: [],
+            });
+
+            // Call the Meteor method
+            const jsonStr = (await Meteor.callAsync('inventory.export.json')) as string;
+
+            // Pass the result into importJson
+            const report = await importJson(jsonStr, { dryRun: true });
+            assert.strictEqual(report.exactDuplicates, 1, 'reports 1 exact duplicate');
+            assert.strictEqual(report.toCreate, 0, 'creates nothing');
         });
     });
 });

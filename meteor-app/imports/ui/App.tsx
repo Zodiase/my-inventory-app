@@ -1,5 +1,5 @@
 import { Box, Button, Grommet, Header, Heading, Layer, Main, Nav } from 'grommet';
-import { Apps, Tag as TagIcon, Close, Search as SearchIcon, Filter, Add } from 'grommet-icons';
+import { Apps, Tag as TagIcon, Close, Search as SearchIcon, Filter, Add, Configure } from 'grommet-icons';
 import { Meteor } from 'meteor/meteor';
 import React, { type ReactElement, useState, useEffect } from 'react';
 import { Route, Switch, Link, useLocation } from 'wouter';
@@ -22,6 +22,7 @@ import { SearchBar } from './SearchBar';
 import { SearchFragmentBuilder } from './SearchFragmentBuilder';
 import { SearchResultsView } from './SearchResultsView';
 import { SearchScopeSelector } from './SearchScopeSelector';
+import { SettingsDataView } from './SettingsDataView';
 
 // Grommet theme with iOS-style design and touch-friendly sizing
 const theme = {
@@ -242,6 +243,15 @@ export const App = (): ReactElement => {
                                 style={{ minHeight: '44px' }}
                             />
                         </Link>
+                        <Link href="/settings/data">
+                            <Button
+                                icon={<Configure />}
+                                label="Data"
+                                primary={location === '/settings/data'}
+                                plain={location !== '/settings/data'}
+                                style={{ minHeight: '44px' }}
+                            />
+                        </Link>
                     </Nav>
                 </Header>
 
@@ -452,6 +462,9 @@ export const App = (): ReactElement => {
 
                         {/* Items by tag route */}
                         <Route path="/tags/:tagId">{() => <ItemsByTagView />}</Route>
+
+                        {/* Settings route */}
+                        <Route path="/settings/data">{() => <SettingsDataView />}</Route>
 
                         {/* 404 Not Found */}
                         <Route>{() => <NotFoundView />}</Route>
