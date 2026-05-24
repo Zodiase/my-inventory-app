@@ -16,6 +16,8 @@ import {
 import createLogger from '/imports/utility/Logger';
 
 import { initializeGridFS } from './gridfs';
+import '/imports/api/importExport/export';
+
 import './test-helpers'; // Test helper methods for E2E testing
 
 const logger = createLogger(module);
@@ -50,8 +52,9 @@ Meteor.startup(async () => {
     logger.log('Database indexes created successfully');
 
     // Sample data creation
+    const SAMPLE_ITEMS_COUNT = 100;
     if ((await InventoryItemsCollection.find().countAsync()) === 0) {
-        for (let i = 1; i <= 100; i++) {
+        for (let i = 1; i <= SAMPLE_ITEMS_COUNT; i++) {
             await createInventoryItem({ name: `Sample item ${i}` });
         }
     }
