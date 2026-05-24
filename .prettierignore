@@ -2,6 +2,8 @@
 meteor-app/
 
 # AI-specific files with intentional formatting
+.agents/
+.augment/
 .github/prompts/
 .specify/
 specs/
