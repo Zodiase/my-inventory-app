@@ -51,10 +51,9 @@ Meteor.startup(async () => {
 
     // Sample data creation
     if ((await InventoryItemsCollection.find().countAsync()) === 0) {
-        await createInventoryItem({ name: 'Sample item 1' });
-        await createInventoryItem({ name: 'Sample item 2' });
-        await createInventoryItem({ name: 'Sample item 3' });
-        await createInventoryItem({ name: 'Sample item 4' });
+        for (let i = 1; i <= 100; i++) {
+            await createInventoryItem({ name: `Sample item ${i}` });
+        }
     }
 
     if ((await TagsCollection.find().countAsync()) === 0) {
