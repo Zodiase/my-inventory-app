@@ -10,6 +10,7 @@ For detailed docs, see:
 - `README.md` — overview, testing strategy, quick commands
 - `docs/DEVELOPMENT_NOTES.md` — Meteor 3 upgrade context, CI, lint config, troubleshooting
 - `docs/TESTING_GUIDE.md` — Playwright modes, nohup background servers, workflow rules
+- `tests/e2e/README.md` — Playwright app-mode E2E test authoring guide
 - `docs/KNOWN_ISSUES.md` — upstream deprecation warnings (safe to ignore)
 
 ## Critical structural split

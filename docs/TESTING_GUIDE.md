@@ -135,7 +135,7 @@ await Collection.createIndexAsync({ field: 1 }, { unique: true });
 
 - **Root level**: Playwright config, tests, and dependencies
     - `playwright.config.js` - Main test configuration
-    - `tests/e2e/` - End-to-end test files
+    - `tests/e2e/` - End-to-end test files (See the [E2E Test Authoring Guide](../../tests/e2e/README.md) for patterns)
     - `package.json` - Playwright dependencies only
 
 - **meteor-app/**: Meteor application code
