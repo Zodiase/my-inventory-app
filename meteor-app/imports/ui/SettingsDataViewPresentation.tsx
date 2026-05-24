@@ -9,23 +9,31 @@ export interface SettingsDataViewProps {
     onExportJson: () => Promise<string>;
     onExportCsv: () => Promise<string>;
     onImport: (isCsv: boolean, content: string, dryRun: boolean) => Promise<ImportReport>;
+    _testState?: {
+        exportingJson?: boolean;
+        importing?: boolean;
+        importFile?: { name: string } | null;
+        importReport?: ImportReport | null;
+        importSuccess?: boolean;
+    };
 }
 
 export const SettingsDataViewPresentation = ({
     onExportJson,
     onExportCsv,
     onImport,
+    _testState,
 }: SettingsDataViewProps): ReactElement => {
-    const [exportingJson, setExportingJson] = useState(false);
+    const [exportingJson, setExportingJson] = useState(_testState?.exportingJson ?? false);
     const [exportingCsv, setExportingCsv] = useState(false);
     const [exportError, setExportError] = useState<string | null>(null);
 
-    const [importFile, setImportFile] = useState<File | null>(null);
+    const [importFile, setImportFile] = useState<File | { name: string } | null>(_testState?.importFile ?? null);
     const [importContent, setImportContent] = useState<string | null>(null);
-    const [importing, setImporting] = useState(false);
-    const [importReport, setImportReport] = useState<ImportReport | null>(null);
+    const [importing, setImporting] = useState(_testState?.importing ?? false);
+    const [importReport, setImportReport] = useState<ImportReport | null>(_testState?.importReport ?? null);
     const [importError, setImportError] = useState<string | null>(null);
-    const [importSuccess, setImportSuccess] = useState(false);
+    const [importSuccess, setImportSuccess] = useState(_testState?.importSuccess ?? false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
