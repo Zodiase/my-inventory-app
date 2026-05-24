@@ -43,10 +43,7 @@ const storybookWebServer = {
     cwd: './meteor-app',
 };
 
-const webServer = [
-    ...(isStorybookOnlyRun ? [] : [appWebServer]),
-    ...(isAppOnlyRun ? [] : [storybookWebServer]),
-];
+const webServer = [...(isStorybookOnlyRun ? [] : [appWebServer]), ...(isAppOnlyRun ? [] : [storybookWebServer])];
 
 /**
  * Playwright configuration for testing the Meteor inventory app.

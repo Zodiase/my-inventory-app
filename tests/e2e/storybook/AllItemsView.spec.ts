@@ -22,10 +22,10 @@ test.describe('AllItemsView Component (Storybook)', () => {
             let ancestor = itemList.parentElement;
             while (ancestor !== null) {
                 const style = getComputedStyle(ancestor);
-                const hasYOverflow = ['auto', 'scroll'].includes(style.overflowY) &&
-                    ancestor.scrollHeight > ancestor.clientHeight + 1;
-                const hasXOverflow = ['auto', 'scroll'].includes(style.overflowX) &&
-                    ancestor.scrollWidth > ancestor.clientWidth + 1;
+                const hasYOverflow =
+                    ['auto', 'scroll'].includes(style.overflowY) && ancestor.scrollHeight > ancestor.clientHeight + 1;
+                const hasXOverflow =
+                    ['auto', 'scroll'].includes(style.overflowX) && ancestor.scrollWidth > ancestor.clientWidth + 1;
 
                 if (hasYOverflow || hasXOverflow) {
                     overflowingAncestors.push({
