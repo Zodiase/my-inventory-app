@@ -1,7 +1,6 @@
 import assert from 'assert';
-import fs from 'fs';
-import path from 'path';
 
+import { loadFixture } from '/imports/api/importExport/fixtureLoader';
 import type { ExportRow, ParsedRow } from '/imports/model/importExport/csv';
 import {
     EXTENDED_COLUMNS,
@@ -219,14 +218,11 @@ describe('importExport/csv', function () {
 
     describe('UMR sample fixture', function () {
         it('parses without errors when present on disk', function () {
-            const fixturePath = path.resolve(
-                __dirname,
-                '../../../../specs/004-import-export/fixtures/under-my-roof-sample.csv'
-            );
             let contents = '';
             try {
-                contents = fs.readFileSync(fixturePath, 'utf8');
-            } catch {
+                contents = loadFixture('under-my-roof-sample.csv');
+            } catch (err) {
+                console.error('FAILED TO LOAD FIXTURE:', err);
                 this.skip();
                 return;
             }
