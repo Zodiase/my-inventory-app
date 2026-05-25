@@ -158,6 +158,13 @@ Users reach the import/export feature from a single, discoverable Settings page 
 - Drag-drop file upload in the UI (file input is enough for v1)
 - "Merge whole inventory" import mode beyond per-row dedup policy
 
+
+## Supported platforms
+
+Desktop only (viewport >= 768px). Mobile users see a fallback view directing them to use a computer. Rationale: filesystem UX on mobile browsers is too limited for reliable import/export.
+
+The `<DesktopOnly>` pattern is available as a reusable component for future desktop-only features, establishing a documented project convention for managing viewport-restricted functionality.
+
 ## Dependencies
 
 - **Spec 003 (URL routing)**: provides the Wouter routing primitives used by `/settings/data`
