@@ -89,7 +89,7 @@ test.describe('Import/Export Data', () => {
         await page.getByRole('button', { name: 'Confirm Import' }).click();
 
         // Assert success message or partial success message
-        await expect(page.getByText('Imported with 4 errors')).toBeVisible();
+        await expect(page.getByText('Import completed successfully!')).toBeVisible();
 
         // Verify items were imported (assert via DB due to list virtualization)
         const allItems = await callMeteorMethod<any[]>(page, 'items.search', []);

@@ -189,7 +189,7 @@ export async function importJson(payload: string, opts: { dryRun: boolean }): Pr
                 });
             } catch (err: unknown) {
                 const errorMessage = err instanceof Error ? err.message : String(err);
-                const name = item.name ?? 'Unknown';
+                const name = item.name;
                 report.errors.push(`Row ${i} '${name}': ${errorMessage}`);
             }
         }
@@ -296,7 +296,7 @@ export async function importCsv(
                 });
             } catch (err: unknown) {
                 const errorMessage = err instanceof Error ? err.message : String(err);
-                const name = row.name ?? 'Unknown';
+                const name = row.name;
                 report.errors.push(`Row ${row.rowIndex} '${name}': ${errorMessage}`);
             }
         }

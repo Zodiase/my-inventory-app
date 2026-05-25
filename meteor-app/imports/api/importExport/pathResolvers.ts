@@ -69,7 +69,7 @@ const VIRTUAL_ID_PREFIX = 'virtual:';
 
 const containerCacheKey = (parentId: string | undefined, name: string): string => `${parentId ?? ''}\u0000${name}`;
 
-const tagCacheKey = (parentId: string, name: string): string => `${parentId}\u0000${name.toLowerCase()}`;
+const tagCacheKey = (name: string): string => name.toLowerCase();
 
 export const createResolverSession = (options: ResolverSessionOptions = {}): ResolverSession => {
     const dryRun = options.dryRun === true;
@@ -194,19 +194,25 @@ export const createResolverSession = (options: ResolverSessionOptions = {}): Res
             parentTagId = await resolveTagByName(opts.groupName.trim(), { autoCreate: opts.autoCreate });
         }
 
-        const cacheKey = tagCacheKey(parentTagId, trimmedName);
+        const cacheKey = tagCacheKey(trimmedName);
         const cached = tagCache.get(cacheKey);
         if (typeof cached !== 'undefined') {
             return cached;
         }
 
-        // Case-insensitive lookup keyed by parent (matches createTag's uniqueness pattern, but scoped per parent).
+        // Case-insensitive lookup globally.
         const existing = await TagsCollection.findOneAsync({
-            parentTagId,
             name: { $regex: `^${escapeRegex(trimmedName)}$`, $options: 'i' },
         });
 
         if (typeof existing !== 'undefined') {
+            if (existing.parentTagId !== parentTagId) {
+                logger.warn('Resolver found global tag under a different parent. Reusing existing tag.', {
+                    name: trimmedName,
+                    requestedParent: parentTagId,
+                    actualParent: existing.parentTagId,
+                });
+            }
             tagCache.set(cacheKey, existing._id);
             return existing._id;
         }

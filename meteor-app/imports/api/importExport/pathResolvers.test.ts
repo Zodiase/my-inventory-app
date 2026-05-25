@@ -238,6 +238,39 @@ describe('pathResolvers', function () {
             const second = await createResolverSession().resolveTagByName('campinggear', { autoCreate: true });
             assert.strictEqual(first, second);
         });
+        it('reuses an existing global tag even if groupName differs', async function () {
+            const sessionA = createResolverSession();
+            const idA = await sessionA.resolveTagByName('UniqueName', { groupName: 'GroupA', autoCreate: true });
+
+            const sessionB = createResolverSession();
+            const idB = await sessionB.resolveTagByName('UniqueName', { groupName: 'GroupB', autoCreate: true });
+
+            assert.strictEqual(idA, idB);
+
+            const tag = await TagsCollection.findOneAsync({ _id: idA });
+            assert.ok(tag);
+
+            // Should still have the original parent
+            const groupATag = await TagsCollection.findOneAsync({ name: 'GroupA' });
+            assert.ok(groupATag);
+            assert.strictEqual(tag.parentTagId, groupATag._id);
+
+            // GroupB should be created because resolveTagByName creates group tags before checking the child
+            const groupBTag = await TagsCollection.findOneAsync({ name: 'GroupB' });
+            assert.ok(groupBTag);
+        });
+
+        it('returns same id on second call with different groupName in same session (cache hit)', async function () {
+            const session = createResolverSession();
+            const idA = await session.resolveTagByName('SessionCacheTest', { groupName: 'GroupX', autoCreate: true });
+            const idB = await session.resolveTagByName('SessionCacheTest', { groupName: 'GroupY', autoCreate: true });
+
+            assert.strictEqual(idA, idB);
+
+            // GroupY tag is created during the resolution
+            const groupYTag = await TagsCollection.findOneAsync({ name: 'GroupY' });
+            assert.ok(groupYTag);
+        });
 
         it('throws when autoCreate is false and the tag does not exist', async function () {
             const session = createResolverSession();
