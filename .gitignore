@@ -6,3 +6,4 @@ storybook-static/
 playwright-report/
 test-results/
 .playwright/
+tests/e2e/app/temp-download.json
