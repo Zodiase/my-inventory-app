@@ -13,6 +13,7 @@ These notes capture migration context and operational learnings gathered during 
 - Warning appears only in dev server startup: emitted by Meteor tool internal `http-proxy` usage.
 - Upstream issue: meteor/meteor#13491 (documented in `docs/KNOWN_ISSUES.md`).
 - Harmless; not caused by repository code. No suppression committed to keep visibility into future deprecations.
+- **Note on `.meteor/versions`:** Test runs inject driver packages into the lock file. This drift is documented in `docs/KNOWN_ISSUES.md`. Always commit the app-mode lock file.
 
 ## 3. CI Pipeline Adjustments
 

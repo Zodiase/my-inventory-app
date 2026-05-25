@@ -113,6 +113,29 @@ While this warning can be safely ignored, if the console noise is problematic, y
 
 These workarounds are not recommended as they may hide other important warnings.
 
+
+## .meteor/versions Flip-Flop Between Test and App Runs
+
+### Symptom
+
+`git diff meteor-app/.meteor/versions` shows 3 `meteortesting:*` lines added/removed depending on whether `npm test` or `meteor run` was last invoked.
+
+### Cause
+
+Meteor's resolver rewrites `.meteor/versions` on every run based on the inputs it sees. `--driver-package meteortesting:mocha` adds extra inputs, which get persisted into the lock.
+
+### Upstream Tracking
+
+- Meteor issue: https://github.com/meteor/meteor/issues/14068
+
+### Project Policy
+
+Commit the **app-mode** version of `.meteor/versions`. After running `npm test` or `npm run test-app`, discard the `.meteor/versions` change before committing: `git checkout -- meteor-app/.meteor/versions`. Do NOT delete the 3 `meteortesting:*` lines — they're the app-mode resolved set's transitive closure and Meteor will keep adding them right back.
+
+### Why we don't gitignore it
+
+Losing the lock file loses reproducible builds. The cost of occasional manual cleanup is lower.
+
 ---
 
 _Last updated: 2025-09-23_
