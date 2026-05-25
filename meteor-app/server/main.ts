@@ -17,6 +17,7 @@ import createLogger from '/imports/utility/Logger';
 
 import { initializeGridFS } from './gridfs';
 import '/imports/api/importExport/export';
+import '/imports/api/importExport/import';
 
 import './test-helpers'; // Test helper methods for E2E testing
 
