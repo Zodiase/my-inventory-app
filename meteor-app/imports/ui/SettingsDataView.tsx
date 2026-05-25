@@ -3,6 +3,7 @@ import React, { type ReactElement } from 'react';
 
 import type { ImportReport } from '/imports/api/importExport/import';
 
+import { DesktopOnly } from './DesktopOnly';
 import { SettingsDataViewPresentation } from './SettingsDataViewPresentation';
 
 export const SettingsDataView = (): ReactElement => {
@@ -20,10 +21,12 @@ export const SettingsDataView = (): ReactElement => {
     };
 
     return (
-        <SettingsDataViewPresentation
-            onExportJson={handleExportJson}
-            onExportCsv={handleExportCsv}
-            onImport={handleImport}
-        />
+        <DesktopOnly>
+            <SettingsDataViewPresentation
+                onExportJson={handleExportJson}
+                onExportCsv={handleExportCsv}
+                onImport={handleImport}
+            />
+        </DesktopOnly>
     );
 };
