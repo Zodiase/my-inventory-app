@@ -191,11 +191,47 @@ export const SettingsDataViewPresentation = ({
                         </Text>
                     )}
 
-                    {importSuccess && (
+                    {importSuccess && importReport != null && importReport.errors.length === 0 && (
                         <Box background="status-ok" pad="small" round="small">
                             <Text color="white">Import completed successfully!</Text>
                         </Box>
                     )}
+
+                    {importSuccess &&
+                        importReport != null &&
+                        importReport.errors.length > 0 &&
+                        importReport.toCreate + importReport.exactDuplicates + importReport.supersetMerges > 0 && (
+                            <Box background="status-warning" pad="small" round="small" gap="xsmall">
+                                <Text color="white" weight="bold">
+                                    Imported with {importReport.errors.length} errors
+                                </Text>
+                                <Box margin={{ top: 'small' }} gap="xsmall">
+                                    {importReport.errors.map((err, i) => (
+                                        <Text key={i} size="small" color="white">
+                                            • {err}
+                                        </Text>
+                                    ))}
+                                </Box>
+                            </Box>
+                        )}
+
+                    {importSuccess &&
+                        importReport != null &&
+                        importReport.errors.length > 0 &&
+                        importReport.toCreate + importReport.exactDuplicates + importReport.supersetMerges === 0 && (
+                            <Box background="status-critical" pad="small" round="small" gap="xsmall">
+                                <Text color="white" weight="bold">
+                                    Import failed
+                                </Text>
+                                <Box margin={{ top: 'small' }} gap="xsmall">
+                                    {importReport.errors.map((err, i) => (
+                                        <Text key={i} size="small" color="white">
+                                            • {err}
+                                        </Text>
+                                    ))}
+                                </Box>
+                            </Box>
+                        )}
 
                     <Box>
                         <input
