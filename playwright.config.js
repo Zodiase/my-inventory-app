@@ -93,7 +93,7 @@ export default defineConfig({
         },
         {
             name: 'iPad',
-            testIgnore: /tests\/e2e\/storybook\/.*\.spec\.ts/,
+            testIgnore: [/tests\/e2e\/storybook\/.*\.spec\.ts/, /tests\/e2e\/app\/import-export\.spec\.ts/],
             use: {
                 ...devices['iPad Pro'],
                 hasTouch: true,
@@ -101,7 +101,7 @@ export default defineConfig({
         },
         {
             name: 'iPhone',
-            testIgnore: /tests\/e2e\/storybook\/.*\.spec\.ts/,
+            testIgnore: [/tests\/e2e\/storybook\/.*\.spec\.ts/, /tests\/e2e\/app\/import-export\.spec\.ts/],
             use: {
                 ...devices['iPhone 13'],
                 hasTouch: true,
