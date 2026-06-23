@@ -104,7 +104,7 @@ describe('importExport/import', function () {
             });
 
             // Call the Meteor method
-            const jsonStr = (await Meteor.callAsync('inventory.export.json')) as string;
+            const jsonStr = await Meteor.callAsync('inventory.export.json');
             assert(typeof jsonStr === 'string', 'Expected jsonStr to be a string');
 
             // Pass the result into importJson
