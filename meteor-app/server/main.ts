@@ -69,6 +69,77 @@ Meteor.startup(async () => {
         await createTag({ name: 'Sample child tag 2-2', parentTagId: tag2Id });
     }
 
+    if (Meteor.isDevelopment && (await InventoryItemsCollection.find({ isContainer: true }).countAsync()) === 0) {
+        let createdRecordsCount = 0;
+
+        const tag1 = await TagsCollection.findOneAsync({ name: 'Sample tag 1' });
+        const childTag = await TagsCollection.findOneAsync({ name: 'Sample child tag 1-1' });
+
+        const tagIds: string[] = [];
+        if (typeof tag1 !== 'undefined') {
+            tagIds.push(tag1._id);
+        }
+        if (typeof childTag !== 'undefined') {
+            tagIds.push(childTag._id);
+        }
+
+        const garageId = await createInventoryItem({ name: 'Garage', isContainer: true });
+        createdRecordsCount++;
+        const officeId = await createInventoryItem({ name: 'Office', isContainer: true });
+        createdRecordsCount++;
+        const kitchenId = await createInventoryItem({ name: 'Kitchen', isContainer: true });
+        createdRecordsCount++;
+        await createInventoryItem({ name: 'Spare Room', isContainer: true });
+        createdRecordsCount++;
+
+        const toolboxId = await createInventoryItem({ name: 'Toolbox', isContainer: true, containerId: garageId });
+        createdRecordsCount++;
+
+        await createInventoryItem({
+            name: 'Lawnmower',
+            description: 'Gas powered lawnmower',
+            containerId: garageId,
+            properties: { make: 'Honda', model: 'HRX217' },
+        });
+        createdRecordsCount++;
+        await createInventoryItem({ name: 'Snow Shovel', containerId: garageId });
+        createdRecordsCount++;
+
+        await createInventoryItem({ name: 'Hammer', containerId: toolboxId });
+        createdRecordsCount++;
+        await createInventoryItem({
+            name: 'Screwdriver Set',
+            description: 'Phillips and Flathead',
+            containerId: toolboxId,
+        });
+        createdRecordsCount++;
+        await createInventoryItem({ name: 'Wrench', containerId: toolboxId, tagIds });
+        createdRecordsCount++;
+
+        await createInventoryItem({ name: 'Desk Chair', description: 'Ergonomic office chair', containerId: officeId });
+        createdRecordsCount++;
+        await createInventoryItem({
+            name: 'A very long item name that exceeds typical lengths and should be truncated by the UI to verify that our CSS text-overflow properties are working correctly across all views',
+            containerId: officeId,
+            properties: { make: 'Generic', model: 'Long Name Edition' },
+        });
+        createdRecordsCount++;
+
+        await createInventoryItem({
+            name: 'Blender',
+            description: 'High speed blender',
+            containerId: kitchenId,
+            properties: { make: 'Vitamix', model: '5200' },
+        });
+        createdRecordsCount++;
+        await createInventoryItem({ name: 'Toaster', containerId: kitchenId });
+        createdRecordsCount++;
+        await createInventoryItem({ name: 'Coffee Maker', containerId: kitchenId, tagIds });
+        createdRecordsCount++;
+
+        logger.log(`Seeded ${createdRecordsCount} rich fixture items for development audit.`);
+    }
+
     watchAndFixMissingPath().catch((reason: unknown) => {
         logger.warn('Error starting watching for tags without path.', reason);
     });
