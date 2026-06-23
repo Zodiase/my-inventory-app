@@ -113,7 +113,6 @@ While this warning can be safely ignored, if the console noise is problematic, y
 
 These workarounds are not recommended as they may hide other important warnings.
 
-
 ## .meteor/versions Flip-Flop Between Test and App Runs
 
 ### Symptom

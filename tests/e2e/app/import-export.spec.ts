@@ -61,7 +61,7 @@ test.describe('Import/Export Data', () => {
         await page.goto('/');
 
         const jsonResults = await callMeteorMethod<any[]>(page, 'items.search', []);
-        console.log("JSON test items in DB:", jsonResults.length);
+        console.log('JSON test items in DB:', jsonResults.length);
 
         await expect(page.getByText('Export Item 1')).toBeVisible();
         await expect(page.getByText('Export Item 2')).toBeVisible();
@@ -93,11 +93,13 @@ test.describe('Import/Export Data', () => {
 
         // Verify items were imported (assert via DB due to list virtualization)
         const allItems = await callMeteorMethod<any[]>(page, 'items.search', []);
-        console.log("All items count:", allItems.length);
+        console.log('All items count:', allItems.length);
         const sonyResults = await callMeteorMethod<any[]>(page, 'items.search', [{ type: 'name', value: 'Sony a7R3' }]);
         expect(sonyResults.length).toBeGreaterThan(0);
 
-        const appleResults = await callMeteorMethod<any[]>(page, 'items.search', [{ type: 'name', value: 'Apple TV 4K 64GB' }]);
+        const appleResults = await callMeteorMethod<any[]>(page, 'items.search', [
+            { type: 'name', value: 'Apple TV 4K 64GB' },
+        ]);
         expect(appleResults.length).toBeGreaterThan(0);
     });
 
