@@ -121,7 +121,6 @@ npm run test:e2e:skip-server:ui
 3. **Helper Tests by Dependency** - If a helper requires Storybook, its tests go in `storybook/`. If it requires the full app, tests go in `app/`
 4. **DRY (Don't Repeat Yourself)** - Share common code via `helpers/`, don't duplicate page objects or factories
 
-
 ## App-Mode E2E Test Authoring Guide
 
 This section documents the patterns for writing app-mode Playwright tests (testing the full Meteor application) to ensure consistency and prevent context-loss when writing new specs.
@@ -130,8 +129,8 @@ This section documents the patterns for writing app-mode Playwright tests (testi
 
 - **Location**: `tests/e2e/helpers/database.ts`
 - **Usage**:
-  - `waitForMeteorReady(page)`: Ensures Meteor DDP connection is fully established before running assertions.
-  - `resetDatabase(page)`: Calls a dev-only HTTP endpoint (`/api/test/reset-database`) to wipe the database. Use this before each test to ensure a clean slate.
+    - `waitForMeteorReady(page)`: Ensures Meteor DDP connection is fully established before running assertions.
+    - `resetDatabase(page)`: Calls a dev-only HTTP endpoint (`/api/test/reset-database`) to wipe the database. Use this before each test to ensure a clean slate.
 
 ### 2. Page Objects
 
@@ -158,8 +157,8 @@ test.beforeEach(async ({ page }) => {
 
 - **Location**: `meteor-app/server/test-helpers.ts`
 - **Usage**: Provides dev-only capabilities to manipulate the backend during tests.
-  - `test.resetDatabase`: A Meteor method to reset all collections.
-  - `POST /api/test/reset-database`: An HTTP endpoint for Playwright to easily reset the DB without needing a client-side Meteor connection.
+    - `test.resetDatabase`: A Meteor method to reset all collections.
+    - `POST /api/test/reset-database`: An HTTP endpoint for Playwright to easily reset the DB without needing a client-side Meteor connection.
 
 ### 5. File Uploads
 
