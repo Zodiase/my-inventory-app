@@ -172,7 +172,7 @@ export const App = (): ReactElement => {
             }
 
             // Call search method
-            const results = await Meteor.callAsync<InventoryItem[]>('items.search', fragments);
+            const results = (await Meteor.callAsync('items.search', fragments)) as InventoryItem[];
             setSearchResults(results);
         } catch (error) {
             console.error('Search failed:', error);

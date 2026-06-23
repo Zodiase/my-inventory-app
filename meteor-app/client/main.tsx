@@ -3,6 +3,9 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { App } from '/imports/ui/App';
+import { setupDiagnostics } from '/imports/utility/diagnostics';
+
+setupDiagnostics();
 
 Meteor.startup(() => {
     const reactRenderRootElement = document.getElementById('react-target');

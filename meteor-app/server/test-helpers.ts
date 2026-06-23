@@ -50,21 +50,23 @@ if (!Meteor.isProduction) {
      * This allows tests to reset without needing Meteor.call().
      * Only available in development mode.
      */
-    WebApp.connectHandlers.use('/api/test/reset-database', async (req, res) => {
-        // Only allow POST requests
-        if (req.method !== 'POST') {
-            res.writeHead(HTTP_METHOD_NOT_ALLOWED, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Method not allowed. Use POST.' }));
-            return;
-        }
+    WebApp.connectHandlers.use('/api/test/reset-database', (req, res) => {
+        void (async () => {
+            // Only allow POST requests
+            if (req.method !== 'POST') {
+                res.writeHead(HTTP_METHOD_NOT_ALLOWED, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Method not allowed. Use POST.' }));
+                return;
+            }
 
-        try {
-            await resetDatabase();
-            res.writeHead(HTTP_OK, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: true }));
-        } catch (error) {
-            res.writeHead(HTTP_INTERNAL_SERVER_ERROR, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }));
-        }
+            try {
+                await resetDatabase();
+                res.writeHead(HTTP_OK, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true }));
+            } catch (error) {
+                res.writeHead(HTTP_INTERNAL_SERVER_ERROR, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }));
+            }
+        })();
     });
 }
