@@ -16,6 +16,7 @@
         "test:e2e:headed": "playwright test --headed",
         "test:e2e:debug": "playwright test --debug",
         "test:e2e:chromium": "playwright test --project=chromium",
+        "test:e2e:audit": "playwright test tests/e2e/audit/ --project=chromium",
         "test:e2e:ipad": "playwright test --project=iPad",
         "test:e2e:iphone": "playwright test --project=iPhone",
         "test:e2e:headless": "playwright test --reporter=line",
