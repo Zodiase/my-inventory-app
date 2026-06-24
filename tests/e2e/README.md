@@ -6,6 +6,7 @@ This directory contains end-to-end tests for the inventory app using Playwright.
 
 ```
 tests/e2e/
+├── audit/            # Local route sweeps with screenshots and diagnostics
 ├── app/              # Integration tests (full app)
 ├── storybook/        # Component tests (Storybook isolation)
 └── helpers/          # Shared utilities (page objects, factories, helpers)
@@ -32,6 +33,32 @@ tests/e2e/
 - `search-and-filter.spec.ts` - Searching and filtering with real data
 
 **Playwright Config**: Uses `chromium` project with `baseURL: http://localhost:3000`
+
+### `audit/` - Local Route Audit Sweeps
+
+**When to use**: Quickly inspect core app routes across common viewport sizes during local development.
+
+**Characteristics**:
+
+- Requires Meteor app running, or lets Playwright start it through the configured web server.
+- Visits core routes at desktop, tablet, and mobile viewport sizes.
+- Captures full-page screenshots, accessibility snapshots, body text samples, headings, and client diagnostics.
+- Fails on captured `console.error`, `console.warn`, browser `error` events, or unhandled promise rejections.
+- Produces ignored local artifacts under `tests/e2e/audit/artifacts/`.
+
+**Scope**: This is a local observability tool, not a complete visual quality gate. It makes layout issues visible and records them, but it does not currently fail on visual defects such as overflow, overlap, clipping, or awkward responsive composition.
+
+**Run**:
+
+```bash
+npm run test:e2e:audit
+```
+
+**Review artifacts**:
+
+- `tests/e2e/audit/artifacts/audit-report.json`
+- `tests/e2e/audit/artifacts/<viewport>/<route>.png`
+- `tests/e2e/audit/artifacts/<viewport>/<route>.a11y.json`
 
 ### `storybook/` - Component Isolation Tests
 
@@ -100,6 +127,9 @@ npm run test:e2e:skip-server:headless -- tests/e2e/storybook/ --project=storyboo
 
 # Integration tests (Meteor must be running)
 npm run test:e2e:skip-server:headless -- tests/e2e/app/ --project=chromium
+
+# Local route audit sweep with generated screenshots/report
+npm run test:e2e:audit
 
 # Specific test file
 npm run test:e2e:skip-server:headless -- tests/e2e/storybook/ItemForm.spec.ts --project=storybook-chromium
