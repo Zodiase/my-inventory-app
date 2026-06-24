@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -56,6 +56,8 @@ test('check-prerequisites accepts a pinned feature directory on master via .spec
 
         assert.equal((await run('git', ['config', 'user.name', 'Test User'], tempRoot)).code, 0);
         assert.equal((await run('git', ['config', 'user.email', 'test@example.com'], tempRoot)).code, 0);
+        assert.equal((await run('git', ['config', 'commit.gpgsign', 'false'], tempRoot)).code, 0);
+        assert.equal((await run('git', ['config', 'tag.gpgsign', 'false'], tempRoot)).code, 0);
         const initialCommit = await run('git', ['commit', '--allow-empty', '-m', 'init'], tempRoot);
         assert.equal(initialCommit.code, 0, initialCommit.stderr);
 
@@ -68,7 +70,10 @@ test('check-prerequisites accepts a pinned feature directory on master via .spec
         assert.equal(result.code, 0, result.stderr || result.stdout);
 
         const payload = JSON.parse(result.stdout);
-        assert.equal(payload.FEATURE_DIR, path.join(tempRoot, 'specs', '002-storybook-e2e-testing'));
+        assert.equal(
+            await realpath(payload.FEATURE_DIR),
+            await realpath(path.join(tempRoot, 'specs', '002-storybook-e2e-testing'))
+        );
         assert.deepEqual(payload.AVAILABLE_DOCS, ['tasks.md']);
     } finally {
         await rm(tempRoot, { recursive: true, force: true });

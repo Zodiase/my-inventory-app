@@ -1,9 +1,9 @@
 import { Box, Button, Heading, Text } from 'grommet';
-import React, { type ComponentProps, type ReactElement, useState } from 'react';
+import React, { type ReactElement } from 'react';
 import { useParams, Link } from 'wouter';
 
-import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
-import { TagsCollection, type TagRecord } from '/imports/api/tags';
+import { InventoryItemsCollection } from '/imports/api/items';
+import { TagsCollection } from '/imports/api/tags';
 import { LoadingState } from '/imports/ui/common/LoadingState';
 import { ItemsByTagViewPresentation } from '/imports/ui/ItemsByTagView/ItemsByTagViewPresentation';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
