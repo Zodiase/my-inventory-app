@@ -10,6 +10,20 @@ const VIEWPORTS = [
 
 const ROUTES = ['/', '/items', '/items/:id', '/tags', '/tags/:id', '/search', '/settings/data', '/does-not-exist'];
 
+type DiagnosticsSnapshot = {
+    errors: unknown[];
+    warnings: unknown[];
+    exceptions: unknown[];
+    rejections: unknown[];
+    route: string;
+    counts: {
+        items: number;
+        containers: number;
+        tags: number;
+    };
+    timestamp: number;
+};
+
 let targetItemId = 'dummy-item';
 let targetTagId = 'dummy-tag';
 
@@ -18,6 +32,14 @@ const report = {
     meteorBaseUrl: 'http://localhost:3000',
     results: [] as any[],
 };
+
+function expectCleanDiagnostics(diag: DiagnosticsSnapshot | null): void {
+    expect(diag, 'diagnostics should be installed on audited routes').not.toBeNull();
+    expect(diag?.errors, 'console.error entries').toEqual([]);
+    expect(diag?.warnings, 'console.warn entries').toEqual([]);
+    expect(diag?.exceptions, 'window error events').toEqual([]);
+    expect(diag?.rejections, 'unhandled promise rejections').toEqual([]);
+}
 
 test.describe('Audit Sweep', () => {
     test.beforeAll(async ({ browser }) => {
@@ -111,9 +133,11 @@ test.describe('Audit Sweep', () => {
                         JSON.stringify(a11ySnapshot, null, 2)
                     );
 
-                    const diag = await page.evaluate(() => {
+                    const diag = await page.evaluate((): DiagnosticsSnapshot | null => {
                         return (window as any).__diagnostics?.get() || null;
                     });
+
+                    expectCleanDiagnostics(diag);
 
                     const title = await page.title();
                     const bodyTextSample = await page.evaluate(() => {
