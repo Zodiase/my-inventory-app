@@ -165,4 +165,27 @@ test.describe('Tags view', () => {
         await page.getByRole('button', { name: 'Tags' }).click();
         await expect(page.locator('.tag-body', { hasText: `${tagName} (1)` })).toBeVisible({ timeout: 10000 });
     });
+
+    test('shows parent container location for tagged nested items', async ({ page }) => {
+        const tagName = `Nested ${Date.now()}`;
+        const containerName = `Nested Bin ${Date.now()}`;
+        const itemName = `Tagged Nested Item ${Date.now()}`;
+
+        const tagId = await callMeteorMethod<string>(page, 'createTag', { name: tagName });
+        const containerId = await callMeteorMethod<string>(page, 'createItem', {
+            name: containerName,
+            isContainer: true,
+        });
+        const itemId = await callMeteorMethod<string>(page, 'createItem', {
+            name: itemName,
+            containerId,
+            tagIds: [tagId],
+        });
+
+        await page.goto(`/tags/${tagId}`);
+        await waitForMeteorReady(page);
+
+        await expect(page.getByRole('heading', { name: `Items tagged with: ${tagName}` })).toBeVisible();
+        await expect(page.locator(`[data-item-id="${itemId}"]`)).toContainText(`Location: ${containerName}`);
+    });
 });
