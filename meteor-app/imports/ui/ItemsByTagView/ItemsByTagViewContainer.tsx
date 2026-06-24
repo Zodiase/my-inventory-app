@@ -4,8 +4,9 @@ import { useParams, Link } from 'wouter';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import { TagsCollection, type TagRecord } from '/imports/api/tags';
+import { LoadingState } from '/imports/ui/common/LoadingState';
 import { ItemsByTagViewPresentation } from '/imports/ui/ItemsByTagView/ItemsByTagViewPresentation';
-import { useTracker } from '/imports/utility/reactMeteorData';
+import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 /**
@@ -25,6 +26,9 @@ import { usePageTitle } from '/imports/utility/usePageTitle';
 
 export const ItemsByTagViewContainer = (): ReactElement => {
     const { tagId } = useParams<{ tagId: string }>();
+
+    const isLoadingTags = useSubscribe('tags.all');
+    const isLoadingItems = useSubscribe('items.byTags', typeof tagId === 'string' && tagId !== '' ? [tagId] : []);
 
     usePageTitle('Tag Filter - My Inventory');
 
@@ -64,6 +68,10 @@ export const ItemsByTagViewContainer = (): ReactElement => {
 
         return paths;
     }, [items]);
+
+    if (isLoadingTags() || isLoadingItems()) {
+        return <LoadingState />;
+    }
 
     // Validate tagId exists
     if (tagId === '') {

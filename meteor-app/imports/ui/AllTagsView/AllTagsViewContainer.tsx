@@ -4,8 +4,9 @@ import { useLocation } from 'wouter';
 import { InventoryItemsCollection } from '/imports/api/items';
 import TagsCollection, { type TagRecord } from '/imports/api/tags';
 import { AllTagsViewPresentation } from '/imports/ui/AllTagsView/AllTagsViewPresentation';
+import { LoadingState } from '/imports/ui/common/LoadingState';
 import { SCROLL_DELAY_MS } from '/imports/utility/constants';
-import { useTracker } from '/imports/utility/reactMeteorData';
+import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 /**
@@ -24,6 +25,9 @@ import { usePageTitle } from '/imports/utility/usePageTitle';
  */
 export const AllTagsViewContainer = (): ReactElement => {
     const [, setLocation] = useLocation();
+
+    const isLoadingTags = useSubscribe('tags.all');
+    const isLoadingItems = useSubscribe('items.all');
 
     usePageTitle('Tags - My Inventory');
 
@@ -187,6 +191,10 @@ export const AllTagsViewContainer = (): ReactElement => {
                 }
             );
     }, [detachedTagsData.updating, detachedTagsData.removing, detachedTagsData.tagIds]);
+
+    if (isLoadingTags() || isLoadingItems()) {
+        return <LoadingState />;
+    }
 
     return (
         <AllTagsViewPresentation

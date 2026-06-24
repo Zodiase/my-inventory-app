@@ -5,7 +5,8 @@ import { useLocation } from 'wouter';
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
-import { useTracker } from '/imports/utility/reactMeteorData';
+import { LoadingState } from '/imports/ui/common/LoadingState';
+import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import { buildSearchQuery } from '/imports/utility/searchQuery';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
@@ -70,6 +71,9 @@ export const AllItemsViewContainer = ({
         });
     }, []);
 
+    const isLoadingItems = useSubscribe('items.byContainer', currentContainerId ?? null);
+    const isLoadingTags = useSubscribe('tags.all');
+
     // Fetch items at current level with optional filters
     const items = useTracker(() => {
         // Start with base query for current container level
@@ -130,6 +134,10 @@ export const AllItemsViewContainer = ({
         setCurrentContainerId(containerId);
         onNavigate?.(containerId);
     };
+
+    if (isLoadingItems() || isLoadingTags()) {
+        return <LoadingState />;
+    }
 
     return (
         <AllItemsViewPresentation
