@@ -67,6 +67,9 @@ npm run test:e2e:app
 # Run all E2E tests
 npm run test:e2e:all
 
+# Run the local route audit sweep
+npm run test:e2e:audit
+
 # Run unit tests
 npm test
 npm run test-app
@@ -83,6 +86,7 @@ Before running E2E tests, ensure:
 
 - **Component Tests**: Located in `tests/e2e/storybook/`
 - **Integration Tests**: Located in `tests/e2e/app/`
+- **Local Route Audit**: `npm run test:e2e:audit` writes ignored screenshots and reports under `tests/e2e/audit/artifacts/`
 - **Page Objects**: Shared helpers in `tests/e2e/helpers/page-objects.ts`
 - **Test Patterns**: Documented in `specs/002-storybook-e2e-testing/test-patterns.md`
 

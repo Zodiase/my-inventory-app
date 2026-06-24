@@ -1,5 +1,24 @@
 # Known Issues
 
+## Local Route Audit Visual Findings
+
+The local route audit (`npm run test:e2e:audit`) generates screenshots and accessibility snapshots for core routes across desktop, tablet, and mobile viewports. These artifacts are intended to make visual defects easy to spot while keeping this branch focused on observability rather than broad UI remediation.
+
+### Current Findings
+
+- Mobile top navigation can overflow or clip the rightmost actions on narrow screens, especially the Data action.
+- Mobile Search has a layout overlap where the disabled Search button text bleeds toward the empty-results content.
+- Mobile Tags renders functional content, but the hierarchy and controls are cramped and visually rough.
+
+### Impact
+
+- The affected routes still render and the current audit diagnostics are clean.
+- These are visual/responsive quality issues, not runtime observability failures.
+
+### Resolution
+
+Track and fix these in follow-up UI branches. Keep this branch focused on producing reliable local artifacts and surfacing diagnostics.
+
 ## Deprecation Warning: `util._extend`
 
 When starting the development server you may see the following warning in the console:

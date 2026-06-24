@@ -10,6 +10,8 @@ const VIEWPORTS = [
 
 const ROUTES = ['/', '/items', '/items/:id', '/tags', '/tags/:id', '/search', '/settings/data', '/does-not-exist'];
 
+type Viewport = (typeof VIEWPORTS)[number];
+
 type DiagnosticsSnapshot = {
     errors: unknown[];
     warnings: unknown[];
@@ -24,13 +26,25 @@ type DiagnosticsSnapshot = {
     timestamp: number;
 };
 
+type AuditResult = {
+    viewport: Viewport;
+    route: string;
+    finalUrl: string;
+    title: string;
+    diag: DiagnosticsSnapshot | null;
+    bodyTextSample: string;
+    headings: string[];
+    screenshot: string;
+    a11ySnapshot: string;
+};
+
 let targetItemId = 'dummy-item';
 let targetTagId = 'dummy-tag';
 
-const report = {
+const report: { generatedAt: string; meteorBaseUrl: string; results: AuditResult[] } = {
     generatedAt: new Date().toISOString(),
     meteorBaseUrl: 'http://localhost:3000',
-    results: [] as any[],
+    results: [],
 };
 
 function expectCleanDiagnostics(diag: DiagnosticsSnapshot | null): void {
