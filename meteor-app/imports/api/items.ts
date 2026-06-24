@@ -466,6 +466,23 @@ if (Meteor.isServer) {
             tagIds: { $in: tagIds },
         });
     });
+
+    /**
+     * Publish a single item by its ID.
+     *
+     * @param itemId - ID of the item to publish
+     * @returns Cursor for the specified item
+     */
+    Meteor.publish('items.byId', function publishItemById(itemId: string) {
+        logger.log('Publishing items.byId', { itemId });
+
+        if (typeof itemId !== 'string' || itemId.trim() === '') {
+            this.ready();
+            return;
+        }
+
+        return InventoryItemsCollection.find({ _id: itemId });
+    });
 }
 
 export default asMeteorMethods(InventoryItemsCollection, {

@@ -8,7 +8,8 @@ import Items, { InventoryItemsCollection } from '/imports/api/items';
 import Tags, { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { SearchFragment } from '/imports/model/SearchFragment';
-import { useTracker } from '/imports/utility/reactMeteorData';
+import { LoadingState } from '/imports/ui/common/LoadingState';
+import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
 
 import { AllItemsView } from './AllItemsView';
@@ -98,6 +99,7 @@ export const App = (): ReactElement => {
     const [showFilterBuilder, setShowFilterBuilder] = useState(false);
 
     // Fetch selected item for detail view
+    const isLoadingSelectedItem = useSubscribe('items.byId', selectedItemId ?? '');
     const selectedItem = useTracker(() => {
         if (selectedItemId === undefined) return undefined;
         return InventoryItemsCollection.findOne({ _id: selectedItemId });
@@ -110,6 +112,7 @@ export const App = (): ReactElement => {
     }, [selectedItem?.tagIds.join(',')]);
 
     // Fetch all tags for search components
+    const isLoadingTags = useSubscribe('tags.all');
     const allTags = useTracker(() => {
         return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
     }, []);
@@ -401,58 +404,64 @@ export const App = (): ReactElement => {
                                         Search
                                     </Heading>
 
-                                    {/* Search bar with scope selector */}
-                                    <Box gap="small">
-                                        <SearchBar
-                                            value={searchQuery}
-                                            onChange={setSearchQuery}
-                                            onSearch={() => {
-                                                void handleSearch();
-                                                return undefined;
-                                            }}
-                                            onClear={handleClearSearch}
-                                            searchMode={searchScope}
-                                            scopeLabel="Current Location"
-                                        />
-                                        <SearchScopeSelector
-                                            value={searchScope}
-                                            onChange={setSearchScope}
-                                            scopeLabel="Current Location"
-                                        />
-                                    </Box>
+                                    {isLoadingTags() ? (
+                                        <LoadingState />
+                                    ) : (
+                                        <>
+                                            {/* Search bar with scope selector */}
+                                            <Box gap="small">
+                                                <SearchBar
+                                                    value={searchQuery}
+                                                    onChange={setSearchQuery}
+                                                    onSearch={() => {
+                                                        void handleSearch();
+                                                        return undefined;
+                                                    }}
+                                                    onClear={handleClearSearch}
+                                                    searchMode={searchScope}
+                                                    scopeLabel="Current Location"
+                                                />
+                                                <SearchScopeSelector
+                                                    value={searchScope}
+                                                    onChange={setSearchScope}
+                                                    scopeLabel="Current Location"
+                                                />
+                                            </Box>
 
-                                    {/* Advanced search filters */}
-                                    <Box>
-                                        <Heading level="4" margin={{ top: 'none', bottom: 'small' }}>
-                                            Advanced Filters
-                                        </Heading>
-                                        <SearchFragmentBuilder
-                                            fragments={searchFragments}
-                                            onChange={handleSearchFragmentsChange}
-                                            availableTags={allTags}
-                                        />
-                                    </Box>
+                                            {/* Advanced search filters */}
+                                            <Box>
+                                                <Heading level="4" margin={{ top: 'none', bottom: 'small' }}>
+                                                    Advanced Filters
+                                                </Heading>
+                                                <SearchFragmentBuilder
+                                                    fragments={searchFragments}
+                                                    onChange={handleSearchFragmentsChange}
+                                                    availableTags={allTags}
+                                                />
+                                            </Box>
 
-                                    {/* Search button */}
-                                    <Box>
-                                        <Button
-                                            label="Search"
-                                            primary
-                                            onClick={() => {
-                                                void handleSearch();
-                                                return undefined;
-                                            }}
-                                            disabled={searchQuery.trim() === '' && searchFragments.length === 0}
-                                        />
-                                    </Box>
+                                            {/* Search button */}
+                                            <Box>
+                                                <Button
+                                                    label="Search"
+                                                    primary
+                                                    onClick={() => {
+                                                        void handleSearch();
+                                                        return undefined;
+                                                    }}
+                                                    disabled={searchQuery.trim() === '' && searchFragments.length === 0}
+                                                />
+                                            </Box>
 
-                                    {/* Search results */}
-                                    <SearchResultsView
-                                        items={searchResults}
-                                        onItemClick={handleSearchItemClick}
-                                        loading={searchLoading}
-                                        getItemPath={getItemPath}
-                                    />
+                                            {/* Search results */}
+                                            <SearchResultsView
+                                                items={searchResults}
+                                                onItemClick={handleSearchItemClick}
+                                                loading={searchLoading}
+                                                getItemPath={getItemPath}
+                                            />
+                                        </>
+                                    )}
                                 </Box>
                             )}
                         </Route>
@@ -504,7 +513,7 @@ export const App = (): ReactElement => {
                 )}
 
                 {/* Item Detail Modal */}
-                {selectedItem !== undefined && (
+                {selectedItemId !== undefined && (
                     <Layer onEsc={handleCloseItemDetail} onClickOutside={handleCloseItemDetail}>
                         <Box
                             pad="medium"
@@ -519,21 +528,31 @@ export const App = (): ReactElement => {
                                 </Heading>
                                 <Button icon={<Close />} onClick={handleCloseItemDetail} />
                             </Box>
-                            <ItemDetailViewPresentation
-                                item={selectedItem}
-                                tags={selectedItemTags}
-                                onEdit={() => {
-                                    /* TODO: Edit modal */
-                                }}
-                                onDelete={() => {
-                                    void handleDeleteItem();
-                                    return undefined;
-                                }}
-                                onRemoveTag={(tagId) => {
-                                    void handleRemoveTagFromItem(tagId);
-                                    return undefined;
-                                }}
-                            />
+                            {isLoadingSelectedItem() ? (
+                                <LoadingState />
+                            ) : selectedItem !== undefined ? (
+                                <ItemDetailViewPresentation
+                                    item={selectedItem}
+                                    tags={selectedItemTags}
+                                    onEdit={() => {
+                                        /* TODO: Edit modal */
+                                    }}
+                                    onDelete={() => {
+                                        void handleDeleteItem();
+                                        return undefined;
+                                    }}
+                                    onRemoveTag={(tagId) => {
+                                        void handleRemoveTagFromItem(tagId);
+                                        return undefined;
+                                    }}
+                                />
+                            ) : (
+                                <Box align="center" pad="large">
+                                    <Heading level="3" color="status-error">
+                                        Item Not Found
+                                    </Heading>
+                                </Box>
+                            )}
                         </Box>
                     </Layer>
                 )}
