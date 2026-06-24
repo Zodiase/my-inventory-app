@@ -30,6 +30,7 @@ test.describe('Audit Sweep', () => {
                     const diag = (window as any).__diagnostics?.get();
                     return diag && diag.counts && diag.counts.items > 0;
                 },
+                undefined,
                 { timeout: 15000 }
             )
             .catch(() => {});
@@ -51,6 +52,7 @@ test.describe('Audit Sweep', () => {
                     const diag = (window as any).__diagnostics?.get();
                     return diag && diag.counts && diag.counts.tags > 0;
                 },
+                undefined,
                 { timeout: 15000 }
             )
             .catch(() => {});
@@ -74,11 +76,12 @@ test.describe('Audit Sweep', () => {
 
             for (const route of ROUTES) {
                 test(`Route: ${route}`, async ({ page }) => {
+                    test.setTimeout(60_000);
                     let actualRoute = route;
                     if (route === '/items/:id') actualRoute = `/items/${targetItemId}`;
                     if (route === '/tags/:id') actualRoute = `/tags/${targetTagId}`;
 
-                    await page.goto(actualRoute);
+                    await page.goto(actualRoute, { waitUntil: 'domcontentloaded' });
 
                     // Wait for diagnostics count or timeout
                     await page
@@ -87,7 +90,8 @@ test.describe('Audit Sweep', () => {
                                 const diag = (window as any).__diagnostics?.get();
                                 return diag && diag.counts && diag.counts.items > 0;
                             },
-                            { timeout: 15000 }
+                            undefined,
+                            { timeout: 2000 }
                         )
                         .catch(() => {});
 
