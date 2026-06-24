@@ -437,9 +437,9 @@ if (Meteor.isServer) {
         const normalizedContainerId =
             typeof containerId === 'undefined' || containerId === null || containerId === '' ? undefined : containerId;
 
-        // Find items with matching containerId
+        // Include all containers so scoped item views can still build breadcrumbs and parent labels.
         return InventoryItemsCollection.find({
-            containerId: normalizedContainerId,
+            $or: [{ containerId: normalizedContainerId }, { isContainer: true }],
         });
     });
 
@@ -463,7 +463,7 @@ if (Meteor.isServer) {
         }
 
         return InventoryItemsCollection.find({
-            tagIds: { $in: tagIds },
+            $or: [{ tagIds: { $in: tagIds } }, { isContainer: true }],
         });
     });
 
