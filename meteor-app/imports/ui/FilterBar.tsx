@@ -1,3 +1,4 @@
+import { Close } from 'grommet-icons';
 import React, { type ComponentProps } from 'react';
 import styled from 'styled-components';
 
@@ -221,7 +222,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                                         aria-label={`Remove ${display.type} filter`}
                                         type="button"
                                     >
-                                        ✕
+                                        <Close size="16px" />
                                     </RemoveButton>
                                 </FilterChip>
                             );

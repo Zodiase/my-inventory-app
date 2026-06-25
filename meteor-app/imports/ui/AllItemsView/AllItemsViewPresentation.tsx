@@ -225,6 +225,9 @@ export const AllItemsViewPresentation = ({
                 <BreadcrumbTrail
                     path={containerPath}
                     showHomeIcon={showHomeIcon}
+                    onNavigateRoot={() => {
+                        onBreadcrumbNavigate(undefined);
+                    }}
                     onNavigate={(item) => {
                         onBreadcrumbNavigate(item._id);
                     }}

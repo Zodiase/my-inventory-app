@@ -1,6 +1,8 @@
 import React, { type ComponentProps, type ReactElement, useState, useCallback } from 'react';
 import styled from 'styled-components';
 
+import { uiTokens } from './theme';
+
 /**
  * TouchButton component providing iOS-style visual feedback for touch interactions.
  *
@@ -50,14 +52,14 @@ const StyledButton = styled.button<StyledButtonProps>`
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 44px;
-    min-width: 44px;
+    min-height: ${uiTokens.size.touchTarget};
+    min-width: ${uiTokens.size.touchTarget};
     padding: 12px 20px;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: ${uiTokens.radius.control};
+    font-size: ${uiTokens.font.size};
     font-weight: 600;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: ${uiTokens.font.family};
     cursor: pointer;
     user-select: none;
     transition: all 0.15s ease-out;
@@ -67,18 +69,18 @@ const StyledButton = styled.button<StyledButtonProps>`
     ${(props) =>
         props.$variant === 'primary' &&
         `
-        background: #007aff;
-        color: white;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        background: ${uiTokens.color.brand};
+        color: ${uiTokens.color.white};
+        box-shadow: ${uiTokens.shadow.raised};
 
         &:hover:not(:disabled) {
-            background: #0051d5;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            background: ${uiTokens.color.brandHover};
+            box-shadow: ${uiTokens.shadow.raisedHover};
         }
 
         &:active:not(:disabled), &.pressed {
-            background: #004bb8;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            background: ${uiTokens.color.brandActive};
+            box-shadow: ${uiTokens.shadow.pressed};
             transform: scale(0.98);
         }
     `}
@@ -87,16 +89,16 @@ const StyledButton = styled.button<StyledButtonProps>`
     ${(props) =>
         props.$variant === 'secondary' &&
         `
-        background: #f2f2f7;
-        color: #007aff;
+        background: ${uiTokens.color.surfaceSubtle};
+        color: ${uiTokens.color.brand};
         box-shadow: none;
 
         &:hover:not(:disabled) {
-            background: #e5e5ea;
+            background: ${uiTokens.color.surfaceSubtleHover};
         }
 
         &:active:not(:disabled), &.pressed {
-            background: #d1d1d6;
+            background: ${uiTokens.color.surfaceSubtleActive};
             transform: scale(0.98);
         }
     `}
@@ -105,18 +107,18 @@ const StyledButton = styled.button<StyledButtonProps>`
     ${(props) =>
         props.$variant === 'danger' &&
         `
-        background: #ff3b30;
-        color: white;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        background: ${uiTokens.color.danger};
+        color: ${uiTokens.color.white};
+        box-shadow: ${uiTokens.shadow.raised};
 
         &:hover:not(:disabled) {
-            background: #e60000;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            background: ${uiTokens.color.dangerHover};
+            box-shadow: ${uiTokens.shadow.raisedHover};
         }
 
         &:active:not(:disabled), &.pressed {
-            background: #cc0000;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            background: ${uiTokens.color.dangerActive};
+            box-shadow: ${uiTokens.shadow.pressed};
             transform: scale(0.98);
         }
     `}
@@ -126,15 +128,15 @@ const StyledButton = styled.button<StyledButtonProps>`
         props.$variant === 'ghost' &&
         `
         background: transparent;
-        color: #007aff;
+        color: ${uiTokens.color.brand};
         box-shadow: none;
 
         &:hover:not(:disabled) {
-            background: rgba(0, 122, 255, 0.08);
+            background: ${uiTokens.color.brandGhostHover};
         }
 
         &:active:not(:disabled), &.pressed {
-            background: rgba(0, 122, 255, 0.15);
+            background: ${uiTokens.color.brandGhostActive};
             transform: scale(0.98);
         }
     `}
@@ -166,7 +168,7 @@ const LoadingSpinner = styled.span`
     height: 16px;
     border: 2px solid currentColor;
     border-top-color: transparent;
-    border-radius: 50%;
+    border-radius: ${uiTokens.radius.round};
     animation: spin 0.6s linear infinite;
 
     @keyframes spin {

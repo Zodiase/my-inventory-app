@@ -394,13 +394,52 @@ export const searchItems = async (fragments: SearchFragment[]): Promise<Inventor
         throw new Error('Search fragments must be an array');
     }
 
-    // Build MongoDB query from fragments
-    const query = buildSearchQuery(fragments);
+    const scopeFragments = fragments.filter(
+        (fragment) =>
+            fragment.type === 'containerScope' && fragment.containerRootId !== null && fragment.containerRootId !== ''
+    );
+    const nonScopeFragments = fragments.filter((fragment) => fragment.type !== 'containerScope');
+    const conditions: Array<Mongo.Selector<InventoryItem>> = [];
+    const baseQuery = buildSearchQuery(nonScopeFragments) as Mongo.Selector<InventoryItem>;
+
+    if (Object.keys(baseQuery).length > 0) {
+        conditions.push(baseQuery);
+    }
+
+    for (const fragment of scopeFragments) {
+        if (fragment.type === 'containerScope' && fragment.containerRootId !== null) {
+            const scopedContainerIds = await getContainerScopeIds(fragment.containerRootId);
+            conditions.push({ containerId: { $in: scopedContainerIds } });
+        }
+    }
+
+    const query: Mongo.Selector<InventoryItem> =
+        conditions.length === 0 ? {} : conditions.length === 1 ? conditions[0] : { $and: conditions };
 
     logger.log('Searching items', { fragments, query });
 
     // Execute query and return results
-    return await InventoryItemsCollection.find(query as Mongo.Selector<InventoryItem>).fetchAsync();
+    return await InventoryItemsCollection.find(query).fetchAsync();
+};
+
+const getContainerScopeIds = async (containerRootId: string): Promise<string[]> => {
+    const scopedContainerIds = new Set<string>([containerRootId]);
+    let pendingContainerIds = [containerRootId];
+
+    while (pendingContainerIds.length > 0) {
+        const childContainers = await InventoryItemsCollection.find({
+            containerId: { $in: pendingContainerIds },
+            isContainer: true,
+        }).fetchAsync();
+
+        pendingContainerIds = childContainers
+            .map((container) => container._id)
+            .filter((containerId) => !scopedContainerIds.has(containerId));
+
+        pendingContainerIds.forEach((containerId) => scopedContainerIds.add(containerId));
+    }
+
+    return Array.from(scopedContainerIds);
 };
 
 // Publications (server-side only)

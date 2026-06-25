@@ -176,6 +176,11 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
             name: 'Kitchen',
             isContainer: true,
         });
+        const pantryId = await createItem(page, {
+            name: 'Pantry',
+            isContainer: true,
+            containerId: kitchenId,
+        });
         const garageId = await createItem(page, {
             name: 'Garage',
             isContainer: true,
@@ -183,7 +188,7 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
 
         // Create items in different containers
         await createItem(page, { name: 'Kitchen Knife', containerId: kitchenId });
-        await createItem(page, { name: 'Kitchen Towel', containerId: kitchenId });
+        await createItem(page, { name: 'Kitchen Towel', containerId: pantryId });
         await createItem(page, { name: 'Garage Tool', containerId: garageId });
 
         // Scoped search within kitchen
@@ -192,8 +197,8 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
             { type: 'name', value: 'kitchen' },
         ])) as SearchResults;
 
-        expect(results.length).toBe(2);
         const names = results.map((r: { name: string }) => r.name);
+        expect(names).toHaveLength(2);
         expect(names).toContain('Kitchen Knife');
         expect(names).toContain('Kitchen Towel');
         expect(names).not.toContain('Garage Tool');

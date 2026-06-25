@@ -1,29 +1,13 @@
-import React, { type ComponentProps, useState, useCallback } from 'react';
+import { Close, Search as SearchIcon } from 'grommet-icons';
+import React, { type ComponentProps, useCallback, useState } from 'react';
 import styled from 'styled-components';
-
-/**
- * SearchBar component with search mode indicator.
- *
- * Provides a text input for search queries with visual indication of:
- * - Global search mode (searches entire inventory)
- * - Scoped search mode (searches within current container)
- *
- * @remarks
- * This component is designed for touch-friendly interaction with:
- * - Large tap targets (44x44px minimum)
- * - Clear visual feedback
- * - Search mode indicator badge
- * - Clear/reset functionality
- *
- * The search executes on Enter key or when the search button is tapped.
- */
 
 interface SearchBarProps extends Omit<ComponentProps<'div'>, 'onChange' | 'onSearch'> {
     /** Current search query text */
     value?: string;
     /** Placeholder text for the input */
     placeholder?: string;
-    /** Search mode: 'global' searches all items, 'scoped' searches current container */
+    /** Kept for existing callers; visible scope is owned by SearchScopeSelector. */
     searchMode?: 'global' | 'scoped';
     /** Callback when search is executed (Enter key or search button) */
     onSearch?: (query: string) => void;
@@ -31,8 +15,10 @@ interface SearchBarProps extends Omit<ComponentProps<'div'>, 'onChange' | 'onSea
     onChange?: (query: string) => void;
     /** Callback when clear button is clicked */
     onClear?: () => void;
-    /** Label for scoped search (e.g., "In: Kitchen") */
+    /** Kept for existing callers; visible scope is owned by SearchScopeSelector. */
     scopeLabel?: string;
+    /** Whether the submit button is disabled */
+    submitDisabled?: boolean;
 }
 
 const Container = styled.div`
@@ -45,8 +31,8 @@ const Container = styled.div`
 const SearchInputWrapper = styled.div`
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
+    gap: 6px;
+    padding: 4px 6px 4px 12px;
     background: white;
     border: 2px solid #ddd;
     border-radius: 8px;
@@ -59,14 +45,17 @@ const SearchInputWrapper = styled.div`
     }
 `;
 
-const SearchIcon = styled.span`
-    font-size: 20px;
+const IconSlot = styled.span`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: #666;
-    user-select: none;
+    flex: 0 0 auto;
 `;
 
 const Input = styled.input`
     flex: 1;
+    min-width: 0;
     border: none;
     outline: none;
     font-size: 16px;
@@ -78,7 +67,7 @@ const Input = styled.input`
     }
 `;
 
-const ClearButton = styled.button`
+const IconButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -90,7 +79,6 @@ const ClearButton = styled.button`
     border-radius: 8px;
     cursor: pointer;
     color: #666;
-    font-size: 20px;
     transition: background-color 0.15s;
 
     &:hover {
@@ -100,46 +88,52 @@ const ClearButton = styled.button`
     &:active {
         background: rgba(0, 0, 0, 0.1);
     }
+`;
+
+const SubmitButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 8px 14px;
+    background: #007aff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.15s, transform 0.15s;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+        background: #0051d5;
+    }
+
+    &:active:not(:disabled) {
+        background: #003d99;
+        transform: scale(0.98);
+    }
 
     &:disabled {
-        opacity: 0.3;
+        background: #ccc;
         cursor: not-allowed;
     }
 `;
 
-const SearchModeIndicator = styled.div<{ mode: 'global' | 'scoped' }>`
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 12px;
-    background: ${(props) => (props.mode === 'global' ? '#007aff' : '#34c759')};
-    color: white;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    user-select: none;
-`;
-
-const ModeIcon = styled.span`
-    font-size: 14px;
-`;
-
-const ModeText = styled.span``;
-
 export const SearchBar: React.FC<SearchBarProps> = ({
     value = '',
     placeholder = 'Search items...',
-    searchMode = 'global',
     onSearch,
     onChange,
     onClear,
-    scopeLabel,
+    submitDisabled = false,
     className,
     style,
 }) => {
     const [query, setQuery] = useState(value);
 
-    // Sync internal state with prop changes
     React.useEffect(() => {
         setQuery(value);
     }, [value]);
@@ -153,13 +147,19 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         [onChange]
     );
 
+    const submitSearch = useCallback(() => {
+        if (!submitDisabled) {
+            onSearch?.(query);
+        }
+    }, [onSearch, query, submitDisabled]);
+
     const handleKeyDown = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.key === 'Enter') {
-                onSearch?.(query);
+                submitSearch();
             }
         },
-        [query, onSearch]
+        [submitSearch]
     );
 
     const handleClear = useCallback(() => {
@@ -168,13 +168,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         onClear?.();
     }, [onChange, onClear]);
 
-    const modeLabel = searchMode === 'global' ? 'All Items' : scopeLabel ?? 'Current Container';
-    const modeIcon = searchMode === 'global' ? '🌐' : '📁';
-
     return (
         <Container className={className} style={style}>
             <SearchInputWrapper>
-                <SearchIcon>🔍</SearchIcon>
+                <IconSlot aria-hidden="true">
+                    <SearchIcon size="20px" />
+                </IconSlot>
                 <Input
                     type="text"
                     value={query}
@@ -184,15 +183,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                     aria-label="Search query"
                 />
                 {query.length > 0 && (
-                    <ClearButton onClick={handleClear} aria-label="Clear search" title="Clear search" type="button">
-                        ✕
-                    </ClearButton>
+                    <IconButton onClick={handleClear} aria-label="Clear search" title="Clear search" type="button">
+                        <Close size="18px" />
+                    </IconButton>
                 )}
+                <SubmitButton
+                    onClick={submitSearch}
+                    disabled={submitDisabled}
+                    aria-label="Submit search"
+                    title="Submit search"
+                    type="button"
+                >
+                    <SearchIcon size="18px" />
+                    Search
+                </SubmitButton>
             </SearchInputWrapper>
-            <SearchModeIndicator mode={searchMode}>
-                <ModeIcon>{modeIcon}</ModeIcon>
-                <ModeText>{modeLabel}</ModeText>
-            </SearchModeIndicator>
         </Container>
     );
 };

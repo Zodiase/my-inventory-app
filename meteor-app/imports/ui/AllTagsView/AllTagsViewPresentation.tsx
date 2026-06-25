@@ -1,49 +1,38 @@
-import React, { type ComponentProps, type ReactElement, useState } from 'react';
+import { Box, Button, Form, FormField, Heading, Layer, Text, TextInput } from 'grommet';
+import { Add, Close, Edit, Tag as TagIcon, Trash } from 'grommet-icons';
+import React, {
+    type ChangeEvent,
+    type ComponentProps,
+    type MouseEvent,
+    type ReactElement,
+    useMemo,
+    useState,
+} from 'react';
 import styled from 'styled-components';
 
 import type { TagRecord } from '/imports/model/TagRecord';
 import { CreateTagDialog } from '/imports/ui/CreateTagDialog';
-import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
-import StyledButton from '/imports/ui/StyledButton';
-
-/**
- * AllTagsViewPresentation is a pure presentation component that displays tags
- * in a hierarchical structure with management actions.
- *
- * This component receives all data and callbacks as props and has no dependencies
- * on Meteor's reactive data system, making it fully testable in Storybook.
- *
- * Features:
- * - Hierarchical tag display with nesting
- * - Usage counts showing how many items have each tag
- * - Create child tag action
- * - Rename and delete actions for each tag
- * - Utility views for detached tags and tags without paths
- * - Touch-optimized buttons (44x44px minimum)
- */
+import { LongPressContextMenu, type ContextMenuAction } from '/imports/ui/LongPressContextMenu';
 
 interface TagWithChildren extends TagRecord {
     children: TagWithChildren[];
 }
 
-/**
- * Build a hierarchical tree structure from flat tag array in O(n) time.
- *
- * @param tags - Flat array of all tags
- * @returns Array of root-level tags, each with their children recursively nested
- *
- * @remarks
- * This avoids O(n²) filtering by building the tree structure once upfront.
- * For n=100 tags, this does ~100 operations vs ~3,900 for recursive filtering.
- */
+type DivProps = Omit<ComponentProps<'div'>, 'ref'>;
+
+type DialogState =
+    | { type: 'create'; parentTagId: string }
+    | { type: 'rename'; tag: TagRecord }
+    | { type: 'delete'; tag: TagRecord }
+    | { type: 'removeDetached' }
+    | { type: 'none' };
+
 function buildHierarchy(tags: TagRecord[]): TagWithChildren[] {
-    // Create map of tag ID to tag with empty children array
     const tagMap = new Map<string, TagWithChildren>();
     for (const tag of tags) {
         tagMap.set(tag._id, { ...tag, children: [] });
     }
 
-    // Build parent-child relationships
     const rootTags: TagWithChildren[] = [];
     for (const tagWithChildren of tagMap.values()) {
         if (tagWithChildren.parentTagId === '') {
@@ -59,198 +48,352 @@ function buildHierarchy(tags: TagRecord[]): TagWithChildren[] {
     return rootTags;
 }
 
-interface TagListProps {
-    tag?: TagWithChildren;
-    tagChildren: TagWithChildren[];
-    usageCounts: Record<string, number>;
-    onAddChild: (parentTagId: string, tagName: string) => void | Promise<void>;
-    onRename: (tag: TagRecord, newName: string) => void;
-    onDelete: (tag: TagRecord) => void;
-    onTagClick?: (tagId: string) => void;
-}
+const Shell = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 100%;
+    padding: 0.75rem;
+`;
 
-const TagList = styled(
-    ({
-        tag,
-        tagChildren,
-        usageCounts,
-        onAddChild,
-        onRename,
-        onDelete,
-        onTagClick,
-        ...rootElementProps
-    }: TagListProps & ComponentProps<'div'>): ReactElement => {
-        const tagId = tag?._id ?? '';
-        const tagName = tag?.name ?? 'All Tags';
-        const itemCount = tagId !== '' ? usageCounts[tagId] ?? 0 : 0;
+const Toolbar = styled.div`
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: space-between;
+    padding: 0.75rem;
 
-        const [createDialogState, setCreateDialogState] = useState<{ isOpen: boolean; parentTagId: string }>({
-            isOpen: false,
-            parentTagId: '',
-        });
-
-        const handleAddChild = (): void => {
-            setCreateDialogState({ isOpen: true, parentTagId: tagId });
-        };
-
-        const handleCreateTagSubmit = async (tagName: string): Promise<void> => {
-            await onAddChild(createDialogState.parentTagId, tagName);
-            setCreateDialogState({ isOpen: false, parentTagId: '' });
-        };
-
-        const handleCreateTagClose = (): void => {
-            setCreateDialogState({ isOpen: false, parentTagId: '' });
-        };
-
-        const handleRename = (): void => {
-            if (typeof tag === 'undefined') {
-                console.warn('NOOP: Invalid parent tag.');
-                return;
-            }
-            const newTagName = window.prompt(`New name for tag "${tagName}":`, tagName);
-            if (newTagName !== null && newTagName !== tagName) {
-                onRename(tag, newTagName);
-            }
-        };
-
-        const handleDelete = (): void => {
-            if (typeof tag === 'undefined') {
-                console.warn('NOOP: Invalid parent tag.');
-                return;
-            }
-            const confirmDelete = window.confirm(`Delete tag "${tagName}"?`);
-            if (confirmDelete) {
-                onDelete(tag);
-            }
-        };
-
-        return (
-            <div {...rootElementProps} data-tag-id={tagId}>
-                <CreateTagDialog
-                    isOpen={createDialogState.isOpen}
-                    onSubmit={handleCreateTagSubmit}
-                    onClose={handleCreateTagClose}
-                />
-                <LongPressContextMenu
-                    actions={
-                        tag !== undefined
-                            ? [
-                                  {
-                                      label: 'Add Child',
-                                      onClick: handleAddChild,
-                                  },
-                                  {
-                                      label: 'Rename',
-                                      onClick: handleRename,
-                                  },
-                                  {
-                                      label: 'Delete',
-                                      onClick: handleDelete,
-                                      variant: 'danger' as const,
-                                  },
-                              ]
-                            : [
-                                  {
-                                      label: 'Add Child',
-                                      onClick: handleAddChild,
-                                  },
-                              ]
-                    }
-                >
-                    <div
-                        className="tag-body"
-                        data-tag-id={tagId}
-                        data-tag-path={tag !== undefined ? tag.path.map(({ name }) => name).join(',') : undefined}
-                        onClick={() => {
-                            if (tagId !== '') {
-                                onTagClick?.(tagId);
-                            }
-                        }}
-                    >
-                        <label className="tag-name-label">
-                            {tagId !== '' ? (
-                                <span style={{ cursor: 'pointer', textDecoration: 'underline' }}>
-                                    {tagName}
-                                    <span className="tag-item-count"> ({itemCount})</span>
-                                </span>
-                            ) : (
-                                <span>
-                                    {tagName}
-                                    <span className="tag-item-count"> ({itemCount})</span>
-                                </span>
-                            )}
-                        </label>
-                        <span className="tag-actions-container">
-                            <StyledButton
-                                className="new-child-action"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    handleAddChild();
-                                }}
-                            >
-                                +
-                            </StyledButton>
-                            <StyledButton
-                                className="rename-tag-action"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    handleRename();
-                                }}
-                            >
-                                Rename
-                            </StyledButton>
-                            <StyledButton
-                                className="remove-tag-action"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    handleDelete();
-                                }}
-                            >
-                                Delete
-                            </StyledButton>
-                        </span>
-                    </div>
-                </LongPressContextMenu>
-
-                <ul className="tag-children-list" data-parent-tag-id={tagId} data-children-count={tagChildren.length}>
-                    {tagChildren.map((childTag) => {
-                        return (
-                            <li key={childTag._id} className="tag-child-item">
-                                <TagList
-                                    tag={childTag}
-                                    tagChildren={childTag.children}
-                                    usageCounts={usageCounts}
-                                    onAddChild={onAddChild}
-                                    onRename={onRename}
-                                    onDelete={onDelete}
-                                    onTagClick={onTagClick}
-                                />
-                            </li>
-                        );
-                    })}
-                </ul>
-            </div>
-        );
+    @media (max-width: 600px) {
+        align-items: stretch;
+        flex-direction: column;
     }
-)`
-    .tag-body {
-        align-items: center;
-        display: flex;
-        gap: 0.5rem;
+`;
+
+const ToolbarSummary = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+`;
+
+const UtilityPanel = styled.div`
+    align-items: center;
+    background: #f7f8fa;
+    border: 1px solid #d9dde4;
+    border-radius: 8px;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: space-between;
+    padding: 0.75rem;
+
+    @media (max-width: 600px) {
+        align-items: stretch;
+        flex-direction: column;
+    }
+`;
+
+const UtilityActions = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+`;
+
+const EmptyState = styled.div`
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    justify-content: center;
+    min-height: 12rem;
+    padding: 2rem 1rem;
+    text-align: center;
+`;
+
+const TreeContainer = styled.div`
+    background: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    overflow: hidden;
+
+    > ul > .tag-child-item > div > div {
+        display: block;
+    }
+
+    .tag-child-item > div > div {
         width: 100%;
     }
 
+    .tag-children-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .tag-child-item {
+        margin: 0;
+        padding: 0;
+    }
+
+    .tag-children-list[data-children-count='0'] {
+        display: none;
+    }
+`;
+
+const Row = styled.div<{ $depth: number }>`
+    align-items: center;
+    background: #ffffff;
+    border-bottom: 1px solid #eeeeee;
+    display: flex;
+    gap: 0.75rem;
+    min-height: 52px;
+    padding-block: 0.375rem;
+    padding-inline: calc(0.75rem + ${(props) => props.$depth} * 1.25rem) 0.5rem;
+    width: 100%;
+
+    &:hover {
+        background: #f4f7fb;
+    }
+
+    &:focus-within {
+        background: #f4f7fb;
+        outline: 2px solid #7d4cdb;
+        outline-offset: -2px;
+    }
+
     .tag-name-label {
+        display: flex;
         flex: 1;
+        min-width: 0;
+    }
+
+    .tag-name-button {
+        align-items: flex-start;
+        background: transparent;
+        border: 0;
+        color: inherit;
+        cursor: pointer;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        font: inherit;
+        gap: 0.125rem;
+        min-height: 44px;
+        min-width: 0;
+        padding: 0;
+        text-align: left;
+    }
+
+    .tag-name {
+        font-size: 1rem;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .tag-item-count,
+    .tag-path {
+        color: #6f7785;
+        font-size: 0.875rem;
+        font-weight: normal;
     }
 
     .tag-actions-container {
+        align-items: center;
         display: inline-flex;
+        flex-shrink: 0;
         gap: 0.25rem;
         position: relative;
         z-index: 1;
     }
+
+    .tag-action-button {
+        min-height: 44px;
+        min-width: 44px;
+    }
 `;
+
+interface TagsToolbarProps {
+    totalTagsCount: number;
+    onCreateRoot: () => void;
+}
+
+const TagsToolbar = ({ totalTagsCount, onCreateRoot }: TagsToolbarProps): ReactElement => {
+    return (
+        <Toolbar>
+            <ToolbarSummary>
+                <Heading level={2} margin="none" size="small">
+                    Tags
+                </Heading>
+                <Text color="text-weak" size="small">
+                    {totalTagsCount === 1 ? '1 tag' : `${totalTagsCount} tags`}
+                </Text>
+            </ToolbarSummary>
+            <Button primary icon={<Add />} label="New Tag" onClick={onCreateRoot} style={{ minHeight: '44px' }} />
+        </Toolbar>
+    );
+};
+
+interface TagRowProps {
+    tag: TagWithChildren;
+    depth: number;
+    usageCounts: Record<string, number>;
+    onAddChild: (parentTagId: string) => void;
+    onRename: (tag: TagRecord) => void;
+    onDelete: (tag: TagRecord) => void;
+    onTagClick?: (tagId: string) => void;
+}
+
+const TagRow = ({ tag, depth, usageCounts, onAddChild, onRename, onDelete, onTagClick }: TagRowProps): ReactElement => {
+    const itemCount = usageCounts[tag._id] ?? 0;
+    const pathLabel = tag.path.length > 1 ? tag.path.map(({ name }) => name).join(' / ') : undefined;
+    const menuActions: ContextMenuAction[] = [
+        {
+            label: 'Add Child',
+            icon: <Add />,
+            onClick: () => {
+                onAddChild(tag._id);
+            },
+        },
+        {
+            label: 'Rename',
+            icon: <Edit />,
+            onClick: () => {
+                onRename(tag);
+            },
+        },
+        {
+            label: 'Delete',
+            icon: <Trash />,
+            onClick: () => {
+                onDelete(tag);
+            },
+            variant: 'danger',
+        },
+    ];
+
+    return (
+        <LongPressContextMenu actions={menuActions}>
+            <Row
+                $depth={depth}
+                className="tag-body"
+                data-tag-id={tag._id}
+                data-tag-path={tag.path.map(({ name }) => name).join(',')}
+            >
+                <TagIcon color="brand" size="medium" />
+                <div className="tag-name-label">
+                    <button
+                        className="tag-name-button"
+                        type="button"
+                        onClick={() => {
+                            onTagClick?.(tag._id);
+                        }}
+                    >
+                        <span className="tag-name">{tag.name}</span>
+                        <span className="tag-item-count">
+                            {itemCount === 1 ? '1 item' : `${itemCount} items`}
+                            {tag.children.length > 0
+                                ? `, ${tag.children.length} ${tag.children.length === 1 ? 'child' : 'children'}`
+                                : ''}
+                        </span>
+                        {pathLabel !== undefined && <span className="tag-path">{pathLabel}</span>}
+                    </button>
+                </div>
+                <span className="tag-actions-container" aria-label={`Actions for ${tag.name}`}>
+                    <Button
+                        className="tag-action-button new-child-action"
+                        icon={<Add />}
+                        plain
+                        hoverIndicator
+                        aria-label={`Add child tag under ${tag.name}`}
+                        onClick={(event: MouseEvent<HTMLElement>) => {
+                            event.stopPropagation();
+                            onAddChild(tag._id);
+                        }}
+                    />
+                    <Button
+                        className="tag-action-button rename-tag-action"
+                        icon={<Edit />}
+                        plain
+                        hoverIndicator
+                        aria-label={`Rename ${tag.name}`}
+                        onClick={(event: MouseEvent<HTMLElement>) => {
+                            event.stopPropagation();
+                            onRename(tag);
+                        }}
+                    />
+                    <Button
+                        className="tag-action-button remove-tag-action"
+                        icon={<Trash />}
+                        plain
+                        hoverIndicator
+                        aria-label={`Delete ${tag.name}`}
+                        onClick={(event: MouseEvent<HTMLElement>) => {
+                            event.stopPropagation();
+                            onDelete(tag);
+                        }}
+                    />
+                </span>
+            </Row>
+        </LongPressContextMenu>
+    );
+};
+
+interface TagTreeProps {
+    tags: TagWithChildren[];
+    depth?: number;
+    usageCounts: Record<string, number>;
+    onAddChild: (parentTagId: string) => void;
+    onRename: (tag: TagRecord) => void;
+    onDelete: (tag: TagRecord) => void;
+    onTagClick?: (tagId: string) => void;
+    parentTagId?: string;
+}
+
+const TagTree = ({
+    tags,
+    depth = 0,
+    usageCounts,
+    onAddChild,
+    onRename,
+    onDelete,
+    onTagClick,
+    parentTagId = '',
+}: TagTreeProps): ReactElement => {
+    return (
+        <ul className="tag-children-list" data-parent-tag-id={parentTagId} data-children-count={tags.length}>
+            {tags.map((tag) => (
+                <li key={tag._id} className="tag-child-item">
+                    <div data-tag-id={tag._id}>
+                        <TagRow
+                            tag={tag}
+                            depth={depth}
+                            usageCounts={usageCounts}
+                            onAddChild={onAddChild}
+                            onRename={onRename}
+                            onDelete={onDelete}
+                            onTagClick={onTagClick}
+                        />
+                        <TagTree
+                            tags={tag.children}
+                            depth={depth + 1}
+                            usageCounts={usageCounts}
+                            onAddChild={onAddChild}
+                            onRename={onRename}
+                            onDelete={onDelete}
+                            onTagClick={onTagClick}
+                            parentTagId={tag._id}
+                        />
+                    </div>
+                </li>
+            ))}
+        </ul>
+    );
+};
 
 interface DetachedTagsViewProps {
     detachedTagIds: string[];
@@ -263,99 +406,153 @@ interface DetachedTagsViewProps {
     onRemoveAll: () => void;
 }
 
-const DetachedTagsView = styled(
-    ({
-        detachedTagIds,
-        totalTagsCount,
-        isUpdating,
-        isRemoving,
-        removedCount,
-        lastUpdated,
-        onCheck,
-        onRemoveAll,
-        ...rootElementProps
-    }: DetachedTagsViewProps & ComponentProps<'div'>): ReactElement => {
-        return (
-            <div {...rootElementProps}>
-                <div>
-                    {isRemoving
-                        ? `Removing... ${removedCount} of ${detachedTagIds.length}`
-                        : isUpdating
-                        ? 'Updating...'
-                        : lastUpdated === null
-                        ? '--'
-                        : `${
-                              detachedTagIds.length
-                          } detached tags out of ${totalTagsCount} (updated ${lastUpdated.toLocaleString()})`}
-                </div>
-                <div>
-                    <StyledButton disabled={isUpdating} onClick={onCheck}>
-                        Check
-                    </StyledButton>
-                    <StyledButton disabled={isUpdating || detachedTagIds.length === 0} onClick={onRemoveAll}>
-                        Remove All
-                    </StyledButton>
-                </div>
-            </div>
-        );
-    }
-)`
-    display: inline-block;
-    width: 30em;
-    padding: 1em;
-`;
+const DetachedTagsView = ({
+    detachedTagIds,
+    totalTagsCount,
+    isUpdating,
+    isRemoving,
+    removedCount,
+    lastUpdated,
+    onCheck,
+    onRemoveAll,
+}: DetachedTagsViewProps): ReactElement => {
+    const statusText = isRemoving
+        ? `Removing ${removedCount} of ${detachedTagIds.length}`
+        : isUpdating
+        ? 'Checking detached tags...'
+        : lastUpdated === null
+        ? 'Detached tag check has not run yet.'
+        : `${detachedTagIds.length} detached out of ${totalTagsCount} tags. Updated ${lastUpdated.toLocaleString()}.`;
+
+    return (
+        <UtilityPanel>
+            <Box gap="xxsmall">
+                <Text weight="bold">Detached tags</Text>
+                <Text color="text-weak" size="small">
+                    {statusText}
+                </Text>
+            </Box>
+            <UtilityActions>
+                <Button label="Check" disabled={isUpdating || isRemoving} onClick={onCheck} />
+                <Button
+                    label="Remove All"
+                    disabled={isUpdating || isRemoving || detachedTagIds.length === 0}
+                    onClick={onRemoveAll}
+                />
+            </UtilityActions>
+        </UtilityPanel>
+    );
+};
 
 interface TagsWithoutPathViewProps {
     tagsWithoutPath: TagRecord[];
 }
 
-const TagsWithoutPathView = styled(
-    ({ tagsWithoutPath, ...rootElementProps }: TagsWithoutPathViewProps & ComponentProps<'div'>): ReactElement => {
-        return (
-            <div {...rootElementProps} title={tagsWithoutPath.map(({ name }) => name).join(',')}>
-                {tagsWithoutPath.length} tags missing path.
-            </div>
-        );
-    }
-)`
-    display: inline-block;
-    padding: 1em;
-`;
+const TagsWithoutPathView = ({ tagsWithoutPath }: TagsWithoutPathViewProps): ReactElement => {
+    return (
+        <UtilityPanel title={tagsWithoutPath.map(({ name }) => name).join(', ')}>
+            <Box gap="xxsmall">
+                <Text weight="bold">Tags missing path data</Text>
+                <Text color="text-weak" size="small">
+                    {tagsWithoutPath.length === 1
+                        ? '1 tag needs path repair.'
+                        : `${tagsWithoutPath.length} tags need path repair.`}
+                </Text>
+            </Box>
+        </UtilityPanel>
+    );
+};
+
+interface RenameTagDialogProps {
+    tag: TagRecord;
+    onClose: () => void;
+    onSubmit: (tag: TagRecord, newName: string) => void;
+}
+
+const RenameTagDialog = ({ tag, onClose, onSubmit }: RenameTagDialogProps): ReactElement => {
+    const [tagName, setTagName] = useState(tag.name);
+    const trimmedName = tagName.trim();
+    const hasChanged = trimmedName !== '' && trimmedName !== tag.name;
+
+    return (
+        <Layer position="center" onClickOutside={onClose} onEsc={onClose}>
+            <Box width="medium" pad="medium" gap="medium">
+                <Box direction="row" justify="between" align="center">
+                    <Heading level={3} margin="none">
+                        Rename Tag
+                    </Heading>
+                    <Button icon={<Close />} plain aria-label="Close dialog" onClick={onClose} />
+                </Box>
+                <Form
+                    onSubmit={() => {
+                        if (hasChanged) {
+                            onSubmit(tag, trimmedName);
+                        }
+                    }}
+                >
+                    <FormField name="name" label="Tag Name">
+                        <TextInput
+                            name="name"
+                            value={tagName}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                                setTagName(event.target.value);
+                            }}
+                            autoFocus
+                        />
+                    </FormField>
+                    <Box direction="row" gap="small" justify="end" margin={{ top: 'medium' }}>
+                        <Button label="Cancel" onClick={onClose} />
+                        <Button primary type="submit" label="Rename" disabled={!hasChanged} />
+                    </Box>
+                </Form>
+            </Box>
+        </Layer>
+    );
+};
+
+interface ConfirmDialogProps {
+    title: string;
+    message: string;
+    confirmLabel: string;
+    onClose: () => void;
+    onConfirm: () => void;
+}
+
+const ConfirmDialog = ({ title, message, confirmLabel, onClose, onConfirm }: ConfirmDialogProps): ReactElement => {
+    return (
+        <Layer position="center" onClickOutside={onClose} onEsc={onClose}>
+            <Box width="medium" pad="medium" gap="medium">
+                <Box direction="row" justify="between" align="center">
+                    <Heading level={3} margin="none">
+                        {title}
+                    </Heading>
+                    <Button icon={<Close />} plain aria-label="Close dialog" onClick={onClose} />
+                </Box>
+                <Text>{message}</Text>
+                <Box direction="row" gap="small" justify="end">
+                    <Button label="Cancel" onClick={onClose} />
+                    <Button
+                        primary
+                        color="status-critical"
+                        label={confirmLabel}
+                        onClick={() => {
+                            onConfirm();
+                            onClose();
+                        }}
+                    />
+                </Box>
+            </Box>
+        </Layer>
+    );
+};
 
 export interface AllTagsViewPresentationProps {
-    /**
-     * All tags to display (flat list, will be organized hierarchically)
-     */
     tags: TagRecord[];
-
-    /**
-     * Map of tag IDs to usage counts (how many items have each tag)
-     */
     usageCounts: Record<string, number>;
-
-    /**
-     * Callback when adding a child tag
-     */
     onAddChild: (parentTagId: string, tagName: string) => void | Promise<void>;
-
-    /**
-     * Callback when renaming a tag
-     */
     onRename: (tag: TagRecord, newName: string) => void;
-
-    /**
-     * Callback when deleting a tag
-     */
     onDelete: (tag: TagRecord) => void;
-
-    /**
-     * Callback when clicking a tag name (for navigation)
-     */
     onTagClick?: (tagId: string) => void;
-
-    /**
-     * Detached tags utility props
-     */
     detachedTags?: {
         detachedTagIds: string[];
         isUpdating: boolean;
@@ -365,126 +562,138 @@ export interface AllTagsViewPresentationProps {
         onCheck: () => void;
         onRemoveAll: () => void;
     };
-
-    /**
-     * Tags without path
-     */
     tagsWithoutPath?: TagRecord[];
 }
 
-export const AllTagsViewPresentation = styled(
-    ({
-        tags,
-        usageCounts,
-        onAddChild,
-        onRename,
-        onDelete,
-        onTagClick,
-        detachedTags,
-        tagsWithoutPath,
-        ...rootElementProps
-    }: AllTagsViewPresentationProps & ComponentProps<'div'>): ReactElement => {
-        // Build hierarchy once when tag identity or display fields change, not array reference.
-        // This handles useTracker creating new array references on every render
-        const tagSignature = tags.map((t) => `${t._id}:${t.name}:${t.parentTagId}`).join(',');
-        const tagHierarchy = React.useMemo(() => buildHierarchy(tags), [tagSignature]);
-        const totalTagsCount = tags.length;
+export const AllTagsViewPresentation = ({
+    tags,
+    usageCounts,
+    onAddChild,
+    onRename,
+    onDelete,
+    onTagClick,
+    detachedTags,
+    tagsWithoutPath,
+    ...rootElementProps
+}: AllTagsViewPresentationProps & DivProps): ReactElement => {
+    const [dialogState, setDialogState] = useState<DialogState>({ type: 'none' });
+    const tagSignature = tags.map((tag) => `${tag._id}:${tag.name}:${tag.parentTagId}`).join(',');
+    const tagHierarchy = useMemo(() => buildHierarchy(tags), [tagSignature]);
 
-        return (
-            <div {...rootElementProps}>
-                {detachedTags !== undefined && (
-                    <DetachedTagsView
-                        detachedTagIds={detachedTags.detachedTagIds}
-                        totalTagsCount={totalTagsCount}
-                        isUpdating={detachedTags.isUpdating}
-                        isRemoving={detachedTags.isRemoving}
-                        removedCount={detachedTags.removedCount}
-                        lastUpdated={detachedTags.lastUpdated}
-                        onCheck={detachedTags.onCheck}
-                        onRemoveAll={detachedTags.onRemoveAll}
-                    />
-                )}
-                {tagsWithoutPath !== undefined && tagsWithoutPath.length > 0 && (
-                    <TagsWithoutPathView tagsWithoutPath={tagsWithoutPath} />
-                )}
-                <TagList
-                    tagChildren={tagHierarchy}
-                    usageCounts={usageCounts}
-                    onAddChild={onAddChild}
-                    onRename={onRename}
-                    onDelete={onDelete}
-                    onTagClick={onTagClick}
+    const closeDialog = (): void => {
+        setDialogState({ type: 'none' });
+    };
+
+    return (
+        <Shell {...rootElementProps}>
+            <TagsToolbar
+                totalTagsCount={tags.length}
+                onCreateRoot={() => {
+                    setDialogState({ type: 'create', parentTagId: '' });
+                }}
+            />
+
+            {detachedTags !== undefined && (
+                <DetachedTagsView
+                    detachedTagIds={detachedTags.detachedTagIds}
+                    totalTagsCount={tags.length}
+                    isUpdating={detachedTags.isUpdating}
+                    isRemoving={detachedTags.isRemoving}
+                    removedCount={detachedTags.removedCount}
+                    lastUpdated={detachedTags.lastUpdated}
+                    onCheck={detachedTags.onCheck}
+                    onRemoveAll={() => {
+                        setDialogState({ type: 'removeDetached' });
+                    }}
                 />
-            </div>
-        );
-    }
-)`;
-    ${TagList} {
-        // Renaming and removing actions don't apply to root tag.
-        .tag-body[data-tag-id=''] {
-            .rename-tag-action,
-            .remove-tag-action {
-                display: none;
-            }
-        }
+            )}
 
-        .tag-name-label {
-            display: block;
-            font-size: 1.2em;
-            line-height: 1.5em;
+            {tagsWithoutPath !== undefined && tagsWithoutPath.length > 0 && (
+                <TagsWithoutPathView tagsWithoutPath={tagsWithoutPath} />
+            )}
 
-            .tag-item-count {
-                color: #666;
-                font-size: 0.85em;
-                font-weight: normal;
-            }
-        }
+            {tagHierarchy.length === 0 ? (
+                <EmptyState>
+                    <TagIcon color="brand" size="large" />
+                    <Box gap="xxsmall">
+                        <Text weight="bold">No tags yet</Text>
+                        <Text color="text-weak" size="small">
+                            Create a tag to start grouping inventory items.
+                        </Text>
+                    </Box>
+                    <Button
+                        primary
+                        icon={<Add />}
+                        label="New Tag"
+                        onClick={() => {
+                            setDialogState({ type: 'create', parentTagId: '' });
+                        }}
+                    />
+                </EmptyState>
+            ) : (
+                <TreeContainer>
+                    <TagTree
+                        tags={tagHierarchy}
+                        usageCounts={usageCounts}
+                        onAddChild={(parentTagId) => {
+                            setDialogState({ type: 'create', parentTagId });
+                        }}
+                        onRename={(tag) => {
+                            setDialogState({ type: 'rename', tag });
+                        }}
+                        onDelete={(tag) => {
+                            setDialogState({ type: 'delete', tag });
+                        }}
+                        onTagClick={onTagClick}
+                    />
+                </TreeContainer>
+            )}
 
-        .tag-actions-container {
-            button {
-                font-size: 1em;
-            }
-            button + button {
-                margin-left: 0.5em;
-            }
+            {dialogState.type === 'create' && (
+                <CreateTagDialog
+                    isOpen
+                    onClose={closeDialog}
+                    onSubmit={async (tagName) => {
+                        await onAddChild(dialogState.parentTagId, tagName);
+                        closeDialog();
+                    }}
+                />
+            )}
 
-            .new-child-action {
-                width: 2em;
-                text-align: center;
-            }
-        }
+            {dialogState.type === 'rename' && (
+                <RenameTagDialog
+                    tag={dialogState.tag}
+                    onClose={closeDialog}
+                    onSubmit={(tag, newName) => {
+                        onRename(tag, newName);
+                        closeDialog();
+                    }}
+                />
+            )}
 
-        .tag-body {
-            padding-inline-start: 1em;
-            padding-inline-end: 1em;
+            {dialogState.type === 'delete' && (
+                <ConfirmDialog
+                    title="Delete Tag"
+                    message={`Delete "${dialogState.tag.name}"? Items will keep their other tags.`}
+                    confirmLabel="Delete"
+                    onClose={closeDialog}
+                    onConfirm={() => {
+                        onDelete(dialogState.tag);
+                    }}
+                />
+            )}
 
-            &:hover {
-                background-color: #cccccc;
-            }
-        }
-
-        &:not([data-tag-id='']) .tag-body:not(:hover) {
-            .tag-actions-container {
-                opacity: 0;
-                pointer-events: none;
-            }
-        }
-
-        .tag-children-list {
-            margin-block-start: 1em;
-            padding-inline-start: 2em;
-            list-style: none;
-        }
-
-        .tag-children-list > li {
-            border-inline-start: 1px dashed currentColor;
-            padding-block-start: 0.5em;
-            padding-block-end: 0.5em;
-            padding-inline-start: 0.5em;
-        }
-
-        .tag-children-list[data-children-count='0'] {
-            display: none;
-        }
-    }
-`;
+            {dialogState.type === 'removeDetached' && detachedTags !== undefined && (
+                <ConfirmDialog
+                    title="Remove Detached Tags"
+                    message={`Remove ${detachedTags.detachedTagIds.length} detached ${
+                        detachedTags.detachedTagIds.length === 1 ? 'tag' : 'tags'
+                    }?`}
+                    confirmLabel="Remove All"
+                    onClose={closeDialog}
+                    onConfirm={detachedTags.onRemoveAll}
+                />
+            )}
+        </Shell>
+    );
+};

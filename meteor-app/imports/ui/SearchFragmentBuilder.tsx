@@ -1,3 +1,4 @@
+import { Add, Close, StatusWarning } from 'grommet-icons';
 import React, { type ComponentProps, useState, useCallback } from 'react';
 import styled from 'styled-components';
 
@@ -204,8 +205,9 @@ const ValidationWarning = styled.div`
 `;
 
 const WarningIcon = styled.span`
-    font-size: 18px;
-    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    color: #856404;
 `;
 
 const WarningText = styled.div`
@@ -384,7 +386,9 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                 <div>
                     {validationWarnings.map((warning, index) => (
                         <ValidationWarning key={index}>
-                            <WarningIcon>⚠️</WarningIcon>
+                            <WarningIcon>
+                                <StatusWarning size="18px" />
+                            </WarningIcon>
                             <WarningText>{warning}</WarningText>
                         </ValidationWarning>
                     ))}
@@ -406,7 +410,7 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                                     aria-label="Remove filter"
                                     type="button"
                                 >
-                                    ✕
+                                    <Close size="18px" />
                                 </RemoveButton>
                             </FragmentChip>
                         );
@@ -435,7 +439,8 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                         }}
                     />
                     <AddButton onClick={handleAddNameFragment} disabled={nameInput.trim() === ''} type="button">
-                        + Name
+                        <Add size="16px" />
+                        Name
                     </AddButton>
                 </FormRow>
 
@@ -456,7 +461,8 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                             ))}
                         </Select>
                         <AddButton onClick={handleAddTagInclude} disabled={selectedIncludeTag === ''} type="button">
-                            + Has Tag
+                            <Add size="16px" />
+                            Has Tag
                         </AddButton>
                     </FormRow>
                 )}
@@ -478,7 +484,8 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                             ))}
                         </Select>
                         <AddButton onClick={handleAddTagExclude} disabled={selectedExcludeTag === ''} type="button">
-                            + Not Tag
+                            <Add size="16px" />
+                            Not Tag
                         </AddButton>
                     </FormRow>
                 )}
@@ -498,7 +505,8 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
                         <option value="items">Items only</option>
                     </Select>
                     <AddButton onClick={handleAddContainerType} type="button">
-                        + Type
+                        <Add size="16px" />
+                        Type
                     </AddButton>
                 </FormRow>
             </AddFragmentSection>
