@@ -3,6 +3,7 @@ import React, { type ComponentProps } from 'react';
 import styled from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import type { TagRecord } from '/imports/model/TagRecord';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 /**
@@ -36,6 +37,8 @@ interface SearchResultsViewProps extends ComponentProps<'div'> {
     hasSearched?: boolean;
     /** Optional function to get breadcrumb path for an item */
     getItemPath?: (itemId: string) => InventoryItem[];
+    /** Available tags for rendering readable tag names */
+    availableTags?: TagRecord[];
 }
 
 const Container = styled.div`
@@ -218,6 +221,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
     loading = false,
     hasSearched = true,
     getItemPath,
+    availableTags = [],
     className,
     style,
 }) => {
@@ -225,6 +229,10 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
 
     const handleItemClick = (itemId: string): void => {
         onItemClick?.(itemId);
+    };
+
+    const getTagName = (tagId: string): string => {
+        return availableTags.find((tag) => tag._id === tagId)?.name ?? tagId;
     };
 
     if (loading) {
@@ -311,7 +319,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                             {item.tagIds.length > 0 && (
                                 <TagList>
                                     {item.tagIds.map((tagId) => (
-                                        <TagChip key={tagId}>{tagId}</TagChip>
+                                        <TagChip key={tagId}>{getTagName(tagId)}</TagChip>
                                     ))}
                                 </TagList>
                             )}

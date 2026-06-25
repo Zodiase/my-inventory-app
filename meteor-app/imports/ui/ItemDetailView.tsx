@@ -1,12 +1,17 @@
-import { Box, Button, Heading, Text } from 'grommet';
-import React from 'react';
-import { useParams, Link } from 'wouter';
+import { Box, Button, Heading, Layer, Text } from 'grommet';
+import { Close } from 'grommet-icons';
+import React, { useState } from 'react';
+import { useParams, Link, useLocation } from 'wouter';
 
-import { InventoryItemsCollection } from '/imports/api/items';
-import { TagsCollection } from '/imports/api/tags';
+import Items, { InventoryItemsCollection } from '/imports/api/items';
+import Tags, { TagsCollection } from '/imports/api/tags';
+import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingState } from '/imports/ui/common/LoadingState';
+import { ContainerSelector } from '/imports/ui/ContainerSelector';
 import { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
+import { ItemForm } from '/imports/ui/ItemForm';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
+import type RecordInput from '/imports/utility/RecordInput';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 export type { ItemDetailViewProps } from '/imports/ui/ItemDetailViewPresentation';
@@ -35,8 +40,14 @@ export { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentati
  */
 export const ItemDetailView: React.FC = () => {
     const { itemId } = useParams<{ itemId: string }>();
+    const [, setLocation] = useLocation();
+    const [isEditing, setIsEditing] = useState(false);
+    const [isMoving, setIsMoving] = useState(false);
+    const [moveTargetId, setMoveTargetId] = useState<string | undefined>();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isLoadingItem = useSubscribe('items.byId', itemId);
+    const isLoadingAllItems = useSubscribe('items.all');
     const isLoadingTags = useSubscribe('tags.all');
 
     usePageTitle('Item Details - My Inventory');
@@ -53,7 +64,18 @@ export const ItemDetailView: React.FC = () => {
         return TagsCollection.find({ _id: { $in: item.tagIds } }).fetch();
     }, [item?.tagIds.join(',')]);
 
-    if (isLoadingItem() || isLoadingTags()) {
+    const allTags = useTracker(() => {
+        return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
+    }, []);
+
+    const availableContainers = useTracker(() => {
+        return InventoryItemsCollection.find(
+            { isContainer: true, _id: { $ne: itemId } },
+            { sort: { name: 1 } }
+        ).fetch();
+    }, [itemId]);
+
+    if (isLoadingItem() || isLoadingAllItems() || isLoadingTags()) {
         return <LoadingState />;
     }
 
@@ -87,13 +109,145 @@ export const ItemDetailView: React.FC = () => {
         );
     }
 
+    const handleUpdateItem = async (values: RecordInput<InventoryItem>): Promise<void> => {
+        try {
+            setIsSubmitting(true);
+            await Items.updateItem(item._id, {
+                name: values.name,
+                description: values.description,
+                isContainer: values.isContainer,
+                tagIds: values.tagIds,
+                properties: values.properties,
+            });
+            setIsEditing(false);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleMoveItem = async (): Promise<void> => {
+        try {
+            setIsSubmitting(true);
+            await Items.moveItem(item._id, moveTargetId);
+            setIsMoving(false);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteItem = async (): Promise<void> => {
+        await Items.deleteItem(item._id);
+        setLocation('/items');
+    };
+
+    const handleRemoveTag = async (tagId: string): Promise<void> => {
+        await Tags.removeFromItem(item._id, tagId);
+    };
+
     // Render the presentation component with fetched data
     return (
-        <ItemDetailViewPresentation
-            item={item}
-            tags={tags}
-            containerPath={[]}
-            // TODO: Add onEdit, onDelete, onMove handlers in future tasks
-        />
+        <>
+            <ItemDetailViewPresentation
+                item={item}
+                tags={tags}
+                containerPath={[]}
+                onEdit={() => {
+                    setIsEditing(true);
+                }}
+                onMove={() => {
+                    setMoveTargetId(item.containerId);
+                    setIsMoving(true);
+                }}
+                onDelete={() => {
+                    void handleDeleteItem();
+                }}
+                onRemoveTag={(tagId) => {
+                    void handleRemoveTag(tagId);
+                }}
+                disabled={isSubmitting}
+            />
+
+            {isEditing && (
+                <Layer
+                    onEsc={() => {
+                        setIsEditing(false);
+                    }}
+                    onClickOutside={() => {
+                        setIsEditing(false);
+                    }}
+                >
+                    <Box pad="medium" gap="medium" width="large">
+                        <Box direction="row" justify="between" align="center">
+                            <Heading level="3" margin="none">
+                                Edit Item
+                            </Heading>
+                            <Button
+                                icon={<Close />}
+                                onClick={() => {
+                                    setIsEditing(false);
+                                }}
+                            />
+                        </Box>
+                        <ItemForm
+                            initialValues={item}
+                            availableTags={allTags}
+                            onSubmit={handleUpdateItem}
+                            onCancel={() => {
+                                setIsEditing(false);
+                            }}
+                            isSubmitting={isSubmitting}
+                        />
+                    </Box>
+                </Layer>
+            )}
+
+            {isMoving && (
+                <Layer
+                    onEsc={() => {
+                        setIsMoving(false);
+                    }}
+                    onClickOutside={() => {
+                        setIsMoving(false);
+                    }}
+                >
+                    <Box pad="medium" gap="medium" width="large">
+                        <Box direction="row" justify="between" align="center">
+                            <Heading level="3" margin="none">
+                                Move Item
+                            </Heading>
+                            <Button
+                                icon={<Close />}
+                                onClick={() => {
+                                    setIsMoving(false);
+                                }}
+                            />
+                        </Box>
+                        <ContainerSelector
+                            containers={availableContainers}
+                            selectedContainerId={moveTargetId}
+                            onSelect={setMoveTargetId}
+                            disabled={isSubmitting}
+                        />
+                        <Box direction="row" justify="end" gap="small">
+                            <Button
+                                label="Cancel"
+                                onClick={() => {
+                                    setIsMoving(false);
+                                }}
+                                disabled={isSubmitting}
+                            />
+                            <Button
+                                primary
+                                label="Move Item"
+                                onClick={() => {
+                                    void handleMoveItem();
+                                }}
+                                disabled={isSubmitting}
+                            />
+                        </Box>
+                    </Box>
+                </Layer>
+            )}
+        </>
     );
 };

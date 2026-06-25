@@ -4,7 +4,9 @@ import React, { useState, useRef, type ReactElement } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from '/imports/model/ItemConstants';
+import type { TagRecord } from '/imports/model/TagRecord';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
+import { TagSelector } from '/imports/ui/TagSelector';
 import { TouchButton } from '/imports/ui/TouchButton';
 import type RecordInput from '/imports/utility/RecordInput';
 
@@ -48,6 +50,12 @@ export interface ItemFormProps {
 
     /** External error message to display */
     error?: string;
+
+    /** Tags that can be applied to this item */
+    availableTags?: TagRecord[];
+
+    /** Callback when creating a new tag from the form */
+    onCreateNewTag?: () => void;
 }
 
 export const ItemForm = ({
@@ -56,10 +64,13 @@ export const ItemForm = ({
     onCancel,
     isSubmitting = false,
     error,
+    availableTags,
+    onCreateNewTag,
 }: ItemFormProps): ReactElement => {
     const [name, setName] = useState(initialValues.name ?? '');
     const [description, setDescription] = useState(initialValues.description ?? '');
     const [isContainer, setIsContainer] = useState(initialValues.isContainer ?? false);
+    const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialValues.tagIds ?? []);
     const [validationError, setValidationError] = useState<string>('');
     const [internalSubmitting, setInternalSubmitting] = useState(false);
 
@@ -125,7 +136,7 @@ export const ItemForm = ({
         const itemData: RecordInput<InventoryItem> = {
             name: name.trim(),
             isContainer,
-            tagIds: initialValues.tagIds ?? [],
+            tagIds: selectedTagIds,
         };
 
         // Add optional fields
@@ -272,6 +283,22 @@ export const ItemForm = ({
                         disabled={isActuallySubmitting}
                     />
                 </Box>
+
+                {availableTags !== undefined && (
+                    <TagSelector
+                        availableTags={availableTags}
+                        selectedTagIds={selectedTagIds}
+                        onToggleTag={(tagId, isSelected) => {
+                            setSelectedTagIds((currentTagIds) =>
+                                isSelected
+                                    ? [...new Set([...currentTagIds, tagId])]
+                                    : currentTagIds.filter((currentTagId) => currentTagId !== tagId)
+                            );
+                        }}
+                        onCreateNewTag={onCreateNewTag}
+                        disabled={isActuallySubmitting}
+                    />
+                )}
 
                 <Box direction="row" gap="medium" justify="end">
                     {onCancel !== undefined && (

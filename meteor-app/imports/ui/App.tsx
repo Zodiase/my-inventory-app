@@ -15,6 +15,7 @@ import type RecordInput from '/imports/utility/RecordInput';
 import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';
 import { AppShell } from './AppShell';
+import { ContainerSelector } from './ContainerSelector';
 import { FilterBar } from './FilterBar';
 import { ItemDetailView, ItemDetailViewPresentation } from './ItemDetailView';
 import { ItemForm } from './ItemForm';
@@ -32,6 +33,10 @@ export const App = (): ReactElement => {
     const [showCreateItem, setShowCreateItem] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
     const [currentItemsContainerId, setCurrentItemsContainerId] = useState<string | undefined>();
+    const [isEditingSelectedItem, setIsEditingSelectedItem] = useState(false);
+    const [isMovingSelectedItem, setIsMovingSelectedItem] = useState(false);
+    const [selectedMoveTargetId, setSelectedMoveTargetId] = useState<string | undefined>();
+    const [isSubmittingSelectedItem, setIsSubmittingSelectedItem] = useState(false);
 
     // Search state
     const [searchQuery, setSearchQuery] = useState('');
@@ -61,9 +66,17 @@ export const App = (): ReactElement => {
 
     // Fetch all tags for search components
     const isLoadingTags = useSubscribe('tags.all');
+    useSubscribe('items.all');
     const allTags = useTracker(() => {
         return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
     }, []);
+
+    const availableContainers = useTracker(() => {
+        return InventoryItemsCollection.find(
+            { isContainer: true, _id: { $ne: selectedItemId } },
+            { sort: { name: 1 } }
+        ).fetch();
+    }, [selectedItemId]);
 
     const currentSearchScopeItem = useTracker(() => {
         if (currentItemsContainerId === undefined) return undefined;
@@ -87,6 +100,8 @@ export const App = (): ReactElement => {
 
     const handleCloseItemDetail = (): void => {
         setSelectedItemId(undefined);
+        setIsEditingSelectedItem(false);
+        setIsMovingSelectedItem(false);
     };
 
     const handleCreateItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
@@ -110,6 +125,38 @@ export const App = (): ReactElement => {
             handleCloseItemDetail();
         } catch (error) {
             console.error('Failed to delete item:', error);
+        }
+    };
+
+    const handleUpdateSelectedItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
+        if (selectedItem === undefined) return;
+        try {
+            setIsSubmittingSelectedItem(true);
+            await Items.updateItem(selectedItem._id, {
+                name: itemData.name,
+                description: itemData.description,
+                isContainer: itemData.isContainer,
+                tagIds: itemData.tagIds,
+                properties: itemData.properties,
+            });
+            setIsEditingSelectedItem(false);
+        } catch (error) {
+            console.error('Failed to update item:', error);
+        } finally {
+            setIsSubmittingSelectedItem(false);
+        }
+    };
+
+    const handleMoveSelectedItem = async (): Promise<void> => {
+        if (selectedItem === undefined) return;
+        try {
+            setIsSubmittingSelectedItem(true);
+            await Items.moveItem(selectedItem._id, selectedMoveTargetId);
+            setIsMovingSelectedItem(false);
+        } catch (error) {
+            console.error('Failed to move item:', error);
+        } finally {
+            setIsSubmittingSelectedItem(false);
         }
     };
 
@@ -375,6 +422,7 @@ export const App = (): ReactElement => {
                                             loading={searchLoading}
                                             hasSearched={hasSearched}
                                             getItemPath={getItemPath}
+                                            availableTags={allTags}
                                         />
                                     </>
                                 )}
@@ -418,6 +466,7 @@ export const App = (): ReactElement => {
                                 />
                             </Box>
                             <ItemForm
+                                availableTags={allTags}
                                 onSubmit={handleCreateItem}
                                 onCancel={() => {
                                     setShowCreateItem(false);
@@ -445,12 +494,52 @@ export const App = (): ReactElement => {
                             </Box>
                             {isLoadingSelectedItem() ? (
                                 <LoadingState />
+                            ) : selectedItem !== undefined && isEditingSelectedItem ? (
+                                <ItemForm
+                                    initialValues={selectedItem}
+                                    availableTags={allTags}
+                                    onSubmit={handleUpdateSelectedItem}
+                                    onCancel={() => {
+                                        setIsEditingSelectedItem(false);
+                                    }}
+                                    isSubmitting={isSubmittingSelectedItem}
+                                />
+                            ) : selectedItem !== undefined && isMovingSelectedItem ? (
+                                <Box gap="medium">
+                                    <ContainerSelector
+                                        containers={availableContainers}
+                                        selectedContainerId={selectedMoveTargetId}
+                                        onSelect={setSelectedMoveTargetId}
+                                        disabled={isSubmittingSelectedItem}
+                                    />
+                                    <Box direction="row" justify="end" gap="small">
+                                        <Button
+                                            label="Cancel"
+                                            onClick={() => {
+                                                setIsMovingSelectedItem(false);
+                                            }}
+                                            disabled={isSubmittingSelectedItem}
+                                        />
+                                        <Button
+                                            primary
+                                            label="Move Item"
+                                            onClick={() => {
+                                                void handleMoveSelectedItem();
+                                            }}
+                                            disabled={isSubmittingSelectedItem}
+                                        />
+                                    </Box>
+                                </Box>
                             ) : selectedItem !== undefined ? (
                                 <ItemDetailViewPresentation
                                     item={selectedItem}
                                     tags={selectedItemTags}
                                     onEdit={() => {
-                                        /* TODO: Edit modal */
+                                        setIsEditingSelectedItem(true);
+                                    }}
+                                    onMove={() => {
+                                        setSelectedMoveTargetId(selectedItem.containerId);
+                                        setIsMovingSelectedItem(true);
                                     }}
                                     onDelete={() => {
                                         void handleDeleteItem();
@@ -460,6 +549,7 @@ export const App = (): ReactElement => {
                                         void handleRemoveTagFromItem(tagId);
                                         return undefined;
                                     }}
+                                    disabled={isSubmittingSelectedItem}
                                 />
                             ) : (
                                 <Box align="center" pad="large">
