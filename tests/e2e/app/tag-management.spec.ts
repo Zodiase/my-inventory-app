@@ -277,11 +277,11 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         // Navigate directly to tags view
         await page.goto('/tags');
 
-        // Wait for tags view to load - look for "All Tags" heading
-        await expect(page.getByText('All Tags')).toBeVisible({ timeout: 10000 });
+        // Wait for tags view to load
+        await expect(page.getByRole('heading', { name: 'Tags' })).toBeVisible({ timeout: 10000 });
 
-        // Click + button to open CreateTagDialog
-        const addButton = page.locator('.new-child-action').first();
+        // Click New Tag button to open CreateTagDialog
+        const addButton = page.getByRole('button', { name: /new tag/i }).first();
         await expect(addButton).toBeVisible({ timeout: 10000 });
         await addButton.click();
 
@@ -308,7 +308,7 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         await tagsPage.goto();
 
         // Open dialog
-        await page.locator('.new-child-action').first().click();
+        await page.getByRole('button', { name: /new tag/i }).first().click();
 
         // Wait for dialog
         await page.waitForSelector('input[name="name"]', { state: 'visible' });
@@ -323,7 +323,7 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         await tagsPage.goto();
 
         // Open dialog
-        await page.locator('.new-child-action').first().click();
+        await page.getByRole('button', { name: /new tag/i }).first().click();
 
         // Wait for dialog
         await page.waitForSelector('input[name="name"]', { state: 'visible' });
@@ -352,7 +352,7 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         await tagsPage.goto();
 
         // Open dialog
-        await page.locator('.new-child-action').first().click();
+        await page.getByRole('button', { name: /new tag/i }).first().click();
 
         // Wait for dialog
         await page.waitForSelector('input[name="name"]', { state: 'visible' });
