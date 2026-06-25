@@ -24,7 +24,7 @@ const isStorybookOnlyRun =
     (selectedProjects.length > 0 && selectedProjects.every((project) => project === 'storybook-chromium'));
 
 const appWebServer = {
-    command: 'meteor run --port 3000',
+    command: 'env -u MONGO_URL -u NAS_MONGO_URL meteor run --port 3000',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // 2 minutes for Meteor to start

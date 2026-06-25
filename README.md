@@ -10,13 +10,21 @@ Install dependencies (Meteor manages most server/client deps):
 meteor npm install
 ```
 
-Start the app:
+Start the app with throwaway local Meteor data:
 
 ```bash
-meteor run
+npm run start:throwaway
 ```
 
 The app will be available at http://localhost:3000/.
+
+Start the app with personal data from `NAS_MONGO_URL` in `.env`:
+
+```bash
+npm run start:personal
+```
+
+E2E tests treat local Meteor Mongo as disposable and may reset it. The test reset endpoint refuses to run against an external `MONGO_URL`.
 
 ## Features
 
