@@ -1,7 +1,9 @@
+import { Close } from 'grommet-icons';
 import React, { type ComponentProps } from 'react';
 import styled from 'styled-components';
 
 import type { SearchFragment } from '/imports/model/SearchFragment';
+import { uiTokens } from '/imports/ui/theme';
 
 /**
  * FilterBar component for context-aware filtering of current view.
@@ -39,44 +41,44 @@ interface FilterBarProps extends Omit<ComponentProps<'div'>, 'onChange'> {
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: ${uiTokens.space.sm};
 `;
 
 const FilterBarHeader = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: ${uiTokens.space.md};
 `;
 
 const FilterCount = styled.span`
-    font-size: 14px;
-    font-weight: 600;
-    color: #666;
+    font-size: ${uiTokens.font.sizeSmall};
+    font-weight: ${uiTokens.font.weightSemibold};
+    color: ${uiTokens.color.textWeak};
 `;
 
 const ClearAllButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    min-height: 44px;
-    padding: 8px 16px;
+    gap: ${uiTokens.space.sm};
+    min-height: ${uiTokens.size.touchTarget};
+    padding: ${uiTokens.space.sm} ${uiTokens.space.lg};
     background: transparent;
-    color: #ff3b30;
-    border: 1px solid #ff3b30;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
+    color: ${uiTokens.color.danger};
+    border: 1px solid ${uiTokens.color.danger};
+    border-radius: ${uiTokens.radius.control};
+    font-size: ${uiTokens.font.sizeSmall};
+    font-weight: ${uiTokens.font.weightSemibold};
     cursor: pointer;
-    transition: all 0.15s;
+    transition: background-color ${uiTokens.motion.fast}, transform ${uiTokens.motion.fast};
 
     &:hover {
-        background: rgba(255, 59, 48, 0.1);
+        background: ${uiTokens.color.dangerSubtle};
     }
 
     &:active {
-        background: rgba(255, 59, 48, 0.2);
+        background: ${uiTokens.color.dangerSubtleStrong};
         transform: scale(0.98);
     }
 `;
@@ -84,61 +86,61 @@ const ClearAllButton = styled.button`
 const FilterChipList = styled.div`
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: ${uiTokens.space.sm};
 `;
 
 const FilterChip = styled.div`
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: #007aff;
-    color: white;
-    border-radius: 20px;
-    min-height: 44px;
+    gap: ${uiTokens.space.sm};
+    padding: ${uiTokens.space.sm} ${uiTokens.space.md};
+    background: ${uiTokens.color.brand};
+    color: ${uiTokens.color.textInverse};
+    border-radius: ${uiTokens.radius.pill};
+    min-height: ${uiTokens.size.touchTarget};
 `;
 
 const FilterType = styled.span`
-    font-size: 12px;
-    font-weight: 600;
+    font-size: ${uiTokens.font.sizeXSmall};
+    font-weight: ${uiTokens.font.weightSemibold};
     text-transform: uppercase;
     opacity: 0.8;
 `;
 
 const FilterValue = styled.span`
-    font-size: 14px;
-    font-weight: 500;
+    font-size: ${uiTokens.font.sizeSmall};
+    font-weight: ${uiTokens.font.weightMedium};
 `;
 
 const RemoveButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
-    padding: 10px; /* Centers 24px icon: (44px - 24px) / 2 = 10px */
-    background: rgba(255, 255, 255, 0.2);
+    min-width: ${uiTokens.size.touchTarget};
+    min-height: ${uiTokens.size.touchTarget};
+    padding: ${uiTokens.space.sm};
+    background: ${uiTokens.color.textInverseWeak};
     border: none;
-    border-radius: 50%;
+    border-radius: ${uiTokens.radius.round};
     cursor: pointer;
-    color: white;
-    font-size: 16px;
-    transition: background-color 0.15s;
+    color: ${uiTokens.color.textInverse};
+    font-size: ${uiTokens.font.sizeMedium};
+    transition: background-color ${uiTokens.motion.fast};
 
     &:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: ${uiTokens.color.textInverseWeakHover};
     }
 
     &:active {
-        background: rgba(255, 255, 255, 0.4);
+        background: ${uiTokens.color.textInverseWeakActive};
     }
 `;
 
 const EmptyState = styled.div`
-    padding: 12px;
+    padding: ${uiTokens.space.md};
     text-align: center;
-    color: #999;
-    font-size: 14px;
+    color: ${uiTokens.color.textMuted};
+    font-size: ${uiTokens.font.sizeSmall};
 `;
 
 export const FilterBar: React.FC<FilterBarProps> = ({
@@ -221,7 +223,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                                         aria-label={`Remove ${display.type} filter`}
                                         type="button"
                                     >
-                                        ✕
+                                        <Close size="16px" />
                                     </RemoveButton>
                                 </FilterChip>
                             );

@@ -2,6 +2,8 @@ import { Box, Text } from 'grommet';
 import React, { type ReactElement } from 'react';
 import styled, { keyframes } from 'styled-components';
 
+import { uiTokens } from './theme';
+
 /**
  * LoadingSpinner component optimized for mobile touch interfaces.
  *
@@ -79,10 +81,11 @@ const getSizePx = (size: LoadingSpinnerSize): number => {
 const SpinnerCircle = styled.div<SpinnerCircleProps>`
     width: ${(props) => getSizePx(props.$size)}px;
     height: ${(props) => getSizePx(props.$size)}px;
-    border: ${(props) =>
-        Math.max(MIN_BORDER_WIDTH_PX, getSizePx(props.$size) / BORDER_WIDTH_DIVISOR)}px solid rgba(0, 0, 0, 0.1);
+    border-style: solid;
+    border-width: ${(props) => Math.max(MIN_BORDER_WIDTH_PX, getSizePx(props.$size) / BORDER_WIDTH_DIVISOR)}px;
+    border-color: ${uiTokens.color.scrim};
     border-top-color: ${(props) => props.$color};
-    border-radius: 50%;
+    border-radius: ${uiTokens.radius.round};
     animation: ${spin} 0.8s linear infinite;
     will-change: transform;
 `;
@@ -91,7 +94,7 @@ const SpinnerContainer = styled(Box)`
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: ${uiTokens.space.md};
 `;
 
 const OverlayBackdrop = styled.div`
@@ -100,13 +103,13 @@ const OverlayBackdrop = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.95);
+    background: ${uiTokens.color.overlayLight};
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
-    animation: fadeIn 0.2s ease-out;
+    z-index: ${uiTokens.zIndex.overlay};
+    animation: fadeIn ${uiTokens.motion.standard};
 
     @keyframes fadeIn {
         from {
@@ -127,7 +130,7 @@ const OverlayBackdrop = styled.div`
 export const LoadingSpinner = ({
     size = 'medium',
     text,
-    color = '#007aff',
+    color = uiTokens.color.brand,
     overlay = false,
     ariaLabel = 'Loading',
 }: LoadingSpinnerProps): ReactElement => {
@@ -137,7 +140,7 @@ export const LoadingSpinner = ({
             {text !== undefined && (
                 <Text
                     size={size === 'small' ? 'small' : 'medium'}
-                    color="dark-4"
+                    color={uiTokens.color.textWeak}
                     textAlign="center"
                     style={{ maxWidth: '250px' }}
                 >
