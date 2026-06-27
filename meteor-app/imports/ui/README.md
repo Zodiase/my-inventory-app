@@ -5,14 +5,15 @@ This directory contains React components for the inventory management applicatio
 ## Design System Foundation
 
 -   App-level Grommet theme and shared UI tokens live in `theme.ts`.
+-   Design principles, token meanings, component standards, and feature design requirement prompts live in
+    `/docs/DESIGN_SYSTEM.md`.
 -   Prefer Grommet `Button` for standard actions and `TouchButton` when custom pressed-state feedback is needed.
 -   `StyledButton` is deprecated and should not be used in new code.
 
 ### Remaining Migration Opportunities
 
 -   Move remaining hardcoded colors, radii, and touch-target sizes in `SearchBar`, `SearchResultsView`,
-    `SearchFragmentBuilder`, `FilterBar`, `BreadcrumbTrail`, `LongPressContextMenu`, and related stories onto
-    `uiTokens`.
+    `SearchFragmentBuilder`, `BreadcrumbTrail`, `LongPressContextMenu`, and related stories onto `uiTokens`.
 -   Replace remaining emoji UI icons in focused component passes. Search-related components were intentionally left
     alone during the design-system foundation cleanup to avoid conflicts with parallel search work.
 -   Consider a `styled-components` theme provider bridge once most shared components consume tokens consistently.

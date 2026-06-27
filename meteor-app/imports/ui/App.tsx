@@ -27,7 +27,7 @@ import { SearchFragmentBuilder } from './SearchFragmentBuilder';
 import { SearchResultsView } from './SearchResultsView';
 import { SearchScopeSelector } from './SearchScopeSelector';
 import { SettingsDataView } from './SettingsDataView';
-import { theme } from './theme';
+import { DesignSystemGlobalStyle, theme } from './theme';
 
 const getErrorMessage = (error: unknown): string => {
     return error instanceof Error ? error.message : 'Something went wrong. Please try again.';
@@ -280,6 +280,7 @@ export const App = (): ReactElement => {
 
     return (
         <Grommet theme={theme} full>
+            <DesignSystemGlobalStyle />
             <AppShell location={location}>
                 <Switch>
                     {/* Home route - Items view */}

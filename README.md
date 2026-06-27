@@ -28,6 +28,10 @@ E2E tests treat local Meteor Mongo as disposable and may reset it. The test rese
 
 ## Features
 
+### Design System
+
+The app uses a lightweight design language for touch-friendly inventory workflows. See [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) for product feel, shared tokens, component standards, and the feature design requirements template.
+
 ### URL Routing
 
 The app uses client-side URL routing (via [Wouter](https://github.com/molefrog/wouter)) for navigation:

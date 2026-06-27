@@ -51,18 +51,19 @@ const StyledButton = styled.button<StyledButtonProps>`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: ${uiTokens.space.sm};
     min-height: ${uiTokens.size.touchTarget};
     min-width: ${uiTokens.size.touchTarget};
-    padding: 12px 20px;
+    padding: ${uiTokens.space.md} ${uiTokens.space.xl};
     border: none;
     border-radius: ${uiTokens.radius.control};
     font-size: ${uiTokens.font.size};
-    font-weight: 600;
+    font-weight: ${uiTokens.font.weightSemibold};
     font-family: ${uiTokens.font.family};
     cursor: pointer;
     user-select: none;
-    transition: all 0.15s ease-out;
+    transition: background-color ${uiTokens.motion.fast}, box-shadow ${uiTokens.motion.fast},
+        transform ${uiTokens.motion.fast}, opacity ${uiTokens.motion.fast};
     width: ${(props) => (props.$fullWidth ? '100%' : 'auto')};
 
     /* Variant: Primary */
@@ -159,7 +160,7 @@ const IconWrapper = styled.span`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: ${uiTokens.font.sizeLarge};
 `;
 
 const LoadingSpinner = styled.span`
