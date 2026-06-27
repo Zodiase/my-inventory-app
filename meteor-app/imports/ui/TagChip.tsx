@@ -2,6 +2,8 @@ import { Box, Button, type BoxProps } from 'grommet';
 import { Close } from 'grommet-icons';
 import React, { type ReactElement } from 'react';
 
+import { uiTokens } from './theme';
+
 export interface TagChipProps extends Omit<BoxProps, 'onClick'> {
     /** The name of the tag to display */
     tagName: string;
@@ -32,32 +34,32 @@ export function TagChip({
         <Box
             direction="row"
             align="center"
-            background={disabled ? 'light-4' : { color, opacity: 'weak' }}
+            background={disabled ? uiTokens.color.surfaceSubtle : { color, opacity: 'weak' }}
             pad={{ horizontal: 'small', vertical: 'xsmall' }}
-            round="medium"
+            round={uiTokens.radius.pill}
             gap="xsmall"
             {...boxProps}
         >
             <Box
                 as="span"
                 style={{
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    color: disabled ? '#999' : '#333',
+                    fontSize: uiTokens.font.sizeSmall,
+                    fontWeight: uiTokens.font.weightMedium,
+                    color: disabled ? uiTokens.color.textMuted : uiTokens.color.text,
                 }}
             >
                 {tagName}
             </Box>
             {onRemove !== undefined && (
                 <Button
-                    icon={<Close size="small" color={disabled ? 'light-6' : 'dark-3'} />}
+                    icon={<Close size="small" color={disabled ? uiTokens.color.textMuted : uiTokens.color.textWeak} />}
                     onClick={onRemove}
                     disabled={disabled}
                     plain
                     style={{
-                        minWidth: '44px',
-                        minHeight: '44px',
-                        padding: '12px',
+                        minWidth: uiTokens.size.touchTarget,
+                        minHeight: uiTokens.size.touchTarget,
+                        padding: uiTokens.space.md,
                     }}
                     aria-label={`Remove ${tagName} tag`}
                 />

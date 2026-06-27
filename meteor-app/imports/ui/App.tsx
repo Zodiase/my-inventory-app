@@ -24,62 +24,9 @@ import { SearchFragmentBuilder } from './SearchFragmentBuilder';
 import { SearchResultsView } from './SearchResultsView';
 import { SearchScopeSelector } from './SearchScopeSelector';
 import { SettingsDataView } from './SettingsDataView';
+import { DesignSystemGlobalStyle, theme, uiTokens } from './theme';
 
-// Grommet theme with iOS-style design and touch-friendly sizing
-const theme = {
-    global: {
-        colors: {
-            brand: '#007aff', // iOS blue
-            focus: '#007aff',
-        },
-        font: {
-            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            size: '16px',
-        },
-        control: {
-            border: {
-                radius: '8px',
-            },
-        },
-    },
-    button: {
-        default: {
-            // Ensure all buttons meet 44px minimum touch target
-            padding: {
-                vertical: '10px', // 10px + 16px font + 10px = 36px + border ≈ 44px total
-                horizontal: '20px',
-            },
-        },
-        border: {
-            radius: '8px',
-        },
-    },
-    formField: {
-        border: false,
-        content: {
-            pad: { vertical: 'small' },
-        },
-    },
-    textInput: {
-        extend: `
-            min-height: 44px;
-            padding: 12px 16px;
-        `,
-    },
-    textArea: {
-        extend: `
-            min-height: 44px;
-            padding: 12px 16px;
-        `,
-    },
-    select: {
-        container: {
-            extend: `
-                min-height: 44px;
-            `,
-        },
-    },
-};
+const navigationButtonStyle: React.CSSProperties = { minHeight: uiTokens.size.touchTarget };
 
 export const App = (): ReactElement => {
     const [location] = useLocation();
@@ -212,6 +159,7 @@ export const App = (): ReactElement => {
 
     return (
         <Grommet theme={theme} full>
+            <DesignSystemGlobalStyle />
             <Box fill>
                 {/* Header with navigation */}
                 <Header background="brand" pad="small">
@@ -225,7 +173,7 @@ export const App = (): ReactElement => {
                                 label="Items"
                                 primary={location === '/items' || location === '/'}
                                 plain={location !== '/items' && location !== '/'}
-                                style={{ minHeight: '44px' }}
+                                style={navigationButtonStyle}
                             />
                         </Link>
                         <Link href="/tags">
@@ -234,7 +182,7 @@ export const App = (): ReactElement => {
                                 label="Tags"
                                 primary={location === '/tags'}
                                 plain={location !== '/tags'}
-                                style={{ minHeight: '44px' }}
+                                style={navigationButtonStyle}
                             />
                         </Link>
                         <Link href="/search">
@@ -243,7 +191,7 @@ export const App = (): ReactElement => {
                                 label="Search"
                                 primary={location === '/search'}
                                 plain={location !== '/search'}
-                                style={{ minHeight: '44px' }}
+                                style={navigationButtonStyle}
                             />
                         </Link>
                         <Link href="/settings/data">
@@ -252,7 +200,7 @@ export const App = (): ReactElement => {
                                 label="Data"
                                 primary={location === '/settings/data'}
                                 plain={location !== '/settings/data'}
-                                style={{ minHeight: '44px' }}
+                                style={navigationButtonStyle}
                             />
                         </Link>
                     </Nav>

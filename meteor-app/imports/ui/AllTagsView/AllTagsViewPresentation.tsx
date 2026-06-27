@@ -1,10 +1,12 @@
+import { Button } from 'grommet';
+import { Add } from 'grommet-icons';
 import React, { type ComponentProps, type ReactElement, useState } from 'react';
 import styled from 'styled-components';
 
 import type { TagRecord } from '/imports/model/TagRecord';
 import { CreateTagDialog } from '/imports/ui/CreateTagDialog';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
-import StyledButton from '/imports/ui/StyledButton';
+import { uiTokens } from '/imports/ui/theme';
 
 /**
  * AllTagsViewPresentation is a pure presentation component that displays tags
@@ -181,33 +183,31 @@ const TagList = styled(
                             )}
                         </label>
                         <span className="tag-actions-container">
-                            <StyledButton
+                            <Button
+                                a11yTitle="Add child tag"
                                 className="new-child-action"
+                                icon={<Add size="small" />}
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     handleAddChild();
                                 }}
-                            >
-                                +
-                            </StyledButton>
-                            <StyledButton
+                            />
+                            <Button
                                 className="rename-tag-action"
+                                label="Rename"
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     handleRename();
                                 }}
-                            >
-                                Rename
-                            </StyledButton>
-                            <StyledButton
+                            />
+                            <Button
                                 className="remove-tag-action"
+                                label="Delete"
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     handleDelete();
                                 }}
-                            >
-                                Delete
-                            </StyledButton>
+                            />
                         </span>
                     </div>
                 </LongPressContextMenu>
@@ -289,12 +289,12 @@ const DetachedTagsView = styled(
                           } detached tags out of ${totalTagsCount} (updated ${lastUpdated.toLocaleString()})`}
                 </div>
                 <div>
-                    <StyledButton disabled={isUpdating} onClick={onCheck}>
-                        Check
-                    </StyledButton>
-                    <StyledButton disabled={isUpdating || detachedTagIds.length === 0} onClick={onRemoveAll}>
-                        Remove All
-                    </StyledButton>
+                    <Button disabled={isUpdating} label="Check" onClick={onCheck} />
+                    <Button
+                        disabled={isUpdating || detachedTagIds.length === 0}
+                        label="Remove All"
+                        onClick={onRemoveAll}
+                    />
                 </div>
             </div>
         );
@@ -418,9 +418,9 @@ export const AllTagsViewPresentation = styled(
             </div>
         );
     }
-)`;
+)`
     ${TagList} {
-        // Renaming and removing actions don't apply to root tag.
+        /* Renaming and removing actions don't apply to root tag. */
         .tag-body[data-tag-id=''] {
             .rename-tag-action,
             .remove-tag-action {
@@ -434,7 +434,7 @@ export const AllTagsViewPresentation = styled(
             line-height: 1.5em;
 
             .tag-item-count {
-                color: #666;
+                color: ${uiTokens.color.textWeak};
                 font-size: 0.85em;
                 font-weight: normal;
             }
@@ -459,7 +459,7 @@ export const AllTagsViewPresentation = styled(
             padding-inline-end: 1em;
 
             &:hover {
-                background-color: #cccccc;
+                background-color: ${uiTokens.color.surfaceHover};
             }
         }
 

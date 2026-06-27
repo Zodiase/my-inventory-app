@@ -1,9 +1,11 @@
+import { Button } from 'grommet';
+import { Apps } from 'grommet-icons';
 import React, { type ComponentProps, type ReactElement } from 'react';
 import styled from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
-import StyledButton from '/imports/ui/StyledButton';
+import { uiTokens } from '/imports/ui/theme';
 import { DESCRIPTION_PREVIEW_LENGTH } from '/imports/utility/constants';
 
 /**
@@ -49,7 +51,7 @@ const ItemCard = styled(
             <div {...rootElementProps} onClick={handleClick} data-item-id={item._id}>
                 <div className="item-card-header">
                     <h3 className="item-name">{item.name}</h3>
-                    {item.isContainer && <span className="container-badge">📁</span>}
+                    {item.isContainer && <Apps className="container-badge" size="18px" />}
                 </div>
                 {typeof item.description === 'string' && item.description !== '' && (
                     <p className="item-description">
@@ -64,14 +66,14 @@ const ItemCard = styled(
         );
     }
 )`
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid ${uiTokens.color.border};
+    border-radius: ${uiTokens.radius.control};
     padding: 1em;
     cursor: ${(props) => (props.onSelectItem !== undefined ? 'pointer' : 'default')};
     transition: background-color 0.2s, box-shadow 0.2s;
 
     &:hover {
-        background-color: ${(props) => (props.onSelectItem !== undefined ? '#f5f5f5' : 'transparent')};
+        background-color: ${(props) => (props.onSelectItem !== undefined ? uiTokens.color.surface : 'transparent')};
         box-shadow: ${(props) => (props.onSelectItem !== undefined ? '0 2px 4px rgba(0,0,0,0.1)' : 'none')};
     }
 
@@ -89,12 +91,12 @@ const ItemCard = styled(
     }
 
     .container-badge {
-        font-size: 1.2em;
+        color: ${uiTokens.color.brand};
     }
 
     .item-description {
         margin: 0.5em 0;
-        color: #666;
+        color: ${uiTokens.color.textWeak};
         font-size: 0.9em;
         line-height: 1.4;
     }
@@ -102,7 +104,7 @@ const ItemCard = styled(
     .item-location {
         margin-top: 0.5em;
         font-size: 0.85em;
-        color: #888;
+        color: ${uiTokens.color.textMuted};
     }
 
     .location-label {
@@ -180,9 +182,7 @@ export const ItemsByTagViewPresentation = styled(
                         </p>
                     </div>
                     {onClearSelection !== undefined && (
-                        <StyledButton className="clear-button" onClick={onClearSelection}>
-                            Clear Selection
-                        </StyledButton>
+                        <Button className="clear-button" secondary label="Clear Selection" onClick={onClearSelection} />
                     )}
                 </div>
 
@@ -212,7 +212,7 @@ export const ItemsByTagViewPresentation = styled(
         align-items: flex-start;
         margin-bottom: 1.5em;
         padding-bottom: 1em;
-        border-bottom: 2px solid #ddd;
+        border-bottom: 2px solid ${uiTokens.color.border};
     }
 
     .tag-info {
@@ -227,7 +227,7 @@ export const ItemsByTagViewPresentation = styled(
 
     .item-count {
         margin: 0;
-        color: #666;
+        color: ${uiTokens.color.textWeak};
         font-size: 0.9em;
     }
 
@@ -245,12 +245,12 @@ export const ItemsByTagViewPresentation = styled(
     .loading-state {
         text-align: center;
         padding: 3em;
-        color: #999;
+        color: ${uiTokens.color.textMuted};
         font-size: 1.1em;
     }
 
     .loading-state {
-        color: #666;
+        color: ${uiTokens.color.textWeak};
     }
 
     ${ItemCard} {
