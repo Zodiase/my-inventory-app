@@ -1,4 +1,4 @@
-import { Box, Button, Grommet, Heading, Layer } from 'grommet';
+import { Box, Button, Grommet, Heading, Layer, Text } from 'grommet';
 import { Add, Close, Filter } from 'grommet-icons';
 import { Meteor } from 'meteor/meteor';
 import React, { type ReactElement, useState, useEffect } from 'react';
@@ -9,6 +9,7 @@ import Tags, { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { LoadingState } from '/imports/ui/common/LoadingState';
+import { getValidMoveTargetContainers } from '/imports/utility/moveTargets';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
 
@@ -28,6 +29,16 @@ import { SearchScopeSelector } from './SearchScopeSelector';
 import { SettingsDataView } from './SettingsDataView';
 import { theme } from './theme';
 
+const getErrorMessage = (error: unknown): string => {
+    return error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+};
+
+const getNonEmptyContainerMessage = (childCount: number): string => {
+    return `Cannot delete container with ${childCount} child ${
+        childCount === 1 ? 'item' : 'items'
+    }. Move or delete children first.`;
+};
+
 export const App = (): ReactElement => {
     const [location] = useLocation();
     const [showCreateItem, setShowCreateItem] = useState(false);
@@ -35,8 +46,10 @@ export const App = (): ReactElement => {
     const [currentItemsContainerId, setCurrentItemsContainerId] = useState<string | undefined>();
     const [isEditingSelectedItem, setIsEditingSelectedItem] = useState(false);
     const [isMovingSelectedItem, setIsMovingSelectedItem] = useState(false);
+    const [isConfirmingSelectedDelete, setIsConfirmingSelectedDelete] = useState(false);
     const [selectedMoveTargetId, setSelectedMoveTargetId] = useState<string | undefined>();
     const [isSubmittingSelectedItem, setIsSubmittingSelectedItem] = useState(false);
+    const [selectedItemError, setSelectedItemError] = useState<string | undefined>();
 
     // Search state
     const [searchQuery, setSearchQuery] = useState('');
@@ -64,6 +77,11 @@ export const App = (): ReactElement => {
         return TagsCollection.find({ _id: { $in: selectedItem.tagIds } }).fetch();
     }, [selectedItem?.tagIds.join(',')]);
 
+    const selectedItemChildCount = useTracker(() => {
+        if (selectedItemId === undefined) return 0;
+        return InventoryItemsCollection.find({ containerId: selectedItemId }).count();
+    }, [selectedItemId]);
+
     // Fetch all tags for search components
     const isLoadingTags = useSubscribe('tags.all');
     useSubscribe('items.all');
@@ -72,10 +90,11 @@ export const App = (): ReactElement => {
     }, []);
 
     const availableContainers = useTracker(() => {
-        return InventoryItemsCollection.find(
+        const containers = InventoryItemsCollection.find(
             { isContainer: true, _id: { $ne: selectedItemId } },
             { sort: { name: 1 } }
         ).fetch();
+        return getValidMoveTargetContainers(containers, selectedItemId);
     }, [selectedItemId]);
 
     const currentSearchScopeItem = useTracker(() => {
@@ -102,6 +121,8 @@ export const App = (): ReactElement => {
         setSelectedItemId(undefined);
         setIsEditingSelectedItem(false);
         setIsMovingSelectedItem(false);
+        setIsConfirmingSelectedDelete(false);
+        setSelectedItemError(undefined);
     };
 
     const handleCreateItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
@@ -120,11 +141,21 @@ export const App = (): ReactElement => {
 
     const handleDeleteItem = async (): Promise<void> => {
         if (selectedItem === undefined) return;
+        if (selectedItem.isContainer && selectedItemChildCount > 0) {
+            setSelectedItemError(getNonEmptyContainerMessage(selectedItemChildCount));
+            return;
+        }
+
         try {
+            setIsSubmittingSelectedItem(true);
+            setSelectedItemError(undefined);
             await Items.deleteItem(selectedItem._id);
             handleCloseItemDetail();
         } catch (error) {
+            setSelectedItemError(getErrorMessage(error));
             console.error('Failed to delete item:', error);
+        } finally {
+            setIsSubmittingSelectedItem(false);
         }
     };
 
@@ -132,6 +163,7 @@ export const App = (): ReactElement => {
         if (selectedItem === undefined) return;
         try {
             setIsSubmittingSelectedItem(true);
+            setSelectedItemError(undefined);
             await Items.updateItem(selectedItem._id, {
                 name: itemData.name,
                 description: itemData.description,
@@ -141,6 +173,7 @@ export const App = (): ReactElement => {
             });
             setIsEditingSelectedItem(false);
         } catch (error) {
+            setSelectedItemError(getErrorMessage(error));
             console.error('Failed to update item:', error);
         } finally {
             setIsSubmittingSelectedItem(false);
@@ -151,9 +184,11 @@ export const App = (): ReactElement => {
         if (selectedItem === undefined) return;
         try {
             setIsSubmittingSelectedItem(true);
+            setSelectedItemError(undefined);
             await Items.moveItem(selectedItem._id, selectedMoveTargetId);
             setIsMovingSelectedItem(false);
         } catch (error) {
+            setSelectedItemError(getErrorMessage(error));
             console.error('Failed to move item:', error);
         } finally {
             setIsSubmittingSelectedItem(false);
@@ -163,8 +198,10 @@ export const App = (): ReactElement => {
     const handleRemoveTagFromItem = async (tagId: string): Promise<void> => {
         if (selectedItem === undefined) return;
         try {
+            setSelectedItemError(undefined);
             await Tags.removeFromItem(selectedItem._id, tagId);
         } catch (error) {
+            setSelectedItemError(getErrorMessage(error));
             console.error('Failed to remove tag from item:', error);
         }
     };
@@ -205,6 +242,10 @@ export const App = (): ReactElement => {
     };
 
     const handleSearchItemClick = (itemId: string): void => {
+        setSelectedItemError(undefined);
+        setIsEditingSelectedItem(false);
+        setIsMovingSelectedItem(false);
+        setIsConfirmingSelectedDelete(false);
         setSelectedItemId(itemId);
     };
 
@@ -494,18 +535,56 @@ export const App = (): ReactElement => {
                             </Box>
                             {isLoadingSelectedItem() ? (
                                 <LoadingState />
+                            ) : selectedItem !== undefined && isConfirmingSelectedDelete ? (
+                                <Box gap="medium">
+                                    <Text>Delete "{selectedItem.name}"? This cannot be undone.</Text>
+                                    {selectedItem.isContainer && (
+                                        <Text color="text-weak" size="small">
+                                            Containers must be empty before they can be deleted.
+                                        </Text>
+                                    )}
+                                    {selectedItemError !== undefined && (
+                                        <Text color="status-critical">{selectedItemError}</Text>
+                                    )}
+                                    <Box direction="row" justify="end" gap="small">
+                                        <Button
+                                            label="Cancel"
+                                            onClick={() => {
+                                                setIsConfirmingSelectedDelete(false);
+                                            }}
+                                            disabled={isSubmittingSelectedItem}
+                                        />
+                                        <Button
+                                            primary
+                                            color="status-critical"
+                                            label="Delete Item"
+                                            onClick={() => {
+                                                void handleDeleteItem();
+                                            }}
+                                            disabled={isSubmittingSelectedItem}
+                                        />
+                                    </Box>
+                                </Box>
                             ) : selectedItem !== undefined && isEditingSelectedItem ? (
-                                <ItemForm
-                                    initialValues={selectedItem}
-                                    availableTags={allTags}
-                                    onSubmit={handleUpdateSelectedItem}
-                                    onCancel={() => {
-                                        setIsEditingSelectedItem(false);
-                                    }}
-                                    isSubmitting={isSubmittingSelectedItem}
-                                />
+                                <Box gap="medium">
+                                    {selectedItemError !== undefined && (
+                                        <Text color="status-critical">{selectedItemError}</Text>
+                                    )}
+                                    <ItemForm
+                                        initialValues={selectedItem}
+                                        availableTags={allTags}
+                                        onSubmit={handleUpdateSelectedItem}
+                                        onCancel={() => {
+                                            setIsEditingSelectedItem(false);
+                                        }}
+                                        isSubmitting={isSubmittingSelectedItem}
+                                    />
+                                </Box>
                             ) : selectedItem !== undefined && isMovingSelectedItem ? (
                                 <Box gap="medium">
+                                    {selectedItemError !== undefined && (
+                                        <Text color="status-critical">{selectedItemError}</Text>
+                                    )}
                                     <ContainerSelector
                                         containers={availableContainers}
                                         selectedContainerId={selectedMoveTargetId}
@@ -535,14 +614,19 @@ export const App = (): ReactElement => {
                                     item={selectedItem}
                                     tags={selectedItemTags}
                                     onEdit={() => {
+                                        setSelectedItemError(undefined);
+                                        setIsConfirmingSelectedDelete(false);
                                         setIsEditingSelectedItem(true);
                                     }}
                                     onMove={() => {
+                                        setSelectedItemError(undefined);
+                                        setIsConfirmingSelectedDelete(false);
                                         setSelectedMoveTargetId(selectedItem.containerId);
                                         setIsMovingSelectedItem(true);
                                     }}
                                     onDelete={() => {
-                                        void handleDeleteItem();
+                                        setSelectedItemError(undefined);
+                                        setIsConfirmingSelectedDelete(true);
                                         return undefined;
                                     }}
                                     onRemoveTag={(tagId) => {
