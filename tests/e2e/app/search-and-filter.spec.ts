@@ -295,6 +295,32 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
         expect(path.length).toBeGreaterThanOrEqual(2);
     });
 
+    test('shows breadcrumb trail in the Search UI results', async ({ page }) => {
+        const kitchenId = await createItem(page, {
+            name: 'Kitchen',
+            isContainer: true,
+        });
+        const cabinetId = await createItem(page, {
+            name: 'Cabinet',
+            isContainer: true,
+            containerId: kitchenId,
+        });
+        await createItem(page, {
+            name: 'Plate',
+            containerId: cabinetId,
+        });
+
+        await page.goto('/search');
+        await waitForMeteorReady(page);
+        await page.getByRole('textbox', { name: 'Search query' }).fill('plate');
+        await page.getByRole('button', { name: 'Submit search' }).click();
+
+        const result = page.locator('button').filter({ hasText: 'Plate' }).first();
+        await expect(result).toBeVisible();
+        await expect(result).toContainText('Kitchen');
+        await expect(result).toContainText('Cabinet');
+    });
+
     test('T067j: Prevent contradictory filters (same tag included and excluded)', async ({ page }) => {
         // Create tag
         const testTagId = await createTag(page, { name: 'Test' });

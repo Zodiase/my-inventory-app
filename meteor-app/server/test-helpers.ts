@@ -15,10 +15,14 @@ const HTTP_OK = 200;
 const HTTP_METHOD_NOT_ALLOWED = 405;
 const HTTP_INTERNAL_SERVER_ERROR = 500;
 
-const isLocalMongoUrl = (mongoUrl: string): boolean => {
+const TEST_RESET_ENABLED = process.env.E2E_RESET_DATABASE === '1';
+
+const isThrowawayMeteorMongoUrl = (mongoUrl: string): boolean => {
     try {
-        const { hostname } = new URL(mongoUrl);
-        return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '[::1]';
+        const { hostname, pathname, port } = new URL(mongoUrl);
+        const isLocalHost =
+            hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '[::1]';
+        return isLocalHost && port !== '' && pathname === '/meteor';
     } catch {
         return false;
     }
@@ -34,9 +38,13 @@ async function resetDatabase(): Promise<void> {
         throw new Meteor.Error('not-allowed', 'Cannot reset database in production');
     }
 
+    if (!TEST_RESET_ENABLED) {
+        throw new Meteor.Error('not-allowed', 'Database reset is only enabled for explicit E2E test runs');
+    }
+
     const mongoUrl = process.env.MONGO_URL;
-    if (mongoUrl !== undefined && mongoUrl !== '' && !isLocalMongoUrl(mongoUrl)) {
-        throw new Meteor.Error('not-allowed', 'Refusing to reset an external Mongo database');
+    if (mongoUrl !== undefined && mongoUrl !== '' && !isThrowawayMeteorMongoUrl(mongoUrl)) {
+        throw new Meteor.Error('not-allowed', 'Refusing to reset a non-test Mongo database');
     }
 
     // Remove all documents from all collections

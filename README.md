@@ -24,7 +24,7 @@ Start the app with personal data from `NAS_MONGO_URL` in `.env`:
 npm run start:personal
 ```
 
-E2E tests treat local Meteor Mongo as disposable and may reset it. The test reset endpoint refuses to run against an external `MONGO_URL`.
+E2E tests treat local Meteor Mongo as disposable and may reset it. The test reset endpoint only runs when Playwright starts Meteor with `E2E_RESET_DATABASE=1` and refuses non-test Mongo URLs.
 
 ## Features
 

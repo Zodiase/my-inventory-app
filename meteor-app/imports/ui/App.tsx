@@ -84,7 +84,7 @@ export const App = (): ReactElement => {
 
     // Fetch all tags for search components
     const isLoadingTags = useSubscribe('tags.all');
-    useSubscribe('items.all');
+    const isLoadingAllItems = useSubscribe('items.all');
     const allTags = useTracker(() => {
         return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
     }, []);
@@ -249,10 +249,26 @@ export const App = (): ReactElement => {
         setSelectedItemId(itemId);
     };
 
-    const getItemPath = (_itemId: string): InventoryItem[] => {
-        // TODO: Implement breadcrumb path resolution
-        // For now, return empty array
-        return [];
+    const getItemPath = (pathItemId: string): InventoryItem[] => {
+        const item = InventoryItemsCollection.findOne({ _id: pathItemId });
+        if (item === undefined) return [];
+
+        const path: InventoryItem[] = [item];
+        const visitedItemIds = new Set<string>([item._id]);
+        let currentItem = item;
+
+        while (currentItem.containerId !== undefined) {
+            if (visitedItemIds.has(currentItem.containerId)) break;
+
+            const parent = InventoryItemsCollection.findOne({ _id: currentItem.containerId });
+            if (parent === undefined) break;
+
+            path.unshift(parent);
+            visitedItemIds.add(parent._id);
+            currentItem = parent;
+        }
+
+        return path;
     };
 
     const handleItemsViewNavigate = (containerId: string | undefined): void => {
@@ -406,7 +422,7 @@ export const App = (): ReactElement => {
                                     />
                                 </Box>
 
-                                {isLoadingTags() ? (
+                                {isLoadingTags() || isLoadingAllItems() ? (
                                     <LoadingState />
                                 ) : (
                                     <>
@@ -533,7 +549,7 @@ export const App = (): ReactElement => {
                                 </Heading>
                                 <Button icon={<Close />} onClick={handleCloseItemDetail} />
                             </Box>
-                            {isLoadingSelectedItem() ? (
+                            {isLoadingSelectedItem() || isLoadingAllItems() || isLoadingTags() ? (
                                 <LoadingState />
                             ) : selectedItem !== undefined && isConfirmingSelectedDelete ? (
                                 <Box gap="medium">

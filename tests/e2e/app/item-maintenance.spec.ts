@@ -64,6 +64,35 @@ test.describe('Item maintenance happy paths', () => {
         await expect(page.getByText('Grandchild Container', { exact: true })).not.toBeVisible();
     });
 
+    test('filters descendant containers out of search result modal move targets', async ({ page }) => {
+        const parentId = await createItem(page, { name: 'Parent Container', isContainer: true });
+        const childId = await createItem(page, {
+            name: 'Child Container',
+            isContainer: true,
+            containerId: parentId,
+        });
+        await createItem(page, {
+            name: 'Grandchild Container',
+            isContainer: true,
+            containerId: childId,
+        });
+        await createItem(page, { name: 'Other Container', isContainer: true });
+
+        await page.goto('/search');
+        await waitForMeteorReady(page);
+        await page.getByRole('textbox', { name: 'Search query' }).fill('Parent Container');
+        await page.getByRole('button', { name: 'Submit search' }).click();
+        await page.locator('button').filter({ hasText: 'Parent Container' }).first().click();
+
+        await expect(page.getByRole('heading', { name: 'Item Details' })).toBeVisible();
+        await page.getByRole('button', { name: /Move$/ }).click();
+
+        await expect(page.getByText('Root (No Container)', { exact: true })).toBeVisible();
+        await expect(page.getByText('Other Container', { exact: true })).toBeVisible();
+        await expect(page.getByText('Child Container', { exact: true })).not.toBeVisible();
+        await expect(page.getByText('Grandchild Container', { exact: true })).not.toBeVisible();
+    });
+
     test('confirms item deletion before removing an item', async ({ page }) => {
         const itemId = await createItem(page, { name: 'Disposable Item' });
 
