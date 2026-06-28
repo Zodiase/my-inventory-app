@@ -32,7 +32,7 @@
         "build-storybook": "storybook build -o ../storybook-static"
     },
     "dependencies": {
-        "@babel/core": "^7.28.4",
+        "@babel/core": "^7.29.6",
         "@babel/runtime": "^7.28.4",
         "@types/papaparse": "^5.5.2",
         "archiver": "^7.0.1",
