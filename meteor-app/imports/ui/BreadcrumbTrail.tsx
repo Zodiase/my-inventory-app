@@ -1,3 +1,4 @@
+import { Home } from 'grommet-icons';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -29,6 +30,7 @@ const BreadcrumbContainer = styled.nav`
 const BreadcrumbButton = styled.button`
     display: flex;
     align-items: center;
+    gap: 6px;
     min-height: 44px;
     padding: 8px 12px;
     background-color: transparent;
@@ -55,6 +57,7 @@ const BreadcrumbButton = styled.button`
 const BreadcrumbText = styled.span`
     display: flex;
     align-items: center;
+    gap: 6px;
     min-height: 44px;
     padding: 8px 12px;
     font-size: 16px;
@@ -69,7 +72,7 @@ const Separator = styled.span`
 `;
 
 const HomeIcon = styled.span`
-    font-size: 20px;
+    display: inline-flex;
 `;
 
 export interface BreadcrumbTrailProps {
@@ -78,6 +81,9 @@ export interface BreadcrumbTrailProps {
 
     /** Callback when a breadcrumb is clicked */
     onNavigate?: (item: InventoryItem) => void;
+
+    /** Callback when the root breadcrumb is clicked */
+    onNavigateRoot?: () => void;
 
     /** Show home icon for root instead of text */
     showHomeIcon?: boolean;
@@ -102,6 +108,7 @@ export interface BreadcrumbTrailProps {
 export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
     path,
     onNavigate,
+    onNavigateRoot,
     showHomeIcon = false,
     className,
 }) => {
@@ -122,6 +129,18 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
 
     return (
         <BreadcrumbContainer className={className}>
+            {showHomeIcon && onNavigateRoot !== undefined && (
+                <>
+                    <BreadcrumbButton type="button" onClick={onNavigateRoot} aria-label="Navigate to all items">
+                        <HomeIcon>
+                            <Home size="small" />
+                        </HomeIcon>
+                        All Items
+                    </BreadcrumbButton>
+                    <Separator>›</Separator>
+                </>
+            )}
+
             {path.map((item, index) => {
                 const isLast = index === path.length - 1;
                 const isFirst = index === 0;
@@ -132,7 +151,15 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
                         {index > 0 && <Separator>›</Separator>}
 
                         {isLast ? (
-                            <BreadcrumbText>{showHome ? <HomeIcon>🏠</HomeIcon> : item.name}</BreadcrumbText>
+                            <BreadcrumbText>
+                                {showHome ? (
+                                    <HomeIcon>
+                                        <Home size="small" />
+                                    </HomeIcon>
+                                ) : (
+                                    item.name
+                                )}
+                            </BreadcrumbText>
                         ) : (
                             <BreadcrumbButton
                                 type="button"
@@ -141,7 +168,13 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
                                 }}
                                 aria-label={`Navigate to ${item.name}`}
                             >
-                                {showHome ? <HomeIcon>🏠</HomeIcon> : item.name}
+                                {showHome ? (
+                                    <HomeIcon>
+                                        <Home size="small" />
+                                    </HomeIcon>
+                                ) : (
+                                    item.name
+                                )}
                             </BreadcrumbButton>
                         )}
                     </React.Fragment>

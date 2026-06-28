@@ -36,6 +36,10 @@ const meta = {
             control: 'boolean',
             description: 'Whether results are currently loading',
         },
+        hasSearched: {
+            control: 'boolean',
+            description: 'Whether the user has executed at least one search',
+        },
         getItemPath: {
             description: 'Optional function to get breadcrumb path for an item',
         },
@@ -110,6 +114,17 @@ const mockPath: Record<string, InventoryItem[]> = {
         mockItems[1],
     ],
     item3: [mockItems[2]],
+};
+
+/**
+ * Initial state before a search is run
+ */
+export const Initial: Story = {
+    args: {
+        items: [],
+        loading: false,
+        hasSearched: false,
+    },
 };
 
 /**

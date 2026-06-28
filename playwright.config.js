@@ -22,10 +22,16 @@ const isAppOnlyRun =
 const isStorybookOnlyRun =
     (hasStorybookTestPath && !hasAppTestPath) ||
     (selectedProjects.length > 0 && selectedProjects.every((project) => project === 'storybook-chromium'));
+const appPort = process.env.PLAYWRIGHT_APP_PORT ?? '3000';
+const appBaseURL = process.env.PLAYWRIGHT_APP_BASE_URL ?? `http://localhost:${appPort}`;
+const meteorLocalDir =
+    process.env.PLAYWRIGHT_METEOR_LOCAL_DIR === undefined
+        ? ''
+        : ` METEOR_LOCAL_DIR=${JSON.stringify(process.env.PLAYWRIGHT_METEOR_LOCAL_DIR)}`;
 
 const appWebServer = {
-    command: 'meteor run --port 3000',
-    url: 'http://localhost:3000',
+    command: `env -u MONGO_URL -u NAS_MONGO_URL E2E_RESET_DATABASE=1${meteorLocalDir} meteor run --port ${appPort}`,
+    url: appBaseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // 2 minutes for Meteor to start
     stdout: 'pipe',
@@ -72,7 +78,7 @@ export default defineConfig({
     /* Shared settings for all the projects below */
     use: {
         /* Base URL to use in actions like `await page.goto('/')` */
-        baseURL: 'http://localhost:3000',
+        baseURL: appBaseURL,
 
         /* Collect trace when retrying the failed test */
         trace: 'on-first-retry',

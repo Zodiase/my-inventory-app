@@ -176,6 +176,11 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
             name: 'Kitchen',
             isContainer: true,
         });
+        const pantryId = await createItem(page, {
+            name: 'Pantry',
+            isContainer: true,
+            containerId: kitchenId,
+        });
         const garageId = await createItem(page, {
             name: 'Garage',
             isContainer: true,
@@ -183,7 +188,7 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
 
         // Create items in different containers
         await createItem(page, { name: 'Kitchen Knife', containerId: kitchenId });
-        await createItem(page, { name: 'Kitchen Towel', containerId: kitchenId });
+        await createItem(page, { name: 'Kitchen Towel', containerId: pantryId });
         await createItem(page, { name: 'Garage Tool', containerId: garageId });
 
         // Scoped search within kitchen
@@ -192,8 +197,8 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
             { type: 'name', value: 'kitchen' },
         ])) as SearchResults;
 
-        expect(results.length).toBe(2);
         const names = results.map((r: { name: string }) => r.name);
+        expect(names).toHaveLength(2);
         expect(names).toContain('Kitchen Knife');
         expect(names).toContain('Kitchen Towel');
         expect(names).not.toContain('Garage Tool');
@@ -288,6 +293,32 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
         expect(Array.isArray(path)).toBe(true);
         // Path should include Kitchen > Cabinet > Plate
         expect(path.length).toBeGreaterThanOrEqual(2);
+    });
+
+    test('shows breadcrumb trail in the Search UI results', async ({ page }) => {
+        const kitchenId = await createItem(page, {
+            name: 'Kitchen',
+            isContainer: true,
+        });
+        const cabinetId = await createItem(page, {
+            name: 'Cabinet',
+            isContainer: true,
+            containerId: kitchenId,
+        });
+        await createItem(page, {
+            name: 'Plate',
+            containerId: cabinetId,
+        });
+
+        await page.goto('/search');
+        await waitForMeteorReady(page);
+        await page.getByRole('textbox', { name: 'Search query' }).fill('plate');
+        await page.getByRole('button', { name: 'Submit search' }).click();
+
+        const result = page.locator('button').filter({ hasText: 'Plate' }).first();
+        await expect(result).toBeVisible();
+        await expect(result).toContainText('Kitchen');
+        await expect(result).toContainText('Cabinet');
     });
 
     test('T067j: Prevent contradictory filters (same tag included and excluded)', async ({ page }) => {

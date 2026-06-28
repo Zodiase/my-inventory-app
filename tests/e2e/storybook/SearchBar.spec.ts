@@ -29,8 +29,12 @@ test.describe('SearchBar Component (Storybook)', () => {
         await expect(page.getByTestId('clear-count')).toHaveText('1');
     });
 
-    test('should render scoped mode and keep clear button touch-friendly', async ({ page }) => {
-        await expect(page.getByText('In: Garage')).toBeVisible();
+    test('should expose touch-friendly clear and submit affordances', async ({ page }) => {
+        const submitButton = page.getByRole('button', { name: 'Submit search' });
+        const submitBox = await submitButton.boundingBox();
+
+        if (submitBox === null) throw new Error('Submit button is not visible');
+        expect(submitBox.height).toBeGreaterThanOrEqual(44);
 
         await page.getByRole('textbox', { name: 'Search query' }).fill('box');
         const clearButton = page.getByRole('button', { name: 'Clear search' });

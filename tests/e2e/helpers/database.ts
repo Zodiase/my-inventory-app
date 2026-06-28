@@ -15,7 +15,7 @@ import type { Page } from '@playwright/test';
  */
 export async function resetDatabase(page: Page): Promise<void> {
     // Use page.request to make HTTP call to reset endpoint
-    const response = await page.request.post('http://localhost:3000/api/test/reset-database');
+    const response = await page.request.post('/api/test/reset-database');
 
     if (!response.ok()) {
         const body = await response.text();

@@ -330,11 +330,10 @@ export class TagsPage {
     }
 
     /**
-     * Get the "Add Tag" button (+ button).
-     * Uses .new-child-action class since UI shows "+" not "Add Tag" text.
+     * Get the root "New Tag" button.
      */
     get addTagButton(): Locator {
-        return this.page.locator('.new-child-action').first();
+        return this.page.getByRole('button', { name: /new tag/i }).first();
     }
 
     /**

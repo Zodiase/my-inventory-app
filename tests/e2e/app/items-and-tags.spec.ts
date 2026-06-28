@@ -127,7 +127,7 @@ test.describe('Tags view', () => {
         await page.getByRole('button', { name: 'Tags' }).click();
 
         const tagName = `Tag ${Date.now()}`;
-        await page.locator('[data-tag-id=""]').locator('.new-child-action').click();
+        await page.getByRole('button', { name: /new tag/i }).first().click();
         await page.locator('input[name="name"]').fill(tagName);
         await page.getByRole('button', { name: /create tag/i }).click();
         await expect(page.locator('input[name="name"]')).not.toBeVisible({ timeout: 10000 });
@@ -135,20 +135,15 @@ test.describe('Tags view', () => {
         await expect(tagRow).toBeVisible();
 
         const renamedTag = `${tagName} Updated`;
-        page.once('dialog', async (dialog) => {
-            expect(dialog.type()).toBe('prompt');
-            await dialog.accept(renamedTag);
-        });
         await tagRow.hover();
         await tagRow.locator('.rename-tag-action').click();
+        await page.locator('input[name="name"]').fill(renamedTag);
+        await page.getByRole('button', { name: 'Rename' }).click();
         await expect(page.locator('.tag-body', { hasText: renamedTag }).first()).toBeVisible({ timeout: 10000 });
 
-        page.once('dialog', async (dialog) => {
-            expect(dialog.type()).toBe('confirm');
-            await dialog.accept();
-        });
         await page.locator('.tag-body', { hasText: renamedTag }).first().hover();
         await page.locator('.tag-body', { hasText: renamedTag }).first().locator('.remove-tag-action').click();
+        await page.getByRole('button', { name: 'Delete', exact: true }).click();
         await expect(page.locator('.tag-body', { hasText: renamedTag })).toHaveCount(0);
     });
 
@@ -163,7 +158,9 @@ test.describe('Tags view', () => {
         await reloadAndWait(page);
 
         await page.getByRole('button', { name: 'Tags' }).click();
-        await expect(page.locator('.tag-body', { hasText: `${tagName} (1)` })).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('.tag-body', { hasText: tagName }).filter({ hasText: '1 item' })).toBeVisible({
+            timeout: 10000,
+        });
     });
 
     test('shows parent container location for tagged nested items', async ({ page }) => {

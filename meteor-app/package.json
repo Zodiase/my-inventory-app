@@ -14,6 +14,8 @@
         "format:check": "prettier --check .",
         "start:nasdb:run": "export MONGO_URL=\"${NAS_MONGO_URL}\" && npm start",
         "start:nasdb": "dotenv -e ../.env npm run start:nasdb:run",
+        "start:personal": "npm run start:nasdb",
+        "start:throwaway": "meteor run",
         "start": "meteor run",
         "test": "meteor test --once --driver-package meteortesting:mocha",
         "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",

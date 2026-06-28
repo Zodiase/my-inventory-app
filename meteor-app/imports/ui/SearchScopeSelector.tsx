@@ -1,3 +1,4 @@
+import { Apps, Folder } from 'grommet-icons';
 import React, { type ComponentProps } from 'react';
 import styled from 'styled-components';
 
@@ -25,6 +26,8 @@ interface SearchScopeSelectorProps extends Omit<ComponentProps<'div'>, 'onChange
     onChange?: (scope: 'global' | 'scoped') => void;
     /** Whether the selector is disabled */
     disabled?: boolean;
+    /** Whether scoped search is unavailable */
+    scopedDisabled?: boolean;
     /** Label for the scoped search option */
     scopeLabel?: string;
 }
@@ -77,7 +80,8 @@ const SegmentButton = styled.button<{ isActive: boolean }>`
 `;
 
 const Icon = styled.span`
-    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
 `;
 
 const Label = styled.span``;
@@ -86,6 +90,7 @@ export const SearchScopeSelector: React.FC<SearchScopeSelectorProps> = ({
     value = 'global',
     onChange,
     disabled = false,
+    scopedDisabled = false,
     scopeLabel = 'Current',
     className,
     style,
@@ -97,7 +102,7 @@ export const SearchScopeSelector: React.FC<SearchScopeSelectorProps> = ({
     };
 
     const handleScopedClick = (): void => {
-        if (!disabled && value !== 'scoped') {
+        if (!disabled && !scopedDisabled && value !== 'scoped') {
             onChange?.('scoped');
         }
     };
@@ -112,18 +117,23 @@ export const SearchScopeSelector: React.FC<SearchScopeSelectorProps> = ({
                 aria-label="Global search"
                 aria-pressed={value === 'global'}
             >
-                <Icon>🌐</Icon>
+                <Icon>
+                    <Apps size="16px" />
+                </Icon>
                 <Label>All Items</Label>
             </SegmentButton>
             <SegmentButton
                 isActive={value === 'scoped'}
                 onClick={handleScopedClick}
-                disabled={disabled}
+                disabled={disabled || scopedDisabled}
                 type="button"
-                aria-label="Scoped search"
+                aria-label={scopedDisabled ? 'Scoped search unavailable' : 'Scoped search'}
                 aria-pressed={value === 'scoped'}
+                title={scopedDisabled ? 'Choose a container in Items before using scoped search' : undefined}
             >
-                <Icon>📁</Icon>
+                <Icon>
+                    <Folder size="16px" />
+                </Icon>
                 <Label>{scopeLabel}</Label>
             </SegmentButton>
         </Container>

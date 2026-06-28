@@ -4,13 +4,12 @@ import React, { useState } from 'react';
 import SearchBar from './SearchBar';
 
 /**
- * SearchBar provides a text input for search queries with visual indication
- * of search mode (global or scoped).
+ * SearchBar provides a compact command surface for search queries.
  *
  * ## Features
  * - Touch-friendly design with 44x44px minimum tap targets
  * - Clear/reset functionality
- * - Search mode indicator (global vs scoped)
+ * - Submit button for touch users
  * - Enter key to execute search
  * - Visual feedback for focus state
  */
@@ -92,7 +91,7 @@ export const ScopedEmpty: Story = {
 };
 
 /**
- * Scoped search with query
+ * Search with query
  */
 export const ScopedWithQuery: Story = {
     args: {
@@ -184,8 +183,6 @@ export const TestInteractions: Story = {
             <div style={{ maxWidth: '600px' }}>
                 <SearchBar
                     value={query}
-                    searchMode="scoped"
-                    scopeLabel="In: Garage"
                     onChange={setQuery}
                     onSearch={(nextQuery) => {
                         setLastSearch(nextQuery);

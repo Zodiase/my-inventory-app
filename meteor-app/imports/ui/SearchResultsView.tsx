@@ -1,7 +1,9 @@
+import { Folder, Package, Search as SearchIcon } from 'grommet-icons';
 import React, { type ComponentProps } from 'react';
 import styled from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import type { TagRecord } from '/imports/model/TagRecord';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 /**
@@ -31,8 +33,12 @@ interface SearchResultsViewProps extends ComponentProps<'div'> {
     onItemClick?: (itemId: string) => void;
     /** Whether results are currently loading */
     loading?: boolean;
+    /** Whether the user has executed at least one search */
+    hasSearched?: boolean;
     /** Optional function to get breadcrumb path for an item */
     getItemPath?: (itemId: string) => InventoryItem[];
+    /** Available tags for rendering readable tag names */
+    availableTags?: TagRecord[];
 }
 
 const Container = styled.div`
@@ -115,6 +121,7 @@ const ItemDescription = styled.div`
 const ContainerBadge = styled.span<{ isContainer: boolean }>`
     display: inline-flex;
     align-items: center;
+    gap: 4px;
     padding: 4px 8px;
     background: ${(props) => (props.isContainer ? '#34c759' : '#007aff')};
     color: white;
@@ -169,7 +176,7 @@ const EmptyState = styled.div`
 `;
 
 const EmptyIcon = styled.div`
-    font-size: 48px;
+    color: #999;
     margin-bottom: 12px;
 `;
 
@@ -212,7 +219,9 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
     items = [],
     onItemClick,
     loading = false,
+    hasSearched = true,
     getItemPath,
+    availableTags = [],
     className,
     style,
 }) => {
@@ -220,6 +229,10 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
 
     const handleItemClick = (itemId: string): void => {
         onItemClick?.(itemId);
+    };
+
+    const getTagName = (tagId: string): string => {
+        return availableTags.find((tag) => tag._id === tagId)?.name ?? tagId;
     };
 
     if (loading) {
@@ -233,11 +246,27 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
         );
     }
 
+    if (!hasSearched) {
+        return (
+            <Container className={className} style={style}>
+                <EmptyState>
+                    <EmptyIcon>
+                        <SearchIcon size="48px" />
+                    </EmptyIcon>
+                    <EmptyText>Search your inventory</EmptyText>
+                    <EmptyHint>Enter a query or add filters to begin</EmptyHint>
+                </EmptyState>
+            </Container>
+        );
+    }
+
     if (items.length === 0) {
         return (
             <Container className={className} style={style}>
                 <EmptyState>
-                    <EmptyIcon>🔍</EmptyIcon>
+                    <EmptyIcon>
+                        <SearchIcon size="48px" />
+                    </EmptyIcon>
                     <EmptyText>No results found</EmptyText>
                     <EmptyHint>Try adjusting your search criteria</EmptyHint>
                 </EmptyState>
@@ -269,10 +298,13 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                             <ItemHeader>
                                 <ItemInfo>
                                     <ItemName>{item.name}</ItemName>
-                                    {item.description !== '' && <ItemDescription>{item.description}</ItemDescription>}
+                                    {item.description !== undefined && item.description !== '' && (
+                                        <ItemDescription>{item.description}</ItemDescription>
+                                    )}
                                 </ItemInfo>
                                 <ContainerBadge isContainer={item.isContainer}>
-                                    {item.isContainer ? '📦 Container' : '📄 Item'}
+                                    {item.isContainer ? <Folder size="14px" /> : <Package size="14px" />}
+                                    {item.isContainer ? ' Container' : ' Item'}
                                 </ContainerBadge>
                             </ItemHeader>
 
@@ -287,7 +319,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                             {item.tagIds.length > 0 && (
                                 <TagList>
                                     {item.tagIds.map((tagId) => (
-                                        <TagChip key={tagId}>{tagId}</TagChip>
+                                        <TagChip key={tagId}>{getTagName(tagId)}</TagChip>
                                     ))}
                                 </TagList>
                             )}

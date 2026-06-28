@@ -1,16 +1,32 @@
-import { Box, Button, Heading, Text } from 'grommet';
-import React from 'react';
-import { useParams, Link } from 'wouter';
+import { Box, Button, Heading, Layer, Text } from 'grommet';
+import { Close } from 'grommet-icons';
+import React, { useState } from 'react';
+import { useParams, Link, useLocation } from 'wouter';
 
-import { InventoryItemsCollection } from '/imports/api/items';
-import { TagsCollection } from '/imports/api/tags';
+import Items, { InventoryItemsCollection } from '/imports/api/items';
+import Tags, { TagsCollection } from '/imports/api/tags';
+import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingState } from '/imports/ui/common/LoadingState';
+import { ContainerSelector } from '/imports/ui/ContainerSelector';
 import { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
+import { ItemForm } from '/imports/ui/ItemForm';
+import { getValidMoveTargetContainers } from '/imports/utility/moveTargets';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
+import type RecordInput from '/imports/utility/RecordInput';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 export type { ItemDetailViewProps } from '/imports/ui/ItemDetailViewPresentation';
 export { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
+
+const getErrorMessage = (error: unknown): string => {
+    return error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+};
+
+const getNonEmptyContainerMessage = (childCount: number): string => {
+    return `Cannot delete container with ${childCount} child ${
+        childCount === 1 ? 'item' : 'items'
+    }. Move or delete children first.`;
+};
 
 /**
  * ItemDetailView - Route-aware wrapper that extracts itemId from URL parameters.
@@ -35,8 +51,16 @@ export { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentati
  */
 export const ItemDetailView: React.FC = () => {
     const { itemId } = useParams<{ itemId: string }>();
+    const [, setLocation] = useLocation();
+    const [isEditing, setIsEditing] = useState(false);
+    const [isMoving, setIsMoving] = useState(false);
+    const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+    const [moveTargetId, setMoveTargetId] = useState<string | undefined>();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
     const isLoadingItem = useSubscribe('items.byId', itemId);
+    const isLoadingAllItems = useSubscribe('items.all');
     const isLoadingTags = useSubscribe('tags.all');
 
     usePageTitle('Item Details - My Inventory');
@@ -53,7 +77,24 @@ export const ItemDetailView: React.FC = () => {
         return TagsCollection.find({ _id: { $in: item.tagIds } }).fetch();
     }, [item?.tagIds.join(',')]);
 
-    if (isLoadingItem() || isLoadingTags()) {
+    const allTags = useTracker(() => {
+        return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
+    }, []);
+
+    const availableContainers = useTracker(() => {
+        const containers = InventoryItemsCollection.find(
+            { isContainer: true, _id: { $ne: itemId } },
+            { sort: { name: 1 } }
+        ).fetch();
+        return getValidMoveTargetContainers(containers, itemId);
+    }, [itemId]);
+
+    const childCount = useTracker(() => {
+        if (itemId === '') return 0;
+        return InventoryItemsCollection.find({ containerId: itemId }).count();
+    }, [itemId]);
+
+    if (isLoadingItem() || isLoadingAllItems() || isLoadingTags()) {
         return <LoadingState />;
     }
 
@@ -87,13 +128,226 @@ export const ItemDetailView: React.FC = () => {
         );
     }
 
+    const handleUpdateItem = async (values: RecordInput<InventoryItem>): Promise<void> => {
+        try {
+            setIsSubmitting(true);
+            setErrorMessage(undefined);
+            await Items.updateItem(item._id, {
+                name: values.name,
+                description: values.description,
+                isContainer: values.isContainer,
+                tagIds: values.tagIds,
+                properties: values.properties,
+            });
+            setIsEditing(false);
+        } catch (error) {
+            setErrorMessage(getErrorMessage(error));
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleMoveItem = async (): Promise<void> => {
+        try {
+            setIsSubmitting(true);
+            setErrorMessage(undefined);
+            await Items.moveItem(item._id, moveTargetId);
+            setIsMoving(false);
+        } catch (error) {
+            setErrorMessage(getErrorMessage(error));
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteItem = async (): Promise<void> => {
+        if (item.isContainer && childCount > 0) {
+            setErrorMessage(getNonEmptyContainerMessage(childCount));
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            setErrorMessage(undefined);
+            await Items.deleteItem(item._id);
+            setLocation('/items');
+        } catch (error) {
+            setErrorMessage(getErrorMessage(error));
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleRemoveTag = async (tagId: string): Promise<void> => {
+        try {
+            setErrorMessage(undefined);
+            await Tags.removeFromItem(item._id, tagId);
+        } catch (error) {
+            setErrorMessage(getErrorMessage(error));
+        }
+    };
+
     // Render the presentation component with fetched data
     return (
-        <ItemDetailViewPresentation
-            item={item}
-            tags={tags}
-            containerPath={[]}
-            // TODO: Add onEdit, onDelete, onMove handlers in future tasks
-        />
+        <>
+            <ItemDetailViewPresentation
+                item={item}
+                tags={tags}
+                containerPath={[]}
+                onEdit={() => {
+                    setErrorMessage(undefined);
+                    setIsConfirmingDelete(false);
+                    setIsEditing(true);
+                }}
+                onMove={() => {
+                    setErrorMessage(undefined);
+                    setIsConfirmingDelete(false);
+                    setMoveTargetId(item.containerId);
+                    setIsMoving(true);
+                }}
+                onDelete={() => {
+                    setErrorMessage(undefined);
+                    setIsConfirmingDelete(true);
+                }}
+                onRemoveTag={(tagId) => {
+                    void handleRemoveTag(tagId);
+                }}
+                disabled={isSubmitting}
+            />
+
+            {isConfirmingDelete && (
+                <Layer
+                    onEsc={() => {
+                        setIsConfirmingDelete(false);
+                    }}
+                    onClickOutside={() => {
+                        setIsConfirmingDelete(false);
+                    }}
+                >
+                    <Box pad="medium" gap="medium" width="medium">
+                        <Box direction="row" justify="between" align="center">
+                            <Heading level="3" margin="none">
+                                Delete Item
+                            </Heading>
+                            <Button
+                                icon={<Close />}
+                                onClick={() => {
+                                    setIsConfirmingDelete(false);
+                                }}
+                            />
+                        </Box>
+                        <Text>Delete "{item.name}"? This cannot be undone.</Text>
+                        {item.isContainer && (
+                            <Text color="text-weak" size="small">
+                                Containers must be empty before they can be deleted.
+                            </Text>
+                        )}
+                        {errorMessage !== undefined && <Text color="status-critical">{errorMessage}</Text>}
+                        <Box direction="row" justify="end" gap="small">
+                            <Button
+                                label="Cancel"
+                                onClick={() => {
+                                    setIsConfirmingDelete(false);
+                                }}
+                                disabled={isSubmitting}
+                            />
+                            <Button
+                                primary
+                                color="status-critical"
+                                label="Delete Item"
+                                onClick={() => {
+                                    void handleDeleteItem();
+                                }}
+                                disabled={isSubmitting}
+                            />
+                        </Box>
+                    </Box>
+                </Layer>
+            )}
+
+            {isEditing && (
+                <Layer
+                    onEsc={() => {
+                        setIsEditing(false);
+                    }}
+                    onClickOutside={() => {
+                        setIsEditing(false);
+                    }}
+                >
+                    <Box pad="medium" gap="medium" width="large">
+                        <Box direction="row" justify="between" align="center">
+                            <Heading level="3" margin="none">
+                                Edit Item
+                            </Heading>
+                            <Button
+                                icon={<Close />}
+                                onClick={() => {
+                                    setIsEditing(false);
+                                }}
+                            />
+                        </Box>
+                        {errorMessage !== undefined && <Text color="status-critical">{errorMessage}</Text>}
+                        <ItemForm
+                            initialValues={item}
+                            availableTags={allTags}
+                            onSubmit={handleUpdateItem}
+                            onCancel={() => {
+                                setIsEditing(false);
+                            }}
+                            isSubmitting={isSubmitting}
+                        />
+                    </Box>
+                </Layer>
+            )}
+
+            {isMoving && (
+                <Layer
+                    onEsc={() => {
+                        setIsMoving(false);
+                    }}
+                    onClickOutside={() => {
+                        setIsMoving(false);
+                    }}
+                >
+                    <Box pad="medium" gap="medium" width="large">
+                        <Box direction="row" justify="between" align="center">
+                            <Heading level="3" margin="none">
+                                Move Item
+                            </Heading>
+                            <Button
+                                icon={<Close />}
+                                onClick={() => {
+                                    setIsMoving(false);
+                                }}
+                            />
+                        </Box>
+                        {errorMessage !== undefined && <Text color="status-critical">{errorMessage}</Text>}
+                        <ContainerSelector
+                            containers={availableContainers}
+                            selectedContainerId={moveTargetId}
+                            onSelect={setMoveTargetId}
+                            disabled={isSubmitting}
+                        />
+                        <Box direction="row" justify="end" gap="small">
+                            <Button
+                                label="Cancel"
+                                onClick={() => {
+                                    setIsMoving(false);
+                                }}
+                                disabled={isSubmitting}
+                            />
+                            <Button
+                                primary
+                                label="Move Item"
+                                onClick={() => {
+                                    void handleMoveItem();
+                                }}
+                                disabled={isSubmitting}
+                            />
+                        </Box>
+                    </Box>
+                </Layer>
+            )}
+        </>
     );
 };

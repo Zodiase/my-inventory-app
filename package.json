@@ -7,6 +7,8 @@
         "clean:generated": "node scripts/cleanup-meteor-generated.mjs",
         "prepare": "cd meteor-app && npm run prepare",
         "start": "cd meteor-app && npm start",
+        "start:personal": "cd meteor-app && npm run start:personal",
+        "start:throwaway": "cd meteor-app && npm run start:throwaway",
         "storybook": "cd meteor-app && npm run storybook",
         "test:scripts": "node --test scripts/*.test.mjs",
         "format": "prettier --write . && (cd meteor-app && npm run format)",
