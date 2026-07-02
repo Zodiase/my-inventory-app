@@ -1,8 +1,13 @@
+/**
+ * Selectable container list used when moving inventory items.
+ * Keeps move-target display concerns here while shared ordering logic lives in utility modules.
+ */
 import { Box, List, Text } from 'grommet';
 import { Folder, Home } from 'grommet-icons';
 import React from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import { compareNaturalText } from '/imports/utility/naturalSort';
 
 /**
  * Spacing constants for container hierarchy display
@@ -108,7 +113,7 @@ export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
             return depthA - depthB;
         }
 
-        return a.name.localeCompare(b.name);
+        return compareNaturalText(a.name, b.name);
     });
 
     // Build list data including optional root

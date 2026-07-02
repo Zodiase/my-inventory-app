@@ -1,16 +1,39 @@
+/**
+ * Meteor-backed container for the hierarchical inventory list.
+ * Keeps publication state, current-container selection, breadcrumbs, and route updates
+ * out of the presentational list component.
+ */
 import type { Mongo } from 'meteor/mongo';
-import React, { type ComponentProps, type ReactElement, useState, useCallback } from 'react';
+import React, { type ComponentProps, type ReactElement, useState, useCallback, useEffect } from 'react';
 import { useLocation } from 'wouter';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
 import { LoadingState } from '/imports/ui/common/LoadingState';
+import { compareNaturalText } from '/imports/utility/naturalSort';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import { buildSearchQuery } from '/imports/utility/searchQuery';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 const REFRESH_VISUAL_DELAY_MS = 500;
+
+const findInventoryItemById = (itemId: string): InventoryItem | undefined => {
+    return InventoryItemsCollection.find({ _id: itemId }, { limit: 1 }).fetch()[0];
+};
+
+const compareItemsForDisplay = (first: InventoryItem, second: InventoryItem): number => {
+    if (first.isContainer !== second.isContainer) {
+        return first.isContainer ? -1 : 1;
+    }
+
+    const byNaturalName = compareNaturalText(first.name, second.name);
+    if (byNaturalName !== 0) {
+        return byNaturalName;
+    }
+
+    return first.createdAt.getTime() - second.createdAt.getTime();
+};
 
 /**
  * AllItemsViewContainer is a container component that fetches data from Meteor and passes it
@@ -71,6 +94,10 @@ export const AllItemsViewContainer = ({
         });
     }, []);
 
+    useEffect(() => {
+        setCurrentContainerId(initialContainerId);
+    }, [initialContainerId]);
+
     const isLoadingItems = useSubscribe('items.byContainer', currentContainerId ?? null);
     const isLoadingTags = useSubscribe('tags.all');
 
@@ -90,23 +117,11 @@ export const AllItemsViewContainer = ({
                 $and: [baseQuery, filterQuery],
             };
 
-            return InventoryItemsCollection.find(combinedQuery, {
-                sort: [
-                    ['isContainer', 'desc'], // Containers first
-                    ['name', 'asc'],
-                    ['createdAt', 'asc'],
-                ],
-            }).fetch();
-        } else {
-            // No filters - just show items at current level
-            return InventoryItemsCollection.find(baseQuery, {
-                sort: [
-                    ['isContainer', 'desc'], // Containers first
-                    ['name', 'asc'],
-                    ['createdAt', 'asc'],
-                ],
-            }).fetch();
+            return InventoryItemsCollection.find(combinedQuery).fetch().sort(compareItemsForDisplay);
         }
+
+        // No filters - just show items at current level
+        return InventoryItemsCollection.find(baseQuery).fetch().sort(compareItemsForDisplay);
     }, [currentContainerId, JSON.stringify(filters), refreshTrigger]);
 
     // Fetch current container path for breadcrumb
@@ -114,17 +129,22 @@ export const AllItemsViewContainer = ({
         if (currentContainerId === undefined) {
             return [];
         }
-        const container = InventoryItemsCollection.findOne({ _id: currentContainerId });
+        const container = findInventoryItemById(currentContainerId);
         if (container === undefined) {
             return [];
         }
 
         const path: InventoryItem[] = [container];
+        const visitedContainerIds = new Set<string>([container._id]);
         let current = container;
         while (current.containerId !== undefined) {
-            const parent = InventoryItemsCollection.findOne({ _id: current.containerId });
+            if (visitedContainerIds.has(current.containerId)) break;
+
+            const parent = findInventoryItemById(current.containerId);
             if (parent === undefined) break;
+
             path.unshift(parent);
+            visitedContainerIds.add(parent._id);
             current = parent;
         }
         return path;
@@ -133,6 +153,7 @@ export const AllItemsViewContainer = ({
     const handleNavigateToContainer = (containerId: string | undefined): void => {
         setCurrentContainerId(containerId);
         onNavigate?.(containerId);
+        setLocation(containerId === undefined ? '/items' : `/container/${containerId}`);
     };
 
     if (isLoadingItems() || isLoadingTags()) {

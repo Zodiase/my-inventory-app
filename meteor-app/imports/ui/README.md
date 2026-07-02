@@ -59,13 +59,14 @@ export const ItemDetailView = (): ReactElement => {
 
 #### 1. Link Components (Preferred)
 
-Use `<Link>` from Wouter to wrap navigation elements:
+Use `<Link>` from Wouter as the navigation element. Do not wrap interactive elements such as Grommet
+`Button` inside a `Link`; that creates nested controls for assistive technology.
 
 ```typescript
 import { Link } from 'wouter';
 
-<Link href="/tags">
-    <Button label="Tags" />
+<Link href="/tags" className="app-primary-link-button">
+    Tags
 </Link>
 ```
 
@@ -137,8 +138,8 @@ const [selectedItemId, setSelectedItemId] = useState<string>();
 
 ```typescript
 // Navigation state is in URL, not React state
-<Link href="/tags">
-    <Button />
+<Link href="/tags" className="app-primary-link-button">
+    Tags
 </Link>
 ```
 

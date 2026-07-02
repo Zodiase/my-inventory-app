@@ -1,3 +1,7 @@
+/**
+ * Touch-friendly long-press menu wrapper for mobile item actions.
+ * Handles gesture timing, cancellation, and menu dismissal while callers supply action content.
+ */
 import { Layer, Box } from 'grommet';
 import React, { type ReactElement, type ReactNode, useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
@@ -142,7 +146,6 @@ export const LongPressContextMenu = ({
 }: LongPressContextMenuProps): ReactElement => {
     const [isPressed, setIsPressed] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
-    const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
 
     const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const startPositionRef = useRef({ x: 0, y: 0 });
@@ -158,7 +161,6 @@ export const LongPressContextMenu = ({
             pressTimerRef.current = setTimeout(() => {
                 if (!hasMovedRef.current) {
                     setShowMenu(true);
-                    setMenuPosition({ x: clientX, y: clientY });
                     setIsPressed(false);
                     onMenuOpen?.();
 
@@ -213,6 +215,13 @@ export const LongPressContextMenu = ({
         [handleMenuClose]
     );
 
+    const handleContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+        const nativeEvent = event.nativeEvent as PointerEvent;
+        if (nativeEvent.pointerType === 'touch' || nativeEvent.pointerType === 'pen') {
+            event.preventDefault();
+        }
+    }, []);
+
     // Cleanup timer on unmount
     useEffect(() => {
         return () => {
@@ -243,6 +252,7 @@ export const LongPressContextMenu = ({
             <Wrapper
                 $isPressed={isPressed}
                 onPointerDown={(e) => {
+                    if (e.button !== 0) return;
                     handlePressStart(e.clientX, e.clientY);
                 }}
                 onPointerMove={(e) => {
@@ -251,10 +261,7 @@ export const LongPressContextMenu = ({
                 onPointerUp={handlePressEnd}
                 onPointerCancel={handlePressEnd}
                 onPointerLeave={handlePressEnd}
-                onContextMenu={(e) => {
-                    // Prevent default context menu
-                    e.preventDefault();
-                }}
+                onContextMenu={handleContextMenu}
             >
                 {children}
             </Wrapper>

@@ -1,7 +1,13 @@
+/**
+ * Presentational inventory list for the current container level.
+ * Owns list-row semantics, touch gestures, breadcrumbs, and context-menu affordances,
+ * while container modules provide data and routing callbacks.
+ */
 import { Box, List, Text } from 'grommet';
 import { Folder, Next } from 'grommet-icons';
 import React, { type ComponentProps, type ReactElement, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
+import { Link } from 'wouter';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
@@ -48,6 +54,17 @@ const PullToRefreshIndicator = styled.div`
     pointer-events: none;
     z-index: 100;
     transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+`;
+
+const ItemRowLink = styled(Link)`
+    display: block;
+    color: inherit;
+    text-decoration: none;
+
+    &:focus-visible {
+        outline: 3px solid #007aff;
+        outline-offset: 2px;
+    }
 `;
 
 /**
@@ -274,41 +291,43 @@ export const AllItemsViewPresentation = ({
                             }
                             return (
                                 <LongPressContextMenu key={item._id} actions={menuActions}>
-                                    <Box
-                                        direction="row"
-                                        align="center"
-                                        pad="small"
-                                        gap="small"
-                                        background="background-front"
-                                        hoverIndicator="background-contrast"
-                                        style={{
-                                            minHeight: '44px',
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={() => {
-                                            if (item.isContainer) {
-                                                onNavigateToContainer(item._id);
-                                            } else if (onViewItemDetails !== undefined) {
-                                                onViewItemDetails(item._id);
-                                            }
-                                        }}
+                                    <ItemRowLink
+                                        href={item.isContainer ? `/container/${item._id}` : `/items/${item._id}`}
+                                        aria-label={
+                                            item.isContainer ? `Open container ${item.name}` : `View item ${item.name}`
+                                        }
                                     >
-                                        {/* Icon for containers */}
-                                        {item.isContainer && <Folder size="medium" color="brand" />}
+                                        <Box
+                                            direction="row"
+                                            align="center"
+                                            pad="small"
+                                            gap="small"
+                                            background="background-front"
+                                            hoverIndicator="background-contrast"
+                                            style={{
+                                                minHeight: '44px',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            {/* Icon for containers */}
+                                            {item.isContainer && <Folder size="medium" color="brand" />}
 
-                                        {/* Item name */}
-                                        <Box flex>
-                                            <Text weight={item.isContainer ? 'bold' : 'normal'}>{item.name}</Text>
-                                            {item.description !== '' && item.description !== undefined && (
-                                                <Text size="small" color="text-weak" truncate>
-                                                    {item.description}
+                                            {/* Item name */}
+                                            <Box flex style={{ minWidth: 0 }}>
+                                                <Text weight={item.isContainer ? 'bold' : 'normal'} truncate>
+                                                    {item.name}
                                                 </Text>
-                                            )}
-                                        </Box>
+                                                {item.description !== '' && item.description !== undefined && (
+                                                    <Text size="small" color="text-weak" truncate>
+                                                        {item.description}
+                                                    </Text>
+                                                )}
+                                            </Box>
 
-                                        {/* Navigation arrow for containers */}
-                                        {item.isContainer && <Next size="medium" color="text-weak" />}
-                                    </Box>
+                                            {/* Navigation arrow for containers */}
+                                            {item.isContainer && <Next size="medium" color="text-weak" />}
+                                        </Box>
+                                    </ItemRowLink>
                                 </LongPressContextMenu>
                             );
                         }}

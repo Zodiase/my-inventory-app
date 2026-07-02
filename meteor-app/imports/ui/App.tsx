@@ -1,3 +1,7 @@
+/**
+ * Top-level application shell and route composition.
+ * Coordinates URL-backed inventory views, creation modal state, and cross-view search state.
+ */
 import { Box, Button, Grommet, Heading, Layer, Text } from 'grommet';
 import { Add, Close, Filter } from 'grommet-icons';
 import { Meteor } from 'meteor/meteor';
@@ -5,20 +9,18 @@ import React, { type ReactElement, useState, useEffect } from 'react';
 import { Route, Switch, useLocation } from 'wouter';
 
 import Items, { InventoryItemsCollection } from '/imports/api/items';
-import Tags, { TagsCollection } from '/imports/api/tags';
+import { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { LoadingState } from '/imports/ui/common/LoadingState';
-import { getValidMoveTargetContainers } from '/imports/utility/moveTargets';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
 
 import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';
 import { AppShell } from './AppShell';
-import { ContainerSelector } from './ContainerSelector';
 import { FilterBar } from './FilterBar';
-import { ItemDetailView, ItemDetailViewPresentation } from './ItemDetailView';
+import { ItemDetailView } from './ItemDetailView';
 import { ItemForm } from './ItemForm';
 import { ItemsByTagView } from './ItemsByTagView';
 import { NotFoundView } from './NotFoundView';
@@ -29,27 +31,46 @@ import { SearchScopeSelector } from './SearchScopeSelector';
 import { SettingsDataView } from './SettingsDataView';
 import { DesignSystemGlobalStyle, theme } from './theme';
 
-const getErrorMessage = (error: unknown): string => {
-    return error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+const SEARCH_RESULT_ITEM_DETAIL_SOURCE = 'search-results';
+
+interface ItemDetailNavigationState {
+    inventoryItemDetailSource?: typeof SEARCH_RESULT_ITEM_DETAIL_SOURCE;
+}
+
+const findInventoryItemById = (itemId: string): InventoryItem | undefined => {
+    return InventoryItemsCollection.find({ _id: itemId }, { limit: 1 }).fetch()[0];
 };
 
-const getNonEmptyContainerMessage = (childCount: number): string => {
-    return `Cannot delete container with ${childCount} child ${
-        childCount === 1 ? 'item' : 'items'
-    }. Move or delete children first.`;
+const isSearchResultItemDetailState = (state: unknown): state is ItemDetailNavigationState => {
+    return (
+        typeof state === 'object' &&
+        state !== null &&
+        (state as ItemDetailNavigationState).inventoryItemDetailSource === SEARCH_RESULT_ITEM_DETAIL_SOURCE
+    );
+};
+
+const getCurrentHistoryState = (): unknown => {
+    if (typeof window === 'undefined') return undefined;
+    return window.history.state;
+};
+
+const decodeRouteParam = (routeParam: string): string | undefined => {
+    try {
+        const decodedParam = decodeURIComponent(routeParam);
+        return decodedParam.length > 0 ? decodedParam : undefined;
+    } catch {
+        return undefined;
+    }
 };
 
 export const App = (): ReactElement => {
-    const [location] = useLocation();
+    const [location, setLocation] = useLocation();
+    const isSearchResultItemDetail = isSearchResultItemDetailState(getCurrentHistoryState());
     const [showCreateItem, setShowCreateItem] = useState(false);
-    const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
     const [currentItemsContainerId, setCurrentItemsContainerId] = useState<string | undefined>();
-    const [isEditingSelectedItem, setIsEditingSelectedItem] = useState(false);
-    const [isMovingSelectedItem, setIsMovingSelectedItem] = useState(false);
-    const [isConfirmingSelectedDelete, setIsConfirmingSelectedDelete] = useState(false);
-    const [selectedMoveTargetId, setSelectedMoveTargetId] = useState<string | undefined>();
-    const [isSubmittingSelectedItem, setIsSubmittingSelectedItem] = useState(false);
-    const [selectedItemError, setSelectedItemError] = useState<string | undefined>();
+    const containerRouteMatch = /^\/container\/([^/]+)$/.exec(location);
+    const isContainerRoute = containerRouteMatch !== null;
+    const routeContainerId = containerRouteMatch !== null ? decodeRouteParam(containerRouteMatch[1]) : undefined;
 
     // Search state
     const [searchQuery, setSearchQuery] = useState('');
@@ -64,66 +85,60 @@ export const App = (): ReactElement => {
     const [itemsViewFilters, setItemsViewFilters] = useState<SearchFragment[]>([]);
     const [showFilterBuilder, setShowFilterBuilder] = useState(false);
 
-    // Fetch selected item for detail view
-    const isLoadingSelectedItem = useSubscribe('items.byId', selectedItemId ?? '');
-    const selectedItem = useTracker(() => {
-        if (selectedItemId === undefined) return undefined;
-        return InventoryItemsCollection.findOne({ _id: selectedItemId });
-    }, [selectedItemId]);
-
-    // Fetch tags for selected item
-    const selectedItemTags = useTracker(() => {
-        if (selectedItem === undefined) return [];
-        return TagsCollection.find({ _id: { $in: selectedItem.tagIds } }).fetch();
-    }, [selectedItem?.tagIds.join(',')]);
-
-    const selectedItemChildCount = useTracker(() => {
-        if (selectedItemId === undefined) return 0;
-        return InventoryItemsCollection.find({ containerId: selectedItemId }).count();
-    }, [selectedItemId]);
-
     // Fetch all tags for search components
     const isLoadingTags = useSubscribe('tags.all');
     const isLoadingAllItems = useSubscribe('items.all');
+    const tagsLoading = isLoadingTags();
+    const allItemsLoading = isLoadingAllItems();
     const allTags = useTracker(() => {
         return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
     }, []);
 
-    const availableContainers = useTracker(() => {
-        const containers = InventoryItemsCollection.find(
-            { isContainer: true, _id: { $ne: selectedItemId } },
-            { sort: { name: 1 } }
-        ).fetch();
-        return getValidMoveTargetContainers(containers, selectedItemId);
-    }, [selectedItemId]);
+    const routeContainer = useTracker(() => {
+        if (routeContainerId === undefined) return undefined;
+        return findInventoryItemById(routeContainerId);
+    }, [routeContainerId]);
 
     const currentSearchScopeItem = useTracker(() => {
         if (currentItemsContainerId === undefined) return undefined;
-        return InventoryItemsCollection.findOne({ _id: currentItemsContainerId });
+        return findInventoryItemById(currentItemsContainerId);
     }, [currentItemsContainerId]);
 
     // Clear filters when navigating between views
     useEffect(() => {
+        const itemDetailRouteMatch = /^\/items\/[^/]+$/.exec(location);
+        setShowCreateItem(false);
         setItemsViewFilters([]);
         setShowFilterBuilder(false);
-        if (location !== '/' && location !== '/items' && location !== '/search') {
+
+        if (isContainerRoute) {
+            setCurrentItemsContainerId(routeContainerId);
+        } else if (location === '/' || location === '/items') {
+            setCurrentItemsContainerId(undefined);
+        } else if (itemDetailRouteMatch !== null) {
+            if (!isSearchResultItemDetail) {
+                setCurrentItemsContainerId(undefined);
+            }
+        } else if (location !== '/search') {
             setCurrentItemsContainerId(undefined);
         }
-    }, [location]);
+    }, [isContainerRoute, isSearchResultItemDetail, location, routeContainerId]);
+
+    useEffect(() => {
+        if (!isContainerRoute || routeContainerId === undefined || allItemsLoading) return;
+
+        if (routeContainer?.isContainer === true) {
+            setCurrentItemsContainerId(routeContainerId);
+        } else {
+            setCurrentItemsContainerId(undefined);
+        }
+    }, [allItemsLoading, isContainerRoute, routeContainer?._id, routeContainer?.isContainer, routeContainerId]);
 
     useEffect(() => {
         if (currentItemsContainerId === undefined && searchScope === 'scoped') {
             setSearchScope('global');
         }
     }, [currentItemsContainerId, searchScope]);
-
-    const handleCloseItemDetail = (): void => {
-        setSelectedItemId(undefined);
-        setIsEditingSelectedItem(false);
-        setIsMovingSelectedItem(false);
-        setIsConfirmingSelectedDelete(false);
-        setSelectedItemError(undefined);
-    };
 
     const handleCreateItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
         try {
@@ -136,73 +151,6 @@ export const App = (): ReactElement => {
             setShowCreateItem(false);
         } catch (error) {
             console.error('Failed to create item:', error);
-        }
-    };
-
-    const handleDeleteItem = async (): Promise<void> => {
-        if (selectedItem === undefined) return;
-        if (selectedItem.isContainer && selectedItemChildCount > 0) {
-            setSelectedItemError(getNonEmptyContainerMessage(selectedItemChildCount));
-            return;
-        }
-
-        try {
-            setIsSubmittingSelectedItem(true);
-            setSelectedItemError(undefined);
-            await Items.deleteItem(selectedItem._id);
-            handleCloseItemDetail();
-        } catch (error) {
-            setSelectedItemError(getErrorMessage(error));
-            console.error('Failed to delete item:', error);
-        } finally {
-            setIsSubmittingSelectedItem(false);
-        }
-    };
-
-    const handleUpdateSelectedItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
-        if (selectedItem === undefined) return;
-        try {
-            setIsSubmittingSelectedItem(true);
-            setSelectedItemError(undefined);
-            await Items.updateItem(selectedItem._id, {
-                name: itemData.name,
-                description: itemData.description,
-                isContainer: itemData.isContainer,
-                tagIds: itemData.tagIds,
-                properties: itemData.properties,
-            });
-            setIsEditingSelectedItem(false);
-        } catch (error) {
-            setSelectedItemError(getErrorMessage(error));
-            console.error('Failed to update item:', error);
-        } finally {
-            setIsSubmittingSelectedItem(false);
-        }
-    };
-
-    const handleMoveSelectedItem = async (): Promise<void> => {
-        if (selectedItem === undefined) return;
-        try {
-            setIsSubmittingSelectedItem(true);
-            setSelectedItemError(undefined);
-            await Items.moveItem(selectedItem._id, selectedMoveTargetId);
-            setIsMovingSelectedItem(false);
-        } catch (error) {
-            setSelectedItemError(getErrorMessage(error));
-            console.error('Failed to move item:', error);
-        } finally {
-            setIsSubmittingSelectedItem(false);
-        }
-    };
-
-    const handleRemoveTagFromItem = async (tagId: string): Promise<void> => {
-        if (selectedItem === undefined) return;
-        try {
-            setSelectedItemError(undefined);
-            await Tags.removeFromItem(selectedItem._id, tagId);
-        } catch (error) {
-            setSelectedItemError(getErrorMessage(error));
-            console.error('Failed to remove tag from item:', error);
         }
     };
 
@@ -242,15 +190,15 @@ export const App = (): ReactElement => {
     };
 
     const handleSearchItemClick = (itemId: string): void => {
-        setSelectedItemError(undefined);
-        setIsEditingSelectedItem(false);
-        setIsMovingSelectedItem(false);
-        setIsConfirmingSelectedDelete(false);
-        setSelectedItemId(itemId);
+        setLocation(`/items/${itemId}`, {
+            state: {
+                inventoryItemDetailSource: SEARCH_RESULT_ITEM_DETAIL_SOURCE,
+            },
+        });
     };
 
     const getItemPath = (pathItemId: string): InventoryItem[] => {
-        const item = InventoryItemsCollection.findOne({ _id: pathItemId });
+        const item = findInventoryItemById(pathItemId);
         if (item === undefined) return [];
 
         const path: InventoryItem[] = [item];
@@ -260,7 +208,7 @@ export const App = (): ReactElement => {
         while (currentItem.containerId !== undefined) {
             if (visitedItemIds.has(currentItem.containerId)) break;
 
-            const parent = InventoryItemsCollection.findOne({ _id: currentItem.containerId });
+            const parent = findInventoryItemById(currentItem.containerId);
             if (parent === undefined) break;
 
             path.unshift(parent);
@@ -278,127 +226,119 @@ export const App = (): ReactElement => {
         setShowFilterBuilder(false);
     };
 
+    const getItemsViewHeading = (initialContainerId?: string): string => {
+        if (initialContainerId === undefined) return 'All Items';
+        return findInventoryItemById(initialContainerId)?.name ?? 'Container';
+    };
+
+    const renderItemsView = (initialContainerId?: string): ReactElement => {
+        return (
+            <Box>
+                <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }}>
+                    <Heading level="2" margin="none">
+                        {getItemsViewHeading(initialContainerId)}
+                    </Heading>
+                    <Box direction="row" gap="small">
+                        <Button
+                            icon={<Filter />}
+                            label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
+                            onClick={() => {
+                                setShowFilterBuilder(!showFilterBuilder);
+                            }}
+                            secondary={!showFilterBuilder}
+                            primary={showFilterBuilder}
+                        />
+                        <Button
+                            icon={<Add />}
+                            label="Create Item"
+                            primary
+                            onClick={() => {
+                                setShowCreateItem(true);
+                            }}
+                        />
+                    </Box>
+                </Box>
+
+                {/* Filter status and clear */}
+                {itemsViewFilters.length > 0 && (
+                    <Box margin={{ bottom: 'medium' }}>
+                        <FilterBar
+                            filters={itemsViewFilters}
+                            onChange={setItemsViewFilters}
+                            onClearAll={() => {
+                                setItemsViewFilters([]);
+                            }}
+                            availableTags={allTags}
+                        />
+                    </Box>
+                )}
+
+                {/* Filter builder (collapsible) */}
+                {showFilterBuilder && (
+                    <Box margin={{ bottom: 'medium' }} pad="medium" background="light-2" round="small">
+                        <SearchFragmentBuilder
+                            fragments={itemsViewFilters}
+                            onChange={setItemsViewFilters}
+                            availableTags={allTags}
+                        />
+                    </Box>
+                )}
+
+                <AllItemsView
+                    initialContainerId={initialContainerId}
+                    filters={itemsViewFilters}
+                    onNavigate={handleItemsViewNavigate}
+                />
+            </Box>
+        );
+    };
+
+    const renderInvalidContainerView = (): ReactElement => {
+        return (
+            <Box fill align="center" justify="center" gap="medium" pad="large">
+                <Heading level={3} color="status-error">
+                    Container Not Found
+                </Heading>
+                <Text>The container you're looking for doesn't exist, is not a container, or has been deleted.</Text>
+                <a href="/items" className="app-primary-link-button">
+                    Go to Items
+                </a>
+            </Box>
+        );
+    };
+
+    const renderContainerRoute = (rawRouteContainerId: string): ReactElement => {
+        const containerId = decodeRouteParam(rawRouteContainerId);
+        if (containerId === undefined) {
+            return renderInvalidContainerView();
+        }
+
+        if (allItemsLoading) {
+            return <LoadingState />;
+        }
+
+        const container = containerId === routeContainerId ? routeContainer : findInventoryItemById(containerId);
+        if (container?.isContainer !== true) {
+            return renderInvalidContainerView();
+        }
+
+        return renderItemsView(containerId);
+    };
+
     return (
         <Grommet theme={theme} full>
             <DesignSystemGlobalStyle />
             <AppShell location={location}>
                 <Switch>
                     {/* Home route - Items view */}
-                    <Route path="/">
-                        {() => (
-                            <Box>
-                                <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }}>
-                                    <Heading level="2" margin="none">
-                                        Items
-                                    </Heading>
-                                    <Box direction="row" gap="small">
-                                        <Button
-                                            icon={<Filter />}
-                                            label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
-                                            onClick={() => {
-                                                setShowFilterBuilder(!showFilterBuilder);
-                                            }}
-                                            secondary={!showFilterBuilder}
-                                            primary={showFilterBuilder}
-                                        />
-                                        <Button
-                                            icon={<Add />}
-                                            label="Create Item"
-                                            primary
-                                            onClick={() => {
-                                                setShowCreateItem(true);
-                                            }}
-                                        />
-                                    </Box>
-                                </Box>
-
-                                {/* Filter status and clear */}
-                                {itemsViewFilters.length > 0 && (
-                                    <Box margin={{ bottom: 'medium' }}>
-                                        <FilterBar
-                                            filters={itemsViewFilters}
-                                            onChange={setItemsViewFilters}
-                                            onClearAll={() => {
-                                                setItemsViewFilters([]);
-                                            }}
-                                            availableTags={allTags}
-                                        />
-                                    </Box>
-                                )}
-
-                                {/* Filter builder (collapsible) */}
-                                {showFilterBuilder && (
-                                    <Box margin={{ bottom: 'medium' }} pad="medium" background="light-2" round="small">
-                                        <SearchFragmentBuilder
-                                            fragments={itemsViewFilters}
-                                            onChange={setItemsViewFilters}
-                                            availableTags={allTags}
-                                        />
-                                    </Box>
-                                )}
-
-                                <AllItemsView filters={itemsViewFilters} onNavigate={handleItemsViewNavigate} />
-                            </Box>
-                        )}
-                    </Route>
+                    <Route path="/">{() => renderItemsView()}</Route>
 
                     {/* Items list route */}
-                    <Route path="/items">
-                        {() => (
-                            <Box>
-                                <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }}>
-                                    <Heading level="2" margin="none">
-                                        Items
-                                    </Heading>
-                                    <Box direction="row" gap="small">
-                                        <Button
-                                            icon={<Filter />}
-                                            label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
-                                            onClick={() => {
-                                                setShowFilterBuilder(!showFilterBuilder);
-                                            }}
-                                            secondary={!showFilterBuilder}
-                                            primary={showFilterBuilder}
-                                        />
-                                        <Button
-                                            icon={<Add />}
-                                            label="Create Item"
-                                            primary
-                                            onClick={() => {
-                                                setShowCreateItem(true);
-                                            }}
-                                        />
-                                    </Box>
-                                </Box>
+                    <Route path="/items">{() => renderItemsView()}</Route>
 
-                                {/* Filter status and clear */}
-                                {itemsViewFilters.length > 0 && (
-                                    <Box margin={{ bottom: 'medium' }}>
-                                        <FilterBar
-                                            filters={itemsViewFilters}
-                                            onChange={setItemsViewFilters}
-                                            onClearAll={() => {
-                                                setItemsViewFilters([]);
-                                            }}
-                                            availableTags={allTags}
-                                        />
-                                    </Box>
-                                )}
-
-                                {/* Filter builder (collapsible) */}
-                                {showFilterBuilder && (
-                                    <Box margin={{ bottom: 'medium' }} pad="medium" background="light-2" round="small">
-                                        <SearchFragmentBuilder
-                                            fragments={itemsViewFilters}
-                                            onChange={setItemsViewFilters}
-                                            availableTags={allTags}
-                                        />
-                                    </Box>
-                                )}
-
-                                <AllItemsView filters={itemsViewFilters} onNavigate={handleItemsViewNavigate} />
-                            </Box>
-                        )}
+                    {/* Container route */}
+                    <Route path="/container/:containerId">
+                        {({ containerId }) => renderContainerRoute(containerId)}
                     </Route>
 
                     {/* Tags list route */}
@@ -423,7 +363,7 @@ export const App = (): ReactElement => {
                                     />
                                 </Box>
 
-                                {isLoadingTags() || isLoadingAllItems() ? (
+                                {tagsLoading || allItemsLoading ? (
                                     <LoadingState />
                                 ) : (
                                     <>
@@ -530,135 +470,6 @@ export const App = (): ReactElement => {
                                     setShowCreateItem(false);
                                 }}
                             />
-                        </Box>
-                    </Layer>
-                )}
-
-                {/* Item Detail Modal */}
-                {selectedItemId !== undefined && (
-                    <Layer onEsc={handleCloseItemDetail} onClickOutside={handleCloseItemDetail}>
-                        <Box
-                            pad="medium"
-                            gap="medium"
-                            width="large"
-                            overflow="auto"
-                            style={{ WebkitOverflowScrolling: 'touch' }}
-                        >
-                            <Box direction="row" justify="between" align="center">
-                                <Heading level="3" margin="none">
-                                    Item Details
-                                </Heading>
-                                <Button icon={<Close />} onClick={handleCloseItemDetail} />
-                            </Box>
-                            {isLoadingSelectedItem() || isLoadingAllItems() || isLoadingTags() ? (
-                                <LoadingState />
-                            ) : selectedItem !== undefined && isConfirmingSelectedDelete ? (
-                                <Box gap="medium">
-                                    <Text>Delete "{selectedItem.name}"? This cannot be undone.</Text>
-                                    {selectedItem.isContainer && (
-                                        <Text color="text-weak" size="small">
-                                            Containers must be empty before they can be deleted.
-                                        </Text>
-                                    )}
-                                    {selectedItemError !== undefined && (
-                                        <Text color="status-critical">{selectedItemError}</Text>
-                                    )}
-                                    <Box direction="row" justify="end" gap="small">
-                                        <Button
-                                            label="Cancel"
-                                            onClick={() => {
-                                                setIsConfirmingSelectedDelete(false);
-                                            }}
-                                            disabled={isSubmittingSelectedItem}
-                                        />
-                                        <Button
-                                            primary
-                                            color="status-critical"
-                                            label="Delete Item"
-                                            onClick={() => {
-                                                void handleDeleteItem();
-                                            }}
-                                            disabled={isSubmittingSelectedItem}
-                                        />
-                                    </Box>
-                                </Box>
-                            ) : selectedItem !== undefined && isEditingSelectedItem ? (
-                                <Box gap="medium">
-                                    {selectedItemError !== undefined && (
-                                        <Text color="status-critical">{selectedItemError}</Text>
-                                    )}
-                                    <ItemForm
-                                        initialValues={selectedItem}
-                                        availableTags={allTags}
-                                        onSubmit={handleUpdateSelectedItem}
-                                        onCancel={() => {
-                                            setIsEditingSelectedItem(false);
-                                        }}
-                                        isSubmitting={isSubmittingSelectedItem}
-                                    />
-                                </Box>
-                            ) : selectedItem !== undefined && isMovingSelectedItem ? (
-                                <Box gap="medium">
-                                    {selectedItemError !== undefined && (
-                                        <Text color="status-critical">{selectedItemError}</Text>
-                                    )}
-                                    <ContainerSelector
-                                        containers={availableContainers}
-                                        selectedContainerId={selectedMoveTargetId}
-                                        onSelect={setSelectedMoveTargetId}
-                                        disabled={isSubmittingSelectedItem}
-                                    />
-                                    <Box direction="row" justify="end" gap="small">
-                                        <Button
-                                            label="Cancel"
-                                            onClick={() => {
-                                                setIsMovingSelectedItem(false);
-                                            }}
-                                            disabled={isSubmittingSelectedItem}
-                                        />
-                                        <Button
-                                            primary
-                                            label="Move Item"
-                                            onClick={() => {
-                                                void handleMoveSelectedItem();
-                                            }}
-                                            disabled={isSubmittingSelectedItem}
-                                        />
-                                    </Box>
-                                </Box>
-                            ) : selectedItem !== undefined ? (
-                                <ItemDetailViewPresentation
-                                    item={selectedItem}
-                                    tags={selectedItemTags}
-                                    onEdit={() => {
-                                        setSelectedItemError(undefined);
-                                        setIsConfirmingSelectedDelete(false);
-                                        setIsEditingSelectedItem(true);
-                                    }}
-                                    onMove={() => {
-                                        setSelectedItemError(undefined);
-                                        setIsConfirmingSelectedDelete(false);
-                                        setSelectedMoveTargetId(selectedItem.containerId);
-                                        setIsMovingSelectedItem(true);
-                                    }}
-                                    onDelete={() => {
-                                        setSelectedItemError(undefined);
-                                        setIsConfirmingSelectedDelete(true);
-                                        return undefined;
-                                    }}
-                                    onRemoveTag={(tagId) => {
-                                        void handleRemoveTagFromItem(tagId);
-                                        return undefined;
-                                    }}
-                                    disabled={isSubmittingSelectedItem}
-                                />
-                            ) : (
-                                <Box align="center" pad="large">
-                                    <Heading level="3" color="status-error">
-                                        Item Not Found
-                                    </Heading>
-                                </Box>
-                            )}
                         </Box>
                     </Layer>
                 )}

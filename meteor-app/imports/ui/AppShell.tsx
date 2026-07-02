@@ -1,4 +1,8 @@
-import { Box, Button, Header, Heading, Main, Nav, Text } from 'grommet';
+/**
+ * Responsive application chrome for primary navigation.
+ * Keeps the header landmark, desktop links, and mobile tab bar consistent across routes.
+ */
+import { Box, Header, Main, Nav, Text } from 'grommet';
 import { Apps, Configure, Search as SearchIcon, Tag as TagIcon } from 'grommet-icons';
 import React, { type ReactElement, type ReactNode } from 'react';
 import { Link } from 'wouter';
@@ -20,7 +24,7 @@ const navItems: NavItem[] = [
         href: '/items',
         label: 'Items',
         icon: <Apps />,
-        isActive: (location) => location === '/' || location.startsWith('/items'),
+        isActive: (location) => location === '/' || location.startsWith('/items') || location.startsWith('/container'),
     },
     {
         href: '/tags',
@@ -48,9 +52,9 @@ export const AppShell = ({ children, location }: AppShellProps): ReactElement =>
     return (
         <Box fill className="app-shell">
             <Header background="brand" pad={{ horizontal: 'medium', vertical: 'small' }} className="app-shell-header">
-                <Heading level="3" margin="none" color="white" className="app-shell-title">
+                <Text as="span" color="white" weight="bold" className="app-shell-title">
                     Inventory App
-                </Heading>
+                </Text>
                 <Nav
                     direction="row"
                     gap="xsmall"
@@ -65,15 +69,14 @@ export const AppShell = ({ children, location }: AppShellProps): ReactElement =>
                                 key={item.href}
                                 href={item.href}
                                 aria-current={getAriaCurrent(active)}
-                                className="app-shell-nav-link"
+                                className={`app-shell-nav-link${active ? ' app-shell-nav-link-active' : ''}`}
                             >
-                                <Button
-                                    icon={item.icon}
-                                    label={item.label}
-                                    primary={active}
-                                    plain={!active}
-                                    className="app-shell-desktop-nav-button"
-                                />
+                                <Box aria-hidden="true" className="app-shell-nav-link-icon">
+                                    {item.icon}
+                                </Box>
+                                <Text as="span" weight={active ? 'bold' : 'normal'}>
+                                    {item.label}
+                                </Text>
                             </Link>
                         );
                     })}

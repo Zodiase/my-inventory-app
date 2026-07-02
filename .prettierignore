@@ -12,6 +12,7 @@ specs/
 node_modules/
 test-results/
 playwright-report/
+.playwright-cli/
 
 # Generated files
 package-lock.json

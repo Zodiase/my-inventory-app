@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
     await resetDatabase(page);
     await page.reload({ waitUntil: 'networkidle' });
     await waitForMeteorReady(page);
-    await expect(page.getByRole('heading', { name: 'Items' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
 });
 
 const getListItemLocator = (page: Page, text: string) => {
@@ -22,7 +22,82 @@ const reloadAndWait = async (page: Page): Promise<void> => {
     await page.waitForSelector('text=Inventory App');
 };
 
+const expectItemNameToBeTruncated = async (page: Page, name: string): Promise<void> => {
+    const rowLink = page.getByRole('link', { name: `View item ${name}` });
+    await expect(rowLink).toBeVisible();
+
+    const nameText = rowLink.getByText(name, { exact: true });
+    const metrics = await nameText.evaluate((element) => {
+        const textElement = element as HTMLElement;
+        const rowElement = textElement.closest('a') as HTMLElement | null;
+        const textStyle = window.getComputedStyle(textElement);
+        const textRect = textElement.getBoundingClientRect();
+        const rowRect = rowElement?.getBoundingClientRect();
+
+        return {
+            bodyClientWidth: document.documentElement.clientWidth,
+            bodyScrollWidth: document.documentElement.scrollWidth,
+            rowRight: rowRect?.right ?? 0,
+            textClientWidth: textElement.clientWidth,
+            textOverflow: textStyle.textOverflow,
+            textRight: textRect.right,
+            textScrollWidth: textElement.scrollWidth,
+            whiteSpace: textStyle.whiteSpace,
+        };
+    });
+
+    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.bodyClientWidth);
+    expect(metrics.textRight).toBeLessThanOrEqual(metrics.rowRight + 1);
+    expect(metrics.textScrollWidth).toBeGreaterThan(metrics.textClientWidth);
+    expect(metrics.textOverflow).toBe('ellipsis');
+    expect(metrics.whiteSpace).toBe('nowrap');
+};
+
 test.describe('Items view', () => {
+    test('sorts containers and items naturally by number', async ({ page }) => {
+        await callMeteorMethod<string>(page, 'createItem', {
+            name: 'Cable 10',
+        });
+        await callMeteorMethod<string>(page, 'createItem', {
+            name: 'Box 10',
+            isContainer: true,
+        });
+        await callMeteorMethod<string>(page, 'createItem', {
+            name: 'Cable 2',
+        });
+        await callMeteorMethod<string>(page, 'createItem', {
+            name: 'Box 2',
+            isContainer: true,
+        });
+
+        await reloadAndWait(page);
+
+        await expect(page.getByTestId('items-list').getByRole('link')).toHaveText([
+            'Box 2',
+            'Box 10',
+            'Cable 2',
+            'Cable 10',
+        ]);
+    });
+
+    test('truncates very long item names at desktop and mobile widths', async ({ page }) => {
+        const longItemName =
+            'A very long item name that exceeds typical lengths and should be truncated by the UI to verify that text overflow behavior is working correctly across item list viewports, desktop screenshots, and narrow mobile screens without creating horizontal scrolling';
+
+        await callMeteorMethod<string>(page, 'createItem', {
+            name: longItemName,
+        });
+
+        for (const viewport of [
+            { width: 1280, height: 720 },
+            { width: 390, height: 844 },
+        ]) {
+            await page.setViewportSize(viewport);
+            await reloadAndWait(page);
+            await expectItemNameToBeTruncated(page, longItemName);
+        }
+    });
+
     test('creates container and standard items via the UI', async ({ page }) => {
         const containerName = `Container ${Date.now()}`;
         const itemName = `Item ${Date.now()}`;
@@ -109,25 +184,34 @@ test.describe('Items view', () => {
 
         await expect(getListItemLocator(page, rootContainerName)).toBeVisible();
         await getListItemLocator(page, rootContainerName).click();
+        await expect(page).toHaveURL(new RegExp(`/container/${rootContainerId}$`));
         await expect(getListItemLocator(page, childContainerName)).toBeVisible();
 
         await getListItemLocator(page, childContainerName).click();
+        await expect(page).toHaveURL(new RegExp(`/container/${childContainerId}$`));
         await expect(getListItemLocator(page, leafItemName)).toBeVisible();
 
         const breadcrumbButton = page.getByRole('button', { name: `Navigate to ${rootContainerName}` });
         await expect(breadcrumbButton).toBeVisible();
         await breadcrumbButton.click();
 
+        await expect(page).toHaveURL(new RegExp(`/container/${rootContainerId}$`));
         await expect(getListItemLocator(page, childContainerName)).toBeVisible();
     });
 });
 
 test.describe('Tags view', () => {
     test('supports creating, renaming, and deleting tags', async ({ page }) => {
-        await page.getByRole('button', { name: 'Tags' }).click();
+        await page
+            .getByRole('navigation', { name: 'Desktop primary navigation' })
+            .getByRole('link', { name: 'Tags' })
+            .click();
 
         const tagName = `Tag ${Date.now()}`;
-        await page.getByRole('button', { name: /new tag/i }).first().click();
+        await page
+            .getByRole('button', { name: /new tag/i })
+            .first()
+            .click();
         await page.locator('input[name="name"]').fill(tagName);
         await page.getByRole('button', { name: /create tag/i }).click();
         await expect(page.locator('input[name="name"]')).not.toBeVisible({ timeout: 10000 });
@@ -157,7 +241,10 @@ test.describe('Tags view', () => {
 
         await reloadAndWait(page);
 
-        await page.getByRole('button', { name: 'Tags' }).click();
+        await page
+            .getByRole('navigation', { name: 'Desktop primary navigation' })
+            .getByRole('link', { name: 'Tags' })
+            .click();
         await expect(page.locator('.tag-body', { hasText: tagName }).filter({ hasText: '1 item' })).toBeVisible({
             timeout: 10000,
         });

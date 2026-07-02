@@ -26,8 +26,9 @@ const SWIPE_BACK_END_X_PX = 150;
 
 const expectInventoryReady = async (page: Page): Promise<void> => {
     await waitForMeteorReady(page);
-    await expect(page.getByRole('heading', { name: 'Inventory App' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Items' })).toBeVisible();
+    await expect(page.getByText('Inventory App', { exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Inventory App' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
 };
 
 const getItemsList = (page: Page): Locator => page.getByTestId('items-list');
@@ -249,7 +250,7 @@ test.describe('Touch Optimization - User Story 5', () => {
         // Should navigate back to root (All Items)
         // Breadcrumb should no longer show Parent Container as current
         // The parent container should now be visible as an item in the list
-        await expect(page.getByText('Parent Container', { exact: true })).toBeVisible({
+        await expect(page.getByTestId('items-list').getByText('Parent Container', { exact: true })).toBeVisible({
             timeout: 2000,
         });
     });

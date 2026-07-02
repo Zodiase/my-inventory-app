@@ -1,19 +1,14 @@
+/**
+ * Shared breadcrumb trail for inventory hierarchy navigation.
+ * By default the final crumb represents the current location and is rendered
+ * as static text; callers with a container-only path can opt into making every
+ * crumb navigable.
+ */
 import { Home } from 'grommet-icons';
 import React from 'react';
 import styled from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
-
-/**
- * Breadcrumb trail showing the path from root to current item.
- *
- * @remarks
- * Displays the container hierarchy as a clickable trail.
- * Each item in the path is a button that navigates to that container.
- * The current item (last in path) is not clickable.
- *
- * Touch targets are 44x44px minimum for iOS accessibility.
- */
 
 const BreadcrumbContainer = styled.nav`
     display: flex;
@@ -88,6 +83,9 @@ export interface BreadcrumbTrailProps {
     /** Show home icon for root instead of text */
     showHomeIcon?: boolean;
 
+    /** Whether the final crumb is the current location and should be static text */
+    lastCrumbIsCurrent?: boolean;
+
     /** Additional CSS class name */
     className?: string;
 }
@@ -102,6 +100,7 @@ export interface BreadcrumbTrailProps {
  *   path={path}
  *   onNavigate={(item) => navigateToContainer(item._id)}
  *   showHomeIcon
+ *   lastCrumbIsCurrent
  * />
  * ```
  */
@@ -110,6 +109,7 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
     onNavigate,
     onNavigateRoot,
     showHomeIcon = false,
+    lastCrumbIsCurrent = true,
     className,
 }) => {
     if (path.length === 0) {
@@ -118,7 +118,7 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
 
     const handleClick = (item: InventoryItem, index: number): void => {
         // Don't navigate to the current item (last in path)
-        if (index === path.length - 1) {
+        if (lastCrumbIsCurrent && index === path.length - 1) {
             return;
         }
 
@@ -150,7 +150,7 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
                     <React.Fragment key={item._id}>
                         {index > 0 && <Separator>›</Separator>}
 
-                        {isLast ? (
+                        {isLast && lastCrumbIsCurrent ? (
                             <BreadcrumbText>
                                 {showHome ? (
                                     <HomeIcon>
