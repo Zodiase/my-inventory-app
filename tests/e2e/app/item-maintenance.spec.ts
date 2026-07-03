@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { createItem, createTag } from '../helpers/factories';
-import { resetDatabase, waitForMeteorReady } from '../helpers/database';
+import { callMeteorMethod, resetDatabase, waitForMeteorReady } from '../helpers/database';
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -41,6 +41,74 @@ test.describe('Item maintenance happy paths', () => {
         await expect(page.getByText('Updated Tent', { exact: true })).toBeVisible();
     });
 
+    test('shows nested item location breadcrumbs on direct item links', async ({ page }) => {
+        const rootContainerId = await createItem(page, {
+            name: 'Maintenance Room',
+            isContainer: true,
+        });
+        const shelfId = await createItem(page, {
+            name: 'Maintenance Shelf',
+            isContainer: true,
+            containerId: rootContainerId,
+        });
+        const itemId = await createItem(page, {
+            name: 'Nested Maintenance Item',
+            containerId: shelfId,
+        });
+
+        await page.goto(`/items/${itemId}`);
+        await waitForMeteorReady(page);
+
+        await expect(page.getByRole('heading', { name: 'Nested Maintenance Item' })).toBeVisible();
+        await expect(page.getByText('Location:')).toBeVisible();
+        await expect(page.getByText('Maintenance Room', { exact: true })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Navigate to Maintenance Room' })).toBeVisible();
+        await expect(page.getByText('Maintenance Shelf', { exact: true })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Navigate to Maintenance Shelf' })).toBeVisible();
+
+        await page.getByRole('button', { name: 'Navigate to Maintenance Shelf' }).click();
+        await expect(page).toHaveURL(new RegExp(`/container/${shelfId}$`));
+        await expect(page.getByText('Nested Maintenance Item', { exact: true })).toBeVisible();
+    });
+
+    test('keeps direct item breadcrumbs finite when container ancestry is cyclic', async ({ page }) => {
+        const parentId = await createItem(page, {
+            name: 'Cycle Parent',
+            isContainer: true,
+        });
+        const childId = await createItem(page, {
+            name: 'Cycle Child',
+            isContainer: true,
+            containerId: parentId,
+        });
+        const itemId = await createItem(page, {
+            name: 'Cycle Guard Item',
+            containerId: childId,
+        });
+
+        const forcedContainerUpdateCount = await callMeteorMethod<number>(
+            page,
+            'test.forceItemContainer',
+            parentId,
+            childId
+        );
+        expect(forcedContainerUpdateCount).toBe(1);
+
+        await page.goto(`/items/${itemId}`);
+        await waitForMeteorReady(page);
+
+        await expect(page.getByRole('heading', { name: 'Cycle Guard Item' })).toBeVisible();
+        await expect(page.getByText('Location:')).toBeVisible();
+        await expect(page.getByText('Cycle Parent', { exact: true })).toHaveCount(1);
+        await expect(page.getByText('Cycle Child', { exact: true })).toHaveCount(1);
+        await expect(page.getByRole('button', { name: 'Navigate to Cycle Parent' })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Navigate to Cycle Child' })).toBeVisible();
+
+        await page.getByRole('button', { name: 'Navigate to Cycle Child' }).click();
+        await expect(page).toHaveURL(new RegExp(`/container/${childId}$`));
+        await expect(page.getByText('Cycle Guard Item', { exact: true })).toBeVisible();
+    });
+
     test('filters descendant containers out of move targets', async ({ page }) => {
         const parentId = await createItem(page, { name: 'Parent Container', isContainer: true });
         const childId = await createItem(page, {
@@ -64,7 +132,7 @@ test.describe('Item maintenance happy paths', () => {
         await expect(page.getByText('Grandchild Container', { exact: true })).not.toBeVisible();
     });
 
-    test('filters descendant containers out of search result modal move targets', async ({ page }) => {
+    test('filters descendant containers out of search result detail move targets', async ({ page }) => {
         const parentId = await createItem(page, { name: 'Parent Container', isContainer: true });
         const childId = await createItem(page, {
             name: 'Child Container',
@@ -84,7 +152,7 @@ test.describe('Item maintenance happy paths', () => {
         await page.getByRole('button', { name: 'Submit search' }).click();
         await page.locator('button').filter({ hasText: 'Parent Container' }).first().click();
 
-        await expect(page.getByRole('heading', { name: 'Item Details' })).toBeVisible();
+        await expect(page).toHaveURL(new RegExp(`/items/${parentId}$`));
         await page.getByRole('button', { name: /Move$/ }).click();
 
         await expect(page.getByText('Root (No Container)', { exact: true })).toBeVisible();

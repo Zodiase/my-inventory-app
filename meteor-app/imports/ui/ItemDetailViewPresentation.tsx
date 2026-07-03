@@ -1,3 +1,8 @@
+/**
+ * Presentation-only item detail view.
+ * Renders item metadata, location breadcrumbs, tags, and detail actions while
+ * leaving data loading and routing decisions to container components.
+ */
 import { Box, Button, Heading, Text } from 'grommet';
 import { Edit, Trash, Up } from 'grommet-icons';
 import React from 'react';
@@ -103,7 +108,8 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
                                   }
                                 : undefined
                         }
-                        showHomeIcon
+                        showHomeIcon={false}
+                        lastCrumbIsCurrent={false}
                     />
                 </Box>
             )}

@@ -31,6 +31,8 @@ body {
 }
 
 .app-shell-title {
+    font-size: 24px;
+    font-weight: 700;
     line-height: 1.2;
     white-space: nowrap;
 }
@@ -40,17 +42,61 @@ body {
 }
 
 .app-shell-nav-link {
-    color: inherit;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 16px;
+    color: #ffffff;
     text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out;
 }
 
-.app-shell-desktop-nav-button {
-    min-height: 44px;
+.app-shell-nav-link:hover,
+.app-shell-nav-link:focus-visible {
+    background: rgb(255 255 255 / 20%);
+}
+
+.app-shell-nav-link-active {
+    background: rgb(255 255 255 / 28%);
+}
+
+.app-shell-nav-link-icon {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+}
+
+.app-shell-nav-link-icon svg {
+    width: 20px;
+    height: 20px;
 }
 
 .app-shell-main {
     min-width: 0;
     width: 100%;
+}
+
+.app-primary-link-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 12px 20px;
+    color: #ffffff;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    background: #007aff;
+    border-radius: 8px;
+    transition: background-color 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+
+.app-primary-link-button:hover,
+.app-primary-link-button:focus-visible {
+    background: #0051d5;
 }
 
 .app-shell-mobile-nav {

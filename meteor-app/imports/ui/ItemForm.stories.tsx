@@ -253,7 +253,7 @@ export const TestSubmitBehavior: Story = {
     render: () => {
         const [submitData, setSubmitData] = useState<any>(null);
         const [submitCount, setSubmitCount] = useState(0);
-        const [errorMessage, setErrorMessage] = useState('');
+        const [errorMessage] = useState('');
         const [callLog, setCallLog] = useState<string[]>([]);
 
         return (

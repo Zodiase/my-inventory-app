@@ -7,4 +7,5 @@ playwright-report/
 test-results/
 tests/e2e/audit/artifacts/
 .playwright/
+.playwright-cli/
 tests/e2e/app/temp-download.json

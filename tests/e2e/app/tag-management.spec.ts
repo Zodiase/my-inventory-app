@@ -308,7 +308,10 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         await tagsPage.goto();
 
         // Open dialog
-        await page.getByRole('button', { name: /new tag/i }).first().click();
+        await page
+            .getByRole('button', { name: /new tag/i })
+            .first()
+            .click();
 
         // Wait for dialog
         await page.waitForSelector('input[name="name"]', { state: 'visible' });
@@ -323,7 +326,10 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         await tagsPage.goto();
 
         // Open dialog
-        await page.getByRole('button', { name: /new tag/i }).first().click();
+        await page
+            .getByRole('button', { name: /new tag/i })
+            .first()
+            .click();
 
         // Wait for dialog
         await page.waitForSelector('input[name="name"]', { state: 'visible' });
@@ -352,7 +358,10 @@ test.describe('T012: CreateTagDialog Integration (Ported from Storybook)', () =>
         await tagsPage.goto();
 
         // Open dialog
-        await page.getByRole('button', { name: /new tag/i }).first().click();
+        await page
+            .getByRole('button', { name: /new tag/i })
+            .first()
+            .click();
 
         // Wait for dialog
         await page.waitForSelector('input[name="name"]', { state: 'visible' });

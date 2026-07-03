@@ -1,3 +1,7 @@
+/**
+ * Route-backed item detail surface.
+ * Loads item data from the URL, renders editable detail states, and handles missing-item fallbacks.
+ */
 import { Box, Button, Heading, Layer, Text } from 'grommet';
 import { Close } from 'grommet-icons';
 import React, { useState } from 'react';
@@ -28,6 +32,14 @@ const getNonEmptyContainerMessage = (childCount: number): string => {
     }. Move or delete children first.`;
 };
 
+const findInventoryItemById = (itemId: string): InventoryItem | undefined => {
+    return InventoryItemsCollection.find({ _id: itemId }, { limit: 1 }).fetch()[0];
+};
+
+interface RouteItemDetailViewProps {
+    deleteReturnPath?: string;
+}
+
 /**
  * ItemDetailView - Route-aware wrapper that extracts itemId from URL parameters.
  *
@@ -49,7 +61,7 @@ const getNonEmptyContainerMessage = (childCount: number): string => {
  * </Route>
  * ```
  */
-export const ItemDetailView: React.FC = () => {
+export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteReturnPath }) => {
     const { itemId } = useParams<{ itemId: string }>();
     const [, setLocation] = useLocation();
     const [isEditing, setIsEditing] = useState(false);
@@ -68,7 +80,7 @@ export const ItemDetailView: React.FC = () => {
     // Fetch item from database
     const item = useTracker(() => {
         if (itemId === '') return undefined;
-        return InventoryItemsCollection.findOne({ _id: itemId });
+        return findInventoryItemById(itemId);
     }, [itemId]);
 
     // Fetch tags for the item
@@ -94,6 +106,26 @@ export const ItemDetailView: React.FC = () => {
         return InventoryItemsCollection.find({ containerId: itemId }).count();
     }, [itemId]);
 
+    const containerPath = useTracker(() => {
+        if (item?.containerId === undefined) return [];
+
+        const path: InventoryItem[] = [];
+        const visitedContainerIds = new Set<string>();
+        let currentContainerId: string | undefined = item.containerId;
+
+        while (currentContainerId !== undefined && !visitedContainerIds.has(currentContainerId)) {
+            visitedContainerIds.add(currentContainerId);
+
+            const container = findInventoryItemById(currentContainerId);
+            if (container === undefined) break;
+
+            path.unshift(container);
+            currentContainerId = container.containerId;
+        }
+
+        return path;
+    }, [item?._id, item?.containerId]);
+
     if (isLoadingItem() || isLoadingAllItems() || isLoadingTags()) {
         return <LoadingState />;
     }
@@ -106,8 +138,8 @@ export const ItemDetailView: React.FC = () => {
                     Invalid Item ID
                 </Heading>
                 <Text>The item ID in the URL is missing or invalid.</Text>
-                <Link href="/items">
-                    <Button label="Go to Items" primary />
+                <Link href="/items" className="app-primary-link-button">
+                    Go to Items
                 </Link>
             </Box>
         );
@@ -121,8 +153,8 @@ export const ItemDetailView: React.FC = () => {
                     Item Not Found
                 </Heading>
                 <Text>The item you're looking for doesn't exist or has been deleted.</Text>
-                <Link href="/items">
-                    <Button label="Go to Items" primary />
+                <Link href="/items" className="app-primary-link-button">
+                    Go to Items
                 </Link>
             </Box>
         );
@@ -169,8 +201,10 @@ export const ItemDetailView: React.FC = () => {
         try {
             setIsSubmitting(true);
             setErrorMessage(undefined);
+            const returnPath =
+                deleteReturnPath ?? (item.containerId !== undefined ? `/container/${item.containerId}` : '/items');
             await Items.deleteItem(item._id);
-            setLocation('/items');
+            setLocation(returnPath);
         } catch (error) {
             setErrorMessage(getErrorMessage(error));
         } finally {
@@ -193,7 +227,7 @@ export const ItemDetailView: React.FC = () => {
             <ItemDetailViewPresentation
                 item={item}
                 tags={tags}
-                containerPath={[]}
+                containerPath={containerPath}
                 onEdit={() => {
                     setErrorMessage(undefined);
                     setIsConfirmingDelete(false);
@@ -211,6 +245,9 @@ export const ItemDetailView: React.FC = () => {
                 }}
                 onRemoveTag={(tagId) => {
                     void handleRemoveTag(tagId);
+                }}
+                onNavigateToContainer={(containerId) => {
+                    setLocation(`/container/${containerId}`);
                 }}
                 disabled={isSubmitting}
             />
