@@ -262,6 +262,53 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
         await expect(page).toHaveURL(new RegExp(`/container/${containerId}`));
     });
 
+    test('Items Add Filter panel contains controls without overlapping the item list', async ({ page }) => {
+        await page.setViewportSize({ width: 2048, height: 512 });
+        await createTag(page, { name: 'Tools' });
+        await createItem(page, {
+            name: 'Garage',
+            isContainer: true,
+        });
+
+        await page.goto('/items');
+        await waitForMeteorReady(page);
+
+        await page.getByRole('button', { name: 'Add Filters' }).click();
+
+        const addFilterPanel = page.getByText('Add Filter', { exact: true }).locator('..');
+        const firstItemRow = page.getByRole('link', { name: 'Open container Garage' });
+
+        await expect(addFilterPanel).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Has Tag' })).toBeVisible();
+        await expect(firstItemRow).toBeVisible();
+
+        const geometry = await page.evaluate(() => {
+            const addFilterHeading = [...document.querySelectorAll('h4')].find(
+                (heading) => heading.textContent?.trim() === 'Add Filter'
+            );
+            const addFilterPanel = addFilterHeading?.parentElement;
+            const firstItemRow = document.querySelector('a[aria-label="Open container Garage"]');
+            const root = document.scrollingElement ?? document.documentElement;
+
+            if (addFilterPanel === undefined || addFilterPanel === null || firstItemRow === null) {
+                throw new Error('Expected Add Filter panel and Garage row to be present');
+            }
+
+            const addFilterRect = addFilterPanel.getBoundingClientRect();
+            const firstItemRect = firstItemRow.getBoundingClientRect();
+
+            return {
+                addFilterBottom: addFilterRect.bottom,
+                firstItemTop: firstItemRect.top,
+                scrollWidth: root.scrollWidth,
+                clientWidth: root.clientWidth,
+            };
+        });
+
+        expect(geometry.firstItemTop).toBeGreaterThanOrEqual(geometry.addFilterBottom + 8);
+        expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth);
+    });
+
     test('T067i: Search results show breadcrumb trail for context', async ({ page }) => {
         // Create hierarchy
         const kitchenId = await createItem(page, {
