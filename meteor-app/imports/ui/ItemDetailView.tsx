@@ -36,6 +36,10 @@ const findInventoryItemById = (itemId: string): InventoryItem | undefined => {
     return InventoryItemsCollection.find({ _id: itemId }, { limit: 1 }).fetch()[0];
 };
 
+interface RouteItemDetailViewProps {
+    deleteReturnPath?: string;
+}
+
 /**
  * ItemDetailView - Route-aware wrapper that extracts itemId from URL parameters.
  *
@@ -57,7 +61,7 @@ const findInventoryItemById = (itemId: string): InventoryItem | undefined => {
  * </Route>
  * ```
  */
-export const ItemDetailView: React.FC = () => {
+export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteReturnPath }) => {
     const { itemId } = useParams<{ itemId: string }>();
     const [, setLocation] = useLocation();
     const [isEditing, setIsEditing] = useState(false);
@@ -197,7 +201,8 @@ export const ItemDetailView: React.FC = () => {
         try {
             setIsSubmitting(true);
             setErrorMessage(undefined);
-            const returnPath = item.containerId !== undefined ? `/container/${item.containerId}` : '/items';
+            const returnPath =
+                deleteReturnPath ?? (item.containerId !== undefined ? `/container/${item.containerId}` : '/items');
             await Items.deleteItem(item._id);
             setLocation(returnPath);
         } catch (error) {

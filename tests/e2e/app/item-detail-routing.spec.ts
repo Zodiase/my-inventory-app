@@ -69,10 +69,7 @@ test.describe('Item detail routing', () => {
         await waitForMeteorReady(page);
 
         await expect(page.getByRole('heading', { name: 'Return Battery' })).toBeVisible();
-        await page
-            .getByRole('button', { name: /delete/i })
-            .first()
-            .click();
+        await page.getByRole('button', { name: /Delete$/ }).click();
         await expect(page.getByRole('heading', { name: 'Delete Item' })).toBeVisible();
         await page.getByRole('button', { name: /delete item/i }).click();
 
@@ -91,10 +88,7 @@ test.describe('Item detail routing', () => {
         await waitForMeteorReady(page);
 
         await expect(page.getByRole('heading', { name: 'Return Root Item' })).toBeVisible();
-        await page
-            .getByRole('button', { name: /delete/i })
-            .first()
-            .click();
+        await page.getByRole('button', { name: /Delete$/ }).click();
         await expect(page.getByRole('heading', { name: 'Delete Item' })).toBeVisible();
         await page.getByRole('button', { name: /delete item/i }).click();
 
@@ -181,6 +175,54 @@ test.describe('Item detail routing', () => {
 
         await expect(page.locator('button').filter({ hasText: 'Scoped Spare Filter' })).toBeVisible();
         await expect(page.locator('button').filter({ hasText: 'Global Spare Filter' })).toHaveCount(0);
+    });
+
+    test('returns to scoped search after deleting a search result detail', async ({ page }) => {
+        const containerId = await createItem(page, {
+            name: 'Search Delete Cabinet',
+            isContainer: true,
+        });
+        const itemId = await createItem(page, {
+            name: 'Scoped Delete Target',
+            containerId,
+        });
+        await createItem(page, {
+            name: 'Global Delete Target',
+        });
+
+        await page.goto(`/container/${containerId}`);
+        await waitForMeteorReady(page);
+        await page
+            .getByRole('navigation', { name: 'Desktop primary navigation' })
+            .getByRole('link', { name: 'Search' })
+            .click();
+
+        const scopedSearchButton = page.getByRole('button', { name: 'Scoped search', exact: true });
+
+        await scopedSearchButton.click();
+        await expect(scopedSearchButton).toHaveAttribute('aria-pressed', 'true');
+        await expect(scopedSearchButton).toContainText('Search Delete Cabinet');
+
+        await page.getByRole('textbox', { name: 'Search query' }).fill('Delete Target');
+        await page.getByRole('button', { name: 'Submit search' }).click();
+
+        const scopedDeleteResult = page.locator('button').filter({ hasText: 'Scoped Delete Target' }).first();
+        await expect(scopedDeleteResult).toBeVisible();
+        await expect(page.locator('button').filter({ hasText: 'Global Delete Target' })).toHaveCount(0);
+
+        await scopedDeleteResult.click();
+        await expect(page).toHaveURL(new RegExp(`/items/${itemId}$`));
+        await expect(page.getByRole('heading', { name: 'Scoped Delete Target' })).toBeVisible();
+
+        await page.getByRole('button', { name: /Delete$/ }).click();
+        await expect(page.getByRole('heading', { name: 'Delete Item' })).toBeVisible();
+        await page.getByRole('button', { name: /delete item/i }).click();
+
+        await expect(page).toHaveURL(/\/search$/);
+        await expect(page.getByRole('heading', { name: 'Search' })).toBeVisible();
+        await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('Delete Target');
+        await expect(scopedSearchButton).toHaveAttribute('aria-pressed', 'true');
+        await expect(scopedSearchButton).toContainText('Search Delete Cabinet');
     });
 
     test('does not reuse stale scoped context after direct item-detail navigation', async ({ page }) => {

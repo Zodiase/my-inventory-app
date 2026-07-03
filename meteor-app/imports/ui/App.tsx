@@ -429,7 +429,9 @@ export const App = (): ReactElement => {
                     </Route>
 
                     {/* Item detail route */}
-                    <Route path="/items/:itemId">{() => <ItemDetailView />}</Route>
+                    <Route path="/items/:itemId">
+                        {() => <ItemDetailView deleteReturnPath={isSearchResultItemDetail ? '/search' : undefined} />}
+                    </Route>
 
                     {/* Items by tag route */}
                     <Route path="/tags/:tagId">{() => <ItemsByTagView />}</Route>
