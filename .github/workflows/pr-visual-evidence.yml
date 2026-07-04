@@ -267,34 +267,36 @@ jobs:
                           `${process.env.PUBLISHED_ROOT}/${kind}-${scenario.slug}-${refShort}.png?raw=1`;
                       const scenarioRows = (group) =>
                           (scenariosByGroup.get(group.id) ?? [])
-                              .map(
-                                  (scenario) => `
-                                  <tr>
-                                    <td><strong>${escapeHtml(scenario.label)}</strong><br><code>${escapeHtml(scenario.slug)}</code></td>
-                                    <td><img src="${imageUrl('before', scenario, process.env.BASE_SHORT)}" alt="Before ${escapeHtml(scenario.label)}" width="360"></td>
-                                    <td><img src="${imageUrl('after', scenario, process.env.HEAD_SHORT)}" alt="After ${escapeHtml(scenario.label)}" width="360"></td>
-                                  </tr>`.trim()
+                              .map((scenario) =>
+                                  [
+                                      '<tr>',
+                                      `<td><strong>${escapeHtml(scenario.label)}</strong><br><code>${escapeHtml(scenario.slug)}</code></td>`,
+                                      `<td><img src="${imageUrl('before', scenario, process.env.BASE_SHORT)}" alt="Before ${escapeHtml(scenario.label)}" width="360"></td>`,
+                                      `<td><img src="${imageUrl('after', scenario, process.env.HEAD_SHORT)}" alt="After ${escapeHtml(scenario.label)}" width="360"></td>`,
+                                      '</tr>',
+                                  ].join('\n')
                               )
                               .join('\n');
                       const groupSections = groups
-                          .map(
-                              (group) => `
-                              <details open>
-                              <summary><strong>${escapeHtml(group.label)}</strong> (${(scenariosByGroup.get(group.id) ?? []).length} scenarios)</summary>
-
-                              <table>
-                              <thead>
-                              <tr>
-                              <th>Scenario</th>
-                              <th>Before base <code>${process.env.BASE_SHORT}</code></th>
-                              <th>After PR <code>${process.env.HEAD_SHORT}</code></th>
-                              </tr>
-                              </thead>
-                              <tbody>
-                              ${scenarioRows(group)}
-                              </tbody>
-                              </table>
-                              </details>`.trim()
+                          .map((group) =>
+                              [
+                                  '<details open>',
+                                  `<summary><strong>${escapeHtml(group.label)}</strong> (${(scenariosByGroup.get(group.id) ?? []).length} scenarios)</summary>`,
+                                  '',
+                                  '<table>',
+                                  '<thead>',
+                                  '<tr>',
+                                  '<th>Scenario</th>',
+                                  `<th>Before base <code>${process.env.BASE_SHORT}</code></th>`,
+                                  `<th>After PR <code>${process.env.HEAD_SHORT}</code></th>`,
+                                  '</tr>',
+                                  '</thead>',
+                                  '<tbody>',
+                                  scenarioRows(group),
+                                  '</tbody>',
+                                  '</table>',
+                                  '</details>',
+                              ].join('\n')
                           )
                           .join('\n\n');
                       const selectionSummary = groups
