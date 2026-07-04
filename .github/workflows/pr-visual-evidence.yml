@@ -76,8 +76,8 @@ jobs:
             - name: Install dependencies
               shell: bash
               run: |
-                  npm ci --prefix base
-                  npm ci --prefix head
+                  npm ci --ignore-scripts --prefix base
+                  npm ci --ignore-scripts --prefix head
                   cd base/meteor-app
                   meteor npm ci
                   cd ../../head/meteor-app
