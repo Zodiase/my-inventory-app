@@ -3,6 +3,7 @@ node_modules/
 storybook-static/
 
 # Playwright
+output/
 playwright-report/
 test-results/
 tests/e2e/audit/artifacts/
