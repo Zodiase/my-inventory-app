@@ -79,9 +79,9 @@ jobs:
                   npm ci --ignore-scripts --prefix base
                   npm ci --ignore-scripts --prefix head
                   cd base/meteor-app
-                  meteor npm ci
+                  meteor npm ci --ignore-scripts
                   cd ../../head/meteor-app
-                  meteor npm ci
+                  meteor npm ci --ignore-scripts
 
             - name: Install Chromium
               shell: bash
