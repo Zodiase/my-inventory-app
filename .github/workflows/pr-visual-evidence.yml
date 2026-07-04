@@ -16,14 +16,18 @@ on:
         paths:
             - '.github/workflows/pr-visual-evidence.yml'
             - 'meteor-app/client/**'
+            - 'meteor-app/imports/api/**'
+            - 'meteor-app/imports/model/**'
             - 'meteor-app/imports/ui/**'
+            - 'meteor-app/imports/utility/**'
             - 'meteor-app/package-lock.json'
             - 'meteor-app/package.json'
             - 'package-lock.json'
             - 'package.json'
             - 'playwright.config.js'
-            - 'tests/e2e/app/search-and-filter.spec.ts'
-            - 'tests/e2e/app/visual-artifacts/**'
+            - 'scripts/visual-scenarios.mjs'
+            - 'scripts/visual-scenarios.test.mjs'
+            - 'tests/e2e/app/**'
             - 'tests/e2e/helpers/**'
 
 concurrency:
@@ -31,10 +35,53 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    items-add-filter:
-        name: Items Add Filter before/after
+    select-visual-scenarios:
+        name: Select visual scenarios
         runs-on: ubuntu-latest
-        if: github.event.pull_request.head.repo.full_name == github.repository
+        timeout-minutes: 5
+        outputs:
+            has-scenarios: ${{ steps.select.outputs.has-scenarios }}
+            scenario-count: ${{ steps.select.outputs.scenario-count }}
+            scenario-slugs: ${{ steps.select.outputs.scenario-slugs }}
+            selection-json: ${{ steps.select.outputs.selection-json }}
+        steps:
+            - name: Check out head
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.pull_request.head.sha }}
+
+            - name: Collect changed files
+              uses: actions/github-script@v7
+              env:
+                  CHANGED_FILES_PATH: ${{ runner.temp }}/changed-files.txt
+              with:
+                  script: |
+                      const fs = require('fs');
+                      const { owner, repo } = context.repo;
+                      const pull_number = context.issue.number;
+                      const files = await github.paginate(github.rest.pulls.listFiles, {
+                          owner,
+                          repo,
+                          pull_number,
+                          per_page: 100,
+                      });
+                      const filenames = files.map((file) => file.filename).sort();
+                      fs.writeFileSync(process.env.CHANGED_FILES_PATH, filenames.join('\n'));
+                      core.info(`Collected ${filenames.length} changed files.`);
+
+            - name: Select scenarios
+              id: select
+              shell: bash
+              run: |
+                  node scripts/visual-scenarios.mjs select \
+                      --changed-files "${RUNNER_TEMP}/changed-files.txt" \
+                      --github-output "${GITHUB_OUTPUT}"
+
+    visual-evidence:
+        name: Visual before/after evidence
+        runs-on: ubuntu-latest
+        needs: select-visual-scenarios
+        if: github.event.pull_request.head.repo.full_name == github.repository && needs.select-visual-scenarios.outputs.has-scenarios == 'true'
         timeout-minutes: 30
         steps:
             - name: Check out base
@@ -91,11 +138,11 @@ jobs:
                   cd ../head
                   npx playwright install chromium
 
-            - name: Copy visual capture spec to base checkout
+            - name: Copy visual capture files to base checkout
               shell: bash
               run: |
                   mkdir -p base/tests/e2e/app/visual-artifacts
-                  cp head/tests/e2e/app/visual-artifacts/items-add-filter.spec.ts base/tests/e2e/app/visual-artifacts/items-add-filter.spec.ts
+                  cp head/tests/e2e/app/visual-artifacts/pr-visual-evidence.spec.ts base/tests/e2e/app/visual-artifacts/pr-visual-evidence.spec.ts
 
             - name: Compute artifact names
               id: refs
@@ -106,37 +153,39 @@ jobs:
               run: |
                   echo "base-short=${BASE_SHA:0:7}" >> "$GITHUB_OUTPUT"
                   echo "head-short=${HEAD_SHA:0:7}" >> "$GITHUB_OUTPUT"
-                  echo "before-file=before-base-${BASE_SHA:0:7}.png" >> "$GITHUB_OUTPUT"
-                  echo "after-file=after-pr-${HEAD_SHA:0:7}.png" >> "$GITHUB_OUTPUT"
 
-            - name: Capture base visual
+            - name: Capture base visuals
               shell: bash
               working-directory: base
               env:
                   PLAYWRIGHT_APP_PORT: '3201'
                   PLAYWRIGHT_METEOR_LOCAL_DIR: ${{ runner.temp }}/meteor-base
-                  VISUAL_OUTPUT_DIR: ${{ runner.temp }}/items-add-filter-visual
-                  VISUAL_SNAPSHOT_NAME: before-base-${{ steps.refs.outputs.base-short }}
+                  VISUAL_OUTPUT_DIR: ${{ runner.temp }}/pr-visual-evidence
+                  VISUAL_REF_KIND: before
+                  VISUAL_REF_SHORT: ${{ steps.refs.outputs.base-short }}
+                  VISUAL_SELECTION_JSON: ${{ needs.select-visual-scenarios.outputs.selection-json }}
               run: |
-                  npm run test:e2e:chromium -- tests/e2e/app/visual-artifacts/items-add-filter.spec.ts --reporter=line
+                  npm run test:e2e:chromium -- tests/e2e/app/visual-artifacts/pr-visual-evidence.spec.ts --reporter=line
 
-            - name: Capture head visual
+            - name: Capture head visuals
               shell: bash
               working-directory: head
               env:
                   PLAYWRIGHT_APP_PORT: '3202'
                   PLAYWRIGHT_METEOR_LOCAL_DIR: ${{ runner.temp }}/meteor-head
-                  VISUAL_OUTPUT_DIR: ${{ runner.temp }}/items-add-filter-visual
-                  VISUAL_SNAPSHOT_NAME: after-pr-${{ steps.refs.outputs.head-short }}
+                  VISUAL_OUTPUT_DIR: ${{ runner.temp }}/pr-visual-evidence
+                  VISUAL_REF_KIND: after
+                  VISUAL_REF_SHORT: ${{ steps.refs.outputs.head-short }}
+                  VISUAL_SELECTION_JSON: ${{ needs.select-visual-scenarios.outputs.selection-json }}
               run: |
-                  npm run test:e2e:chromium -- tests/e2e/app/visual-artifacts/items-add-filter.spec.ts --reporter=line
+                  npm run test:e2e:chromium -- tests/e2e/app/visual-artifacts/pr-visual-evidence.spec.ts --reporter=line
 
             - name: Upload screenshot artifact
               id: upload
               uses: actions/upload-artifact@v4
               with:
-                  name: items-add-filter-before-after
-                  path: ${{ runner.temp }}/items-add-filter-visual/*.png
+                  name: pr-visual-evidence-before-after
+                  path: ${{ runner.temp }}/pr-visual-evidence/*.png
                   if-no-files-found: error
 
             - name: Publish screenshots to repo artifact branch
@@ -146,11 +195,10 @@ jobs:
                   GITHUB_TOKEN: ${{ github.token }}
                   ARTIFACT_BRANCH: visual-artifacts
                   PR_NUMBER: ${{ github.event.pull_request.number }}
-                  BEFORE_FILE: ${{ steps.refs.outputs.before-file }}
-                  AFTER_FILE: ${{ steps.refs.outputs.after-file }}
+                  SCREENSHOT_DIR: ${{ runner.temp }}/pr-visual-evidence
               run: |
                   artifact_repo="${RUNNER_TEMP}/visual-artifacts-repo"
-                  artifact_parent="pr-${PR_NUMBER}/items-add-filter"
+                  artifact_parent="pr-${PR_NUMBER}/visual-evidence"
                   artifact_dir="${artifact_parent}/run-${GITHUB_RUN_ID}"
 
                   git init "${artifact_repo}"
@@ -166,8 +214,7 @@ jobs:
 
                   rm -rf "${artifact_parent}"
                   mkdir -p "${artifact_dir}"
-                  cp "${RUNNER_TEMP}/items-add-filter-visual/${BEFORE_FILE}" "${artifact_dir}/${BEFORE_FILE}"
-                  cp "${RUNNER_TEMP}/items-add-filter-visual/${AFTER_FILE}" "${artifact_dir}/${AFTER_FILE}"
+                  cp "${SCREENSHOT_DIR}"/*.png "${artifact_dir}/"
 
                   git config user.name "github-actions[bot]"
                   git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -181,31 +228,91 @@ jobs:
                   fi
 
                   raw_root="https://github.com/${GITHUB_REPOSITORY}/blob/${ARTIFACT_BRANCH}/${artifact_dir}"
-                  echo "before-url=${raw_root}/${BEFORE_FILE}" >> "$GITHUB_OUTPUT"
-                  echo "after-url=${raw_root}/${AFTER_FILE}" >> "$GITHUB_OUTPUT"
+                  echo "published-root=${raw_root}" >> "$GITHUB_OUTPUT"
 
             - name: Comment on pull request
               uses: actions/github-script@v7
               env:
+                  ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
                   BASE_SHORT: ${{ steps.refs.outputs.base-short }}
                   HEAD_SHORT: ${{ steps.refs.outputs.head-short }}
-                  BEFORE_URL: ${{ steps.publish.outputs.before-url }}
-                  AFTER_URL: ${{ steps.publish.outputs.after-url }}
-                  ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+                  PUBLISHED_ROOT: ${{ steps.publish.outputs.published-root }}
+                  SELECTION_JSON: ${{ needs.select-visual-scenarios.outputs.selection-json }}
               with:
                   script: |
-                      const marker = '<!-- items-add-filter-visual-evidence -->';
+                      const marker = '<!-- pr-visual-evidence -->';
+                      const legacyMarker = '<!-- items-add-filter-visual-evidence -->';
+                      const selection = JSON.parse(process.env.SELECTION_JSON);
+                      const scenarios = selection.scenarios ?? [];
+                      const groups = selection.groups ?? [];
+                      const scenariosByGroup = new Map(
+                          groups.map((group) => [
+                              group.id,
+                              scenarios.filter((scenario) => scenario.groupId === group.id),
+                          ])
+                      );
+
+                      const escapeHtml = (value) =>
+                          String(value)
+                              .replaceAll('&', '&amp;')
+                              .replaceAll('<', '&lt;')
+                              .replaceAll('>', '&gt;')
+                              .replaceAll('"', '&quot;');
+                      const summarizeFiles = (files = []) => {
+                          if (files.length === 0) return '';
+                          const shown = files.slice(0, 5).map((file) => `\`${file}\``).join(', ');
+                          return files.length > 5 ? `${shown}, +${files.length - 5} more` : shown;
+                      };
+                      const imageUrl = (kind, scenario, refShort) =>
+                          `${process.env.PUBLISHED_ROOT}/${kind}-${scenario.slug}-${refShort}.png?raw=1`;
+                      const scenarioRows = (group) =>
+                          (scenariosByGroup.get(group.id) ?? [])
+                              .map(
+                                  (scenario) => `
+                                  <tr>
+                                    <td><strong>${escapeHtml(scenario.label)}</strong><br><code>${escapeHtml(scenario.slug)}</code></td>
+                                    <td><img src="${imageUrl('before', scenario, process.env.BASE_SHORT)}" alt="Before ${escapeHtml(scenario.label)}" width="360"></td>
+                                    <td><img src="${imageUrl('after', scenario, process.env.HEAD_SHORT)}" alt="After ${escapeHtml(scenario.label)}" width="360"></td>
+                                  </tr>`.trim()
+                              )
+                              .join('\n');
+                      const groupSections = groups
+                          .map(
+                              (group) => `
+                              <details open>
+                              <summary><strong>${escapeHtml(group.label)}</strong> (${(scenariosByGroup.get(group.id) ?? []).length} scenarios)</summary>
+
+                              <table>
+                              <thead>
+                              <tr>
+                              <th>Scenario</th>
+                              <th>Before base <code>${process.env.BASE_SHORT}</code></th>
+                              <th>After PR <code>${process.env.HEAD_SHORT}</code></th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              ${scenarioRows(group)}
+                              </tbody>
+                              </table>
+                              </details>`.trim()
+                          )
+                          .join('\n\n');
+                      const selectionSummary = groups
+                          .map((group) => {
+                              const files = summarizeFiles(group.matchedFiles);
+                              return `- **${group.label}**: ${group.reason}${files === '' ? '' : ` (${files})`}`;
+                          })
+                          .join('\n');
+
                       const body = [
                           marker,
-                          '## Visual evidence: Items Add Filter panel',
+                          '## Visual evidence',
                           '',
-                          'Captured by CI at 2048x768 with one `Garage` container and the expanded **Add Filters** panel.',
+                          `Captured ${scenarios.length} selected scenario${scenarios.length === 1 ? '' : 's'} from the PR diff.`,
                           '',
-                          `| Before base \`${process.env.BASE_SHORT}\` | After PR \`${process.env.HEAD_SHORT}\` |`,
-                          '| --- | --- |',
-                          `| <img src="${process.env.BEFORE_URL}?raw=1" alt="Before: Garage row overlaps the Add Filter controls" width="100%"> | <img src="${process.env.AFTER_URL}?raw=1" alt="After: Garage row is below the expanded Add Filter panel" width="100%"> |`,
+                          selectionSummary,
                           '',
-                          'The E2E regression also asserts that the first item row starts at least 8px below the Add Filter panel and that the page does not horizontally overflow.',
+                          groupSections,
                           '',
                           `[Download screenshot artifact](${process.env.ARTIFACT_URL})`,
                       ].join('\n');
@@ -217,8 +324,10 @@ jobs:
                           repo,
                           issue_number,
                       });
-                      const existing = comments.find((comment) =>
-                          comment.user?.type === 'Bot' && comment.body?.includes(marker)
+                      const existing = comments.find(
+                          (comment) =>
+                              comment.user?.type === 'Bot' &&
+                              (comment.body?.includes(marker) || comment.body?.includes(legacyMarker))
                       );
 
                       if (existing) {
@@ -237,11 +346,16 @@ jobs:
                           });
                       }
 
-            - name: Verify head layout regression
+            - name: Verify selected head layout regression
               shell: bash
               working-directory: head
               env:
                   PLAYWRIGHT_APP_PORT: '3203'
                   PLAYWRIGHT_METEOR_LOCAL_DIR: ${{ runner.temp }}/meteor-head-regression
+                  SCENARIO_SLUGS: ${{ needs.select-visual-scenarios.outputs.scenario-slugs }}
               run: |
-                  npm run test:e2e:chromium -- tests/e2e/app/search-and-filter.spec.ts --grep "Items Add Filter panel contains controls without overlapping the item list" --reporter=line
+                  if [[ ",${SCENARIO_SLUGS}," == *",items-add-filter,"* ]]; then
+                      npm run test:e2e:chromium -- tests/e2e/app/search-and-filter.spec.ts --grep "Items Add Filter panel contains controls without overlapping the item list" --reporter=line
+                  else
+                      echo "Skipping Items Add Filter regression; scenario was not selected."
+                  fi
