@@ -85,8 +85,37 @@ test('builds changed visual report with diff and composite files', async () => {
     assert.equal(report.scenarios[0].changedPercent, 6.25);
     assert.equal(report.scenarios[0].files.diff, 'diff-items-add-filter-base123-head456.png');
     assert.equal(report.scenarios[0].files.composite, 'composite-items-add-filter-base123-head456.png');
+    assert.deepEqual(report.scenarios[0].crop, { left: 0, top: 0, width: 4, height: 4 });
     assert(existsSync(join(screenshotDir, report.scenarios[0].files.diff)));
     assert(existsSync(join(screenshotDir, report.scenarios[0].files.composite)));
+});
+
+test('focuses changed composites around the padded changed bounds', async () => {
+    const screenshotDir = mkdtempSync(join(tmpdir(), 'visual-diff-report-'));
+
+    await writePng(join(screenshotDir, 'before-items-add-filter-base123.png'), {
+        width: 400,
+        height: 400,
+        color: { r: 255, g: 255, b: 255 },
+    });
+    await writePng(join(screenshotDir, 'after-items-add-filter-head456.png'), {
+        width: 400,
+        height: 400,
+        color: { r: 255, g: 255, b: 255 },
+        changedPixel: { x: 200, y: 120, color: { r: 0, g: 0, b: 0 } },
+    });
+
+    const report = await buildVisualDiffReport({
+        selection: selectionFor(),
+        screenshotDir,
+        baseShort: 'base123',
+        headShort: 'head456',
+        changedPercentThreshold: 0.0001,
+    });
+
+    assert.deepEqual(report.scenarios[0].crop, { left: 104, top: 24, width: 193, height: 193 });
+    assert(report.scenarios[0].crop.height < report.scenarios[0].height);
+    assert(report.scenarios[0].crop.width < report.scenarios[0].width);
 });
 
 test('builds unchanged visual report without composite file', async () => {

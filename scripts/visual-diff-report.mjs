@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 const DEFAULT_PIXEL_DELTA_THRESHOLD = 16;
 const DEFAULT_CHANGED_PERCENT_THRESHOLD = 0.1;
 const DEFAULT_COMPOSITE_WIDTH = 1440;
+const DEFAULT_FOCUS_PADDING = 96;
 const DIFF_RED = [225, 29, 72, 255];
 const WHITE = [255, 255, 255, 255];
 
@@ -131,6 +132,35 @@ function markDiffPixel(buffer, width, height, x, y) {
     }
 }
 
+function includeBounds(bounds, x, y) {
+    if (bounds === undefined) {
+        return { minX: x, minY: y, maxX: x, maxY: y };
+    }
+
+    return {
+        minX: Math.min(bounds.minX, x),
+        minY: Math.min(bounds.minY, y),
+        maxX: Math.max(bounds.maxX, x),
+        maxY: Math.max(bounds.maxY, y),
+    };
+}
+
+function padBounds(bounds, width, height, padding = DEFAULT_FOCUS_PADDING) {
+    if (bounds === undefined) return undefined;
+
+    const left = Math.max(0, bounds.minX - padding);
+    const top = Math.max(0, bounds.minY - padding);
+    const right = Math.min(width, bounds.maxX + padding + 1);
+    const bottom = Math.min(height, bounds.maxY + padding + 1);
+
+    return {
+        left,
+        top,
+        width: right - left,
+        height: bottom - top,
+    };
+}
+
 async function readRgbaImage(path) {
     const sharp = loadSharp();
     const { data, info } = await sharp(path).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -149,6 +179,7 @@ async function writeDiffImage({ before, after, outputPath, pixelDeltaThreshold }
     const height = Math.max(before.height, after.height);
     const diff = Buffer.alloc(width * height * 4);
     let changedPixels = 0;
+    let changedBounds;
 
     for (let index = 0; index < diff.length; index += 4) {
         fillPixel(diff, index, WHITE);
@@ -158,6 +189,7 @@ async function writeDiffImage({ before, after, outputPath, pixelDeltaThreshold }
         for (let x = 0; x < width; x += 1) {
             if (!pixelChanged(before, after, x, y, pixelDeltaThreshold)) continue;
             changedPixels += 1;
+            changedBounds = includeBounds(changedBounds, x, y);
             markDiffPixel(diff, width, height, x, y);
         }
     }
@@ -171,6 +203,7 @@ async function writeDiffImage({ before, after, outputPath, pixelDeltaThreshold }
         totalPixels: width * height,
         width,
         height,
+        bounds: padBounds(changedBounds, width, height),
     };
 }
 
@@ -185,13 +218,27 @@ function labelSvg(width, text, options = {}) {
 </svg>`);
 }
 
-async function resizedPng(path, width) {
-    const sharp = loadSharp();
-    return sharp(path).resize({ width }).png().toBuffer();
-}
-
 async function imageMetadata(path) {
     return loadSharp()(path).metadata();
+}
+
+async function normalizedCropPng(path, canvasWidth, canvasHeight, crop, outputWidth) {
+    const sharp = loadSharp();
+    const metadata = await imageMetadata(path);
+    const right = Math.max(0, canvasWidth - (metadata.width ?? 0));
+    const bottom = Math.max(0, canvasHeight - (metadata.height ?? 0));
+
+    return sharp(path)
+        .ensureAlpha()
+        .extend({
+            right,
+            bottom,
+            background: '#ffffff',
+        })
+        .extract(crop)
+        .resize({ width: outputWidth })
+        .png()
+        .toBuffer();
 }
 
 export function formatPercent(value) {
@@ -209,26 +256,23 @@ async function writeCompositeImage({
     label,
     changedPercent,
     changedPixels,
+    crop,
     baseShort,
     headShort,
     maxWidth = DEFAULT_COMPOSITE_WIDTH,
 }) {
     const sharp = loadSharp();
-    const [beforeMeta, afterMeta, diffMeta] = await Promise.all([
-        imageMetadata(beforePath),
-        imageMetadata(afterPath),
-        imageMetadata(diffPath),
-    ]);
+    const diffMeta = await imageMetadata(diffPath);
     const padding = 24;
     const gap = 16;
     const sectionGap = 24;
     const labelHeight = 34;
-    const contentWidth = Math.min(Math.max(diffMeta.width ?? 0, 900), maxWidth);
-    const diffHeight = Math.round(((diffMeta.height ?? 1) / (diffMeta.width ?? 1)) * contentWidth);
+    const canvasWidth = diffMeta.width ?? crop.width;
+    const canvasHeight = diffMeta.height ?? crop.height;
+    const contentWidth = Math.min(Math.max(crop.width, 900), maxWidth);
+    const diffHeight = Math.round((crop.height / crop.width) * contentWidth);
     const pairWidth = Math.floor((contentWidth - gap) / 2);
-    const beforeHeight = Math.round(((beforeMeta.height ?? 1) / (beforeMeta.width ?? 1)) * pairWidth);
-    const afterHeight = Math.round(((afterMeta.height ?? 1) / (afterMeta.width ?? 1)) * pairWidth);
-    const pairHeight = Math.max(beforeHeight, afterHeight);
+    const pairHeight = Math.round((crop.height / crop.width) * pairWidth);
     const width = contentWidth + padding * 2;
     const height = padding + labelHeight + diffHeight + sectionGap + labelHeight + pairHeight + padding;
     const diffTop = padding + labelHeight;
@@ -236,9 +280,9 @@ async function writeCompositeImage({
     const pairImageTop = pairLabelTop + labelHeight;
 
     const [diffImage, beforeImage, afterImage] = await Promise.all([
-        resizedPng(diffPath, contentWidth),
-        resizedPng(beforePath, pairWidth),
-        resizedPng(afterPath, pairWidth),
+        normalizedCropPng(diffPath, canvasWidth, canvasHeight, crop, contentWidth),
+        normalizedCropPng(beforePath, canvasWidth, canvasHeight, crop, pairWidth),
+        normalizedCropPng(afterPath, canvasWidth, canvasHeight, crop, pairWidth),
     ]);
 
     await sharp({
@@ -253,7 +297,7 @@ async function writeCompositeImage({
             {
                 input: labelSvg(
                     contentWidth,
-                    `${label} diff mask - ${formatPercent(changedPercent)} changed (${changedPixels} px)`
+                    `${label} changed area - ${formatPercent(changedPercent)} changed (${changedPixels} px)`
                 ),
                 left: padding,
                 top: padding,
@@ -317,13 +361,14 @@ async function analyzeScenario({
         pixelDeltaThreshold,
     });
     const changedPercent = diff.totalPixels === 0 ? 0 : (diff.changedPixels / diff.totalPixels) * 100;
-    const status = changedPercent >= changedPercentThreshold ? 'changed' : 'unchanged';
+    const status = diff.changedPixels > 0 && changedPercent >= changedPercentThreshold ? 'changed' : 'unchanged';
     const result = {
         ...scenario,
         status,
         changedPixels: diff.changedPixels,
         totalPixels: diff.totalPixels,
         changedPercent,
+        crop: diff.bounds,
         width: diff.width,
         height: diff.height,
         files: {
@@ -342,6 +387,7 @@ async function analyzeScenario({
             label: scenario.label,
             changedPercent,
             changedPixels: diff.changedPixels,
+            crop: diff.bounds,
             baseShort,
             headShort,
         });
