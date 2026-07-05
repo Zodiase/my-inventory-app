@@ -25,6 +25,8 @@ on:
             - 'package-lock.json'
             - 'package.json'
             - 'playwright.config.js'
+            - 'scripts/visual-diff-report.mjs'
+            - 'scripts/visual-diff-report.test.mjs'
             - 'scripts/visual-scenarios.mjs'
             - 'scripts/visual-scenarios.test.mjs'
             - 'tests/e2e/app/**'
@@ -180,12 +182,31 @@ jobs:
               run: |
                   npm run test:e2e:chromium -- tests/e2e/app/visual-artifacts/pr-visual-evidence.spec.ts --reporter=line
 
+            - name: Analyze visual diffs
+              id: visual-diff
+              shell: bash
+              working-directory: head
+              env:
+                  BASE_SHORT: ${{ steps.refs.outputs.base-short }}
+                  HEAD_SHORT: ${{ steps.refs.outputs.head-short }}
+                  VISUAL_OUTPUT_DIR: ${{ runner.temp }}/pr-visual-evidence
+                  VISUAL_SELECTION_JSON: ${{ needs.select-visual-scenarios.outputs.selection-json }}
+              run: |
+                  node scripts/visual-diff-report.mjs build \
+                      --screenshot-dir "${VISUAL_OUTPUT_DIR}" \
+                      --base-short "${BASE_SHORT}" \
+                      --head-short "${HEAD_SHORT}" \
+                      --report-json "${VISUAL_OUTPUT_DIR}/visual-diff-report.json" \
+                      --github-output "${GITHUB_OUTPUT}"
+
             - name: Upload screenshot artifact
               id: upload
               uses: actions/upload-artifact@v4
               with:
-                  name: pr-visual-evidence-before-after
-                  path: ${{ runner.temp }}/pr-visual-evidence/*.png
+                  name: pr-visual-evidence
+                  path: |
+                      ${{ runner.temp }}/pr-visual-evidence/*.png
+                      ${{ runner.temp }}/pr-visual-evidence/visual-diff-report.json
                   if-no-files-found: error
 
             - name: Publish screenshots to repo artifact branch
@@ -230,94 +251,32 @@ jobs:
                   raw_root="https://github.com/${GITHUB_REPOSITORY}/blob/${ARTIFACT_BRANCH}/${artifact_dir}"
                   echo "published-root=${raw_root}" >> "$GITHUB_OUTPUT"
 
+            - name: Build visual evidence comment
+              id: comment-body
+              shell: bash
+              working-directory: head
+              env:
+                  ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+                  PUBLISHED_ROOT: ${{ steps.publish.outputs.published-root }}
+                  VISUAL_REPORT_JSON: ${{ steps.visual-diff.outputs.report-json }}
+              run: |
+                  node scripts/visual-diff-report.mjs comment \
+                      --report-json "${VISUAL_REPORT_JSON}" \
+                      --comment-body "${RUNNER_TEMP}/pr-visual-evidence-comment.md" \
+                      --artifact-url "${ARTIFACT_URL}" \
+                      --published-root "${PUBLISHED_ROOT}" \
+                      --github-output "${GITHUB_OUTPUT}"
+
             - name: Comment on pull request
               uses: actions/github-script@v7
               env:
-                  ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
-                  BASE_SHORT: ${{ steps.refs.outputs.base-short }}
-                  HEAD_SHORT: ${{ steps.refs.outputs.head-short }}
-                  PUBLISHED_ROOT: ${{ steps.publish.outputs.published-root }}
-                  SELECTION_JSON: ${{ needs.select-visual-scenarios.outputs.selection-json }}
+                  COMMENT_BODY_PATH: ${{ steps.comment-body.outputs.comment-body }}
               with:
                   script: |
+                      const fs = require('fs');
                       const marker = '<!-- pr-visual-evidence -->';
                       const legacyMarker = '<!-- items-add-filter-visual-evidence -->';
-                      const selection = JSON.parse(process.env.SELECTION_JSON);
-                      const scenarios = selection.scenarios ?? [];
-                      const groups = selection.groups ?? [];
-                      const scenariosByGroup = new Map(
-                          groups.map((group) => [
-                              group.id,
-                              scenarios.filter((scenario) => scenario.groupId === group.id),
-                          ])
-                      );
-
-                      const escapeHtml = (value) =>
-                          String(value)
-                              .replaceAll('&', '&amp;')
-                              .replaceAll('<', '&lt;')
-                              .replaceAll('>', '&gt;')
-                              .replaceAll('"', '&quot;');
-                      const summarizeFiles = (files = []) => {
-                          if (files.length === 0) return '';
-                          const shown = files.slice(0, 5).map((file) => `\`${file}\``).join(', ');
-                          return files.length > 5 ? `${shown}, +${files.length - 5} more` : shown;
-                      };
-                      const imageUrl = (kind, scenario, refShort) =>
-                          `${process.env.PUBLISHED_ROOT}/${kind}-${scenario.slug}-${refShort}.png?raw=1`;
-                      const scenarioRows = (group) =>
-                          (scenariosByGroup.get(group.id) ?? [])
-                              .map((scenario) =>
-                                  [
-                                      '<tr>',
-                                      `<td><strong>${escapeHtml(scenario.label)}</strong><br><code>${escapeHtml(scenario.slug)}</code></td>`,
-                                      `<td><img src="${imageUrl('before', scenario, process.env.BASE_SHORT)}" alt="Before ${escapeHtml(scenario.label)}" width="360"></td>`,
-                                      `<td><img src="${imageUrl('after', scenario, process.env.HEAD_SHORT)}" alt="After ${escapeHtml(scenario.label)}" width="360"></td>`,
-                                      '</tr>',
-                                  ].join('\n')
-                              )
-                              .join('\n');
-                      const groupSections = groups
-                          .map((group) =>
-                              [
-                                  '<details open>',
-                                  `<summary><strong>${escapeHtml(group.label)}</strong> (${(scenariosByGroup.get(group.id) ?? []).length} scenarios)</summary>`,
-                                  '',
-                                  '<table>',
-                                  '<thead>',
-                                  '<tr>',
-                                  '<th>Scenario</th>',
-                                  `<th>Before base <code>${process.env.BASE_SHORT}</code></th>`,
-                                  `<th>After PR <code>${process.env.HEAD_SHORT}</code></th>`,
-                                  '</tr>',
-                                  '</thead>',
-                                  '<tbody>',
-                                  scenarioRows(group),
-                                  '</tbody>',
-                                  '</table>',
-                                  '</details>',
-                              ].join('\n')
-                          )
-                          .join('\n\n');
-                      const selectionSummary = groups
-                          .map((group) => {
-                              const files = summarizeFiles(group.matchedFiles);
-                              return `- **${group.label}**: ${group.reason}${files === '' ? '' : ` (${files})`}`;
-                          })
-                          .join('\n');
-
-                      const body = [
-                          marker,
-                          '## Visual evidence',
-                          '',
-                          `Captured ${scenarios.length} selected scenario${scenarios.length === 1 ? '' : 's'} from the PR diff.`,
-                          '',
-                          selectionSummary,
-                          '',
-                          groupSections,
-                          '',
-                          `[Download screenshot artifact](${process.env.ARTIFACT_URL})`,
-                      ].join('\n');
+                      const body = fs.readFileSync(process.env.COMMENT_BODY_PATH, 'utf8');
 
                       const { owner, repo } = context.repo;
                       const issue_number = context.issue.number;

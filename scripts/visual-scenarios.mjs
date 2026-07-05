@@ -116,6 +116,8 @@ const GLOBAL_RULES = [
         groupIds: GROUP_IDS,
         matchers: [
             exact('.github/workflows/pr-visual-evidence.yml'),
+            exact('scripts/visual-diff-report.mjs'),
+            exact('scripts/visual-diff-report.test.mjs'),
             exact('scripts/visual-scenarios.mjs'),
             exact('scripts/visual-scenarios.test.mjs'),
             prefix('tests/e2e/app/visual-artifacts/'),
