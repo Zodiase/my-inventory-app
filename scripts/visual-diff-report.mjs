@@ -12,6 +12,7 @@ const DEFAULT_PIXEL_DELTA_THRESHOLD = 16;
 const DEFAULT_CHANGED_PERCENT_THRESHOLD = 0.1;
 const DEFAULT_COMPOSITE_WIDTH = 1440;
 const DEFAULT_FOCUS_PADDING = 96;
+const DIFF_OVERLAY_ALPHA = 0.45;
 const DIFF_RED = [225, 29, 72, 255];
 const WHITE = [255, 255, 255, 255];
 
@@ -222,13 +223,13 @@ async function imageMetadata(path) {
     return loadSharp()(path).metadata();
 }
 
-async function normalizedCropPng(path, canvasWidth, canvasHeight, crop, outputWidth) {
+async function normalizedCropRaw(path, canvasWidth, canvasHeight, crop) {
     const sharp = loadSharp();
     const metadata = await imageMetadata(path);
     const right = Math.max(0, canvasWidth - (metadata.width ?? 0));
     const bottom = Math.max(0, canvasHeight - (metadata.height ?? 0));
 
-    return sharp(path)
+    const { data, info } = await sharp(path)
         .ensureAlpha()
         .extend({
             right,
@@ -236,6 +237,59 @@ async function normalizedCropPng(path, canvasWidth, canvasHeight, crop, outputWi
             background: '#ffffff',
         })
         .extract(crop)
+        .raw()
+        .toBuffer({ resolveWithObject: true });
+
+    return {
+        data,
+        width: info.width,
+        height: info.height,
+        channels: info.channels,
+    };
+}
+
+async function normalizedCropPng(path, canvasWidth, canvasHeight, crop, outputWidth) {
+    const sharp = loadSharp();
+    const image = await normalizedCropRaw(path, canvasWidth, canvasHeight, crop);
+
+    return sharp(image.data, { raw: { width: image.width, height: image.height, channels: image.channels } })
+        .resize({ width: outputWidth })
+        .png()
+        .toBuffer();
+}
+
+function isDiffPixel(diff, index) {
+    return (
+        diff.data[index] === DIFF_RED[0] &&
+        diff.data[index + 1] === DIFF_RED[1] &&
+        diff.data[index + 2] === DIFF_RED[2] &&
+        diff.data[index + 3] > 0
+    );
+}
+
+function overlayDiffPixel(buffer, index) {
+    for (let channel = 0; channel < 3; channel += 1) {
+        buffer[index + channel] = Math.round(
+            DIFF_RED[channel] * DIFF_OVERLAY_ALPHA + buffer[index + channel] * (1 - DIFF_OVERLAY_ALPHA)
+        );
+    }
+    buffer[index + 3] = 255;
+}
+
+async function overlayDiffOnAfterPng({ afterPath, diffPath, canvasWidth, canvasHeight, crop, outputWidth }) {
+    const sharp = loadSharp();
+    const [after, diff] = await Promise.all([
+        normalizedCropRaw(afterPath, canvasWidth, canvasHeight, crop),
+        normalizedCropRaw(diffPath, canvasWidth, canvasHeight, crop),
+    ]);
+    const overlay = Buffer.from(after.data);
+
+    for (let index = 0; index < overlay.length; index += after.channels) {
+        if (!isDiffPixel(diff, index)) continue;
+        overlayDiffPixel(overlay, index);
+    }
+
+    return sharp(overlay, { raw: { width: after.width, height: after.height, channels: after.channels } })
         .resize({ width: outputWidth })
         .png()
         .toBuffer();
@@ -270,17 +324,17 @@ async function writeCompositeImage({
     const canvasWidth = diffMeta.width ?? crop.width;
     const canvasHeight = diffMeta.height ?? crop.height;
     const contentWidth = Math.min(Math.max(crop.width, 900), maxWidth);
-    const diffHeight = Math.round((crop.height / crop.width) * contentWidth);
+    const overlayHeight = Math.round((crop.height / crop.width) * contentWidth);
     const pairWidth = Math.floor((contentWidth - gap) / 2);
     const pairHeight = Math.round((crop.height / crop.width) * pairWidth);
     const width = contentWidth + padding * 2;
-    const height = padding + labelHeight + diffHeight + sectionGap + labelHeight + pairHeight + padding;
-    const diffTop = padding + labelHeight;
-    const pairLabelTop = diffTop + diffHeight + sectionGap;
+    const height = padding + labelHeight + overlayHeight + sectionGap + labelHeight + pairHeight + padding;
+    const overlayTop = padding + labelHeight;
+    const pairLabelTop = overlayTop + overlayHeight + sectionGap;
     const pairImageTop = pairLabelTop + labelHeight;
 
-    const [diffImage, beforeImage, afterImage] = await Promise.all([
-        normalizedCropPng(diffPath, canvasWidth, canvasHeight, crop, contentWidth),
+    const [overlayImage, beforeImage, afterImage] = await Promise.all([
+        overlayDiffOnAfterPng({ afterPath, diffPath, canvasWidth, canvasHeight, crop, outputWidth: contentWidth }),
         normalizedCropPng(beforePath, canvasWidth, canvasHeight, crop, pairWidth),
         normalizedCropPng(afterPath, canvasWidth, canvasHeight, crop, pairWidth),
     ]);
@@ -297,12 +351,12 @@ async function writeCompositeImage({
             {
                 input: labelSvg(
                     contentWidth,
-                    `${label} changed area - ${formatPercent(changedPercent)} changed (${changedPixels} px)`
+                    `${label} overlay on after - ${formatPercent(changedPercent)} changed (${changedPixels} px)`
                 ),
                 left: padding,
                 top: padding,
             },
-            { input: diffImage, left: padding, top: diffTop },
+            { input: overlayImage, left: padding, top: overlayTop },
             { input: labelSvg(pairWidth, `Before base ${baseShort}`), left: padding, top: pairLabelTop },
             {
                 input: labelSvg(pairWidth, `After PR ${headShort}`),
@@ -479,7 +533,7 @@ function scenarioRows(group, scenarios, publishedRoot, artifactUrl) {
         .map((scenario) => {
             const evidence =
                 scenario.status === 'changed' && scenario.files.composite !== undefined
-                    ? `<a href="${imageUrl(publishedRoot, scenario.files.composite)}">Composite</a> · <a href="${imageUrl(publishedRoot, scenario.files.diff)}">Diff</a>`
+                    ? `<a href="${imageUrl(publishedRoot, scenario.files.composite)}">Overlay</a> · <a href="${imageUrl(publishedRoot, scenario.files.diff)}">Raw diff</a>`
                     : artifactUrl === undefined
                       ? '-'
                       : `<a href="${artifactUrl}">Artifact</a>`;
@@ -543,7 +597,7 @@ function changedEvidenceGallery(report, publishedRoot) {
                 '<details open>',
                 `<summary><strong>${escapeHtml(scenario.label)}</strong> - ${formatPercent(scenario.changedPercent)} changed</summary>`,
                 '',
-                `<a href="${imageUrl(publishedRoot, scenario.files.composite)}"><img src="${imageUrl(publishedRoot, scenario.files.composite)}" alt="Composite visual diff for ${escapeHtml(scenario.label)}" width="900"></a>`,
+                `<a href="${imageUrl(publishedRoot, scenario.files.composite)}"><img src="${imageUrl(publishedRoot, scenario.files.composite)}" alt="Overlay visual diff for ${escapeHtml(scenario.label)}" width="900"></a>`,
                 '</details>',
             ].join('\n')
         )
@@ -562,6 +616,7 @@ export function buildCommentBody({ report, artifactUrl, publishedRoot }) {
         '',
         `Result: **${summary.changed} changed**, **${summary.unchanged} unchanged**, **${summary.missing} missing**.`,
         `Threshold: ${formatPercent(threshold.changedPercentThreshold)} of pixels changed after per-channel delta > ${threshold.pixelDeltaThreshold}.`,
+        'Changed snapshots show a translucent red overlay on the after screenshot, with before/after crops below.',
         '',
         selectionSummary(report),
         '',

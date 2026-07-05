@@ -29,6 +29,19 @@ async function writePng(path, { width, height, color, changedPixel }) {
     await sharp(data, { raw: { width, height, channels } }).png().toFile(path);
 }
 
+async function readPngPixel(path, { x, y }) {
+    const sharp = loadSharp();
+    const { data, info } = await sharp(path).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    const index = (y * info.width + x) * info.channels;
+
+    return {
+        r: data[index],
+        g: data[index + 1],
+        b: data[index + 2],
+        alpha: data[index + 3],
+    };
+}
+
 function selectionFor(slug = 'items-add-filter') {
     return {
         groups: [
@@ -118,6 +131,37 @@ test('focuses changed composites around the padded changed bounds', async () => 
     assert(report.scenarios[0].crop.width < report.scenarios[0].width);
 });
 
+test('renders changed composite as a translucent overlay on the after image', async () => {
+    const screenshotDir = mkdtempSync(join(tmpdir(), 'visual-diff-report-'));
+
+    await writePng(join(screenshotDir, 'before-items-add-filter-base123.png'), {
+        width: 900,
+        height: 80,
+        color: { r: 255, g: 255, b: 255 },
+    });
+    await writePng(join(screenshotDir, 'after-items-add-filter-head456.png'), {
+        width: 900,
+        height: 80,
+        color: { r: 0, g: 0, b: 0 },
+    });
+
+    const report = await buildVisualDiffReport({
+        selection: selectionFor(),
+        screenshotDir,
+        baseShort: 'base123',
+        headShort: 'head456',
+        changedPercentThreshold: 0.1,
+    });
+
+    const compositePath = join(screenshotDir, report.scenarios[0].files.composite);
+    const overlayPixel = await readPngPixel(compositePath, { x: 34, y: 68 });
+
+    assert(overlayPixel.r > overlayPixel.g);
+    assert(overlayPixel.r > overlayPixel.b);
+    assert(overlayPixel.r < 180);
+    assert.equal(overlayPixel.alpha, 255);
+});
+
 test('builds unchanged visual report without composite file', async () => {
     const screenshotDir = mkdtempSync(join(tmpdir(), 'visual-diff-report-'));
 
@@ -196,6 +240,9 @@ test('builds scan-first PR comment with changed evidence gallery', () => {
     assert(body.includes('<th>Status</th>'));
     assert(body.includes('<th>Evidence</th>'));
     assert(body.includes('Result: **1 changed**, **0 unchanged**, **0 missing**.'));
+    assert(body.includes('Changed snapshots show a translucent red overlay'));
+    assert(body.includes('>Overlay</a>'));
+    assert(body.includes('>Raw diff</a>'));
     assert(body.includes('composite-items-add-filter-base123-head456.png?raw=1'));
     assert(body.includes('### Changed visual evidence'));
     assert(!body.includes('<th>Before'));
