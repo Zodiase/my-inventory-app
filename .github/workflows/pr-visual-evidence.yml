@@ -50,7 +50,7 @@ jobs:
             selection-json: ${{ steps.select.outputs.selection-json }}
         steps:
             - name: Check out head
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   ref: ${{ github.event.pull_request.head.sha }}
                   persist-credentials: false
@@ -94,14 +94,14 @@ jobs:
             artifact-url: ${{ steps.upload.outputs.artifact-url }}
         steps:
             - name: Check out base
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   ref: ${{ github.event.pull_request.base.sha }}
                   path: base
                   persist-credentials: false
 
             - name: Check out head
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   ref: ${{ github.event.pull_request.head.sha }}
                   path: head
@@ -363,7 +363,7 @@ jobs:
         timeout-minutes: 20
         steps:
             - name: Check out head
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   ref: ${{ github.event.pull_request.head.sha }}
                   persist-credentials: false
