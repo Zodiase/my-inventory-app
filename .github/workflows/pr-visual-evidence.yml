@@ -252,7 +252,7 @@ jobs:
             actions: read
             contents: write
             issues: write
-            pull-requests: read
+            pull-requests: write
         timeout-minutes: 10
         steps:
             - name: Download screenshot artifact
