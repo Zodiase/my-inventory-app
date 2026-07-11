@@ -233,8 +233,8 @@ export const App = (): ReactElement => {
 
     const renderItemsView = (initialContainerId?: string): ReactElement => {
         return (
-            <Box>
-                <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }}>
+            <Box fill style={{ minHeight: 0 }}>
+                <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }} flex={false}>
                     <Heading level="2" margin="none">
                         {getItemsViewHeading(initialContainerId)}
                     </Heading>
@@ -261,7 +261,7 @@ export const App = (): ReactElement => {
 
                 {/* Filter status and clear */}
                 {itemsViewFilters.length > 0 && (
-                    <Box margin={{ bottom: 'medium' }}>
+                    <Box margin={{ bottom: 'medium' }} flex={false}>
                         <FilterBar
                             filters={itemsViewFilters}
                             onChange={setItemsViewFilters}
@@ -275,7 +275,7 @@ export const App = (): ReactElement => {
 
                 {/* Filter builder (collapsible) */}
                 {showFilterBuilder && (
-                    <Box margin={{ bottom: 'medium' }} pad="medium" background="light-2" round="small">
+                    <Box margin={{ bottom: 'medium' }} pad="medium" background="light-2" round="small" flex={false}>
                         <SearchFragmentBuilder
                             fragments={itemsViewFilters}
                             onChange={setItemsViewFilters}
@@ -284,11 +284,13 @@ export const App = (): ReactElement => {
                     </Box>
                 )}
 
-                <AllItemsView
-                    initialContainerId={initialContainerId}
-                    filters={itemsViewFilters}
-                    onNavigate={handleItemsViewNavigate}
-                />
+                <Box flex="grow" style={{ minHeight: 0 }}>
+                    <AllItemsView
+                        initialContainerId={initialContainerId}
+                        filters={itemsViewFilters}
+                        onNavigate={handleItemsViewNavigate}
+                    />
+                </Box>
             </Box>
         );
     };
