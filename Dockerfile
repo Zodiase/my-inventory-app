@@ -1,5 +1,5 @@
 # The tag here should match the Meteor version of your app, per .meteor/release
-FROM geoffreybooth/meteor-base:3.3.2
+FROM geoffreybooth/meteor-base:3.4.1
 
 # Copy app package.json and package-lock.json into container
 COPY ./meteor-app/package*.json $APP_SOURCE_FOLDER/
@@ -15,8 +15,8 @@ RUN bash $SCRIPTS_FOLDER/build-meteor-bundle.sh
 # Use the specific version of Node expected by your Meteor release, per https://docs.meteor.com/changelog.html; this is expected for Meteor 3.x
 FROM node:22-alpine
 
-ENV APP_BUNDLE_FOLDER /opt/bundle
-ENV SCRIPTS_FOLDER /docker
+ENV APP_BUNDLE_FOLDER=/opt/bundle
+ENV SCRIPTS_FOLDER=/docker
 
 RUN addgroup -S meteorg && adduser -S meteor -G meteorg
 
@@ -37,14 +37,27 @@ USER meteor
 
 RUN bash $SCRIPTS_FOLDER/build-meteor-npm-dependencies.sh --build-from-source
 
+# Meteor 3.4.1 pins older build helpers in the generated server bundle. Refresh
+# those runtime dependencies after native modules are built so the final image
+# does not ship their known tar/underscore advisories.
+USER root
+
+RUN cd $APP_BUNDLE_FOLDER/bundle/programs/server && \
+    npm install --omit=dev --save-exact \
+    @mapbox/node-pre-gyp@2.0.3 \
+    node-gyp@13.0.1 \
+    underscore@1.13.8
+
+USER meteor
+
 
 
 # Start another Docker stage, so that the final image doesn’t contain the layer with the build dependencies
 # See previous FROM line; this must match
 FROM node:22-alpine
 
-ENV APP_BUNDLE_FOLDER /opt/bundle
-ENV SCRIPTS_FOLDER /docker
+ENV APP_BUNDLE_FOLDER=/opt/bundle
+ENV SCRIPTS_FOLDER=/docker
 
 RUN addgroup -S meteorg && adduser -S meteor -G meteorg
 

@@ -142,11 +142,7 @@ export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
                 pad={{ horizontal: 'small', vertical: 'xsmall' }}
                 onClickItem={(event) => {
                     if (!disabled) {
-                        const item = event.item as {
-                            id: string | undefined;
-                            name: string;
-                            depth: number;
-                        };
+                        const item = event.item;
                         onSelect(item.id);
                     }
                 }}

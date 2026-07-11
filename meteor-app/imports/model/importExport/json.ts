@@ -1,7 +1,3 @@
-import type { InventoryItem } from '/imports/model/InventoryItem';
-import type { PropertyValues } from '/imports/model/PropertyValues';
-import type { TagRecord } from '/imports/model/TagRecord';
-
 /**
  * Native JSON import/export format.
  *
@@ -14,6 +10,9 @@ import type { TagRecord } from '/imports/model/TagRecord';
  * with the same `.getTime()` value, so re-importing an unchanged JSON export
  * is a true no-op against the dedup comparator.
  */
+import type { InventoryItem } from '/imports/model/InventoryItem';
+import type { PropertyValues } from '/imports/model/PropertyValues';
+import type { TagRecord } from '/imports/model/TagRecord';
 
 export const JSON_EXPORT_VERSION = 1 as const;
 
@@ -165,7 +164,7 @@ const parseProperties = (raw: Record<string, unknown>, where: string): PropertyV
         }
         result[field] = parseIsoDate(value, `${where}.properties.${field}`);
     }
-    return result as unknown as PropertyValues;
+    return result;
 };
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> => {

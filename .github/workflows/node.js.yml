@@ -6,7 +6,7 @@ permissions:
     contents: read
 
 env:
-    METEOR_VERSION: 3.3.2
+    METEOR_VERSION: 3.4.1
 
 on:
     push:
@@ -16,6 +16,10 @@ on:
             - 'master'
             - 'twig/**'
 
+concurrency:
+    group: app-tests-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+
 jobs:
     script-tests:
         name: Script tests
@@ -24,9 +28,9 @@ jobs:
             matrix:
                 node-version: ['22.x', '24.x']
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: 'npm'
@@ -48,15 +52,15 @@ jobs:
                 shell: bash -l {0}
                 working-directory: meteor-app
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: 'npm'
                   cache-dependency-path: 'meteor-app/package-lock.json'
             - name: Cache Meteor installation
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: ~/.meteor
                   key: ${{ runner.os }}-meteor-${{ env.METEOR_VERSION }}
@@ -80,15 +84,15 @@ jobs:
                 shell: bash -l {0}
                 working-directory: meteor-app
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: 'npm'
                   cache-dependency-path: 'meteor-app/package-lock.json'
             - name: Cache Meteor installation
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: ~/.meteor
                   key: ${{ runner.os }}-meteor-${{ env.METEOR_VERSION }}
@@ -112,15 +116,15 @@ jobs:
                 shell: bash -l {0}
                 working-directory: meteor-app
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: 'npm'
                   cache-dependency-path: 'meteor-app/package-lock.json'
             - name: Cache Meteor installation
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: ~/.meteor
                   key: ${{ runner.os }}-meteor-${{ env.METEOR_VERSION }}
@@ -132,3 +136,52 @@ jobs:
             - run: meteor npm ci
             - run: meteor npm run build --if-present
             - run: meteor npm test
+
+    app-e2e:
+        name: App E2E
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        steps:
+            - uses: actions/checkout@v7
+            - name: Use Node.js 22
+              uses: actions/setup-node@v6
+              with:
+                  node-version: '22.x'
+                  cache: 'npm'
+                  cache-dependency-path: |
+                      package-lock.json
+                      meteor-app/package-lock.json
+            - name: Cache Meteor installation
+              uses: actions/cache@v6
+              with:
+                  path: ~/.meteor
+                  key: ${{ runner.os }}-meteor-${{ env.METEOR_VERSION }}
+            - name: Install Meteor ${{ env.METEOR_VERSION }}
+              run: |
+                  curl "https://install.meteor.com/?release=${METEOR_VERSION}" | sh
+                  echo "$HOME/.meteor" >> "$GITHUB_PATH"
+                  "$HOME/.meteor/meteor" --version
+            - run: npm ci --ignore-scripts
+            - run: meteor npm ci --ignore-scripts
+              working-directory: meteor-app
+            - run: npx playwright install --with-deps chromium webkit
+            - run: npm run test:e2e:app -- --workers=1 --reporter=line
+
+    storybook-e2e:
+        name: Storybook E2E
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@v7
+            - name: Use Node.js 22
+              uses: actions/setup-node@v6
+              with:
+                  node-version: '22.x'
+                  cache: 'npm'
+                  cache-dependency-path: |
+                      package-lock.json
+                      meteor-app/package-lock.json
+            - run: npm ci --ignore-scripts
+            - run: npm ci --ignore-scripts --prefix meteor-app
+            - run: npx playwright install --with-deps chromium
+            - run: npm run test:e2e:storybook -- --project=storybook-chromium --workers=1 --reporter=line

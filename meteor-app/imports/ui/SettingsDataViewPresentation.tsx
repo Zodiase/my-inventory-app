@@ -1,3 +1,8 @@
+/**
+ * Presents desktop import and export controls independently from Meteor method wiring.
+ * File selection, progress, and report rendering belong here; data transport belongs
+ * in the container and import/export API modules.
+ */
 import { Box, Heading, Text, Card, CardBody, CardHeader } from 'grommet';
 import { DocumentDownload, DocumentUpload } from 'grommet-icons';
 import React, { useState, type ReactElement, useRef } from 'react';
@@ -191,7 +196,7 @@ export const SettingsDataViewPresentation = ({
                         </Text>
                     )}
 
-                    {importSuccess && importReport != null && importReport.errors.length === 0 && (
+                    {importSuccess && importReport?.errors.length === 0 && (
                         <Box background="status-ok" pad="small" round="small">
                             <Text color="white">Import completed successfully!</Text>
                         </Box>
