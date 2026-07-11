@@ -256,13 +256,13 @@ jobs:
         timeout-minutes: 10
         steps:
             - name: Download screenshot artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                   name: pr-visual-evidence
                   path: ${{ runner.temp }}/pr-visual-evidence
 
             - name: Download comment body artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                   name: pr-visual-evidence-comment
                   path: ${{ runner.temp }}/pr-visual-evidence-comment
