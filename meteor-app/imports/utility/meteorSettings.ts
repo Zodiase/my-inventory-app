@@ -1,5 +1,6 @@
 /**
- * @file packages Meteor.settings to be type friendly.
+ * Defines the application's supported Meteor settings and typed access boundary.
+ * Keep setting names here so callers do not spread untyped runtime lookups.
  */
 
 import { Meteor } from 'meteor/meteor';
@@ -12,7 +13,7 @@ export interface MeteorSettings {
 }
 
 export const getMeteorSetting = <T extends keyof MeteorSettings>(name: T): MeteorSettings[T] => {
-    return Meteor.settings[name] as unknown as MeteorSettings[T];
+    return Meteor.settings[name];
 };
 
 export const setMeteorSetting = <T extends keyof MeteorSettings>(name: T, value: MeteorSettings[T]): void => {

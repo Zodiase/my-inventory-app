@@ -1,24 +1,5 @@
 # Known Issues
 
-## Local Route Audit Visual Findings
-
-The local route audit (`npm run test:e2e:audit`) generates screenshots and accessibility snapshots for core routes across desktop, tablet, and mobile viewports. These artifacts are intended to make visual defects easy to spot while keeping this branch focused on observability rather than broad UI remediation.
-
-### Current Findings
-
-- Mobile top navigation can overflow or clip the rightmost actions on narrow screens, especially the Data action.
-- Mobile Search has a layout overlap where the disabled Search button text bleeds toward the empty-results content.
-- Mobile Tags renders functional content, but the hierarchy and controls are cramped and visually rough.
-
-### Impact
-
-- The affected routes still render and the current audit diagnostics are clean.
-- These are visual/responsive quality issues, not runtime observability failures.
-
-### Resolution
-
-Track and fix these in follow-up UI branches. Keep this branch focused on producing reliable local artifacts and surfacing diagnostics.
-
 ## Deprecation Warning: `util._extend`
 
 When starting the development server you may see the following warning in the console:
@@ -34,7 +15,7 @@ This originates from the Meteor tool's internal dependency (`http-proxy`) that s
 ### Upstream Tracking
 
 - Meteor issue: https://github.com/meteor/meteor/issues/13491
-- Appears with Meteor `3.3.x` when running on recent Node.js (e.g. Node 22+).
+- Appears with Meteor 3.4.1 when running on recent Node.js, including Node 22.
 
 ### Impact
 
@@ -79,21 +60,21 @@ This occurs because the `@sinonjs/fake-timers` package (used by the Mocha testin
 
 ### Current Environment
 
-- **Meteor**: 3.3.2
-- **meteor-node-stubs**: 1.2.24 (latest available)
+- **Meteor**: 3.4.1
+- **meteor-node-stubs**: 1.2.27
 - **Node.js**: 22.x or 24.x
 - **ESLint Config**: Flat configuration with eslint-config-love
 
 ### Impact
 
-- **Non-blocking**: All tests pass successfully (18 passing tests)
+- **Non-blocking**: The warning does not fail the test command.
 - **Functionality intact**: Application runs normally in development and production
 - **Cosmetic only**: This is a bundling warning, not a runtime error
 - **Test execution**: Fake timers work correctly despite the warning
 
 ### Investigation Summary
 
-1. ✅ Confirmed `meteor-node-stubs@1.2.24` is the latest version
+1. ✅ Confirmed `meteor-node-stubs@1.2.27` is the latest version as of 2026-07-11
 2. ✅ Package includes timer stubs but not the newer `timers/promises` API
 3. ✅ All test functionality works correctly
 4. ✅ No impact on application performance or stability
@@ -132,6 +113,23 @@ While this warning can be safely ignored, if the console noise is problematic, y
 
 These workarounds are not recommended as they may hide other important warnings.
 
+## Bundled `qs` Audit Advisory
+
+`npm audit --omit=dev` reports one moderate advisory for `qs@6.14.2` under `meteor-node-stubs@1.2.27`.
+
+### Evidence and scope
+
+- The direct production dependency is already at the latest published `meteor-node-stubs` release.
+- `meteor-node-stubs` bundles `url`, which embeds `qs`; npm cannot replace that bundled copy with an override or `npm dedupe`.
+- The application does not import `qs`. The package is present as a browser polyfill dependency.
+- The advisory affects a specific `qs.stringify` option combination. No application call path to that API was found.
+- All high-severity production advisories were removed by updating direct dependencies and compatible transitive lockfile entries.
+- The production Docker build refreshes Meteor's generated server helpers after bundling; `npm audit --omit=dev` reports zero vulnerabilities in the final image.
+
+### Resolution
+
+Keep `meteor-node-stubs` current and remove this exception when its bundled `url` dependency includes `qs` newer than 6.15.1. Treat any new direct application use of `qs` as requiring a fresh exposure review.
+
 ## .meteor/versions Flip-Flop Between Test and App Runs
 
 ### Symptom
@@ -148,7 +146,7 @@ Meteor's resolver rewrites `.meteor/versions` on every run based on the inputs i
 
 ### Project Policy
 
-Commit the **app-mode** version of `.meteor/versions`. After running `npm test` or `npm run test-app`, discard the `.meteor/versions` change before committing: `git checkout -- meteor-app/.meteor/versions`. Do NOT delete the 3 `meteortesting:*` lines — they're the app-mode resolved set's transitive closure and Meteor will keep adding them right back.
+Commit the **app-mode** version of `.meteor/versions`. After running `npm test` or `npm run test-app`, discard the `.meteor/versions` change before committing: `git restore meteor-app/.meteor/versions`. Do NOT delete the 3 `meteortesting:*` lines — they're the app-mode resolved set's transitive closure and Meteor will keep adding them right back.
 
 ### Why we don't gitignore it
 
@@ -156,4 +154,4 @@ Losing the lock file loses reproducible builds. The cost of occasional manual cl
 
 ---
 
-_Last updated: 2025-09-23_
+_Last updated: 2026-07-11_

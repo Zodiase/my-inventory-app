@@ -1,0 +1,196 @@
+{
+    "scripts": [
+        {
+            "name": "check:ci",
+            "command": "npm run check:ci",
+            "mode": "command",
+            "category": "other"
+        },
+        {
+            "name": "check:ci:fresh",
+            "command": "npm run check:ci:fresh",
+            "mode": "command",
+            "category": "other"
+        },
+        {
+            "name": "clean:generated",
+            "command": "npm run clean:generated",
+            "mode": "command",
+            "category": "other"
+        },
+        {
+            "name": "prepare",
+            "command": "npm run prepare",
+            "mode": "command",
+            "category": "other"
+        },
+        {
+            "name": "start",
+            "command": "npm run start",
+            "mode": "service",
+            "category": "dev"
+        },
+        {
+            "name": "storybook",
+            "command": "npm run storybook",
+            "mode": "service",
+            "category": "storybook"
+        },
+        {
+            "name": "test:scripts",
+            "command": "npm run test:scripts",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "format",
+            "command": "npm run format",
+            "mode": "command",
+            "category": "format"
+        },
+        {
+            "name": "format:check",
+            "command": "npm run format:check",
+            "mode": "command",
+            "category": "format"
+        },
+        {
+            "name": "test:e2e",
+            "command": "npm run test:e2e",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:ui",
+            "command": "npm run test:e2e:ui",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:headed",
+            "command": "npm run test:e2e:headed",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:debug",
+            "command": "npm run test:e2e:debug",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:chromium",
+            "command": "npm run test:e2e:chromium",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:ipad",
+            "command": "npm run test:e2e:ipad",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:iphone",
+            "command": "npm run test:e2e:iphone",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:headless",
+            "command": "npm run test:e2e:headless",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:skip-server",
+            "command": "npm run test:e2e:skip-server",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:skip-server:ui",
+            "command": "npm run test:e2e:skip-server:ui",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:skip-server:headed",
+            "command": "npm run test:e2e:skip-server:headed",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:skip-server:debug",
+            "command": "npm run test:e2e:skip-server:debug",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:skip-server:headless",
+            "command": "npm run test:e2e:skip-server:headless",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:storybook",
+            "command": "npm run test:e2e:storybook",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:app",
+            "command": "npm run test:e2e:app",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "test:e2e:all",
+            "command": "npm run test:e2e:all",
+            "mode": "command",
+            "category": "test"
+        },
+        {
+            "name": "debug:check-meteor",
+            "command": "npm run debug:check-meteor",
+            "mode": "command",
+            "category": "other"
+        },
+        {
+            "name": "debug:check-storybook",
+            "command": "npm run debug:check-storybook",
+            "mode": "service",
+            "category": "storybook"
+        },
+        {
+            "name": "image",
+            "command": "make image",
+            "mode": "command",
+            "category": "other"
+        },
+        {
+            "name": "push-image",
+            "command": "make push-image",
+            "mode": "command",
+            "category": "other"
+        },
+        {
+            "name": "up",
+            "command": "make up",
+            "mode": "command",
+            "category": "other"
+        },
+        {
+            "name": "shell",
+            "command": "make shell",
+            "mode": "command",
+            "category": "other"
+        },
+        {
+            "name": "help",
+            "command": "make help",
+            "mode": "command",
+            "category": "other"
+        }
+    ]
+}

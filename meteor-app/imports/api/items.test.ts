@@ -151,10 +151,7 @@ describe('items', function () {
         });
 
         it('throws error when name is undefined', async function () {
-            await assert.rejects(
-                async () => await createInventoryItem({ name: undefined as unknown as string }),
-                /must have a name/
-            );
+            await assert.rejects(async () => await createInventoryItem({ name: undefined }), /must have a name/);
         });
 
         it('throws error when name is empty string', async function () {

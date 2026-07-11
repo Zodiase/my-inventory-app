@@ -1,19 +1,10 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+/**
+ * Composes strict type-aware linting for the Meteor, React, and Storybook codebase.
+ * Dynamic imports keep the flat config compatible with the CommonJS package boundary,
+ * while ordered overrides define the repository's source, test, and story policies.
+ */
 import storybook from 'eslint-plugin-storybook';
 
-/**
- * ESLint Flat Configuration for Meteor + TypeScript + React Project
- *
- * This config uses the new ESLint flat configuration format with dynamic imports
- * to avoid Node.js module type warnings while maintaining compatibility with Meteor.
- *
- * Configuration order matters: later configs override earlier ones.
- *
- * Known Issues:
- * - You may see "Unable to resolve timers/promises" warnings during tests
- *   This is a harmless warning from @sinonjs/fake-timers in browser contexts
- *   See docs/KNOWN_ISSUES.md for details - all functionality works correctly
- */
 export default (async () => {
     // Dynamic imports for all ESLint plugins and configs
     // Using dynamic imports allows ES module syntax without setting "type": "module" in package.json
@@ -44,7 +35,6 @@ export default (async () => {
                 parserOptions: {
                     allowImportExportEverywhere: true, // Meteor allows imports/exports everywhere
                     ecmaVersion: 'latest', // Use latest ECMAScript features
-                    project: './tsconfig.json', // Use TypeScript project config
                     sourceType: 'module', // Treat files as ES modules
                 },
                 globals: {

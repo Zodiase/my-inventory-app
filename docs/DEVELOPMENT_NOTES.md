@@ -1,134 +1,48 @@
 # Development Notes
 
-These notes capture migration context and operational learnings gathered during the Meteor 3.3.2 upgrade and subsequent CI/doc improvements.
+Durable operational context for the Meteor application. Live pass/fail state and test totals belong in local command output and GitHub Actions.
 
-## 1. Meteor 3 Upgrade Summary
+## Runtime baseline
 
-- Upgraded from Meteor 2.x (previous CI referenced `meteor@2.12`) to `METEOR@3.3.2`.
-- Removed legacy Fiber dependency: `fibers` is no longer required (and fails to build under modern Node releases). Dockerfile line installing `fibers@4` was deleted.
-- Supported Node runtimes are now limited to Node 22 and Node 24 via `engines` and CI matrix coverage.
+- The application release is `METEOR@3.4.1` in `meteor-app/.meteor/release`.
+- CI and the Docker build use the same Meteor release.
+- Supported Node runtimes are Node 22 and Node 24, as declared in both package manifests and exercised by CI.
+- The production Docker runtime uses Node 22 Alpine to match Meteor's supported baseline.
 
-## 2. Deprecated `util._extend` Warning
+When changing Meteor, update the app release, CI environment values, Docker builder image, and documentation together.
 
-- Warning appears only in dev server startup: emitted by Meteor tool internal `http-proxy` usage.
-- Upstream issue: meteor/meteor#13491 (documented in `docs/KNOWN_ISSUES.md`).
-- Harmless; not caused by repository code. No suppression committed to keep visibility into future deprecations.
-- **Note on `.meteor/versions`:** Test runs inject driver packages into the lock file. This drift is documented in `docs/KNOWN_ISSUES.md`. Always commit the app-mode lock file.
+## Generated Meteor state
 
-## 3. CI Pipeline Adjustments
+`meteor lint` generates types needed by TypeScript and ESLint in a clean checkout. The CI-equivalent command therefore runs Meteor lint before type and style checks.
 
-- Previous workflows targeted Node 14 and Meteor 2.12.
-- Updated GitHub Actions (`.github/workflows/node.js.yml`) to test Node 22 and Node 24, install `meteor@3.3.2` explicitly, cache `~/.meteor`, and run `meteor lint` before type/style checks so generated Meteor types exist in clean CI checkouts.
-- Matrix intentionally excludes odd-numbered/non-LTS Node releases and older Node versions.
-- Follow‑up idea: add a nightly job to test against `meteor@latest` for early detection of upstream changes.
+Meteor test commands may rewrite `meteor-app/.meteor/versions` with test-driver resolution changes. Commit the app-mode lockfile and review any lockfile drift after tests. See `docs/KNOWN_ISSUES.md` for the upstream issue.
 
-## 4. Lint & Type Issues Encountered
+Use `npm run clean:generated` when local generated state differs from CI. The cleanup script preserves `meteor-app/.meteor/local/db`.
 
-- `@typescript-eslint/no-misused-promises` flagged an `async` callback passed to `forEachAsync` in `getDetachedTags`.
-    - Resolution: fetch matching documents eagerly (`fetchAsync`) then iterate with a standard `for...of`, preserving async awaits inside the loop.
-- Minor warnings (unused variable, empty interface) retained; not build blocking but can be cleaned for signal purity.
+## Test isolation
 
-## 5. Docker Image Changes
+- Playwright starts Meteor with `E2E_RESET_DATABASE=1` and removes personal Mongo environment variables.
+- The reset endpoint rejects non-test Mongo URLs.
+- App E2E tests use one worker because they share a resettable database.
+- CI uses an isolated Meteor local directory for browser tests.
 
-- Base image: `geoffreybooth/meteor-base:3.3.2` retained as first stage for build.
-- Multi-stage approach preserved, but removed obsolete fibers install.
-- Runs on `node:22-alpine` final stage while CI validates both Node 22 and Node 24. Consider pinning a digest for reproducibility.
-- Potential enhancement: add build arg for Meteor version to reduce duplication.
+Keep personal inventory data behind `npm run start:personal`; use `npm run start:throwaway` for development and test work.
 
-## 6. Local Development Commands
+## Dependency maintenance
 
-| Purpose                                    | Command                    |
-| ------------------------------------------ | -------------------------- |
-| Install deps                               | `meteor npm install`       |
-| Start dev app                              | `meteor run`               |
-| Unit tests                                 | `npm test`                 |
-| Full app tests                             | `npm run test-app`         |
-| Lint + format check                        | `npm run check:code-style` |
-| Type check                                 | `npm run check:type`       |
-| CI-like check                              | `npm run check:ci`         |
-| Fresh CI-like check                        | `npm run check:ci:fresh`   |
-| Clean generated app state without DB reset | `npm run clean:generated`  |
+Run `npm audit --omit=dev` from `meteor-app/` for production exposure. `docs/KNOWN_ISSUES.md` records the one current upstream exception caused by a dependency bundled inside `meteor-node-stubs`.
 
-See `docs/NPM_SCRIPTS.md` for the categorized script reference.
+Dependabot covers the Meteor npm manifest and GitHub Actions weekly. Group security fixes by compatibility, and validate runtime dependency changes with unit and app E2E tests.
 
-## 7. Suggested Follow-Ups
+## Docker and CI policy
 
-- Add `CHANGELOG.md` beginning with this upgrade.
-- Add automated production image build test (attempt `meteor build` inside CI) to catch bundle regressions earlier.
-- Evaluate enabling ESLint rule escalation (treat warnings as errors) once outstanding warnings are resolved.
-- Add security scanning of final Docker image (e.g. Trivy or Grype) in pipeline.
+- Pull requests build the Docker image but do not log in to or publish to Docker Hub.
+- Trusted pushes to `master` build and publish the SHA-tagged image.
+- CI runs script tests, type checks, style checks, unit tests, Chromium and mobile WebKit app E2E, and Chromium Storybook E2E.
+- Visual-evidence automation remains a separate PR workflow because it compares base and head screenshots and publishes artifacts.
 
-## 8. ESLint Flat Configuration Migration (September 2025)
+## Known upstream warnings
 
-### Migration Summary
+Meteor development startup may emit the upstream `util._extend` deprecation warning. Meteor tests may emit a `timers/promises` browser-resolution warning from fake timers. Both are documented in `docs/KNOWN_ISSUES.md`; do not globally suppress Node warnings.
 
-- **Migrated from**: Legacy `.eslintrc.js` format to modern ESLint flat configuration
-- **Configuration file**: `eslint.config.mjs` (ES module with `.mjs` extension)
-- **Key achievement**: Successfully integrated `eslint-config-love@49.0.0` for strict TypeScript rules
-
-### Technical Implementation
-
-- **Dynamic imports**: Used `(await import(...))` pattern to avoid Node.js module type warnings
-- **Configuration order**: love config → base config → plugins → prettier (last) → ignores
-- **Environment globals**: Replaced deprecated `env` with explicit globals from `globals` package
-- **Import resolver**: Configured `eslint-import-resolver-meteor` for Meteor-specific imports
-
-### Code Quality Status
-
-- ✅ **TypeScript compilation**: Clean (added `skipLibCheck: true` for third-party types)
-- ✅ **Prettier formatting**: All files conform to standards
-- ⚠️ **ESLint issues**: 46 problems (43 errors, 3 warnings) from strict `love` config rules
-- ✅ **Tests**: All 18 unit tests passing
-
-### ESLint Issues Breakdown
-
-Most issues are from strict TypeScript rules in `eslint-config-love`:
-
-- **Magic numbers**: `@typescript-eslint/no-magic-numbers` (using `0`, `1`, `3000` directly)
-- **Type safety**: `@typescript-eslint/no-unsafe-argument`, `@typescript-eslint/no-unsafe-assignment`
-- **Import patterns**: `@typescript-eslint/no-import-type-side-effects` (inline type imports)
-- **Variable initialization**: `@typescript-eslint/init-declarations`
-- **Method binding**: `@typescript-eslint/unbound-method`
-
-### Testing Infrastructure
-
-- **Framework**: Meteortesting Mocha with browser and server test contexts
-- **Coverage**: 18 passing tests covering API methods, models, and utilities
-- **Known warning**: `timers/promises` module resolution warning (documented in KNOWN_ISSUES.md)
-- **Performance**: Tests complete in ~70-110ms consistently
-
-### Development Workflow Commands
-
-```bash
-# Code quality checks
-npm run check:type          # TypeScript compilation
-npm run check:code-style    # Prettier + ESLint combined
-npm run check:code-style:prettier  # Prettier only
-npm run check:code-style:lint      # ESLint only
-
-# Testing
-npm test                    # Unit tests (server-side)
-npm run test-app           # Full application tests (server + client)
-```
-
-## 9. Troubleshooting Tips
-
-| Symptom                        | Likely Cause                           | Fix                                    |
-| ------------------------------ | -------------------------------------- | -------------------------------------- |
-| `util._extend` warning         | Meteor tool dependency                 | Ignore / track upstream issue          |
-| `timers/promises` warning      | Test framework in browser context      | Safe to ignore (documented)            |
-| ESLint flat config errors      | Missing dynamic imports or wrong order | Check `eslint.config.mjs` structure    |
-| TypeScript third-party errors  | Missing skipLibCheck                   | Add `"skipLibCheck": true` to tsconfig |
-| Fibers build error             | Leftover install step                  | Remove `fibers` (done)                 |
-| Lint misused-promises error    | Async callback to sync iterator        | Prefetch then loop (implemented)       |
-| Docker build slow              | No layer caching of Meteor deps        | Consider caching `.meteor` & npm cache |
-| Local checks pass but CI fails | Stale/generated Meteor local types     | Run `npm run check:ci:fresh`           |
-
-## 10. Conventions Adopted
-
-- Conventional commits: `chore(deps)`, `ci:`, `chore(lint)`, `feat:` as applicable.
-- Documentation for external upstream issues lives in `docs/KNOWN_ISSUES.md`; internal process notes live here.
-- ESLint flat configuration with `.mjs` extension for ES module compatibility
-- Dynamic imports in configuration files to avoid module type conflicts
-
-_Last updated: 2025-09-23_
+_Last updated: 2026-07-11_

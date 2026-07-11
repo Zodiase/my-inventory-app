@@ -4,10 +4,11 @@ A Meteor 3 application for managing inventory items and tags.
 
 ## Development
 
-Install dependencies (Meteor manages most server/client deps):
+Install the root tooling and Meteor application dependencies from the repository root:
 
 ```bash
-meteor npm install
+npm ci
+npm ci --prefix meteor-app
 ```
 
 Start the app with throwaway local Meteor data:
@@ -83,16 +84,12 @@ npm run test:e2e:all
 npm run test:e2e:audit
 
 # Run unit tests
-npm test
-npm run test-app
+npm test --prefix meteor-app
 ```
 
 ### Prerequisites
 
-Before running E2E tests, ensure:
-
-1. **Storybook is running**: `npm run storybook` (for component tests)
-2. **Meteor app is running**: `npm start` (for integration tests)
+Playwright starts the required Meteor and Storybook servers automatically. Use the `test:e2e:skip-server:*` scripts only when intentionally testing against servers you started yourself.
 
 ### Quick Reference
 
@@ -106,12 +103,13 @@ For detailed testing guidance, see [Testing Quickstart Guide](specs/002-storyboo
 
 ## Code Quality
 
-Check code formatting, linting, and types:
+Run the repository's CI-equivalent quality path:
 
 ```bash
-npm run check:code-style    # Prettier + ESLint
-npm run check:type          # TypeScript compilation
+npm run check:ci
 ```
+
+For faster targeted feedback, run `npm run format:check` from the root, or run `npm run check:type` and `npm run check:code-style` from `meteor-app/`.
 
 To reproduce CI quality checks from a clean generated-Meteor state while preserving the local dev database:
 
@@ -121,14 +119,7 @@ npm run check:ci:fresh
 
 For a categorized list of npm scripts and when to use them, see [`docs/NPM_SCRIPTS.md`](docs/NPM_SCRIPTS.md).
 
-### Current Status
-
-- ✅ **TypeScript**: Clean compilation (0 errors)
-- ✅ **Prettier**: All files formatted correctly
-- ✅ **Tests**: 18 passing unit tests
-- ⚠️ **ESLint**: 46 issues from strict `eslint-config-love` rules (see docs/DEVELOPMENT_NOTES.md)
-
-The ESLint issues are mostly stylistic (magic numbers, strict typing) and don't affect functionality.
+Current pass/fail state and test totals belong in command output and GitHub Actions, not in this README. Run the commands above or inspect the latest CI run for live project health.
 
 ## Known Issues
 

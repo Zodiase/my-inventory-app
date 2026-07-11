@@ -183,7 +183,7 @@ test.describe('App Smoke Tests', () => {
         await expect(page.getByRole('heading', { name: 'Regression Room' })).toBeVisible();
     });
 
-    test('items and containers expose semantic links with keyboard navigation', async ({ page }) => {
+    test('items and containers expose semantic links with keyboard navigation', async ({ page }, testInfo) => {
         const containerId = await createItem(page, {
             name: 'Accessible Room',
             isContainer: true,
@@ -212,6 +212,11 @@ test.describe('App Smoke Tests', () => {
         expect(containerContextMenuWasNotCanceled).toBe(true);
         expect(itemContextMenuWasNotCanceled).toBe(true);
 
+        // Mobile WebKit does not expose desktop-style Tab traversal. The link
+        // semantics above still run on iPhone; hardware-keyboard navigation is
+        // covered by the Chromium and iPad projects.
+        if (testInfo.project.name === 'iPhone') return;
+
         const itemHref = `/items/${itemId}`;
         await focusHrefWithKeyboard(page, itemHref);
         await expect(page.locator(`a[href="${itemHref}"]`)).toBeFocused();
@@ -224,6 +229,7 @@ test.describe('App Smoke Tests', () => {
 
         const reloadedContainerLink = page.getByRole('link', { name: 'Open container Accessible Room' });
         const containerHref = `/container/${containerId}`;
+        await expect(reloadedContainerLink).toBeVisible();
         await focusHrefWithKeyboard(page, containerHref);
         await expect(page.locator(`a[href="${containerHref}"]`)).toBeFocused();
         await page.keyboard.press('Enter');
