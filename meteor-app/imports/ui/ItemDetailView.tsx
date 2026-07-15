@@ -7,9 +7,12 @@ import { Close } from 'grommet-icons';
 import React, { useState } from 'react';
 import { useParams, Link, useLocation } from 'wouter';
 
+import { Attachments } from '/imports/api/attachments';
 import Items, { InventoryItemsCollection } from '/imports/api/items';
 import Tags, { TagsCollection } from '/imports/api/tags';
+import type { Attachment } from '/imports/model/Attachment';
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import { AttachmentPanel } from '/imports/ui/AttachmentPanel';
 import { LoadingState } from '/imports/ui/common/LoadingState';
 import { ContainerSelector } from '/imports/ui/ContainerSelector';
 import { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
@@ -24,6 +27,16 @@ export { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentati
 
 const getErrorMessage = (error: unknown): string => {
     return error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+};
+
+const getAttachmentResponseError = async (response: Response): Promise<Error> => {
+    try {
+        const body = (await response.json()) as { message?: unknown };
+        if (typeof body.message === 'string' && body.message !== '') return new Error(body.message);
+    } catch {
+        // Fall through to a stable status-based message.
+    }
+    return new Error(`Attachment request failed (${response.status}).`);
 };
 
 const getNonEmptyContainerMessage = (childCount: number): string => {
@@ -70,10 +83,14 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
     const [moveTargetId, setMoveTargetId] = useState<string | undefined>();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
+    const [isUploadingAttachment, setIsUploadingAttachment] = useState(false);
+    const [deletingAttachmentId, setDeletingAttachmentId] = useState<string | undefined>();
+    const [attachmentErrorMessage, setAttachmentErrorMessage] = useState<string | undefined>();
 
     const isLoadingItem = useSubscribe('items.byId', itemId);
     const isLoadingAllItems = useSubscribe('items.all');
     const isLoadingTags = useSubscribe('tags.all');
+    const isLoadingAttachments = useSubscribe('attachments.byItem', itemId);
 
     usePageTitle('Item Details - My Inventory');
 
@@ -104,6 +121,14 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
     const childCount = useTracker(() => {
         if (itemId === '') return 0;
         return InventoryItemsCollection.find({ containerId: itemId }).count();
+    }, [itemId]);
+
+    const attachments = useTracker(() => {
+        if (itemId === '') return [];
+        return Attachments.find(
+            { itemId, storageState: 'ready' },
+            { sort: { order: 1, createdAt: 1, _id: 1 } }
+        ).fetch();
     }, [itemId]);
 
     const containerPath = useTracker(() => {
@@ -221,6 +246,52 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
         }
     };
 
+    const handleUploadAttachment = async (file: File): Promise<void> => {
+        try {
+            setIsUploadingAttachment(true);
+            setAttachmentErrorMessage(undefined);
+            const response = await fetch(`/api/items/${encodeURIComponent(item._id)}/attachments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': file.type === '' ? 'application/octet-stream' : file.type,
+                    'X-Inventory-Attachment-Request': '1',
+                    'X-Inventory-Filename': encodeURIComponent(file.name),
+                },
+                body: file,
+            });
+
+            if (!response.ok) throw await getAttachmentResponseError(response);
+        } catch (error) {
+            const message = getErrorMessage(error);
+            setAttachmentErrorMessage(message);
+            throw error;
+        } finally {
+            setIsUploadingAttachment(false);
+        }
+    };
+
+    const handleDeleteAttachment = async (attachment: Attachment): Promise<void> => {
+        try {
+            setDeletingAttachmentId(attachment._id);
+            setAttachmentErrorMessage(undefined);
+            const response = await fetch(
+                `/api/items/${encodeURIComponent(item._id)}/attachments/${encodeURIComponent(attachment._id)}`,
+                {
+                    method: 'DELETE',
+                    headers: { 'X-Inventory-Attachment-Request': '1' },
+                }
+            );
+
+            if (!response.ok) throw await getAttachmentResponseError(response);
+        } catch (error) {
+            const message = getErrorMessage(error);
+            setAttachmentErrorMessage(message);
+            throw error;
+        } finally {
+            setDeletingAttachmentId(undefined);
+        }
+    };
+
     // Render the presentation component with fetched data
     return (
         <>
@@ -251,6 +322,19 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
                 }}
                 disabled={isSubmitting}
             />
+
+            <Box pad={{ horizontal: 'medium', bottom: 'medium' }}>
+                <AttachmentPanel
+                    itemId={item._id}
+                    attachments={attachments}
+                    isLoading={isLoadingAttachments()}
+                    isUploading={isUploadingAttachment}
+                    deletingAttachmentId={deletingAttachmentId}
+                    errorMessage={attachmentErrorMessage}
+                    onUpload={handleUploadAttachment}
+                    onDelete={handleDeleteAttachment}
+                />
+            </Box>
 
             {isConfirmingDelete && (
                 <Layer

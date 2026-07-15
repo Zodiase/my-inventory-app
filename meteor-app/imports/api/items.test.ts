@@ -3,10 +3,12 @@ import assert from 'assert';
 import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
 
+import type { Attachment } from '/imports/model/Attachment';
 import type InventoryItem from '/imports/model/InventoryItem';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import type NoId from '/imports/utility/NoId';
 
+import { Attachments } from './attachments';
 import {
     InventoryItemsCollection,
     createInventoryItem,
@@ -477,6 +479,35 @@ describe('items', function () {
                 async () => await deleteInventoryItem(containerId),
                 /Cannot delete container with \d+ child items/
             );
+        });
+
+        it('refuses to delete an item while attachment metadata exists', async function () {
+            const itemId = await createTestItemDirect('Item with attachment', false);
+            const now = new Date();
+            const attachment: NoId<Attachment> = {
+                itemId,
+                type: 'pdf',
+                fileId: Random.id(),
+                storageState: 'ready',
+                label: 'receipt.pdf',
+                originalFilename: 'receipt.pdf',
+                mimeType: 'application/pdf',
+                fileSize: 12,
+                order: 0,
+                isPrimary: false,
+                createdAt: now,
+                modifiedAt: now,
+            };
+            const attachmentId = await Attachments.insertAsync(attachment);
+
+            try {
+                await assert.rejects(
+                    async () => await deleteInventoryItem(itemId),
+                    /Cannot delete item with 1 attachment\. Delete attachments first\./
+                );
+            } finally {
+                await Attachments.removeAsync({ _id: attachmentId });
+            }
         });
 
         it('throws RecordNotFoundException when item does not exist', async function () {
