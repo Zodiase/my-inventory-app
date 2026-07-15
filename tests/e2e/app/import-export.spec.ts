@@ -23,6 +23,9 @@ test.describe('Import/Export Data', () => {
         // 2. Navigate to /settings/data
         await page.goto('/settings/data');
         await expect(page.getByRole('heading', { name: 'Export Data' })).toBeVisible();
+        const attachmentDisclosure = page.getByRole('note', { name: 'Attachment export limitation' });
+        await expect(attachmentDisclosure).toContainText('JSON and CSV exports do not include attachment files.');
+        await expect(attachmentDisclosure).toContainText('but not attachments.');
 
         // 3. Click "Download JSON" and capture download
         const downloadPromise = page.waitForEvent('download');
