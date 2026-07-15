@@ -1,3 +1,8 @@
+/**
+ * Low-level GridFS access for attachment blobs.
+ * Centralizes ObjectId conversion and idempotent blob operations so lifecycle
+ * services can coordinate MongoDB metadata without duplicating driver details.
+ */
 import { MongoInternals } from 'meteor/mongo';
 import type { GridFSBucket as GridFSBucketType, GridFSBucketReadStream, ObjectId } from 'mongodb';
 
@@ -70,6 +75,11 @@ const toObjectId = (fileId: string): ObjectId => {
     return new ObjectIdConstructor(fileId) as unknown as ObjectId;
 };
 
+export const createGridFSFileId = (): string => {
+    const { ObjectId: ObjectIdConstructor } = MongoInternals.NpmModules.mongodb.module;
+    return new ObjectIdConstructor().toString();
+};
+
 /**
  * Upload a file to GridFS.
  *
@@ -90,12 +100,16 @@ const toObjectId = (fileId: string): ObjectId => {
 export const uploadToGridFS = async (
     buffer: Buffer,
     filename: string,
-    metadata: Record<string, unknown> = {}
+    metadata: Record<string, unknown> = {},
+    reservedFileId?: string
 ): Promise<string> => {
     const bucket = getGridFSBucket();
 
     return await new Promise<string>((resolve, reject) => {
-        const uploadStream = bucket.openUploadStream(filename, { metadata });
+        const uploadStream =
+            reservedFileId === undefined
+                ? bucket.openUploadStream(filename, { metadata })
+                : bucket.openUploadStreamWithId(toObjectId(reservedFileId), filename, { metadata });
 
         uploadStream.on('error', reject);
         uploadStream.on('finish', () => {
@@ -105,6 +119,17 @@ export const uploadToGridFS = async (
         uploadStream.write(buffer);
         uploadStream.end();
     });
+};
+
+export const getGridFSFileLength = async (fileId: string): Promise<number | undefined> => {
+    const bucket = getGridFSBucket();
+    const file = await bucket.find({ _id: toObjectId(fileId) }).next();
+    return file?.length;
+};
+
+export const countGridFSFiles = async (): Promise<number> => {
+    const bucket = getGridFSBucket();
+    return (await bucket.find({}).toArray()).length;
 };
 
 /**
@@ -144,4 +169,31 @@ export const downloadFromGridFS = (fileId: string): GridFSBucketReadStream => {
 export const deleteFromGridFS = async (fileId: string): Promise<void> => {
     const bucket = getGridFSBucket();
     await bucket.delete(toObjectId(fileId));
+};
+
+export const deleteFromGridFSIfExists = async (fileId: string): Promise<void> => {
+    const bucket = getGridFSBucket();
+    const objectId = toObjectId(fileId);
+    const exists = await bucket.find({ _id: objectId }).hasNext();
+
+    if (exists) {
+        try {
+            await bucket.delete(objectId);
+        } catch (error) {
+            if (!(error instanceof Error) || !/File not found/iu.test(error.message)) {
+                throw error;
+            }
+        }
+    }
+};
+
+export const clearGridFSBucket = async (): Promise<number> => {
+    const bucket = getGridFSBucket();
+    const files = await bucket.find({}).toArray();
+
+    for (const file of files) {
+        await bucket.delete(file._id);
+    }
+
+    return files.length;
 };

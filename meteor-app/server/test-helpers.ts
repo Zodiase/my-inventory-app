@@ -8,9 +8,10 @@ import type { IncomingMessage, ServerResponse } from 'http';
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 
-import { Attachments } from '/imports/api/attachments';
 import Items from '/imports/api/items';
 import Tags from '/imports/api/tags';
+
+import { clearAttachmentStorage } from './attachmentService';
 
 // HTTP status codes
 const HTTP_OK = 200;
@@ -61,12 +62,10 @@ const assertTestDatabaseMutationAllowed = (): void => {
 async function resetDatabase(): Promise<void> {
     assertTestDatabaseMutationAllowed();
 
-    // Remove all documents from all collections
+    // Remove blobs before their item records so failed cleanup remains retryable.
+    await clearAttachmentStorage();
     await Items.removeAsync({});
     await Tags.removeAsync({});
-    await Attachments.removeAsync({});
-
-    // TODO: Also clear GridFS files when attachments are implemented
 }
 
 // Export methods only in development

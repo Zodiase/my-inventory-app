@@ -15,6 +15,8 @@ import {
 } from '/imports/api/tags';
 import createLogger from '/imports/utility/Logger';
 
+import { registerAttachmentRoutes } from './attachmentRoutes';
+import { reconcileAttachmentStorage } from './attachmentService';
 import { initializeGridFS } from './gridfs';
 import '/imports/api/importExport/export';
 import '/imports/api/importExport/import';
@@ -23,11 +25,17 @@ import './test-helpers'; // Test helper methods for E2E testing
 
 const logger = createLogger(module);
 
+registerAttachmentRoutes();
+
 Meteor.startup(async () => {
     Meteor.settings.fixPath = true;
 
     // Initialize GridFS bucket for file storage (T009)
     initializeGridFS();
+    const reconciliation = await reconcileAttachmentStorage();
+    if (reconciliation.uploadsRemoved > 0 || reconciliation.deletesFinished > 0) {
+        logger.log('Reconciled interrupted attachment storage', reconciliation);
+    }
 
     // Create database indexes for performance
     logger.log('Creating database indexes...');
@@ -46,7 +54,7 @@ Meteor.startup(async () => {
     await TagsCollection.createIndexAsync({ path: 1 }); // Hierarchy queries
 
     // Attachments collection indexes (T008)
-    await Attachments.createIndexAsync({ itemId: 1, order: 1 }); // Ordered list per item
+    await Attachments.createIndexAsync({ itemId: 1, storageState: 1, order: 1 }); // Ready ordered list per item
     await Attachments.createIndexAsync({ itemId: 1, type: 1 }); // Filter by type
     await Attachments.createIndexAsync({ fileId: 1 }); // GridFS lookup
 
