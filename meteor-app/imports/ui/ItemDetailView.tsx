@@ -294,7 +294,7 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
 
     // Render the presentation component with fetched data
     return (
-        <>
+        <Box fill overflow="auto">
             <ItemDetailViewPresentation
                 item={item}
                 tags={tags}
@@ -323,7 +323,7 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
                 disabled={isSubmitting}
             />
 
-            <Box pad={{ horizontal: 'medium', bottom: 'medium' }}>
+            <Box flex={{ shrink: 0 }} pad={{ horizontal: 'medium', bottom: 'medium' }}>
                 <AttachmentPanel
                     itemId={item._id}
                     attachments={attachments}
@@ -469,6 +469,6 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
                     </Box>
                 </Layer>
             )}
-        </>
+        </Box>
     );
 };
