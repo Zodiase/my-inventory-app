@@ -1,7 +1,11 @@
-import { Button } from 'grommet';
+/**
+ * Route-ready presentation for a selected tag and its matching inventory items.
+ * Keeps empty/result states isolated from Meteor while exposing real links for navigation.
+ */
 import { Apps } from 'grommet-icons';
 import React, { type ComponentProps, type ReactElement } from 'react';
 import styled from 'styled-components';
+import { Link } from 'wouter';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
@@ -11,8 +15,8 @@ import { DESCRIPTION_PREVIEW_LENGTH } from '/imports/utility/constants';
 /**
  * ItemsByTagViewPresentation is a pure presentation component that displays items filtered by a selected tag.
  *
- * This component receives all data and callbacks as props and has no dependencies
- * on Meteor's reactive data system, making it fully testable in Storybook.
+ * This component receives its data as props and has no dependencies on Meteor's
+ * reactive data system, making it fully testable in Storybook.
  *
  * Features:
  * - Display selected tag name
@@ -23,58 +27,19 @@ import { DESCRIPTION_PREVIEW_LENGTH } from '/imports/utility/constants';
  * - Touch-optimized buttons (44x44px minimum)
  */
 
-interface ItemCardProps {
-    item: InventoryItem;
-    containerPath?: Array<{ _id: string; name: string }>;
-    onSelectItem?: (item: InventoryItem) => void;
-}
-
-const ItemCard = styled(
-    ({
-        item,
-        containerPath,
-        onSelectItem,
-        ...rootElementProps
-    }: ItemCardProps & ComponentProps<'div'>): ReactElement => {
-        const handleClick = (): void => {
-            if (onSelectItem !== undefined) {
-                onSelectItem(item);
-            }
-        };
-
-        const containerPathString =
-            containerPath !== undefined && containerPath.length > 0
-                ? containerPath.map((c) => c.name).join(' > ')
-                : 'Root';
-
-        return (
-            <div {...rootElementProps} onClick={handleClick} data-item-id={item._id}>
-                <div className="item-card-header">
-                    <h3 className="item-name">{item.name}</h3>
-                    {item.isContainer && <Apps className="container-badge" size="18px" />}
-                </div>
-                {typeof item.description === 'string' && item.description !== '' && (
-                    <p className="item-description">
-                        {item.description.substring(0, DESCRIPTION_PREVIEW_LENGTH)}
-                        {item.description.length > DESCRIPTION_PREVIEW_LENGTH ? '...' : ''}
-                    </p>
-                )}
-                <div className="item-location">
-                    <span className="location-label">Location:</span> {containerPathString}
-                </div>
-            </div>
-        );
-    }
-)`
+const ItemCard = styled(Link)`
+    display: block;
     border: 1px solid ${uiTokens.color.border};
     border-radius: ${uiTokens.radius.control};
     padding: 1em;
-    cursor: ${(props) => (props.onSelectItem !== undefined ? 'pointer' : 'default')};
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
     transition: background-color 0.2s, box-shadow 0.2s;
 
     &:hover {
-        background-color: ${(props) => (props.onSelectItem !== undefined ? uiTokens.color.surface : 'transparent')};
-        box-shadow: ${(props) => (props.onSelectItem !== undefined ? '0 2px 4px rgba(0,0,0,0.1)' : 'none')};
+        background-color: ${uiTokens.color.surface};
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .item-card-header {
@@ -112,6 +77,26 @@ const ItemCard = styled(
     }
 `;
 
+const ClearSelectionLink = styled(Link)`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: ${uiTokens.size.touchTarget};
+    margin-left: 1em;
+    padding: ${uiTokens.space.sm} ${uiTokens.space.lg};
+    color: ${uiTokens.color.brand};
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid ${uiTokens.color.brand};
+    border-radius: ${uiTokens.radius.control};
+`;
+
+const getContainerPathString = (containerPath?: Array<{ _id: string; name: string }>): string => {
+    return containerPath !== undefined && containerPath.length > 0
+        ? containerPath.map((container) => container.name).join(' > ')
+        : 'Root';
+};
+
 export interface ItemsByTagViewPresentationProps {
     /**
      * The currently selected tag to filter items by
@@ -129,16 +114,6 @@ export interface ItemsByTagViewPresentationProps {
     containerPaths?: Record<string, Array<{ _id: string; name: string }>>;
 
     /**
-     * Callback when an item is clicked
-     */
-    onSelectItem?: (item: InventoryItem) => void;
-
-    /**
-     * Callback when clearing the tag selection
-     */
-    onClearSelection?: () => void;
-
-    /**
      * Loading state
      */
     isLoading?: boolean;
@@ -149,8 +124,6 @@ export const ItemsByTagViewPresentation = styled(
         selectedTag,
         items,
         containerPaths = {},
-        onSelectItem,
-        onClearSelection,
         isLoading = false,
         ...rootElementProps
     }: ItemsByTagViewPresentationProps & ComponentProps<'div'>): ReactElement => {
@@ -181,9 +154,7 @@ export const ItemsByTagViewPresentation = styled(
                             {items.length} {items.length === 1 ? 'item' : 'items'}
                         </p>
                     </div>
-                    {onClearSelection !== undefined && (
-                        <Button className="clear-button" secondary label="Clear Selection" onClick={onClearSelection} />
-                    )}
+                    <ClearSelectionLink href="/tags">Clear Selection</ClearSelectionLink>
                 </div>
 
                 {items.length === 0 ? (
@@ -192,14 +163,34 @@ export const ItemsByTagViewPresentation = styled(
                     </div>
                 ) : (
                     <div className="items-grid">
-                        {items.map((item) => (
-                            <ItemCard
-                                key={item._id}
-                                item={item}
-                                containerPath={containerPaths[item._id]}
-                                onSelectItem={onSelectItem}
-                            />
-                        ))}
+                        {items.map((item) => {
+                            const containerPathString = getContainerPathString(containerPaths[item._id]);
+
+                            return (
+                                <ItemCard
+                                    key={item._id}
+                                    href={`/items/${item._id}`}
+                                    aria-label={`View item ${item.name}`}
+                                    data-item-id={item._id}
+                                >
+                                    <div className="item-card-header">
+                                        <h3 className="item-name">{item.name}</h3>
+                                        {item.isContainer && (
+                                            <Apps aria-hidden="true" className="container-badge" size="18px" />
+                                        )}
+                                    </div>
+                                    {typeof item.description === 'string' && item.description !== '' && (
+                                        <p className="item-description">
+                                            {item.description.substring(0, DESCRIPTION_PREVIEW_LENGTH)}
+                                            {item.description.length > DESCRIPTION_PREVIEW_LENGTH ? '...' : ''}
+                                        </p>
+                                    )}
+                                    <div className="item-location">
+                                        <span className="location-label">Location:</span> {containerPathString}
+                                    </div>
+                                </ItemCard>
+                            );
+                        })}
                     </div>
                 )}
             </div>
@@ -231,10 +222,6 @@ export const ItemsByTagViewPresentation = styled(
         font-size: 0.9em;
     }
 
-    .clear-button {
-        margin-left: 1em;
-    }
-
     .items-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -251,9 +238,5 @@ export const ItemsByTagViewPresentation = styled(
 
     .loading-state {
         color: ${uiTokens.color.textWeak};
-    }
-
-    ${ItemCard} {
-        /* Item card styles are already defined in the component */
     }
 `;

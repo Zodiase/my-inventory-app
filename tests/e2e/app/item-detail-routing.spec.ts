@@ -71,7 +71,7 @@ test.describe('Item detail routing', () => {
         await expect(page.getByRole('heading', { name: 'Return Battery' })).toBeVisible();
         await page.getByRole('button', { name: /Delete$/ }).click();
         await expect(page.getByRole('heading', { name: 'Delete Item' })).toBeVisible();
-        await page.getByRole('button', { name: /delete item/i }).click();
+        await page.getByRole('button', { name: 'Delete Item', exact: true }).click();
 
         await expect(page).toHaveURL(new RegExp(`/container/${containerId}$`));
         await expect(page.getByRole('heading', { name: 'Return Cabinet' })).toBeVisible();
@@ -90,7 +90,7 @@ test.describe('Item detail routing', () => {
         await expect(page.getByRole('heading', { name: 'Return Root Item' })).toBeVisible();
         await page.getByRole('button', { name: /Delete$/ }).click();
         await expect(page.getByRole('heading', { name: 'Delete Item' })).toBeVisible();
-        await page.getByRole('button', { name: /delete item/i }).click();
+        await page.getByRole('button', { name: 'Delete Item', exact: true }).click();
 
         await expect(page).toHaveURL(/\/items$/);
         await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
@@ -216,7 +216,7 @@ test.describe('Item detail routing', () => {
 
         await page.getByRole('button', { name: /Delete$/ }).click();
         await expect(page.getByRole('heading', { name: 'Delete Item' })).toBeVisible();
-        await page.getByRole('button', { name: /delete item/i }).click();
+        await page.getByRole('button', { name: 'Delete Item', exact: true }).click();
 
         await expect(page).toHaveURL(/\/search$/);
         await expect(page.getByRole('heading', { name: 'Search' })).toBeVisible();
