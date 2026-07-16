@@ -29,7 +29,9 @@ E2E tests treat local Meteor Mongo as disposable and may reset it. The test rese
 
 ### Docker Mongo Explorer
 
-The Docker stack includes Mongo Express as an opt-in, read-only data explorer. Normal Compose startup leaves it stopped, and MongoDB is reachable only by other containers on the Compose network.
+The Docker stack includes Mongo Express as an opt-in, read-only data explorer. Normal Compose startup leaves it stopped, and MongoDB is reachable only by other containers on the Compose network. The deprecated upstream image is pinned to a tested version and must remain private.
+
+Before generating `.env`, add `mongo-express-browser-password` and `mongo-express-database-password` password fields to the 1Password item referenced by `env.tpl`. The browser password protects the web UI; the database password belongs to a separate MongoDB user that can only read `inventory-app`. Generate both passwords with letters and digits only; the database password is embedded in a MongoDB connection URL, and this avoids URL or `.env` escaping problems.
 
 Start the explorer and its MongoDB dependency:
 
@@ -43,13 +45,13 @@ Stop the explorer when finished:
 docker compose stop mongo-express
 ```
 
-The explorer binds to `127.0.0.1:${MONGO_ADMIN_PORT}` by default and uses the configured Mongo credentials for browser authentication. From another computer, use an SSH tunnel and then open `http://localhost:8081`:
+The explorer binds to `127.0.0.1:${MONGO_ADMIN_PORT}` by default. Sign in with `MONGO_EXPRESS_USERNAME` and `MONGO_EXPRESS_PASSWORD`. From another computer, use an SSH tunnel and then open `http://localhost:8081`:
 
 ```bash
 ssh -N -L 8081:127.0.0.1:<configured-admin-port> <home-server>
 ```
 
-Set `MONGO_ADMIN_BIND_IP` only when the explorer should listen on a specific trusted private interface, such as the server's Tailscale address. Set `MONGO_EXPRESS_READONLY=false` for a session that requires data changes.
+Set `MONGO_ADMIN_BIND_IP` only when the explorer should listen on a specific trusted private interface, such as the server's Tailscale address. Mongo Express hides editing controls and connects as a database user with only the `read` role; use another deliberately privileged tool for data changes.
 
 ## Features
 
