@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
     meteorapp:
         build:
@@ -21,22 +19,25 @@ services:
         environment:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-        ports:
-            - '27017:27017'
         command:
             - --storageEngine=wiredTiger
 
     mongo-express:
         image: mongo-express:latest
-        restart: always
+        profiles: ['admin']
+        restart: 'no'
         environment:
             ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME}
             ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
-            ME_CONFIG_MONGODB_ENABLE_ADMIN: true
+            ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
             ME_CONFIG_MONGODB_PORT: 27017
             ME_CONFIG_MONGODB_SERVER: mongodb
+            ME_CONFIG_BASICAUTH_ENABLED: 'true'
+            ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_USERNAME}
+            ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_PASSWORD}
+            ME_CONFIG_OPTIONS_READONLY: '${MONGO_EXPRESS_READONLY:-true}'
         ports:
-            - '${MONGO_ADMIN_PORT}:8081'
+            - '${MONGO_ADMIN_BIND_IP:-127.0.0.1}:${MONGO_ADMIN_PORT}:8081'
         depends_on:
             - mongodb
 
