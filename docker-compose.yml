@@ -21,24 +21,76 @@ services:
         environment:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-        ports:
-            - '27017:27017'
         command:
             - --storageEngine=wiredTiger
+        networks:
+            default:
+                aliases:
+                    - mongo
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - 'mongo --quiet --username "$$MONGO_INITDB_ROOT_USERNAME" --password "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)"'
+            interval: 5s
+            timeout: 5s
+            retries: 24
+            start_period: 10s
+
+    mongo-express-user:
+        image: mongo:4
+        profiles: ['admin']
+        restart: 'no'
+        environment:
+            MONGO_EXPRESS_DB_USERNAME: '${MONGO_EXPRESS_DB_USERNAME:-}'
+            MONGO_EXPRESS_DB_PASSWORD: '${MONGO_EXPRESS_DB_PASSWORD:-}'
+        volumes:
+            - ./docker/mongo/create-explorer-user.js:/scripts/create-explorer-user.js:ro
+        entrypoint:
+            - mongo
+            - --host
+            - mongodb
+            - --quiet
+            - --username
+            - ${MONGO_USERNAME}
+            - --password
+            - ${MONGO_PASSWORD}
+            - --authenticationDatabase
+            - admin
+            - /scripts/create-explorer-user.js
+        depends_on:
+            mongodb:
+                condition: service_healthy
 
     mongo-express:
-        image: mongo-express:latest
-        restart: always
+        image: mongo-express:1.0.2-20-alpine3.19
+        profiles: ['admin']
+        restart: 'no'
+        volumes:
+            - ./docker/mongo-express-entrypoint.sh:/scripts/mongo-express-entrypoint.sh:ro
+        entrypoint:
+            - /sbin/tini
+            - --
+            - /bin/sh
+            - /scripts/mongo-express-entrypoint.sh
         environment:
-            ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME}
-            ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
-            ME_CONFIG_MONGODB_ENABLE_ADMIN: true
-            ME_CONFIG_MONGODB_PORT: 27017
+            ME_CONFIG_MONGODB_AUTH_DATABASE: inventory-app
+            ME_CONFIG_MONGODB_AUTH_PASSWORD: '${MONGO_EXPRESS_DB_PASSWORD:-}'
+            ME_CONFIG_MONGODB_AUTH_USERNAME: '${MONGO_EXPRESS_DB_USERNAME:-}'
+            ME_CONFIG_MONGODB_ENABLE_ADMIN: 'false'
+            ME_CONFIG_MONGODB_PORT: '27017'
             ME_CONFIG_MONGODB_SERVER: mongodb
+            ME_CONFIG_BASICAUTH: 'true'
+            ME_CONFIG_BASICAUTH_USERNAME: '${MONGO_EXPRESS_USERNAME:-}'
+            ME_CONFIG_BASICAUTH_PASSWORD: '${MONGO_EXPRESS_PASSWORD:-}'
+            ME_CONFIG_OPTIONS_READONLY: 'true'
+            ME_CONFIG_OPTIONS_NO_DELETE: 'true'
         ports:
-            - '${MONGO_ADMIN_PORT}:8081'
+            - '${MONGO_ADMIN_BIND_IP:-127.0.0.1}:${MONGO_ADMIN_PORT}:8081'
         depends_on:
-            - mongodb
+            mongodb:
+                condition: service_healthy
+            mongo-express-user:
+                condition: service_completed_successfully
 
 volumes:
     inventory_app_mongodb_data:
