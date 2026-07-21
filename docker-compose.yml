@@ -23,6 +23,10 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
         command:
             - --storageEngine=wiredTiger
+        networks:
+            default:
+                aliases:
+                    - mongo
         healthcheck:
             test:
                 - CMD-SHELL
@@ -69,8 +73,12 @@ services:
             - /bin/sh
             - /scripts/mongo-express-entrypoint.sh
         environment:
-            ME_CONFIG_MONGODB_URL: mongodb://${MONGO_EXPRESS_DB_USERNAME:-}:${MONGO_EXPRESS_DB_PASSWORD:-}@mongodb:27017/inventory-app
+            ME_CONFIG_MONGODB_AUTH_DATABASE: inventory-app
+            ME_CONFIG_MONGODB_AUTH_PASSWORD: '${MONGO_EXPRESS_DB_PASSWORD:-}'
+            ME_CONFIG_MONGODB_AUTH_USERNAME: '${MONGO_EXPRESS_DB_USERNAME:-}'
             ME_CONFIG_MONGODB_ENABLE_ADMIN: 'false'
+            ME_CONFIG_MONGODB_PORT: '27017'
+            ME_CONFIG_MONGODB_SERVER: mongodb
             ME_CONFIG_BASICAUTH: 'true'
             ME_CONFIG_BASICAUTH_USERNAME: '${MONGO_EXPRESS_USERNAME:-}'
             ME_CONFIG_BASICAUTH_PASSWORD: '${MONGO_EXPRESS_PASSWORD:-}'

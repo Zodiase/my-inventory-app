@@ -31,7 +31,7 @@ E2E tests treat local Meteor Mongo as disposable and may reset it. The test rese
 
 The Docker stack includes Mongo Express as an opt-in, read-only data explorer. Normal Compose startup leaves it stopped, and MongoDB is reachable only by other containers on the Compose network. The deprecated upstream image is pinned to a tested version and must remain private.
 
-Before generating `.env`, add `mongo-express-browser-password` and `mongo-express-database-password` password fields to the 1Password item referenced by `env.tpl`. The browser password protects the web UI; the database password belongs to a separate MongoDB user that can only read `inventory-app`. Generate both passwords with letters and digits only; the database password is embedded in a MongoDB connection URL, and this avoids URL or `.env` escaping problems.
+Before generating `.env`, add `mongo-express-browser-password` and `mongo-express-database-password` password fields to the 1Password item referenced by `env.tpl`. The browser password protects the web UI; the database password belongs to a separate MongoDB user that can only read `inventory-app`. Generate both passwords with letters and digits only to avoid `.env` escaping problems.
 
 Start the explorer and its MongoDB dependency:
 
