@@ -2,8 +2,7 @@
  * Route-backed item detail surface.
  * Loads item data from the URL, renders editable detail states, and handles missing-item fallbacks.
  */
-import { Box, Button, Heading, Layer, Text } from 'grommet';
-import { Close } from 'grommet-icons';
+import { Box, Button, Heading, Text } from 'grommet';
 import React, { useState } from 'react';
 import { useParams, Link, useLocation } from 'wouter';
 
@@ -13,6 +12,7 @@ import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingState } from '/imports/ui/common/LoadingState';
 import { ContainerSelector } from '/imports/ui/ContainerSelector';
 import { ItemDetailViewPresentation } from '/imports/ui/ItemDetailViewPresentation';
+import { ItemDialog } from '/imports/ui/ItemDialog';
 import { ItemForm } from '/imports/ui/ItemForm';
 import { getValidMoveTargetContainers } from '/imports/utility/moveTargets';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
@@ -253,137 +253,93 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
             />
 
             {isConfirmingDelete && (
-                <Layer
-                    onEsc={() => {
-                        setIsConfirmingDelete(false);
-                    }}
-                    onClickOutside={() => {
+                <ItemDialog
+                    title="Delete Item"
+                    width="medium"
+                    onClose={() => {
                         setIsConfirmingDelete(false);
                     }}
                 >
-                    <Box pad="medium" gap="medium" width="medium">
-                        <Box direction="row" justify="between" align="center">
-                            <Heading level="3" margin="none">
-                                Delete Item
-                            </Heading>
-                            <Button
-                                icon={<Close />}
-                                onClick={() => {
-                                    setIsConfirmingDelete(false);
-                                }}
-                            />
-                        </Box>
-                        <Text>Delete "{item.name}"? This cannot be undone.</Text>
-                        {item.isContainer && (
-                            <Text color="text-weak" size="small">
-                                Containers must be empty before they can be deleted.
-                            </Text>
-                        )}
-                        {errorMessage !== undefined && <Text color="status-critical">{errorMessage}</Text>}
-                        <Box direction="row" justify="end" gap="small">
-                            <Button
-                                label="Cancel"
-                                onClick={() => {
-                                    setIsConfirmingDelete(false);
-                                }}
-                                disabled={isSubmitting}
-                            />
-                            <Button
-                                primary
-                                color="status-critical"
-                                label="Delete Item"
-                                onClick={() => {
-                                    void handleDeleteItem();
-                                }}
-                                disabled={isSubmitting}
-                            />
-                        </Box>
+                    <Text>Delete "{item.name}"? This cannot be undone.</Text>
+                    {item.isContainer && (
+                        <Text color="text-weak" size="small">
+                            Containers must be empty before they can be deleted.
+                        </Text>
+                    )}
+                    {errorMessage !== undefined && <Text color="status-critical">{errorMessage}</Text>}
+                    <Box direction="row" justify="end" gap="small">
+                        <Button
+                            label="Cancel"
+                            onClick={() => {
+                                setIsConfirmingDelete(false);
+                            }}
+                            disabled={isSubmitting}
+                        />
+                        <Button
+                            primary
+                            color="status-critical"
+                            label="Delete Item"
+                            onClick={() => {
+                                void handleDeleteItem();
+                            }}
+                            disabled={isSubmitting}
+                        />
                     </Box>
-                </Layer>
+                </ItemDialog>
             )}
 
             {isEditing && (
-                <Layer
-                    onEsc={() => {
-                        setIsEditing(false);
-                    }}
-                    onClickOutside={() => {
+                <ItemDialog
+                    title="Edit Item"
+                    onClose={() => {
                         setIsEditing(false);
                     }}
                 >
-                    <Box pad="medium" gap="medium" width="large">
-                        <Box direction="row" justify="between" align="center">
-                            <Heading level="3" margin="none">
-                                Edit Item
-                            </Heading>
-                            <Button
-                                icon={<Close />}
-                                onClick={() => {
-                                    setIsEditing(false);
-                                }}
-                            />
-                        </Box>
-                        {errorMessage !== undefined && <Text color="status-critical">{errorMessage}</Text>}
-                        <ItemForm
-                            initialValues={item}
-                            availableTags={allTags}
-                            onSubmit={handleUpdateItem}
-                            onCancel={() => {
-                                setIsEditing(false);
-                            }}
-                            isSubmitting={isSubmitting}
-                        />
-                    </Box>
-                </Layer>
+                    {errorMessage !== undefined && <Text color="status-critical">{errorMessage}</Text>}
+                    <ItemForm
+                        initialValues={item}
+                        availableTags={allTags}
+                        onSubmit={handleUpdateItem}
+                        onCancel={() => {
+                            setIsEditing(false);
+                        }}
+                        isSubmitting={isSubmitting}
+                    />
+                </ItemDialog>
             )}
 
             {isMoving && (
-                <Layer
-                    onEsc={() => {
-                        setIsMoving(false);
-                    }}
-                    onClickOutside={() => {
+                <ItemDialog
+                    title="Move Item"
+                    onClose={() => {
                         setIsMoving(false);
                     }}
                 >
-                    <Box pad="medium" gap="medium" width="large">
-                        <Box direction="row" justify="between" align="center">
-                            <Heading level="3" margin="none">
-                                Move Item
-                            </Heading>
-                            <Button
-                                icon={<Close />}
-                                onClick={() => {
-                                    setIsMoving(false);
-                                }}
-                            />
-                        </Box>
-                        {errorMessage !== undefined && <Text color="status-critical">{errorMessage}</Text>}
-                        <ContainerSelector
-                            containers={availableContainers}
-                            selectedContainerId={moveTargetId}
-                            onSelect={setMoveTargetId}
+                    {errorMessage !== undefined && <Text color="status-critical">{errorMessage}</Text>}
+                    <ContainerSelector
+                        containers={availableContainers}
+                        selectedContainerId={moveTargetId}
+                        onSelect={setMoveTargetId}
+                        disabled={isSubmitting}
+                    />
+                    <Box direction="row" justify="end" gap="small">
+                        <Button
+                            label="Cancel"
+                            onClick={() => {
+                                setIsMoving(false);
+                            }}
                             disabled={isSubmitting}
                         />
-                        <Box direction="row" justify="end" gap="small">
-                            <Button
-                                label="Cancel"
-                                onClick={() => {
-                                    setIsMoving(false);
-                                }}
-                                disabled={isSubmitting}
-                            />
-                            <Button
-                                primary
-                                label="Move Item"
-                                onClick={() => {
-                                    void handleMoveItem();
-                                }}
-                                disabled={isSubmitting}
-                            />
-                        </Box>
+                        <Button
+                            primary
+                            label="Move Item"
+                            onClick={() => {
+                                void handleMoveItem();
+                            }}
+                            disabled={isSubmitting}
+                        />
                     </Box>
-                </Layer>
+                </ItemDialog>
             )}
         </>
     );

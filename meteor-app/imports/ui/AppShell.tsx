@@ -92,8 +92,7 @@ export const AppShell = ({ children, location }: AppShellProps): ReactElement =>
                 {children}
             </Main>
 
-            <Nav
-                direction="row"
+            <nav
                 aria-label="Mobile primary navigation"
                 className="app-shell-mobile-nav"
                 data-testid="mobile-primary-navigation"
@@ -105,10 +104,17 @@ export const AppShell = ({ children, location }: AppShellProps): ReactElement =>
                         <Link
                             key={item.href}
                             href={item.href}
+                            aria-label={item.label}
                             aria-current={getAriaCurrent(active)}
                             className={`app-shell-mobile-tab${active ? ' app-shell-mobile-tab-active' : ''}`}
                         >
-                            <Box align="center" justify="center" gap="xxsmall" className="app-shell-mobile-tab-content">
+                            <Box
+                                aria-hidden="true"
+                                align="center"
+                                justify="center"
+                                gap="xxsmall"
+                                className="app-shell-mobile-tab-content"
+                            >
                                 {item.icon}
                                 <Text size="xsmall" weight={active ? 'bold' : 'normal'}>
                                     {item.label}
@@ -117,7 +123,7 @@ export const AppShell = ({ children, location }: AppShellProps): ReactElement =>
                         </Link>
                     );
                 })}
-            </Nav>
+            </nav>
         </Box>
     );
 };

@@ -115,14 +115,5 @@ export const ItemsByTagViewContainer = (): ReactElement => {
         );
     }
 
-    return (
-        <ItemsByTagViewPresentation
-            selectedTag={selectedTag}
-            items={items}
-            containerPaths={containerPaths}
-            onClearSelection={() => {
-                /* Route-based, navigate to /tags instead */
-            }}
-        />
-    );
+    return <ItemsByTagViewPresentation selectedTag={selectedTag} items={items} containerPaths={containerPaths} />;
 };

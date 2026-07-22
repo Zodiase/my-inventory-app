@@ -106,12 +106,6 @@ export const NoTagSelected: Story = {
     args: {
         selectedTag: undefined,
         items: [],
-        onSelectItem: (item: InventoryItem) => {
-            console.log('Selected item:', item.name);
-        },
-        onClearSelection: () => {
-            console.log('Clear selection');
-        },
     },
 };
 
@@ -120,12 +114,14 @@ export const TagWithNoItems: Story = {
     args: {
         selectedTag: electronicsTag,
         items: [],
-        onSelectItem: (item: InventoryItem) => {
-            console.log('Selected item:', item.name);
-        },
-        onClearSelection: () => {
-            console.log('Clear selection');
-        },
+    },
+};
+
+// Story: One item
+export const OneItem: Story = {
+    args: {
+        selectedTag: campingTag,
+        items: sampleItems.slice(0, 1),
     },
 };
 
@@ -135,12 +131,6 @@ export const FewItems: Story = {
         selectedTag: campingTag,
         items: sampleItems,
         containerPaths,
-        onSelectItem: (item: InventoryItem) => {
-            console.log('Selected item:', item.name);
-        },
-        onClearSelection: () => {
-            console.log('Clear selection');
-        },
     },
 };
 
@@ -149,12 +139,6 @@ export const ManyItems: Story = {
     args: {
         selectedTag: campingTag,
         items: manyItems,
-        onSelectItem: (item: InventoryItem) => {
-            console.log('Selected item:', item.name);
-        },
-        onClearSelection: () => {
-            console.log('Clear selection');
-        },
     },
 };
 
@@ -184,12 +168,6 @@ export const ItemsWithLongNames: Story = {
                 modifiedAt: new Date('2024-01-11'),
             },
         ],
-        onSelectItem: (item: InventoryItem) => {
-            console.log('Selected item:', item.name);
-        },
-        onClearSelection: () => {
-            console.log('Clear selection');
-        },
     },
 };
 
@@ -240,12 +218,6 @@ export const ItemsInContainers: Story = {
             item2: [{ _id: 'closet', name: 'Hall Closet' }],
             item3: [{ _id: 'shed', name: 'Backyard Shed' }],
         },
-        onSelectItem: (item: InventoryItem) => {
-            console.log('Selected item:', item.name);
-        },
-        onClearSelection: () => {
-            console.log('Clear selection');
-        },
     },
 };
 
@@ -284,12 +256,6 @@ export const WithContainerItems: Story = {
         containerPaths: {
             item1: [{ _id: 'container1', name: 'Camping Gear Box' }],
         },
-        onSelectItem: (item: InventoryItem) => {
-            console.log('Selected item:', item.name);
-        },
-        onClearSelection: () => {
-            console.log('Clear selection');
-        },
     },
 };
 
@@ -316,7 +282,6 @@ export const FullyInteractive: Story = {
     render: function FullyInteractiveStory() {
         const [selectedTag, setSelectedTag] = useState<TagRecord | undefined>(campingTag);
         const [items, setItems] = useState<InventoryItem[]>(sampleItems);
-        const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
         const availableTags = [campingTag, electronicsTag];
 
@@ -328,19 +293,6 @@ export const FullyInteractive: Story = {
             } else {
                 setItems([]);
             }
-        };
-
-        const handleSelectItem = (item: InventoryItem): void => {
-            setSelectedItem(item);
-            setTimeout(() => {
-                setSelectedItem(null);
-            }, 3000);
-        };
-
-        const handleClearSelection = (): void => {
-            setSelectedTag(undefined);
-            setItems([]);
-            setSelectedItem(null);
         };
 
         return (
@@ -361,23 +313,8 @@ export const FullyInteractive: Story = {
                     ))}
                 </Box>
 
-                {/* Feedback message */}
-                {selectedItem !== null && (
-                    <Box background="brand" pad="small" round="small" animation="slideDown">
-                        <Text color="white" textAlign="center">
-                            Selected: {selectedItem.name}
-                        </Text>
-                    </Box>
-                )}
-
                 {/* Items view */}
-                <ItemsByTagViewPresentation
-                    selectedTag={selectedTag}
-                    items={items}
-                    containerPaths={containerPaths}
-                    onSelectItem={handleSelectItem}
-                    onClearSelection={handleClearSelection}
-                />
+                <ItemsByTagViewPresentation selectedTag={selectedTag} items={items} containerPaths={containerPaths} />
             </Box>
         );
     },
@@ -386,7 +323,7 @@ export const FullyInteractive: Story = {
             description: {
                 story: `**Fully Interactive Demo**
 
-Click tag buttons to switch between tags. Click item cards to simulate item selection (shows feedback message). The view updates reactively based on the selected tag. Click "Clear Selection" to reset.`,
+Click tag buttons to switch between result states. Item cards and Clear Selection expose the real application routes so their link semantics can be reviewed in isolation.`,
             },
         },
     },

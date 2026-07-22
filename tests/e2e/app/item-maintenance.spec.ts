@@ -34,7 +34,7 @@ test.describe('Item maintenance happy paths', () => {
 
         await page.getByRole('button', { name: /Move$/ }).click();
         await page.getByText('Gear Closet', { exact: true }).click();
-        await page.getByRole('button', { name: 'Move Item' }).click();
+        await page.getByRole('button', { name: 'Move Item', exact: true }).click();
 
         await page.goto('/');
         await page.getByText('Gear Closet', { exact: true }).click();
@@ -172,7 +172,7 @@ test.describe('Item maintenance happy paths', () => {
         await expect(page.getByRole('heading', { name: 'Disposable Item' })).toBeVisible();
 
         await page.getByRole('button', { name: /Delete$/ }).click();
-        await page.getByRole('button', { name: 'Delete Item' }).click();
+        await page.getByRole('button', { name: 'Delete Item', exact: true }).click();
 
         await expect(page).toHaveURL(/\/items$/);
         await expect(page.getByText('Disposable Item', { exact: true })).not.toBeVisible();
@@ -184,7 +184,7 @@ test.describe('Item maintenance happy paths', () => {
 
         await page.goto(`/items/${parentId}`);
         await page.getByRole('button', { name: /Delete$/ }).click();
-        await page.getByRole('button', { name: 'Delete Item' }).click();
+        await page.getByRole('button', { name: 'Delete Item', exact: true }).click();
 
         await expect(page.getByText(/Cannot delete container with 1 child item/)).toBeVisible();
         await expect(page.getByText('Delete "Full Container"? This cannot be undone.')).toBeVisible();

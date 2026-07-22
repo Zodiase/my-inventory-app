@@ -2,8 +2,8 @@
  * Top-level application shell and route composition.
  * Coordinates URL-backed inventory views, creation modal state, and cross-view search state.
  */
-import { Box, Button, Grommet, Heading, Layer, Text } from 'grommet';
-import { Add, Close, Filter } from 'grommet-icons';
+import { Box, Button, Grommet, Heading, Text } from 'grommet';
+import { Add, Filter } from 'grommet-icons';
 import { Meteor } from 'meteor/meteor';
 import React, { type ReactElement, useState, useEffect } from 'react';
 import { Route, Switch, useLocation } from 'wouter';
@@ -21,6 +21,7 @@ import { AllTagsView } from './AllTagsView';
 import { AppShell } from './AppShell';
 import { FilterBar } from './FilterBar';
 import { ItemDetailView } from './ItemDetailView';
+import { ItemDialog } from './ItemDialog';
 import { ItemForm } from './ItemForm';
 import { ItemsByTagView } from './ItemsByTagView';
 import { NotFoundView } from './NotFoundView';
@@ -447,35 +448,20 @@ export const App = (): ReactElement => {
 
                 {/* Create Item Modal */}
                 {showCreateItem && (
-                    <Layer
-                        onEsc={() => {
-                            setShowCreateItem(false);
-                        }}
-                        onClickOutside={() => {
+                    <ItemDialog
+                        title="Create New Item"
+                        onClose={() => {
                             setShowCreateItem(false);
                         }}
                     >
-                        <Box pad="medium" gap="medium" width="large">
-                            <Box direction="row" justify="between" align="center">
-                                <Heading level="3" margin="none">
-                                    Create New Item
-                                </Heading>
-                                <Button
-                                    icon={<Close />}
-                                    onClick={() => {
-                                        setShowCreateItem(false);
-                                    }}
-                                />
-                            </Box>
-                            <ItemForm
-                                availableTags={allTags}
-                                onSubmit={handleCreateItem}
-                                onCancel={() => {
-                                    setShowCreateItem(false);
-                                }}
-                            />
-                        </Box>
-                    </Layer>
+                        <ItemForm
+                            availableTags={allTags}
+                            onSubmit={handleCreateItem}
+                            onCancel={() => {
+                                setShowCreateItem(false);
+                            }}
+                        />
+                    </ItemDialog>
                 )}
             </AppShell>
         </Grommet>
