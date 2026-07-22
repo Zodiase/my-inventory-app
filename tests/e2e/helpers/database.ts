@@ -5,6 +5,11 @@
 
 import type { Page } from '@playwright/test';
 
+export interface AttachmentStorageStats {
+    metadataCount: number;
+    fileCount: number;
+}
+
 /**
  * Reset the entire database (remove all items, tags, and attachments).
  * This ensures each test starts with a clean slate.
@@ -21,6 +26,18 @@ export async function resetDatabase(page: Page): Promise<void> {
         const body = await response.text();
         throw new Error(`Failed to reset database: ${response.status()} ${body}`);
     }
+}
+
+/** Read attachment metadata and GridFS file counts from the guarded E2E endpoint. */
+export async function getAttachmentStorageStats(page: Page): Promise<AttachmentStorageStats> {
+    const response = await page.request.get('/api/test/attachment-storage');
+
+    if (!response.ok()) {
+        const body = await response.text();
+        throw new Error(`Failed to read attachment storage: ${response.status()} ${body}`);
+    }
+
+    return (await response.json()) as AttachmentStorageStats;
 }
 
 /**

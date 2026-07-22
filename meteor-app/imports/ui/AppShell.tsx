@@ -94,6 +94,7 @@ export const AppShell = ({ children, location }: AppShellProps): ReactElement =>
 
             <Nav
                 direction="row"
+                gap="none"
                 aria-label="Mobile primary navigation"
                 className="app-shell-mobile-nav"
                 data-testid="mobile-primary-navigation"

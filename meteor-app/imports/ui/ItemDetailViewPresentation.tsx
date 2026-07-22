@@ -84,7 +84,7 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
     disabled = false,
 }) => {
     return (
-        <Box fill pad="medium" gap="medium">
+        <Box fill="horizontal" flex={{ shrink: 0 }} pad="medium" gap="medium">
             {/* Header with item name and type indicator */}
             <Box direction="row" align="center" justify="between" gap="small">
                 <Heading level={2} margin="none">

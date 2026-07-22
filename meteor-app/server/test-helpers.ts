@@ -12,6 +12,9 @@ import { Attachments } from '/imports/api/attachments';
 import Items from '/imports/api/items';
 import Tags from '/imports/api/tags';
 
+import { clearAttachmentStorage } from './attachmentService';
+import { countGridFSFiles } from './gridfs';
+
 // HTTP status codes
 const HTTP_OK = 200;
 const HTTP_METHOD_NOT_ALLOWED = 405;
@@ -61,12 +64,10 @@ const assertTestDatabaseMutationAllowed = (): void => {
 async function resetDatabase(): Promise<void> {
     assertTestDatabaseMutationAllowed();
 
-    // Remove all documents from all collections
+    // Remove blobs before their item records so failed cleanup remains retryable.
+    await clearAttachmentStorage();
     await Items.removeAsync({});
     await Tags.removeAsync({});
-    await Attachments.removeAsync({});
-
-    // TODO: Also clear GridFS files when attachments are implemented
 }
 
 // Export methods only in development
@@ -116,6 +117,31 @@ if (!Meteor.isProduction) {
             await resetDatabase();
             res.writeHead(HTTP_OK, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true }));
+        } catch (error) {
+            res.writeHead(HTTP_INTERNAL_SERVER_ERROR, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }));
+        }
+    });
+
+    /**
+     * Storage-level attachment counts for E2E lifecycle assertions.
+     * Kept behind the same explicit throwaway-database guard as reset.
+     */
+    webAppWithHandlers.handlers.use('/api/test/attachment-storage', async (req, res) => {
+        if (req.method !== 'GET') {
+            res.writeHead(HTTP_METHOD_NOT_ALLOWED, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Method not allowed. Use GET.' }));
+            return;
+        }
+
+        try {
+            assertTestDatabaseMutationAllowed();
+            const [metadataCount, fileCount] = await Promise.all([
+                Attachments.find({}).countAsync(),
+                countGridFSFiles(),
+            ]);
+            res.writeHead(HTTP_OK, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+            res.end(JSON.stringify({ metadataCount, fileCount }));
         } catch (error) {
             res.writeHead(HTTP_INTERNAL_SERVER_ERROR, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }));

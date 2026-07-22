@@ -1,11 +1,16 @@
+/**
+ * Persistent metadata for item-owned attachment blobs.
+ * The storage state coordinates recoverable GridFS writes and deletes; raw
+ * bytes and transport behavior belong to server attachment modules.
+ */
 import type { CollectionItem } from '/imports/model/CollectionItem';
 
 /**
  * Attachment model for photos and PDF documents attached to items
  *
- * Supports:
- * - Photos: JPEG, PNG, HEIC with thumbnail generation and EXIF correction
- * - PDFs: Documents like receipts, warranties, manuals
+ * The first shipping slice supports JPEG/PNG photos with generated thumbnails
+ * and PDF documents. Additional formats and richer ordering/primary controls
+ * remain represented for planned follow-up work.
  *
  * File storage: GridFS
  * Max file size: 20MB per file
@@ -22,6 +27,9 @@ export interface Attachment extends CollectionItem {
 
     /** GridFS file ID for thumbnail (photos only) */
     thumbnailId?: string;
+
+    /** Recoverable state spanning MongoDB metadata and GridFS blob operations */
+    storageState: 'uploading' | 'ready' | 'deleting';
 
     /** User-customizable label, defaults to original filename */
     label: string;

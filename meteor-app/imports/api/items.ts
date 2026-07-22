@@ -1,6 +1,12 @@
+/**
+ * Inventory item persistence, domain validation, methods, and publications.
+ * Owns item hierarchy invariants; attachment bytes remain separate, while item
+ * deletion refuses to orphan attachment metadata or GridFS blobs.
+ */
 import { Meteor } from 'meteor/meteor';
 import type { Mongo } from 'meteor/mongo';
 
+import { Attachments } from '/imports/api/attachments';
 import type InventoryItem from '/imports/model/InventoryItem';
 import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from '/imports/model/ItemConstants';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
@@ -294,6 +300,15 @@ export const deleteInventoryItem = async (itemId: string): Promise<number> => {
         if (childCount > 0) {
             throw new Error(`Cannot delete container with ${childCount} child items. Move or delete children first.`);
         }
+    }
+
+    const attachmentCount = await Attachments.find({ itemId }).countAsync();
+    if (attachmentCount > 0) {
+        throw new Error(
+            `Cannot delete item with ${attachmentCount} ${
+                attachmentCount === 1 ? 'attachment' : 'attachments'
+            }. Delete attachments first.`
+        );
     }
 
     const result = await InventoryItemsCollection.removeAsync({ _id: itemId });

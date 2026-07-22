@@ -142,9 +142,19 @@ export const SettingsDataViewPresentation = ({
                     </Heading>
                 </CardHeader>
                 <CardBody pad="medium" gap="medium">
-                    <Text>
-                        Download a full backup of your inventory, including items, tags, and container hierarchy.
-                    </Text>
+                    <Text>Download inventory items, tags, and container hierarchy as JSON or CSV.</Text>
+                    <Box
+                        role="note"
+                        aria-label="Attachment export limitation"
+                        background="status-warning"
+                        pad="small"
+                        round="small"
+                    >
+                        <Text color="white" size="small">
+                            JSON and CSV exports do not include attachment files. Importing these files restores item
+                            and tag data, but not attachments.
+                        </Text>
+                    </Box>
                     {exportError != null && (
                         <Text color="status-critical" size="small">
                             {exportError}
