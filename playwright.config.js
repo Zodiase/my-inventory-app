@@ -24,6 +24,7 @@ const isStorybookOnlyRun =
     (selectedProjects.length > 0 && selectedProjects.every((project) => project === 'storybook-chromium'));
 const appPort = process.env.PLAYWRIGHT_APP_PORT ?? '3000';
 const appBaseURL = process.env.PLAYWRIGHT_APP_BASE_URL ?? `http://localhost:${appPort}`;
+const storybookBaseURL = process.env.PLAYWRIGHT_STORYBOOK_BASE_URL ?? 'http://localhost:6006';
 const meteorLocalDir =
     process.env.PLAYWRIGHT_METEOR_LOCAL_DIR === undefined
         ? ''
@@ -41,7 +42,7 @@ const appWebServer = {
 
 const storybookWebServer = {
     command: 'npm run storybook',
-    url: 'http://localhost:6006',
+    url: storybookBaseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
     stdout: 'pipe',
@@ -118,7 +119,7 @@ export default defineConfig({
             name: 'storybook-chromium',
             use: {
                 ...devices['Desktop Chrome'],
-                baseURL: 'http://localhost:6006',
+                baseURL: storybookBaseURL,
             },
             testMatch: /tests\/e2e\/storybook\/.*\.spec\.ts/,
         },

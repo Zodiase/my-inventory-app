@@ -6,6 +6,7 @@ import { Box, Button, Grommet, Heading, Text } from 'grommet';
 import { Add, Filter } from 'grommet-icons';
 import { Meteor } from 'meteor/meteor';
 import React, { type ReactElement, useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { Route, Switch, useLocation } from 'wouter';
 
 import Items, { InventoryItemsCollection } from '/imports/api/items';
@@ -30,9 +31,37 @@ import { SearchFragmentBuilder } from './SearchFragmentBuilder';
 import { SearchResultsView } from './SearchResultsView';
 import { SearchScopeSelector } from './SearchScopeSelector';
 import { SettingsDataView } from './SettingsDataView';
-import { DesignSystemGlobalStyle, theme } from './theme';
+import { DesignSystemGlobalStyle, theme, uiTokens } from './theme';
 
 const SEARCH_RESULT_ITEM_DETAIL_SOURCE = 'search-results';
+
+const ItemsViewHeader = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: ${uiTokens.space.lg};
+    margin-bottom: ${uiTokens.space.lg};
+
+    @media (max-width: 599px) {
+        align-items: stretch;
+        flex-direction: column;
+        gap: ${uiTokens.space.md};
+    }
+`;
+
+const ItemsViewActions = styled.div`
+    display: flex;
+    gap: ${uiTokens.space.sm};
+
+    @media (max-width: 599px) {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        > button {
+            width: 100%;
+        }
+    }
+`;
 
 interface ItemDetailNavigationState {
     inventoryItemDetailSource?: typeof SEARCH_RESULT_ITEM_DETAIL_SOURCE;
@@ -235,11 +264,11 @@ export const App = (): ReactElement => {
     const renderItemsView = (initialContainerId?: string): ReactElement => {
         return (
             <Box fill style={{ minHeight: 0 }}>
-                <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }} flex={false}>
+                <ItemsViewHeader>
                     <Heading level="2" margin="none">
                         {getItemsViewHeading(initialContainerId)}
                     </Heading>
-                    <Box direction="row" gap="small">
+                    <ItemsViewActions>
                         <Button
                             icon={<Filter />}
                             label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
@@ -257,8 +286,8 @@ export const App = (): ReactElement => {
                                 setShowCreateItem(true);
                             }}
                         />
-                    </Box>
-                </Box>
+                    </ItemsViewActions>
+                </ItemsViewHeader>
 
                 {/* Filter status and clear */}
                 {itemsViewFilters.length > 0 && (

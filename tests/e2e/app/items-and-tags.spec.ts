@@ -72,11 +72,16 @@ test.describe('Items view', () => {
 
         await reloadAndWait(page);
 
-        await expect(page.getByTestId('items-list').getByRole('link')).toHaveText([
-            'Box 2',
-            'Box 10',
-            'Cable 2',
-            'Cable 10',
+        const inventoryLinks = page.getByTestId('items-list').getByRole('link');
+        await expect(inventoryLinks).toHaveCount(4);
+        const sortedAccessibleNames = await inventoryLinks.evaluateAll((links) =>
+            links.map((link) => link.getAttribute('aria-label'))
+        );
+        expect(sortedAccessibleNames).toEqual([
+            'Open container Box 2',
+            'Open container Box 10',
+            'View item Cable 2',
+            'View item Cable 10',
         ]);
     });
 

@@ -8,10 +8,9 @@ import React, { type ComponentProps, type ReactElement, useState, useCallback, u
 import { useLocation } from 'wouter';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
+import { TagsCollection } from '/imports/api/tags';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
-import { LoadingState } from '/imports/ui/common/LoadingState';
-import { compareNaturalText } from '/imports/utility/naturalSort';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import { buildSearchQuery } from '/imports/utility/searchQuery';
 import { usePageTitle } from '/imports/utility/usePageTitle';
@@ -20,19 +19,6 @@ const REFRESH_VISUAL_DELAY_MS = 500;
 
 const findInventoryItemById = (itemId: string): InventoryItem | undefined => {
     return InventoryItemsCollection.find({ _id: itemId }, { limit: 1 }).fetch()[0];
-};
-
-const compareItemsForDisplay = (first: InventoryItem, second: InventoryItem): number => {
-    if (first.isContainer !== second.isContainer) {
-        return first.isContainer ? -1 : 1;
-    }
-
-    const byNaturalName = compareNaturalText(first.name, second.name);
-    if (byNaturalName !== 0) {
-        return byNaturalName;
-    }
-
-    return first.createdAt.getTime() - second.createdAt.getTime();
 };
 
 /**
@@ -117,12 +103,14 @@ export const AllItemsViewContainer = ({
                 $and: [baseQuery, filterQuery],
             };
 
-            return InventoryItemsCollection.find(combinedQuery).fetch().sort(compareItemsForDisplay);
+            return InventoryItemsCollection.find(combinedQuery).fetch();
         }
 
         // No filters - just show items at current level
-        return InventoryItemsCollection.find(baseQuery).fetch().sort(compareItemsForDisplay);
+        return InventoryItemsCollection.find(baseQuery).fetch();
     }, [currentContainerId, JSON.stringify(filters), refreshTrigger]);
+
+    const availableTags = useTracker(() => TagsCollection.find({}, { sort: { name: 1 } }).fetch(), []);
 
     // Fetch current container path for breadcrumb
     const containerPath = useTracker(() => {
@@ -156,15 +144,13 @@ export const AllItemsViewContainer = ({
         setLocation(containerId === undefined ? '/items' : `/container/${containerId}`);
     };
 
-    if (isLoadingItems() || isLoadingTags()) {
-        return <LoadingState />;
-    }
-
     return (
         <AllItemsViewPresentation
             {...rootElementProps}
             items={items}
             containerPath={containerPath}
+            availableTags={availableTags}
+            loading={isLoadingItems() || isLoadingTags()}
             onNavigateToContainer={(containerId) => {
                 handleNavigateToContainer(containerId);
             }}
