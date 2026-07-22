@@ -4,6 +4,7 @@ import { Add, Apps, Filter, Search as SearchIcon, Tag as TagIcon } from 'grommet
 import React, { useState } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import type { TagRecord } from '/imports/model/TagRecord';
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
 
 const meta: Meta<typeof AllItemsViewPresentation> = {
@@ -28,6 +29,33 @@ const meta: Meta<typeof AllItemsViewPresentation> = {
 export default meta;
 type Story = StoryObj<typeof AllItemsViewPresentation>;
 
+const storyTags: TagRecord[] = [
+    {
+        _id: 'storage-tag',
+        name: 'Storage',
+        parentTagId: '',
+        path: [{ _id: 'storage-tag', name: 'Storage' }],
+        createdAt: new Date('2024-01-01'),
+        modifiedAt: new Date('2024-01-01'),
+    },
+    {
+        _id: 'tools-tag',
+        name: 'Tools',
+        parentTagId: '',
+        path: [{ _id: 'tools-tag', name: 'Tools' }],
+        createdAt: new Date('2024-01-01'),
+        modifiedAt: new Date('2024-01-01'),
+    },
+    {
+        _id: 'outdoor-tag',
+        name: 'Outdoor',
+        parentTagId: '',
+        path: [{ _id: 'outdoor-tag', name: 'Outdoor' }],
+        createdAt: new Date('2024-01-01'),
+        modifiedAt: new Date('2024-01-01'),
+    },
+];
+
 // Sample data hierarchy
 const home: InventoryItem = {
     _id: 'home',
@@ -46,7 +74,7 @@ const garage: InventoryItem = {
     description: 'Two-car garage with storage',
     isContainer: true,
     containerId: 'home',
-    tagIds: [],
+    tagIds: ['storage-tag'],
     createdAt: new Date('2024-01-02'),
     modifiedAt: new Date('2024-01-02'),
 };
@@ -68,7 +96,7 @@ const toolBox: InventoryItem = {
     description: 'Red metal tool box',
     isContainer: true,
     containerId: 'garage',
-    tagIds: [],
+    tagIds: ['storage-tag', 'tools-tag'],
     createdAt: new Date('2024-01-04'),
     modifiedAt: new Date('2024-01-04'),
 };
@@ -79,7 +107,7 @@ const hammer: InventoryItem = {
     description: 'Claw hammer, 16oz',
     isContainer: false,
     containerId: 'toolbox',
-    tagIds: [],
+    tagIds: ['tools-tag'],
     createdAt: new Date('2024-01-05'),
     modifiedAt: new Date('2024-01-05'),
 };
@@ -90,7 +118,7 @@ const screwdriver: InventoryItem = {
     description: 'Phillips and flathead, 6 pieces',
     isContainer: false,
     containerId: 'toolbox',
-    tagIds: [],
+    tagIds: ['tools-tag'],
     createdAt: new Date('2024-01-06'),
     modifiedAt: new Date('2024-01-06'),
 };
@@ -101,7 +129,7 @@ const bike: InventoryItem = {
     description: '21-speed mountain bike, blue',
     isContainer: false,
     containerId: 'garage',
-    tagIds: [],
+    tagIds: ['outdoor-tag'],
     createdAt: new Date('2024-01-07'),
     modifiedAt: new Date('2024-01-07'),
 };
@@ -116,6 +144,84 @@ const scrollRegressionItems: InventoryItem[] = [
         containerId: undefined,
     })),
 ];
+
+const hundredPlusItems: InventoryItem[] = [
+    { ...garage, containerId: undefined },
+    { ...kitchen, containerId: undefined },
+    ...Array.from({ length: 104 }, (_, index) => {
+        const itemNumber = index + 1;
+        return {
+            ...hammer,
+            _id: `high-volume-item-${itemNumber}`,
+            name:
+                itemNumber === 1
+                    ? 'A deliberately long inventory item name that must truncate predictably in every responsive density mode'
+                    : `Inventory item ${itemNumber}`,
+            description:
+                itemNumber % 3 === 0 ? `Useful comparison description for inventory item ${itemNumber}` : undefined,
+            containerId: undefined,
+            tagIds: itemNumber % 5 === 0 ? ['tools-tag', 'outdoor-tag'] : itemNumber % 2 === 0 ? ['storage-tag'] : [],
+            modifiedAt: new Date(Date.UTC(2026, 0, (itemNumber % 28) + 1)),
+        };
+    }),
+];
+
+const commonStoryArgs = {
+    containerPath: [],
+    availableTags: storyTags,
+    showHomeIcon: true,
+    onNavigateToContainer: () => {
+        console.log('Navigate to container');
+    },
+    onBreadcrumbNavigate: () => {
+        console.log('Breadcrumb navigate');
+    },
+};
+
+/**
+ * Loading fixture keeps list context visible while data arrives.
+ */
+export const LoadingInventory: Story = {
+    args: {
+        ...commonStoryArgs,
+        items: [],
+        loading: true,
+    },
+};
+
+/**
+ * Empty fixture includes the zero count and empty guidance.
+ */
+export const EmptyInventory: Story = {
+    args: {
+        ...commonStoryArgs,
+        items: [],
+    },
+};
+
+/**
+ * Short fixture exercises mixed row metadata without scrolling.
+ */
+export const ShortInventory: Story = {
+    args: {
+        ...commonStoryArgs,
+        items: [
+            { ...garage, containerId: undefined },
+            { ...hammer, containerId: undefined },
+            { ...bike, containerId: undefined },
+        ],
+    },
+};
+
+/**
+ * High-volume fixture represents a real 100-plus-entry collection.
+ */
+export const HundredPlusInventory: Story = {
+    args: {
+        ...commonStoryArgs,
+        items: hundredPlusItems,
+    },
+};
 
 /**
  * Empty root level - no items at all
