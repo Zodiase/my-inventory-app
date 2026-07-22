@@ -101,7 +101,7 @@ export default defineConfig({
             name: 'iPad',
             testIgnore: [/tests\/e2e\/storybook\/.*\.spec\.ts/, /tests\/e2e\/app\/import-export\.spec\.ts/],
             use: {
-                ...devices['iPad Pro'],
+                ...devices['iPad Pro 11'],
                 hasTouch: true,
             },
         },

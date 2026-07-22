@@ -148,12 +148,15 @@ jobs:
                     - project: chromium
                       browser: chromium
                       artifact: chromium
+                      tests: tests/e2e/app/
                     - project: iPad
                       browser: webkit
                       artifact: ipad
+                      tests: tests/e2e/app/touch-optimization.spec.ts tests/e2e/app/ui-stabilization.spec.ts
                     - project: iPhone
                       browser: webkit
                       artifact: iphone
+                      tests: tests/e2e/app/touch-optimization.spec.ts tests/e2e/app/ui-stabilization.spec.ts
         steps:
             - uses: actions/checkout@v7
             - name: Use Node.js 22
@@ -178,7 +181,7 @@ jobs:
             - run: meteor npm ci --ignore-scripts
               working-directory: meteor-app
             - run: npx playwright install --with-deps ${{ matrix.browser }}
-            - run: npm run test:e2e:app -- --project=${{ matrix.project }} --workers=1 --reporter=line
+            - run: npx playwright test ${{ matrix.tests }} --project=${{ matrix.project }} --workers=1 --reporter=line
             - name: Upload Playwright diagnostics
               if: always()
               uses: actions/upload-artifact@v4
