@@ -56,7 +56,7 @@ jobs:
                   persist-credentials: false
 
             - name: Collect changed files
-              uses: actions/github-script@v7
+              uses: actions/github-script@v9
               env:
                   CHANGED_FILES_PATH: ${{ runner.temp }}/changed-files.txt
               with:
@@ -310,7 +310,7 @@ jobs:
                   echo "published-root=${raw_root}" >> "$GITHUB_OUTPUT"
 
             - name: Comment on pull request
-              uses: actions/github-script@v7
+              uses: actions/github-script@v9
               env:
                   COMMENT_BODY_PATH: ${{ runner.temp }}/pr-visual-evidence-comment/pr-visual-evidence-comment.md
               with:
