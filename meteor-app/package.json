@@ -54,7 +54,7 @@
         "@storybook/addon-docs": "^10.0.0",
         "@storybook/addon-onboarding": "^10.0.0",
         "@storybook/addon-webpack5-compiler-swc": "^4.0.1",
-        "@storybook/react-webpack5": "^10.0.0",
+        "@storybook/react-webpack5": "^10.5.2",
         "@types/archiver": "^6.0.2",
         "@types/chai": "^5.2.2",
         "@types/lodash": "^4.17.20",
