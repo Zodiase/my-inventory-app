@@ -9,6 +9,7 @@ import React, { type ReactElement, useState, useEffect } from 'react';
 import { Route, Switch, useLocation } from 'wouter';
 
 import Items, { InventoryItemsCollection } from '/imports/api/items';
+import { getInventoryIdLabel, InventoryIdentitiesCollection } from '/imports/api/identities';
 import { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { SearchFragment } from '/imports/model/SearchFragment';
@@ -89,8 +90,10 @@ export const App = (): ReactElement => {
     // Fetch all tags for search components
     const isLoadingTags = useSubscribe('tags.all');
     const isLoadingAllItems = useSubscribe('items.all');
+    const isLoadingIdentities = useSubscribe('inventory.identities');
     const tagsLoading = isLoadingTags();
     const allItemsLoading = isLoadingAllItems();
+    const identitiesLoading = isLoadingIdentities();
     const allTags = useTracker(() => {
         return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
     }, []);
@@ -103,6 +106,11 @@ export const App = (): ReactElement => {
     const currentSearchScopeItem = useTracker(() => {
         if (currentItemsContainerId === undefined) return undefined;
         return findInventoryItemById(currentItemsContainerId);
+    }, [currentItemsContainerId]);
+
+    const currentItemsContainerIdentity = useTracker(() => {
+        if (currentItemsContainerId === undefined) return undefined;
+        return InventoryIdentitiesCollection.findOne({ itemId: currentItemsContainerId });
     }, [currentItemsContainerId]);
 
     // Clear filters when navigating between views
@@ -236,9 +244,22 @@ export const App = (): ReactElement => {
         return (
             <Box fill style={{ minHeight: 0 }}>
                 <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }} flex={false}>
-                    <Heading level="2" margin="none">
-                        {getItemsViewHeading(initialContainerId)}
-                    </Heading>
+                    <Box style={{ minWidth: 0 }}>
+                        <Heading level="2" margin="none">
+                            {getItemsViewHeading(initialContainerId)}
+                        </Heading>
+                        {currentItemsContainerIdentity !== undefined && initialContainerId !== undefined && (
+                            <Text
+                                size="small"
+                                color="brand"
+                                weight="bold"
+                                style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                title={currentItemsContainerIdentity.identity.value}
+                            >
+                                ID: {getInventoryIdLabel(currentItemsContainerIdentity.identity, true)}
+                            </Text>
+                        )}
+                    </Box>
                     <Box direction="row" gap="small">
                         <Button
                             icon={<Filter />}
@@ -316,7 +337,7 @@ export const App = (): ReactElement => {
             return renderInvalidContainerView();
         }
 
-        if (allItemsLoading) {
+        if (allItemsLoading || identitiesLoading) {
             return <LoadingState />;
         }
 

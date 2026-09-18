@@ -8,6 +8,7 @@ import React, { type ComponentProps, type ReactElement, useState, useCallback, u
 import { useLocation } from 'wouter';
 
 import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
+import { InventoryIdentitiesCollection } from '/imports/api/identities';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
 import { LoadingState } from '/imports/ui/common/LoadingState';
@@ -100,6 +101,7 @@ export const AllItemsViewContainer = ({
 
     const isLoadingItems = useSubscribe('items.byContainer', currentContainerId ?? null);
     const isLoadingTags = useSubscribe('tags.all');
+    const isLoadingIdentities = useSubscribe('inventory.identities');
 
     // Fetch items at current level with optional filters
     const items = useTracker(() => {
@@ -123,6 +125,8 @@ export const AllItemsViewContainer = ({
         // No filters - just show items at current level
         return InventoryItemsCollection.find(baseQuery).fetch().sort(compareItemsForDisplay);
     }, [currentContainerId, JSON.stringify(filters), refreshTrigger]);
+
+    const identities = useTracker(() => InventoryIdentitiesCollection.find({}).fetch(), [refreshTrigger]);
 
     // Fetch current container path for breadcrumb
     const containerPath = useTracker(() => {
@@ -156,7 +160,7 @@ export const AllItemsViewContainer = ({
         setLocation(containerId === undefined ? '/items' : `/container/${containerId}`);
     };
 
-    if (isLoadingItems() || isLoadingTags()) {
+    if (isLoadingItems() || isLoadingTags() || isLoadingIdentities()) {
         return <LoadingState />;
     }
 
@@ -164,6 +168,7 @@ export const AllItemsViewContainer = ({
         <AllItemsViewPresentation
             {...rootElementProps}
             items={items}
+            identities={identities}
             containerPath={containerPath}
             onNavigateToContainer={(containerId) => {
                 handleNavigateToContainer(containerId);

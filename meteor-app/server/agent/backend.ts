@@ -7,13 +7,14 @@ import { Mongo } from 'meteor/mongo';
 
 import { InventoryItemsCollection, createInventoryItem, updateInventoryItem, moveItem } from '/imports/api/items';
 import { TagsCollection, createTag } from '/imports/api/tags';
+import { InventoryIdentitiesCollection } from '/imports/api/identities';
 import detectCircularReference from '/imports/utility/circularReference';
 
 import { AgentError, identityKey } from './service';
 import type { Backend, Event, Identity } from './service';
 
 const events = new Mongo.Collection<Event>('agent_requests');
-const bindings = new Mongo.Collection<{ _id: string; itemId: string; identity: Identity }>('agent_identities');
+const bindings = InventoryIdentitiesCollection;
 const locks = new Mongo.Collection<{ _id: string; requestId: string }>('agent_locks');
 const DUPLICATE_KEY = 11000;
 const isDuplicate = (error: unknown): boolean =>

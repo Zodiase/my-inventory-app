@@ -62,6 +62,24 @@ Set `MONGO_ADMIN_BIND_IP` only when the explorer should listen on a specific tru
 
 See [the agent interface guide](docs/AGENT_INTERFACE.md) for opt-in JSON invocation, external identity binding, replay/correction behavior, and interrupted-write recovery.
 
+### Local QR decoding
+
+On macOS, decode QR stickers from local photos with the built-in Vision-based
+utility. It prints one tab-separated `image` / `payload` row per decoded QR and
+returns a nonzero status when no QR payload is found:
+
+```bash
+./scripts/decode-qr.swift /path/to/photo.jpg
+```
+
+The utility performs decoding locally; it does not upload images or modify the
+inventory database. Use a tighter crop when a QR occupies only a small part of
+a large photo.
+
+The web UI uses the printed short form (`箱-XXXXXXXX` for containers and
+`物-XXXXXXXX` for items) in lists and details. Full UUIDs remain available on
+detail views for exact cross-database verification.
+
 ### Design System
 
 The app uses a lightweight design language for touch-friendly inventory workflows. See [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) for product feel, shared tokens, component standards, and the feature design requirements template.

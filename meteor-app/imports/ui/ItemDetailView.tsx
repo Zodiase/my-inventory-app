@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useParams, Link, useLocation } from 'wouter';
 
 import Items, { InventoryItemsCollection } from '/imports/api/items';
+import { InventoryIdentitiesCollection } from '/imports/api/identities';
 import Tags, { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingState } from '/imports/ui/common/LoadingState';
@@ -74,6 +75,7 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
     const isLoadingItem = useSubscribe('items.byId', itemId);
     const isLoadingAllItems = useSubscribe('items.all');
     const isLoadingTags = useSubscribe('tags.all');
+    const isLoadingIdentities = useSubscribe('inventory.identities');
 
     usePageTitle('Item Details - My Inventory');
 
@@ -88,6 +90,11 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
         if (item === undefined) return [];
         return TagsCollection.find({ _id: { $in: item.tagIds } }).fetch();
     }, [item?.tagIds.join(',')]);
+
+    const identities = useTracker(() => {
+        if (itemId === '') return [];
+        return InventoryIdentitiesCollection.find({ itemId }).fetch();
+    }, [itemId]);
 
     const allTags = useTracker(() => {
         return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
@@ -126,7 +133,7 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
         return path;
     }, [item?._id, item?.containerId]);
 
-    if (isLoadingItem() || isLoadingAllItems() || isLoadingTags()) {
+    if (isLoadingItem() || isLoadingAllItems() || isLoadingTags() || isLoadingIdentities()) {
         return <LoadingState />;
     }
 
@@ -226,6 +233,7 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
         <>
             <ItemDetailViewPresentation
                 item={item}
+                identities={identities}
                 tags={tags}
                 containerPath={containerPath}
                 onEdit={() => {

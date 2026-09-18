@@ -10,6 +10,7 @@ import styled, { css, keyframes } from 'styled-components';
 import { Link } from 'wouter';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import { getInventoryIdLabel, type InventoryIdentity } from '/imports/api/identities';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
@@ -126,6 +127,9 @@ export interface AllItemsViewPresentationProps {
      */
     items: InventoryItem[];
 
+    /** Identity bindings keyed by item ID for visible inventory labels. */
+    identities?: InventoryIdentity[];
+
     /**
      * Path of containers from root to current location for breadcrumb
      */
@@ -169,6 +173,7 @@ export interface AllItemsViewPresentationProps {
 
 export const AllItemsViewPresentation = ({
     items,
+    identities = [],
     containerPath,
     showHomeIcon = true,
     onNavigateToContainer,
@@ -180,6 +185,7 @@ export const AllItemsViewPresentation = ({
     ...rootElementProps
 }: AllItemsViewPresentationProps & ComponentProps<'div'>): ReactElement => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const identitiesByItemId = new Map(identities.map((binding) => [binding.itemId, binding.identity]));
 
     // Pull-to-refresh hook
     const { isRefreshing, pullDistance, isTriggered } = usePullToRefresh({
@@ -317,6 +323,25 @@ export const AllItemsViewPresentation = ({
                                                 <Text weight={item.isContainer ? 'bold' : 'normal'} truncate>
                                                     {item.name}
                                                 </Text>
+                                                {identitiesByItemId.has(item._id) && (
+                                                    <Text
+                                                        size="small"
+                                                        color="brand"
+                                                        weight="bold"
+                                                        style={{
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                        }}
+                                                        title={identitiesByItemId.get(item._id)?.value}
+                                                    >
+                                                        ID:{' '}
+                                                        {getInventoryIdLabel(
+                                                            identitiesByItemId.get(item._id)!,
+                                                            item.isContainer
+                                                        )}
+                                                    </Text>
+                                                )}
                                                 {item.description !== '' && item.description !== undefined && (
                                                     <Text size="small" color="text-weak" truncate>
                                                         {item.description}

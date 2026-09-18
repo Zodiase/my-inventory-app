@@ -8,6 +8,7 @@ import { Edit, Trash, Up } from 'grommet-icons';
 import React from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import { getInventoryIdLabel, type InventoryIdentity } from '/imports/api/identities';
 import type { TagRecord } from '/imports/model/TagRecord';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
 import { TagChip } from '/imports/ui/TagChip';
@@ -25,6 +26,9 @@ import { TagChip } from '/imports/ui/TagChip';
 export interface ItemDetailViewProps {
     /** The item to display */
     item: InventoryItem;
+
+    /** Identity bindings for this item, if any. */
+    identities?: InventoryIdentity[];
 
     /** Path from root to the item's container (empty if item is at root) */
     containerPath?: InventoryItem[];
@@ -74,6 +78,7 @@ export interface ItemDetailViewProps {
  */
 export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
     item,
+    identities = [],
     containerPath = [],
     tags = [],
     onEdit,
@@ -111,6 +116,30 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
                         showHomeIcon={false}
                         lastCrumbIsCurrent={false}
                     />
+                </Box>
+            )}
+
+            {/* Description */}
+            {identities.length > 0 && (
+                <Box>
+                    <Text size="small" color="dark-3" margin={{ bottom: 'xsmall' }}>
+                        Inventory ID:
+                    </Text>
+                    {identities.map(({ identity }) => (
+                        <Box key={`${identity.namespace}:${identity.value}`} gap="xxsmall">
+                            <Text weight="bold" color="brand">
+                                {getInventoryIdLabel(identity, item.isContainer)}
+                            </Text>
+                            <Text
+                                size="small"
+                                color="text-weak"
+                                style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                title={identity.value}
+                            >
+                                Full UUID: {identity.value}
+                            </Text>
+                        </Box>
+                    ))}
                 </Box>
             )}
 
