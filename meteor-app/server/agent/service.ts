@@ -4,6 +4,7 @@
  * without a running Meteor server or access to household data.
  */
 import { createHash } from 'node:crypto';
+import type { PropertyValues } from '/imports/model/PropertyValues';
 
 export interface Item {
     _id: string;
@@ -12,6 +13,7 @@ export interface Item {
     isContainer: boolean;
     containerId?: string;
     tagIds: string[];
+    properties?: PropertyValues;
     createdAt: Date;
     modifiedAt: Date;
 }
@@ -62,8 +64,15 @@ export interface Request {
     tagId?: string;
     parentTagId?: string;
     tag?: { name: string; parentTagId?: string };
-    item?: { tagIds?: string[]; name: string; description?: string; isContainer: boolean; containerId?: string };
-    changes?: { name?: string; description?: string; tagIds?: string[] };
+    item?: {
+        tagIds?: string[];
+        name: string;
+        description?: string;
+        isContainer: boolean;
+        containerId?: string;
+        properties?: PropertyValues;
+    };
+    changes?: { name?: string; description?: string; tagIds?: string[]; properties?: PropertyValues };
     containerId?: string | null;
     externalIdentity?: Identity;
     name?: string;
@@ -212,7 +221,7 @@ export const parseRequest = (input: unknown): Request => {
         fail('invalid_input', 'externalIdentity is required');
     if (r.op === 'create') {
         const item = object(r.item);
-        keys(item, ['name', 'description', 'isContainer', 'containerId', 'tagIds']);
+        keys(item, ['name', 'description', 'isContainer', 'containerId', 'tagIds', 'properties']);
         if (item.tagIds !== undefined) tagIds(item.tagIds);
         string(item.name, 'item.name');
         optionalDescription(item.description);
@@ -221,7 +230,7 @@ export const parseRequest = (input: unknown): Request => {
     }
     if (r.op === 'update') {
         const changes = object(r.changes);
-        keys(changes, ['name', 'description', 'tagIds']);
+        keys(changes, ['name', 'description', 'tagIds', 'properties']);
         if (changes.tagIds !== undefined) tagIds(changes.tagIds);
         if (Object.keys(changes).length === 0) fail('invalid_input', 'changes cannot be empty');
         if (changes.name !== undefined) string(changes.name, 'changes.name');

@@ -31,4 +31,18 @@ export interface PropertyValues {
 
     /** Item condition and notes, max 2000 chars, supports markdown */
     condition?: string;
+
+    /** Reusable physical-layout model referenced by a structured container stack. */
+    storageLayout?: {
+        modelId: string;
+        tierCount: number;
+        positions: Array<'left' | 'right'>;
+    };
+
+    /** Physical slot occupied by an item inside a structured storage layout. */
+    storagePlacement?: {
+        modelId: string;
+        tier: number;
+        position: 'left' | 'right';
+    };
 }
