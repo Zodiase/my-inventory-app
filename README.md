@@ -58,6 +58,9 @@ Set `MONGO_ADMIN_BIND_IP` only when the explorer should listen on a specific tru
 
 ## Features
 
+The application-owned design for structured physical storage metadata is in
+[`docs/STRUCTURED_STORAGE_METADATA.md`](docs/STRUCTURED_STORAGE_METADATA.md).
+
 ### Local agent interface
 
 See [the agent interface guide](docs/AGENT_INTERFACE.md) for opt-in JSON invocation, external identity binding, replay/correction behavior, and interrupted-write recovery.
