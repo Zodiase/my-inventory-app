@@ -1,0 +1,56 @@
+{
+    "scenario": "Alder Lantern Townhouse — entirely fictional",
+    "source": { "system": "synthetic-acceptance", "reference": "alder-lantern-v1" },
+    "records": [
+        {
+            "key": "home",
+            "name": "Alder Lantern Townhouse",
+            "isContainer": true,
+            "description": "Fictional acceptance home. Floor count unresolved: two occupied levels are reported; whether the basement counts as a third floor is unconfirmed."
+        },
+        { "key": "lower", "parent": "home", "name": "Lower living level", "isContainer": true },
+        { "key": "upper", "parent": "home", "name": "Upper sleeping level", "isContainer": true },
+        {
+            "key": "garage",
+            "parent": "home",
+            "name": "Lantern garage",
+            "isContainer": true,
+            "description": "Connected by a doorway to Lantern basement. Connection describes access, not containment."
+        },
+        {
+            "key": "basement",
+            "parent": "home",
+            "name": "Lantern basement",
+            "isContainer": true,
+            "description": "Connected to Lantern garage. Sibling of garage; floor classification unresolved."
+        },
+        { "key": "kitchen", "parent": "lower", "name": "Copper kitchen", "isContainer": true },
+        { "key": "laundry", "parent": "lower", "name": "Linen laundry", "isContainer": true },
+        {
+            "key": "bedroomA",
+            "parent": "upper",
+            "name": "Cedar bedroom",
+            "isContainer": true,
+            "description": "Occupant unresolved: either Mira Vale or Theo Finch; do not assign ownership until confirmed."
+        },
+        { "key": "bathroomA", "parent": "bedroomA", "name": "Cedar bathroom", "isContainer": true },
+        {
+            "key": "bedroomB",
+            "parent": "upper",
+            "name": "Willow bedroom",
+            "isContainer": true,
+            "description": "Occupant unresolved: Mira Vale or Theo Finch; no ownership inferred."
+        },
+        { "key": "bathroomB", "parent": "bedroomB", "name": "Willow bathroom", "isContainer": true },
+        { "key": "fridge", "parent": "kitchen", "name": "Frostfern refrigerator", "isContainer": false },
+        { "key": "washer", "parent": "laundry", "name": "Cloudwheel washer", "isContainer": false },
+        { "key": "dryer", "parent": "laundry", "name": "Sunspindle dryer", "isContainer": false },
+        {
+            "key": "vacuum",
+            "parent": "garage",
+            "name": "Pebbleglide vacuum",
+            "isContainer": false,
+            "description": "Initial fictional intake location: garage."
+        }
+    ]
+}

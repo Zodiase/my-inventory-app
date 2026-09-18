@@ -1,3 +1,7 @@
+/**
+ * Inventory CRUD and hierarchy rules shared by the UI and server integrations.
+ * Optional expected snapshots make integration corrections conditional at the database write.
+ */
 import { Meteor } from 'meteor/meteor';
 import type { Mongo } from 'meteor/mongo';
 
@@ -20,7 +24,22 @@ const logger = createLogger(module);
 
 export const InventoryItemsCollection = new NamedCollection<InventoryItem>('items');
 
-export const createInventoryItem = async (itemInput: RecordInput<InventoryItem>): Promise<string> => {
+export const snapshotSelector = (item: InventoryItem): Mongo.Selector<InventoryItem> => ({
+    _id: item._id,
+    name: item.name,
+    description: item.description ?? { $exists: false },
+    containerId: item.containerId ?? { $exists: false },
+    isContainer: item.isContainer,
+    $expr: { $eq: ['$tagIds', { $literal: item.tagIds }] },
+    properties: item.properties ?? { $exists: false },
+    createdAt: item.createdAt,
+    modifiedAt: item.modifiedAt,
+});
+
+export const createInventoryItem = async (
+    itemInput: RecordInput<InventoryItem>,
+    assignedId?: string
+): Promise<string> => {
     const { name, description, containerId, isContainer = false, tagIds = [], properties } = itemInput;
 
     if (typeof name === 'undefined' || name.trim() === '') {
@@ -62,7 +81,9 @@ export const createInventoryItem = async (itemInput: RecordInput<InventoryItem>)
         modifiedAt: now,
     };
 
-    const itemId = await InventoryItemsCollection.insertAsync(newItem);
+    const itemId = await InventoryItemsCollection.insertAsync(
+        assignedId === undefined ? newItem : { ...newItem, _id: assignedId }
+    );
 
     logger.log('Item created', { itemId, name: newItem.name, isContainer });
 
@@ -83,7 +104,8 @@ export const createInventoryItem = async (itemInput: RecordInput<InventoryItem>)
  */
 export const updateInventoryItem = async (
     itemId: string,
-    updates: Partial<Pick<InventoryItem, 'name' | 'description' | 'isContainer' | 'tagIds' | 'properties'>>
+    updates: Partial<Pick<InventoryItem, 'name' | 'description' | 'isContainer' | 'tagIds' | 'properties'>>,
+    expected?: InventoryItem
 ): Promise<number> => {
     const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
 
@@ -120,7 +142,7 @@ export const updateInventoryItem = async (
     }
 
     const result = await InventoryItemsCollection.updateAsync(
-        { _id: itemId },
+        expected === undefined ? { _id: itemId } : snapshotSelector(expected),
         {
             $set: updateFields,
         }
@@ -175,7 +197,11 @@ export const safelyUpdateInventoryItem = async (
  * - Target container exists and has isContainer: true
  * - Move does not create circular reference (item containing itself)
  */
-export const moveItem = async (itemId: string, targetContainerId: string | null | undefined): Promise<number> => {
+export const moveItem = async (
+    itemId: string,
+    targetContainerId: string | null | undefined,
+    expected?: InventoryItem
+): Promise<number> => {
     const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
 
     if (typeof item === 'undefined') {
@@ -225,7 +251,10 @@ export const moveItem = async (itemId: string, targetContainerId: string | null 
                   },
               };
 
-    const result = await InventoryItemsCollection.updateAsync({ _id: itemId }, updateOp);
+    const result = await InventoryItemsCollection.updateAsync(
+        expected === undefined ? { _id: itemId } : snapshotSelector(expected),
+        updateOp
+    );
 
     logger.log('Item moved', { itemId, from: item.containerId, to: normalizedTargetId, rowsAffected: result });
 
@@ -525,7 +554,7 @@ if (Meteor.isServer) {
 }
 
 export default asMeteorMethods(InventoryItemsCollection, {
-    createItem: createInventoryItem,
+    createItem: async (itemInput: RecordInput<InventoryItem>) => await createInventoryItem(itemInput),
     updateItem: updateInventoryItem,
     moveItem,
     deleteItem: deleteInventoryItem,

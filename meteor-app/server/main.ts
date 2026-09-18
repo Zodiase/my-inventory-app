@@ -1,3 +1,7 @@
+/**
+ * Registers server integrations and initializes indexes, storage, and tag repair.
+ * Sample fixtures can be disabled for a persistent household runtime.
+ */
 import { Meteor } from 'meteor/meteor';
 
 import { Attachments } from '/imports/api/attachments';
@@ -19,6 +23,7 @@ import { initializeGridFS } from './gridfs';
 import '/imports/api/importExport/export';
 import '/imports/api/importExport/import';
 
+import './agent';
 import './test-helpers'; // Test helper methods for E2E testing
 
 const logger = createLogger(module);
@@ -52,15 +57,16 @@ Meteor.startup(async () => {
 
     logger.log('Database indexes created successfully');
 
-    // Sample data creation
+    // Preserve demo defaults; persistent household runtimes explicitly disable fixtures.
+    const seedSamples = process.env.INVENTORY_SEED_SAMPLE_DATA !== '0';
     const SAMPLE_ITEMS_COUNT = 100;
-    if ((await InventoryItemsCollection.find().countAsync()) === 0) {
+    if (seedSamples && (await InventoryItemsCollection.find().countAsync()) === 0) {
         for (let i = 1; i <= SAMPLE_ITEMS_COUNT; i++) {
             await createInventoryItem({ name: `Sample item ${i}` });
         }
     }
 
-    if ((await TagsCollection.find().countAsync()) === 0) {
+    if (seedSamples && (await TagsCollection.find().countAsync()) === 0) {
         const tag1Id = await createTag({ name: 'Sample tag 1' });
         const tag2Id = await createTag({ name: 'Sample tag 2' });
         await createTag({ name: 'Sample child tag 1-1', parentTagId: tag1Id });
@@ -69,7 +75,11 @@ Meteor.startup(async () => {
         await createTag({ name: 'Sample child tag 2-2', parentTagId: tag2Id });
     }
 
-    if (Meteor.isDevelopment && (await InventoryItemsCollection.find({ isContainer: true }).countAsync()) === 0) {
+    if (
+        seedSamples &&
+        Meteor.isDevelopment &&
+        (await InventoryItemsCollection.find({ isContainer: true }).countAsync()) === 0
+    ) {
         let createdRecordsCount = 0;
 
         const tag1 = await TagsCollection.findOneAsync({ name: 'Sample tag 1' });

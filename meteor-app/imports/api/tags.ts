@@ -1,3 +1,7 @@
+/**
+ * Shared tag CRUD and hierarchy maintenance for the UI and integrations.
+ * Agent-created tags can supply a stable ID for durable request recovery.
+ */
 import extend from 'lodash/extend';
 import { Meteor } from 'meteor/meteor';
 import type { Mongo } from 'meteor/mongo';
@@ -61,16 +65,17 @@ export const getTagPath = async (
     return [...parentTagPath, leafNode];
 };
 
-export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<string> => {
-    const { name, parentTagId = '' } = tagInput;
+export const createTag = async (tagInput: RecordInput<TagRecord>, assignedId?: string): Promise<string> => {
+    const { parentTagId = '' } = tagInput;
+    const name = tagInput.name?.trim();
 
-    if (typeof name === 'undefined') {
+    if (typeof name === 'undefined' || name === '') {
         throw new Error('Tag must have a name.');
     }
 
     // Check for case-insensitive duplicate
     const existingTag = await TagsCollection.findOneAsync({
-        name: { $regex: `^${name}$`, $options: 'i' },
+        name: { $regex: `^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, $options: 'i' },
     });
 
     if (typeof existingTag !== 'undefined') {
@@ -87,10 +92,10 @@ export const createTag = async (tagInput: RecordInput<TagRecord>): Promise<strin
         parentTagId,
         createdAt: now,
         modifiedAt: now,
-        path: await getTagPath({ _id: '', name, parentTagId }, MeteorSettings.fixPath),
+        path: await getTagPath({ _id: assignedId ?? '', name, parentTagId }, MeteorSettings.fixPath),
     };
 
-    const tagId = await TagsCollection.insertAsync(newTag);
+    const tagId = await TagsCollection.insertAsync(assignedId === undefined ? newTag : { ...newTag, _id: assignedId });
 
     return tagId;
 };

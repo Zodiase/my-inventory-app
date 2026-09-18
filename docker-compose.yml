@@ -2,15 +2,18 @@ version: '3.8'
 
 services:
     meteorapp:
+        restart: unless-stopped
         build:
             context: . # Replace with the path to your Meteor app's source code
             dockerfile: Dockerfile
         ports:
-            - 3000:3000 # Change the host port if you need to map to a different port
+            - '${APP_BIND_IP:-127.0.0.1}:${APP_PORT:-3000}:3000'
         environment:
             ROOT_URL: ${APP_ROOT_URL:-http://localhost}
             MONGO_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/inventory-app?&authSource=admin
             PORT: 3000
+            INVENTORY_AGENT_TOKEN: '${INVENTORY_AGENT_TOKEN:-}'
+            INVENTORY_SEED_SAMPLE_DATA: '0'
         depends_on:
             - mongodb
     mongodb:
