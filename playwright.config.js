@@ -1,3 +1,8 @@
+/**
+ * Orchestrates Playwright projects and their local Meteor and Storybook servers.
+ * The servers stay loopback-only so remote development must use an explicit
+ * trusted tunnel; test behavior and application fixtures belong in the specs.
+ */
 import { defineConfig, devices } from '@playwright/test';
 
 const cliArgs = process.argv.slice(2);
@@ -30,7 +35,7 @@ const meteorLocalDir =
         : ` METEOR_LOCAL_DIR=${JSON.stringify(process.env.PLAYWRIGHT_METEOR_LOCAL_DIR)}`;
 
 const appWebServer = {
-    command: `env -u MONGO_URL -u NAS_MONGO_URL E2E_RESET_DATABASE=1${meteorLocalDir} meteor run --port ${appPort}`,
+    command: `env -u MONGO_URL -u NAS_MONGO_URL E2E_RESET_DATABASE=1${meteorLocalDir} meteor run --port 127.0.0.1:${appPort}`,
     url: appBaseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // 2 minutes for Meteor to start

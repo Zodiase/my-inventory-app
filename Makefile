@@ -2,7 +2,7 @@ IMG_TAG ?= $(shell date +%s)
 
 .PHONY: env
 env:
-	op inject -i env.tpl -o .env
+	op inject --force --file-mode 0600 -i env.tpl -o .env
 
 .PHONY: image
 image:
@@ -14,11 +14,11 @@ push-image:
 
 .PHONY: up
 up:
-	docker-compose up -d meteorapp
+	docker compose up -d meteorapp
 
 .PHONY: shell
 shell:
-	docker-compose run --rm -it --service-ports --entrypoint /bin/bash meteorapp
+	docker compose run --rm -it --service-ports --entrypoint /bin/bash meteorapp
 
 .PHONY: help
 help:

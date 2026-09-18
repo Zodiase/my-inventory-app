@@ -15,8 +15,8 @@
         "start:nasdb:run": "export MONGO_URL=\"${NAS_MONGO_URL}\" && npm start",
         "start:nasdb": "dotenv -e ../.env npm run start:nasdb:run",
         "start:personal": "npm run start:nasdb",
-        "start:throwaway": "meteor run",
-        "start": "meteor run",
+        "start:throwaway": "meteor run --port 127.0.0.1:3000",
+        "start": "meteor run --port 127.0.0.1:3000",
         "test": "meteor test --once --driver-package meteortesting:mocha",
         "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
         "test:e2e": "cd .. && npm run test:e2e",
@@ -28,7 +28,7 @@
         "test:e2e:skip-server:headed": "cd .. && npm run test:e2e:skip-server:headed",
         "test:e2e:skip-server:debug": "cd .. && npm run test:e2e:skip-server:debug",
         "visualize": "meteor --production --extra-packages bundle-visualizer",
-        "storybook": "storybook dev -p 6006",
+        "storybook": "storybook dev -p 6006 --host 127.0.0.1",
         "build-storybook": "storybook build -o ../storybook-static"
     },
     "dependencies": {

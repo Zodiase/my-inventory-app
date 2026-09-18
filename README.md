@@ -4,6 +4,9 @@ A Meteor 3 application for managing inventory items and tags.
 
 ## Development
 
+For the accepted `mini-m4` execution, remote-access, worktree, port, secret,
+and rollback model, see [`docs/MAC_MINI_DEVELOPMENT.md`](docs/MAC_MINI_DEVELOPMENT.md).
+
 Install the root tooling and Meteor application dependencies from the repository root:
 
 ```bash
@@ -54,6 +57,10 @@ ssh -N -L 8081:127.0.0.1:<configured-admin-port> <home-server>
 Set `MONGO_ADMIN_BIND_IP` only when the explorer should listen on a specific trusted private interface, such as the server's Tailscale address. Mongo Express hides editing controls and connects as a database user with only the `read` role; use another deliberately privileged tool for data changes.
 
 ## Features
+
+### Local agent interface
+
+See [the agent interface guide](docs/AGENT_INTERFACE.md) for opt-in JSON invocation, external identity binding, replay/correction behavior, and interrupted-write recovery.
 
 ### Design System
 
