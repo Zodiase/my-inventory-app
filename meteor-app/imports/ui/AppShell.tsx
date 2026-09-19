@@ -2,14 +2,15 @@
  * Responsive application chrome for primary navigation.
  * Keeps the header landmark, desktop links, and mobile tab bar consistent across routes.
  */
-import { Box, Header, Main, Nav, Text } from 'grommet';
-import { Apps, Configure, Search as SearchIcon, Tag as TagIcon } from 'grommet-icons';
-import React, { type ReactElement, type ReactNode } from 'react';
+import { Box, Button, Header, Main, Nav, Text } from 'grommet';
+import { Apps, Configure, Menu, Search as SearchIcon, Tag as TagIcon } from 'grommet-icons';
+import React, { type ReactElement, type ReactNode, useState } from 'react';
 import { Link } from 'wouter';
 
 interface AppShellProps {
     children: ReactNode;
     location: string;
+    headerContent?: ReactNode;
 }
 
 interface NavItem {
@@ -46,30 +47,53 @@ const navItems: NavItem[] = [
     },
 ];
 
+const menuItems = navItems.filter((item) => item.href !== '/search');
+
 const getAriaCurrent = (active: boolean): 'page' | undefined => (active ? 'page' : undefined);
 
-export const AppShell = ({ children, location }: AppShellProps): ReactElement => {
+export const AppShell = ({ children, location, headerContent }: AppShellProps): ReactElement => {
+    const [menuOpen, setMenuOpen] = useState(false);
+
     return (
         <Box fill className="app-shell">
             <Header background="brand" pad={{ horizontal: 'medium', vertical: 'small' }} className="app-shell-header">
-                <Text as="span" color="white" weight="bold" className="app-shell-title">
-                    Inventory App
-                </Text>
-                <Nav
-                    direction="row"
-                    gap="xsmall"
-                    aria-label="Desktop primary navigation"
-                    className="app-shell-desktop-nav"
-                >
-                    {navItems.map((item) => {
-                        const active = item.isActive(location);
+                <Box direction="row" align="center" gap="small" fill>
+                    <Button
+                        plain
+                        icon={<Menu color="white" />}
+                        aria-label="Open navigation menu"
+                        aria-expanded={menuOpen}
+                        onClick={() => setMenuOpen((open) => !open)}
+                        className="app-shell-menu-button"
+                    />
+                    <Text as="span" color="white" weight="bold" className="app-shell-title">
+                        Inventory
+                    </Text>
+                    <Box flex="grow" style={{ minWidth: 0 }}>
+                        {headerContent}
+                    </Box>
+                    <Link
+                        href="/search"
+                        aria-label="Search inventory"
+                        aria-current={location.startsWith('/search') ? 'page' : undefined}
+                        className={`app-shell-search-link${location.startsWith('/search') ? ' app-shell-search-link-active' : ''}`}
+                    >
+                        <SearchIcon aria-hidden="true" />
+                    </Link>
+                </Box>
+            </Header>
 
+            {menuOpen && (
+                <Nav aria-label="Primary navigation" className="app-shell-menu">
+                    {menuItems.map((item) => {
+                        const active = item.isActive(location);
                         return (
                             <Link
                                 key={item.href}
                                 href={item.href}
                                 aria-current={getAriaCurrent(active)}
-                                className={`app-shell-nav-link${active ? ' app-shell-nav-link-active' : ''}`}
+                                className={`app-shell-menu-link${active ? ' app-shell-menu-link-active' : ''}`}
+                                onClick={() => setMenuOpen(false)}
                             >
                                 <Box aria-hidden="true" className="app-shell-nav-link-icon">
                                     {item.icon}
@@ -81,7 +105,7 @@ export const AppShell = ({ children, location }: AppShellProps): ReactElement =>
                         );
                     })}
                 </Nav>
-            </Header>
+            )}
 
             <Main
                 pad="medium"
@@ -92,38 +116,6 @@ export const AppShell = ({ children, location }: AppShellProps): ReactElement =>
                 {children}
             </Main>
 
-            <nav
-                aria-label="Mobile primary navigation"
-                className="app-shell-mobile-nav"
-                data-testid="mobile-primary-navigation"
-            >
-                {navItems.map((item) => {
-                    const active = item.isActive(location);
-
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            aria-label={item.label}
-                            aria-current={getAriaCurrent(active)}
-                            className={`app-shell-mobile-tab${active ? ' app-shell-mobile-tab-active' : ''}`}
-                        >
-                            <Box
-                                aria-hidden="true"
-                                align="center"
-                                justify="center"
-                                gap="xxsmall"
-                                className="app-shell-mobile-tab-content"
-                            >
-                                {item.icon}
-                                <Text size="xsmall" weight={active ? 'bold' : 'normal'}>
-                                    {item.label}
-                                </Text>
-                            </Box>
-                        </Link>
-                    );
-                })}
-            </nav>
         </Box>
     );
 };

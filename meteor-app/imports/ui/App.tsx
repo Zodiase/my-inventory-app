@@ -24,6 +24,7 @@ import { FilterBar } from './FilterBar';
 import { ItemDetailView } from './ItemDetailView';
 import { ItemDialog } from './ItemDialog';
 import { ItemForm } from './ItemForm';
+import { BreadcrumbTrail } from './BreadcrumbTrail';
 import { ItemsByTagView } from './ItemsByTagView';
 import { NotFoundView } from './NotFoundView';
 import { SearchBar } from './SearchBar';
@@ -349,10 +350,27 @@ export const App = (): ReactElement => {
         return renderItemsView(containerId);
     };
 
+    const headerContainerPath = currentItemsContainerId === undefined ? [] : getItemPath(currentItemsContainerId);
+    const headerParentPath = headerContainerPath.slice(0, -1);
+
     return (
         <Grommet theme={theme} full>
             <DesignSystemGlobalStyle />
-            <AppShell location={location}>
+            <AppShell
+                location={location}
+                headerContent={
+                    currentItemsContainerId !== undefined ? (
+                        <BreadcrumbTrail
+                            path={headerParentPath}
+                            showHomeIcon
+                            lastCrumbIsCurrent={false}
+                            onNavigateRoot={() => setLocation('/items')}
+                            onNavigate={(item) => setLocation(`/container/${item._id}`)}
+                            className="app-shell-breadcrumb"
+                        />
+                    ) : undefined
+                }
+            >
                 <Switch>
                     {/* Home route - Items view */}
                     <Route path="/">{() => renderItemsView()}</Route>

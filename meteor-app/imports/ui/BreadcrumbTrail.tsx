@@ -68,6 +68,10 @@ const Separator = styled.span`
 
 const HomeIcon = styled.span`
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    padding: 0;
 `;
 
 export interface BreadcrumbTrailProps {
@@ -112,7 +116,7 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
     lastCrumbIsCurrent = true,
     className,
 }) => {
-    if (path.length === 0) {
+    if (path.length === 0 && (!showHomeIcon || onNavigateRoot === undefined)) {
         return null;
     }
 
@@ -132,19 +136,17 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
             {showHomeIcon && onNavigateRoot !== undefined && (
                 <>
                     <BreadcrumbButton type="button" onClick={onNavigateRoot} aria-label="Navigate to all items">
-                        <HomeIcon>
-                            <Home size="small" />
+                        <HomeIcon className="breadcrumb-home-icon">
+                            <Home size="medium" />
                         </HomeIcon>
                         All Items
                     </BreadcrumbButton>
-                    <Separator>›</Separator>
+                    {path.length > 0 && <Separator>›</Separator>}
                 </>
             )}
 
             {path.map((item, index) => {
                 const isLast = index === path.length - 1;
-                const isFirst = index === 0;
-                const showHome = showHomeIcon && isFirst && !isLast;
 
                 return (
                     <React.Fragment key={item._id}>
@@ -152,13 +154,7 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
 
                         {isLast && lastCrumbIsCurrent ? (
                             <BreadcrumbText>
-                                {showHome ? (
-                                    <HomeIcon>
-                                        <Home size="small" />
-                                    </HomeIcon>
-                                ) : (
-                                    item.name
-                                )}
+                                {item.name}
                             </BreadcrumbText>
                         ) : (
                             <BreadcrumbButton
@@ -168,13 +164,7 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
                                 }}
                                 aria-label={`Navigate to ${item.name}`}
                             >
-                                {showHome ? (
-                                    <HomeIcon>
-                                        <Home size="small" />
-                                    </HomeIcon>
-                                ) : (
-                                    item.name
-                                )}
+                                {item.name}
                             </BreadcrumbButton>
                         )}
                     </React.Fragment>

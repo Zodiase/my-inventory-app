@@ -9,9 +9,8 @@ import React, { type ComponentProps, type ReactElement, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { Link } from 'wouter';
 
-import { getInventoryIdLabel, type InventoryIdentity } from '/imports/model/InventoryIdentity';
 import type { InventoryItem } from '/imports/model/InventoryItem';
-import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
+import { getInventoryIdLabel, type InventoryIdentity } from '/imports/model/InventoryIdentity';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
 import { usePullToRefresh } from '/imports/utility/pullToRefresh';
@@ -175,7 +174,6 @@ export const AllItemsViewPresentation = ({
     items,
     identities = [],
     containerPath,
-    showHomeIcon = true,
     onNavigateToContainer,
     onBreadcrumbNavigate,
     onRefresh,
@@ -244,18 +242,6 @@ export const AllItemsViewPresentation = ({
 
             {/* Scrollable container */}
             <ScrollableContainer ref={containerRef} data-testid="items-list">
-                {/* Breadcrumb trail for navigation */}
-                <BreadcrumbTrail
-                    path={containerPath}
-                    showHomeIcon={showHomeIcon}
-                    onNavigateRoot={() => {
-                        onBreadcrumbNavigate(undefined);
-                    }}
-                    onNavigate={(item) => {
-                        onBreadcrumbNavigate(item._id);
-                    }}
-                />
-
                 {/* Items list */}
                 {items.length === 0 ? (
                     <Box align="center" justify="center" pad="large">

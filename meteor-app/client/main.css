@@ -28,6 +28,105 @@ body {
 .app-shell-header {
     flex: 0 0 auto;
     min-height: 60px;
+    position: relative;
+    z-index: 30;
+}
+
+.app-shell-menu-button {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.app-shell-search-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-width: 44px;
+    min-height: 44px;
+    color: #ffffff;
+    border-radius: 8px;
+}
+
+.app-shell-search-link:hover,
+.app-shell-search-link:focus-visible,
+.app-shell-search-link-active {
+    background: rgb(255 255 255 / 20%);
+}
+
+.app-shell-menu {
+    position: absolute;
+    top: 60px;
+    left: 16px;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    min-width: 220px;
+    padding: 8px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
+}
+
+.app-shell-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 8px 12px;
+    color: #333333;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.app-shell-menu-link:hover,
+.app-shell-menu-link:focus-visible,
+.app-shell-menu-link-active {
+    color: #007aff;
+    background: rgb(0 122 255 / 10%);
+}
+
+.app-shell-breadcrumb {
+    flex: 1;
+    min-width: 0;
+    padding: 0 !important;
+    background: transparent !important;
+    overflow-x: auto;
+}
+
+.app-shell-breadcrumb button,
+.app-shell-breadcrumb span {
+    min-height: 40px;
+    padding: 6px 8px;
+    color: #ffffff !important;
+    font-size: 14px;
+}
+
+.app-shell-breadcrumb .breadcrumb-home-icon {
+    min-height: 0;
+    padding: 0;
+}
+
+.app-shell-breadcrumb .breadcrumb-home-icon svg {
+    width: 24px !important;
+    height: 24px !important;
+}
+
+.app-shell-breadcrumb span {
+    color: rgb(255 255 255 / 80%);
+}
+
+.app-shell-breadcrumb > span {
+    color: rgb(255 255 255 / 65%);
+}
+
+.app-shell-breadcrumb button:hover,
+.app-shell-breadcrumb button:focus-visible {
+    background: rgb(255 255 255 / 15%);
+}
+
+.app-shell-menu-button svg {
+    stroke: #ffffff !important;
 }
 
 .app-shell-title {
