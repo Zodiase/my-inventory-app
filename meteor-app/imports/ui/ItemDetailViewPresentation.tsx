@@ -8,7 +8,7 @@ import { Edit, Trash, Up } from 'grommet-icons';
 import React from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
-import { getInventoryIdLabel, type InventoryIdentity } from '/imports/api/identities';
+import { getInventoryIdLabel, itemNameIncludesInventoryId, type InventoryIdentity } from '/imports/api/identities';
 import type { TagRecord } from '/imports/model/TagRecord';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
 import { TagChip } from '/imports/ui/TagChip';
@@ -120,28 +120,31 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
             )}
 
             {/* Description */}
-            {identities.length > 0 && (
-                <Box>
-                    <Text size="small" color="dark-3" margin={{ bottom: 'xsmall' }}>
-                        Inventory ID:
-                    </Text>
-                    {identities.map(({ identity }) => (
-                        <Box key={`${identity.namespace}:${identity.value}`} gap="xxsmall">
-                            <Text weight="bold" color="brand">
-                                {getInventoryIdLabel(identity, item.isContainer)}
-                            </Text>
-                            <Text
-                                size="small"
-                                color="text-weak"
-                                style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-                                title={identity.value}
-                            >
-                                Full UUID: {identity.value}
-                            </Text>
-                        </Box>
-                    ))}
-                </Box>
-            )}
+            {identities.length > 0 &&
+                !identities.every(({ identity }) =>
+                    itemNameIncludesInventoryId(item.name, identity, item.isContainer)
+                ) && (
+                    <Box>
+                        <Text size="small" color="dark-3" margin={{ bottom: 'xsmall' }}>
+                            Inventory ID:
+                        </Text>
+                        {identities.map(({ identity }) => (
+                            <Box key={`${identity.namespace}:${identity.value}`} gap="xxsmall">
+                                <Text weight="bold" color="brand">
+                                    {getInventoryIdLabel(identity, item.isContainer)}
+                                </Text>
+                                <Text
+                                    size="small"
+                                    color="text-weak"
+                                    style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                    title={identity.value}
+                                >
+                                    Full UUID: {identity.value}
+                                </Text>
+                            </Box>
+                        ))}
+                    </Box>
+                )}
 
             {/* Description */}
             {item.description !== '' && (
