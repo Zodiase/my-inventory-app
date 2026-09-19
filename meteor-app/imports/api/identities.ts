@@ -20,6 +20,13 @@ export const getInventoryIdLabel = (identity: InventoryIdentity['identity'], isC
     return `${prefix}-${identity.value.slice(0, 8).toUpperCase()}`;
 };
 
+/** Avoid repeating an ID when the item name already carries its printed label. */
+export const itemNameIncludesInventoryId = (
+    name: string,
+    identity: InventoryIdentity['identity'],
+    isContainer: boolean
+): boolean => name.toLocaleUpperCase().includes(getInventoryIdLabel(identity, isContainer));
+
 export const InventoryIdentitiesCollection = new Mongo.Collection<InventoryIdentity>('agent_identities');
 
 if (Meteor.isServer) {

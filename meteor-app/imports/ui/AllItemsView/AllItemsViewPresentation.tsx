@@ -10,7 +10,7 @@ import styled, { css, keyframes } from 'styled-components';
 import { Link } from 'wouter';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
-import { getInventoryIdLabel, type InventoryIdentity } from '/imports/api/identities';
+import { getInventoryIdLabel, itemNameIncludesInventoryId, type InventoryIdentity } from '/imports/api/identities';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
@@ -323,25 +323,30 @@ export const AllItemsViewPresentation = ({
                                                 <Text weight={item.isContainer ? 'bold' : 'normal'} truncate>
                                                     {item.name}
                                                 </Text>
-                                                {identitiesByItemId.has(item._id) && (
-                                                    <Text
-                                                        size="small"
-                                                        color="brand"
-                                                        weight="bold"
-                                                        style={{
-                                                            whiteSpace: 'nowrap',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis',
-                                                        }}
-                                                        title={identitiesByItemId.get(item._id)?.value}
-                                                    >
-                                                        ID:{' '}
-                                                        {getInventoryIdLabel(
-                                                            identitiesByItemId.get(item._id)!,
-                                                            item.isContainer
-                                                        )}
-                                                    </Text>
-                                                )}
+                                                {identitiesByItemId.has(item._id) &&
+                                                    !itemNameIncludesInventoryId(
+                                                        item.name,
+                                                        identitiesByItemId.get(item._id)!,
+                                                        item.isContainer
+                                                    ) && (
+                                                        <Text
+                                                            size="small"
+                                                            color="brand"
+                                                            weight="bold"
+                                                            style={{
+                                                                whiteSpace: 'nowrap',
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis',
+                                                            }}
+                                                            title={identitiesByItemId.get(item._id)?.value}
+                                                        >
+                                                            ID:{' '}
+                                                            {getInventoryIdLabel(
+                                                                identitiesByItemId.get(item._id)!,
+                                                                item.isContainer
+                                                            )}
+                                                        </Text>
+                                                    )}
                                                 {item.description !== '' && item.description !== undefined && (
                                                     <Text size="small" color="text-weak" truncate>
                                                         {item.description}
