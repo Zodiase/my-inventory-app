@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from 'grommet';
 import React from 'react';
 
-import type { ImportReport } from '/imports/api/importExport/import';
+import type { ImportReport } from '/imports/model/ImportReport';
 
 import { SettingsDataViewPresentation, type SettingsDataViewProps } from './SettingsDataViewPresentation';
 

@@ -1,7 +1,8 @@
+/** Connects import/export presentation callbacks to Meteor methods. */
 import { Meteor } from 'meteor/meteor';
 import React, { type ReactElement } from 'react';
 
-import type { ImportReport } from '/imports/api/importExport/import';
+import type { ImportReport } from '/imports/model/ImportReport';
 
 import { DesktopOnly } from './DesktopOnly';
 import { SettingsDataViewPresentation } from './SettingsDataViewPresentation';

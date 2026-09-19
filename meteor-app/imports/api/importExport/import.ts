@@ -1,3 +1,7 @@
+/**
+ * Executes inventory imports and assembles reports using Meteor persistence.
+ * Shared report types live in the runtime-independent model layer.
+ */
 import { Meteor } from 'meteor/meteor';
 
 import { createResolverSession, DEFAULT_CONTAINER_PATH_SEPARATOR } from '/imports/api/importExport/pathResolvers';
@@ -6,19 +10,10 @@ import { parseCsv } from '/imports/model/importExport/csv';
 import { classify } from '/imports/model/importExport/dedup';
 import type { NormalizedRow } from '/imports/model/importExport/dedup';
 import { parseJson } from '/imports/model/importExport/json';
+import type { ImportReport } from '/imports/model/ImportReport';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
 import type NoId from '/imports/utility/NoId';
-
-export interface ImportReport {
-    toCreate: number;
-    exactDuplicates: number;
-    supersetMerges: number;
-    warnings: string[];
-    errors: string[];
-    info: string[];
-    samplePreview: Array<{ action: string; name: string; info?: string }>;
-}
 
 export function buildJsonContainerPath(itemId: string, itemsById: Map<string, InventoryItem>): string | undefined {
     const current = itemsById.get(itemId);

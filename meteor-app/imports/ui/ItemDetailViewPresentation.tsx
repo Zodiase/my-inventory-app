@@ -7,8 +7,8 @@ import { Box, Button, Heading, Text } from 'grommet';
 import { Edit, Trash, Up } from 'grommet-icons';
 import React from 'react';
 
+import { getInventoryIdLabel, type InventoryIdentity } from '/imports/model/InventoryIdentity';
 import type { InventoryItem } from '/imports/model/InventoryItem';
-import { getInventoryIdLabel, type InventoryIdentity } from '/imports/api/identities';
 import type { TagRecord } from '/imports/model/TagRecord';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
 import { TagChip } from '/imports/ui/TagChip';

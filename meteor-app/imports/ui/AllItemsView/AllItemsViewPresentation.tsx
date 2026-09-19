@@ -9,8 +9,8 @@ import React, { type ComponentProps, type ReactElement, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { Link } from 'wouter';
 
+import { getInventoryIdLabel, type InventoryIdentity } from '/imports/model/InventoryIdentity';
 import type { InventoryItem } from '/imports/model/InventoryItem';
-import { getInventoryIdLabel, type InventoryIdentity } from '/imports/api/identities';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';

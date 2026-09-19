@@ -7,7 +7,7 @@ import { Box, Heading, Text, Card, CardBody, CardHeader } from 'grommet';
 import { DocumentDownload, DocumentUpload } from 'grommet-icons';
 import React, { useState, type ReactElement, useRef } from 'react';
 
-import type { ImportReport } from '/imports/api/importExport/import';
+import type { ImportReport } from '/imports/model/ImportReport';
 import { TouchButton } from '/imports/ui/TouchButton';
 
 export interface SettingsDataViewProps {
