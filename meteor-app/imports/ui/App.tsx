@@ -9,7 +9,11 @@ import React, { type ReactElement, useState, useEffect } from 'react';
 import { Route, Switch, useLocation } from 'wouter';
 
 import Items, { InventoryItemsCollection } from '/imports/api/items';
-import { getInventoryIdLabel, InventoryIdentitiesCollection } from '/imports/api/identities';
+import {
+    getInventoryIdLabel,
+    InventoryIdentitiesCollection,
+    itemNameIncludesInventoryId,
+} from '/imports/api/identities';
 import { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { SearchFragment } from '/imports/model/SearchFragment';
@@ -248,17 +252,23 @@ export const App = (): ReactElement => {
                         <Heading level="2" margin="none">
                             {getItemsViewHeading(initialContainerId)}
                         </Heading>
-                        {currentItemsContainerIdentity !== undefined && initialContainerId !== undefined && (
-                            <Text
-                                size="small"
-                                color="brand"
-                                weight="bold"
-                                style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-                                title={currentItemsContainerIdentity.identity.value}
-                            >
-                                ID: {getInventoryIdLabel(currentItemsContainerIdentity.identity, true)}
-                            </Text>
-                        )}
+                        {currentItemsContainerIdentity !== undefined &&
+                            initialContainerId !== undefined &&
+                            !itemNameIncludesInventoryId(
+                                getItemsViewHeading(initialContainerId),
+                                currentItemsContainerIdentity.identity,
+                                true
+                            ) && (
+                                <Text
+                                    size="small"
+                                    color="brand"
+                                    weight="bold"
+                                    style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                    title={currentItemsContainerIdentity.identity.value}
+                                >
+                                    ID: {getInventoryIdLabel(currentItemsContainerIdentity.identity, true)}
+                                </Text>
+                            )}
                     </Box>
                     <Box direction="row" gap="small">
                         <Button
