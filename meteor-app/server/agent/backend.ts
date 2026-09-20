@@ -84,6 +84,8 @@ export const agentBackend: Backend = {
         if (result !== 1) throw new Error('Could not finalize request ledger');
     },
     validate: async (request, before) => {
+        if (request.op === 'move' && before?.locked === true)
+            throw new AgentError('conflict', 'Item is locked; unlock it before changing its parent');
         if (request.op === 'createTag' && request.tag !== undefined) {
             if (
                 request.tag.parentTagId !== undefined &&
