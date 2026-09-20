@@ -626,3 +626,109 @@ export const StructuredBedsideStack: Story = {
         },
     },
 };
+
+const declarativeVanity: InventoryItem = {
+    ...toolBox,
+    _id: 'declarative-vanity',
+    name: 'Test vanity',
+    containerId: undefined,
+    properties: {
+        storageLayout: {
+            modelId: 'grid-layout-v1',
+            columns: 2,
+            rows: 3,
+            cells: [
+                { slotId: 'top-left', label: 'Top-left drawer', row: 1, column: 1, kind: 'storage' },
+                { slotId: 'middle-left', label: 'Middle-left drawer', row: 2, column: 1, kind: 'storage' },
+                { slotId: 'bottom-left', label: 'Bottom-left drawer', row: 3, column: 1, kind: 'storage' },
+                {
+                    slotId: 'false-front',
+                    label: 'False drawer front · non-storage',
+                    row: 1,
+                    column: 2,
+                    kind: 'non-storage',
+                },
+                { slotId: 'under-sink', label: 'Under-sink cabinet', row: 2, column: 2, rowSpan: 2, kind: 'storage' },
+            ],
+        },
+    },
+};
+
+const declarativeVanityItems: InventoryItem[] = [
+    {
+        ...toolBox,
+        _id: 'vanity-top-drawer',
+        name: 'Top drawer',
+        containerId: declarativeVanity._id,
+        properties: { storagePlacement: { position: 'left', slotId: 'top-left' } },
+    },
+    {
+        ...toolBox,
+        _id: 'vanity-middle-drawer',
+        name: 'Middle drawer',
+        containerId: declarativeVanity._id,
+        properties: { storagePlacement: { position: 'left', slotId: 'middle-left' } },
+    },
+    {
+        ...toolBox,
+        _id: 'vanity-bottom-drawer',
+        name: 'Bottom drawer',
+        containerId: declarativeVanity._id,
+        properties: { storagePlacement: { position: 'left', slotId: 'bottom-left' } },
+    },
+    {
+        ...toolBox,
+        _id: 'vanity-cabinet',
+        name: 'Cabinet below sink',
+        containerId: declarativeVanity._id,
+        properties: { storagePlacement: { position: 'below sink', slotId: 'under-sink' } },
+    },
+];
+
+/** Generic two-column grid with a spanning cabinet and a non-storage cell. */
+export const DeclarativeVanity: Story = {
+    args: {
+        items: declarativeVanityItems,
+        containerPath: [declarativeVanity],
+        showHomeIcon: true,
+    },
+};
+
+const declarativeRack: InventoryItem = {
+    ...toolBox,
+    _id: 'declarative-rack',
+    name: 'Test over-toilet rack',
+    containerId: undefined,
+    properties: {
+        storageLayout: {
+            modelId: 'grid-layout-v1',
+            columns: 1,
+            rows: 4,
+            axisLabel: 'Top to bottom ↓',
+            cells: Array.from({ length: 4 }, (_, index) => ({
+                slotId: `shelf-${index + 1}`,
+                label: `Shelf ${index + 1}`,
+                row: index + 1,
+                column: 1,
+                kind: 'storage' as const,
+            })),
+        },
+    },
+};
+
+const declarativeRackItems: InventoryItem[] = [1, 2, 4].map((shelf) => ({
+    ...toolBox,
+    _id: `rack-shelf-${shelf}`,
+    name: `Shelf ${shelf} container`,
+    containerId: declarativeRack._id,
+    properties: { storagePlacement: { position: 'middle', slotId: `shelf-${shelf}` } },
+}));
+
+/** Generic single-column fixture with an intentionally empty third shelf. */
+export const DeclarativeOverToiletRack: Story = {
+    args: {
+        items: declarativeRackItems,
+        containerPath: [declarativeRack],
+        showHomeIcon: true,
+    },
+};

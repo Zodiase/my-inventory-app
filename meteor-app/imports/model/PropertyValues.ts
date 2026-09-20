@@ -1,9 +1,35 @@
 /**
- * PropertyValues interface for optional item metadata
- *
- * All fields are optional and nullable. Empty/null properties are not displayed in the UI
- * but are preserved in the data model.
+ * Optional inventory metadata shared by persistence, import/export, and UI projection.
+ * Structured-storage definitions live here because they are durable inventory data,
+ * while validation and visual projection belong in StructuredStorageLayout.
  */
+export interface StorageLayoutCell {
+    slotId: string;
+    label: string;
+    row: number;
+    column: number;
+    rowSpan?: number;
+    columnSpan?: number;
+    kind: 'storage' | 'non-storage';
+}
+
+export interface StorageLayoutDefinition {
+    modelId: string;
+    tierCount?: number;
+    positions?: Array<'left' | 'right'>;
+    columns?: number;
+    rows?: number;
+    axisLabel?: string;
+    cells?: StorageLayoutCell[];
+}
+
+export interface StoragePlacement {
+    modelId?: string;
+    tier?: number;
+    position: string;
+    slotId?: string;
+}
+
 export interface PropertyValues {
     /** Serial number or identification code, max 500 chars */
     serialNumber?: string;
@@ -33,16 +59,23 @@ export interface PropertyValues {
     condition?: string;
 
     /** Reusable physical-layout model referenced by a structured container stack. */
-    storageLayout?: {
-        modelId: string;
-        tierCount: number;
-        positions: Array<'left' | 'right'>;
-    };
+    storageLayout?: StorageLayoutDefinition;
 
     /** Physical slot occupied by an item inside a structured storage layout. */
-    storagePlacement?: {
-        modelId: string;
-        tier: number;
-        position: 'left' | 'right';
-    };
+    storagePlacement?: StoragePlacement;
+
+    /** Known fixture family used to select a physical-layout renderer. */
+    fixtureType?: string;
+
+    /** Number of fixed structural storage sections observed on a fixture. */
+    structuralSectionCount?: number;
+
+    /** Marks a child as a structural part of its parent fixture. */
+    structuralSection?: boolean;
+
+    /** Records that a storage section was observed empty during intake. */
+    observedEmpty?: boolean;
+
+    /** Records a decorative front that does not open into storage. */
+    falseFrontBelowSink?: boolean;
 }

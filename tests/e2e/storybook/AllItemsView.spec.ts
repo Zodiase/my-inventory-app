@@ -78,6 +78,37 @@ test.describe('AllItemsView Component (Storybook)', () => {
         await expect(page).toHaveURL(/\/container\/zulu-left-top$/);
     });
 
+    test('renders a declarative vanity without turning its false front into storage', async ({ page }) => {
+        await gotoStory(page, 'ui-allitemsview', 'declarative-vanity');
+
+        const layout = page.getByRole('region', { name: 'Test vanity physical layout' });
+        await expect(layout).toContainText('False drawer front · non-storage');
+        await expect(layout.getByRole('link', { name: /Open container Top drawer, Top-left drawer/ })).toBeVisible();
+        await expect(
+            layout.getByRole('link', { name: /Open container Cabinet below sink, Under-sink cabinet/ })
+        ).toBeVisible();
+        await expect(layout.getByText('Empty', { exact: false })).toHaveCount(0);
+    });
+
+    test('orders a declarative rack from top to bottom and exposes empty shelves', async ({ page }) => {
+        await gotoStory(page, 'ui-allitemsview', 'declarative-over-toilet-rack');
+
+        const layout = page.getByRole('region', { name: 'Test over-toilet rack physical layout' });
+        await expect(layout).toContainText('Top to bottom');
+        await expect(layout.getByRole('link', { name: /Shelf 1 container, Shelf 1/ })).toBeVisible();
+        await expect(layout.getByText('Empty Shelf 3', { exact: true })).toBeVisible();
+        await expect(layout.getByRole('link', { name: /Shelf 4 container, Shelf 4/ })).toBeVisible();
+
+        const verticalOrder = await layout
+            .locator('a')
+            .evaluateAll((links) =>
+                links.map((link) => ({ text: link.textContent ?? '', top: link.getBoundingClientRect().top }))
+            );
+        expect(verticalOrder.map(({ top }) => top)).toEqual(
+            verticalOrder.map(({ top }) => top).sort((first, second) => first - second)
+        );
+    });
+
     test('keeps scrolling isolated to the items list in the app-shell regression story', async ({ page }) => {
         await gotoStory(page, 'ui-allitemsview', 'app-shell-scroll-regression');
 
