@@ -1,25 +1,61 @@
 /**
  * Shared breadcrumb trail for inventory hierarchy navigation.
- * By default the final crumb represents the current location and is rendered
- * as static text; callers with a container-only path can opt into making every
- * crumb navigable.
+ * Keeps the root anchor fixed while a deep ancestor path uses a right-prioritized,
+ * horizontally scrollable viewport so the nearest location remains visible.
+ * By default the final crumb is static; container-only paths can keep it navigable.
  */
 import { Home } from 'grommet-icons';
-import React from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 
 const BreadcrumbContainer = styled.nav`
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 8px;
     padding: 12px 16px;
     background-color: #f5f5f5;
     border-radius: 8px;
+    min-width: 0;
+    overflow: hidden;
+`;
+
+const RootCrumb = styled.span`
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-width: 0;
+`;
+
+const BreadcrumbPathViewport = styled.span<{ $overflowing: boolean }>`
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
     overflow-x: auto;
+    overflow-y: hidden;
+    direction: ${(props) => (props.$overflowing ? 'rtl' : 'ltr')};
+    scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+`;
+
+const BreadcrumbPath = styled.span`
+    display: flex;
+    align-items: center;
+    width: max-content;
+    direction: ltr;
+`;
+
+const BreadcrumbGroup = styled.span`
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-width: 0;
 `;
 
 const BreadcrumbButton = styled.button`
@@ -58,12 +94,16 @@ const BreadcrumbText = styled.span`
     font-size: 16px;
     color: #333;
     white-space: nowrap;
+    max-width: min(42vw, 32rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
 `;
 
 const Separator = styled.span`
     color: #999;
     font-size: 18px;
     user-select: none;
+    flex: 0 0 auto;
 `;
 
 const HomeIcon = styled.span`
@@ -116,6 +156,26 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
     lastCrumbIsCurrent = true,
     className,
 }) => {
+    const pathViewportRef = useRef<HTMLSpanElement>(null);
+    const [pathOverflows, setPathOverflows] = useState(false);
+
+    useLayoutEffect(() => {
+        const viewport = pathViewportRef.current;
+        if (viewport === null) return;
+
+        const updateOverflowState = (): void => {
+            setPathOverflows(viewport.scrollWidth > viewport.clientWidth + 1);
+        };
+
+        updateOverflowState();
+        const observer = new ResizeObserver(updateOverflowState);
+        observer.observe(viewport);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [path]);
+
     if (path.length === 0 && (!showHomeIcon || onNavigateRoot === undefined)) {
         return null;
     }
@@ -134,42 +194,52 @@ export const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({
     return (
         <BreadcrumbContainer className={className}>
             {showHomeIcon && onNavigateRoot !== undefined && (
-                <>
+                <RootCrumb className="breadcrumb-root">
                     <BreadcrumbButton type="button" onClick={onNavigateRoot} aria-label="Navigate to all items">
                         <HomeIcon className="breadcrumb-home-icon">
                             <Home size="medium" />
                         </HomeIcon>
-                        All Items
+                        <span className="breadcrumb-root-label">All Items</span>
                     </BreadcrumbButton>
-                    {path.length > 0 && <Separator>›</Separator>}
-                </>
+                    {path.length > 0 && <Separator className="breadcrumb-separator">›</Separator>}
+                </RootCrumb>
             )}
 
-            {path.map((item, index) => {
-                const isLast = index === path.length - 1;
+            {path.length > 0 && (
+                <BreadcrumbPathViewport
+                    ref={pathViewportRef}
+                    className="breadcrumb-path-viewport"
+                    $overflowing={pathOverflows}
+                    data-overflowing={pathOverflows ? 'true' : 'false'}
+                >
+                    <BreadcrumbPath className="breadcrumb-path">
+                        {path.map((item, index) => {
+                            const isLast = index === path.length - 1;
 
-                return (
-                    <React.Fragment key={item._id}>
-                        {index > 0 && <Separator>›</Separator>}
+                            return (
+                                <BreadcrumbGroup className="breadcrumb-group" key={item._id}>
+                                    {index > 0 && <Separator className="breadcrumb-separator">›</Separator>}
 
-                        {isLast && lastCrumbIsCurrent ? (
-                            <BreadcrumbText>
-                                {item.name}
-                            </BreadcrumbText>
-                        ) : (
-                            <BreadcrumbButton
-                                type="button"
-                                onClick={() => {
-                                    handleClick(item, index);
-                                }}
-                                aria-label={`Navigate to ${item.name}`}
-                            >
-                                {item.name}
-                            </BreadcrumbButton>
-                        )}
-                    </React.Fragment>
-                );
-            })}
+                                    {isLast && lastCrumbIsCurrent ? (
+                                        <BreadcrumbText title={item.name}>{item.name}</BreadcrumbText>
+                                    ) : (
+                                        <BreadcrumbButton
+                                            type="button"
+                                            onClick={() => {
+                                                handleClick(item, index);
+                                            }}
+                                            aria-label={`Navigate to ${item.name}`}
+                                            title={item.name}
+                                        >
+                                            {item.name}
+                                        </BreadcrumbButton>
+                                    )}
+                                </BreadcrumbGroup>
+                            );
+                        })}
+                    </BreadcrumbPath>
+                </BreadcrumbPathViewport>
+            )}
         </BreadcrumbContainer>
     );
 };

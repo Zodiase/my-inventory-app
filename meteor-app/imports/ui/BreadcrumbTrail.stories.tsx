@@ -125,6 +125,9 @@ export const FourLevelsDeep: Story = {
 
 // Story: Many levels (very deep hierarchy)
 export const ManyLevels: Story = {
+    parameters: {
+        layout: 'fullscreen',
+    },
     args: {
         path: [
             home,
@@ -155,7 +158,11 @@ export const ManyLevels: Story = {
         onNavigate: (item) => {
             console.log('Navigate to:', item.name);
         },
+        onNavigateRoot: () => {
+            console.log('Navigate to all items');
+        },
         showHomeIcon: true,
+        className: 'app-shell-breadcrumb',
     },
 };
 
