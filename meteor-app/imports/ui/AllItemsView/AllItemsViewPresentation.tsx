@@ -12,9 +12,9 @@ import { Link } from 'wouter';
 import { getInventoryIdLabel, type InventoryIdentity } from '/imports/model/InventoryIdentity';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { getStructuredStorageLayoutKind } from '/imports/model/StructuredStorageLayout';
+import { HoistedContainerGroup } from '/imports/ui/HoistedContainerGroup';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
-import { HoistedContainerGroup } from '/imports/ui/HoistedContainerGroup';
 import { StructuredStorageStack } from '/imports/ui/StructuredStorageStack';
 import { usePullToRefresh } from '/imports/utility/pullToRefresh';
 import { useSwipeNavigation } from '/imports/utility/swipeNavigation';
@@ -130,7 +130,7 @@ export interface AllItemsViewPresentationProps {
     items: InventoryItem[];
 
     /** Children projected into marked logical containers, keyed by that container's ID. */
-    hoistedItemsByContainerId?: Readonly<Record<string, InventoryItem[]>>;
+    hoistedItemsByContainerId?: Readonly<Partial<Record<string, InventoryItem[]>>>;
 
     /** Identity bindings keyed by item ID for visible inventory labels. */
     identities?: InventoryIdentity[];
@@ -231,7 +231,7 @@ export const AllItemsViewPresentation = ({
             <List data={items} pad="none" border={false}>
                 {(item: InventoryItem) => {
                     const hoistedItems = hoistedItemsByContainerId[item._id];
-                    if (item.properties?.childrenPresentation === 'hoist-in-parent' && hoistedItems !== undefined) {
+                    if (hoistedItems !== undefined) {
                         return <HoistedContainerGroup key={item._id} container={item} items={hoistedItems} />;
                     }
 

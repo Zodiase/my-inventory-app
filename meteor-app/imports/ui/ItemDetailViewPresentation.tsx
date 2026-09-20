@@ -182,22 +182,29 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
 
             {/* Action buttons */}
             <Box direction="row" gap="small" margin={{ top: 'medium' }}>
-                {item.locked && <Text color="status-warning">🔒 Locked: move and delete are disabled.</Text>}
+                {item.locked === true && <Text color="status-warning">🔒 Locked: move and delete are disabled.</Text>}
                 {onEdit !== undefined && (
                     <Button icon={<Edit />} label="Edit" onClick={onEdit} disabled={disabled} primary />
                 )}
-                {onMove !== undefined && !item.locked && <Button icon={<Up />} label="Move" onClick={onMove} disabled={disabled} />}
+                {onMove !== undefined && item.locked !== true && (
+                    <Button icon={<Up />} label="Move" onClick={onMove} disabled={disabled} />
+                )}
                 {onDelete !== undefined && (
                     <Button
                         icon={<Trash />}
                         label="Delete"
                         onClick={onDelete}
-                        disabled={disabled || item.locked}
+                        disabled={disabled || item.locked === true}
                         color="status-critical"
                     />
                 )}
                 {onToggleLock !== undefined && (
-                    <Button icon={item.locked ? <Unlock /> : <Lock />} label={item.locked ? 'Unlock' : 'Lock'} onClick={onToggleLock} disabled={disabled} />
+                    <Button
+                        icon={item.locked === true ? <Unlock /> : <Lock />}
+                        label={item.locked === true ? 'Unlock' : 'Lock'}
+                        onClick={onToggleLock}
+                        disabled={disabled}
+                    />
                 )}
             </Box>
         </Box>

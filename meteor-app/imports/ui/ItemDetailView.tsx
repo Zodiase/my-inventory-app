@@ -6,8 +6,8 @@ import { Box, Button, Heading, Text } from 'grommet';
 import React, { useState } from 'react';
 import { useParams, Link, useLocation } from 'wouter';
 
-import Items, { InventoryItemsCollection } from '/imports/api/items';
 import { InventoryIdentitiesCollection } from '/imports/api/identities';
+import Items, { InventoryItemsCollection } from '/imports/api/items';
 import Tags, { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { LoadingState } from '/imports/ui/common/LoadingState';
@@ -203,7 +203,7 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
         try {
             setIsSubmitting(true);
             setErrorMessage(undefined);
-            await (item.locked ? Items.unlockItem : Items.lockItem)(item._id);
+            await (item.locked === true ? Items.unlockItem : Items.lockItem)(item._id);
         } catch (error) {
             setErrorMessage(getErrorMessage(error));
         } finally {

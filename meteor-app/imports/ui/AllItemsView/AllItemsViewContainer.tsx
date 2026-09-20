@@ -7,8 +7,8 @@ import type { Mongo } from 'meteor/mongo';
 import React, { type ComponentProps, type ReactElement, useState, useCallback, useEffect } from 'react';
 import { useLocation } from 'wouter';
 
-import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import { InventoryIdentitiesCollection } from '/imports/api/identities';
+import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
 import { LoadingState } from '/imports/ui/common/LoadingState';
@@ -132,18 +132,22 @@ export const AllItemsViewContainer = ({
     const hoistedContainerIdsKey = JSON.stringify(hoistedContainerIds);
     const isLoadingHoistedItems = useSubscribe('items.byContainers', hoistedContainerIds);
     const hoistedItemsByContainerId = useTracker(() => {
-        const grouped: Record<string, InventoryItem[]> = {};
+        const grouped: Partial<Record<string, InventoryItem[]>> = {};
         for (const containerId of hoistedContainerIds) grouped[containerId] = [];
 
         if (hoistedContainerIds.length === 0) return grouped;
 
-        InventoryItemsCollection.find({
+        const selector: Mongo.Selector<InventoryItem> = {
             containerId: { $in: hoistedContainerIds },
-        } as Mongo.Selector<InventoryItem>)
+        };
+
+        InventoryItemsCollection.find(selector)
             .fetch()
             .sort(compareItemsForDisplay)
             .forEach((item) => {
-                if (item.containerId !== undefined) grouped[item.containerId]?.push(item);
+                if (item.containerId === undefined) return;
+                const group = grouped[item.containerId];
+                if (group !== undefined) group.push(item);
             });
 
         return grouped;

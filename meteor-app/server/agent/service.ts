@@ -4,6 +4,7 @@
  * without a running Meteor server or access to household data.
  */
 import { createHash } from 'node:crypto';
+
 import type { PropertyValues } from '/imports/model/PropertyValues';
 
 export interface Item {

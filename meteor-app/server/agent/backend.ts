@@ -5,13 +5,19 @@
  */
 import { Mongo } from 'meteor/mongo';
 
-import { InventoryItemsCollection, createInventoryItem, updateInventoryItem, moveItem, setInventoryItemLocked } from '/imports/api/items';
-import { TagsCollection, createTag } from '/imports/api/tags';
 import { InventoryIdentitiesCollection } from '/imports/api/identities';
+import {
+    InventoryItemsCollection,
+    createInventoryItem,
+    updateInventoryItem,
+    moveItem,
+    setInventoryItemLocked,
+} from '/imports/api/items';
+import { TagsCollection, createTag } from '/imports/api/tags';
 import detectCircularReference from '/imports/utility/circularReference';
 
 import { AgentError, identityKey } from './service';
-import type { Backend, Event, Identity } from './service';
+import type { Backend, Event } from './service';
 
 const events = new Mongo.Collection<Event>('agent_requests');
 const bindings = InventoryIdentitiesCollection;

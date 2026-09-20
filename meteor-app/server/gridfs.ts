@@ -34,7 +34,8 @@ export const initializeGridFS = (): GridFSBucketType => {
     const { GridFSBucket } = MongoInternals.NpmModules.mongodb.module;
 
     // Create bucket with default options (255 KB chunk size)
-    // Type assertion needed due to Meteor/MongoDB version compatibility
+    // Meteor and the app expose separate mongodb package instances with compatible runtime values.
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     gridFSBucket = new GridFSBucket(mongo.db, {
         bucketName: 'attachments',
     }) as unknown as GridFSBucketType;
@@ -66,7 +67,8 @@ export const getGridFSBucket = (): GridFSBucketType => {
  */
 const toObjectId = (fileId: string): ObjectId => {
     const { ObjectId: ObjectIdConstructor } = MongoInternals.NpmModules.mongodb.module;
-    // Type assertion needed due to Meteor/MongoDB version compatibility
+    // Meteor and the app expose separate BSON package instances with compatible runtime values.
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     return new ObjectIdConstructor(fileId) as unknown as ObjectId;
 };
 
