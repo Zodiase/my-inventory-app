@@ -30,6 +30,7 @@ export const snapshotSelector = (item: InventoryItem): Mongo.Selector<InventoryI
     description: item.description ?? { $exists: false },
     containerId: item.containerId ?? { $exists: false },
     isContainer: item.isContainer,
+    locked: item.locked === undefined ? { $in: [false, undefined] } : item.locked,
     $expr: { $eq: ['$tagIds', { $literal: item.tagIds }] },
     properties: item.properties ?? { $exists: false },
     createdAt: item.createdAt,
@@ -208,6 +209,8 @@ export const moveItem = async (
         throw new RecordNotFoundException('Item not found', { _id: itemId });
     }
 
+    if (item.locked) throw new Error('Cannot move locked item. Unlock it first.');
+
     // Normalize empty string and null to undefined
     const normalizedTargetId =
         typeof targetContainerId === 'undefined' || targetContainerId === null || targetContainerId === ''
@@ -316,6 +319,8 @@ export const deleteInventoryItem = async (itemId: string): Promise<number> => {
         throw new RecordNotFoundException('Item not found', { _id: itemId });
     }
 
+    if (item.locked) throw new Error('Cannot delete locked item. Unlock it first.');
+
     // Check if this is a container with children
     if (item.isContainer) {
         const childCount = await InventoryItemsCollection.find({ containerId: itemId }).countAsync();
@@ -359,6 +364,16 @@ export const safelyDeleteInventoryItem = async (_item: InventoryItem): Promise<n
     // This will use strictSelector(item, ['name', 'isContainer', 'containerId'])
     throw new Error('safelyDeleteInventoryItem not yet implemented');
 };
+
+/** Change only the dedicated structural lock state; metadata and contents remain editable. */
+export const setInventoryItemLocked = async (itemId: string, locked: boolean): Promise<number> => {
+    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+    if (typeof item === 'undefined') throw new RecordNotFoundException('Item not found', { _id: itemId });
+    return await InventoryItemsCollection.updateAsync({ _id: itemId }, { $set: { locked, modifiedAt: new Date() } });
+};
+
+export const lockInventoryItem = async (itemId: string): Promise<number> => await setInventoryItemLocked(itemId, true);
+export const unlockInventoryItem = async (itemId: string): Promise<number> => await setInventoryItemLocked(itemId, false);
 
 /**
  * Get the breadcrumb path for an item (all ancestors from root to item).
@@ -558,6 +573,8 @@ export default asMeteorMethods(InventoryItemsCollection, {
     updateItem: updateInventoryItem,
     moveItem,
     deleteItem: deleteInventoryItem,
+    lockItem: lockInventoryItem,
+    unlockItem: unlockInventoryItem,
     getPath: getItemPath,
     search: searchItems,
 });

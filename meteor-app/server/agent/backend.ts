@@ -5,7 +5,7 @@
  */
 import { Mongo } from 'meteor/mongo';
 
-import { InventoryItemsCollection, createInventoryItem, updateInventoryItem, moveItem } from '/imports/api/items';
+import { InventoryItemsCollection, createInventoryItem, updateInventoryItem, moveItem, setInventoryItemLocked } from '/imports/api/items';
 import { TagsCollection, createTag } from '/imports/api/tags';
 import { InventoryIdentitiesCollection } from '/imports/api/identities';
 import detectCircularReference from '/imports/utility/circularReference';
@@ -112,6 +112,7 @@ export const agentBackend: Backend = {
     create: async (item, id) => await createInventoryItem(item, id),
     update: async (item, changes) => (await updateInventoryItem(item._id, changes, item)) === 1,
     move: async (item, target) => (await moveItem(item._id, target, item)) === 1,
+    setLocked: async (item, locked) => (await setInventoryItemLocked(item._id, locked)) === 1,
     bind: async (identity, itemId) => {
         const id = identityKey(identity);
         const existing = await bindings.findOneAsync(id);

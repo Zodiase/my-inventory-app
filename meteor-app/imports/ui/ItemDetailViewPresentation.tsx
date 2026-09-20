@@ -4,7 +4,7 @@
  * leaving data loading and routing decisions to container components.
  */
 import { Box, Button, Heading, Text } from 'grommet';
-import { Edit, Trash, Up } from 'grommet-icons';
+import { Edit, Lock, Trash, Unlock, Up } from 'grommet-icons';
 import React from 'react';
 
 import { getInventoryIdLabel, type InventoryIdentity } from '/imports/model/InventoryIdentity';
@@ -44,6 +44,7 @@ export interface ItemDetailViewProps {
 
     /** Callback when move button is clicked */
     onMove?: () => void;
+    onToggleLock?: () => void;
 
     /** Callback when a tag is removed from the item */
     onRemoveTag?: (tagId: string) => void;
@@ -84,6 +85,7 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
     onEdit,
     onDelete,
     onMove,
+    onToggleLock,
     onRemoveTag,
     onNavigateToContainer,
     disabled = false,
@@ -180,18 +182,22 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
 
             {/* Action buttons */}
             <Box direction="row" gap="small" margin={{ top: 'medium' }}>
+                {item.locked && <Text color="status-warning">🔒 Locked: move and delete are disabled.</Text>}
                 {onEdit !== undefined && (
                     <Button icon={<Edit />} label="Edit" onClick={onEdit} disabled={disabled} primary />
                 )}
-                {onMove !== undefined && <Button icon={<Up />} label="Move" onClick={onMove} disabled={disabled} />}
+                {onMove !== undefined && !item.locked && <Button icon={<Up />} label="Move" onClick={onMove} disabled={disabled} />}
                 {onDelete !== undefined && (
                     <Button
                         icon={<Trash />}
                         label="Delete"
                         onClick={onDelete}
-                        disabled={disabled}
+                        disabled={disabled || item.locked}
                         color="status-critical"
                     />
+                )}
+                {onToggleLock !== undefined && (
+                    <Button icon={item.locked ? <Unlock /> : <Lock />} label={item.locked ? 'Unlock' : 'Lock'} onClick={onToggleLock} disabled={disabled} />
                 )}
             </Box>
         </Box>

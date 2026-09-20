@@ -183,7 +183,6 @@ Children returns `{items: Readback[], nextCursor: string|null}` in ascending Mon
 
 Hierarchy defaults to at most 1000 descendants; `maxNodes` accepts integers 1–1000. Exceeding the limit fails with HTTP400 `limit_exceeded`, never a successful partial tree. Use paginated children traversal when larger results are needed. A detected cycle/revisited node fails with409 `conflict`. These are live reads, not an atomic database snapshot: concurrent UI/agent moves or additions can change a traversal. For a stable exhaustive inventory, quiesce writers; do not claim snapshot consistency from successful traversal alone.
 
-
 ## Agent tags and attribute conventions
 
 Tags use the existing shared `tags` collection and item `tagIds`; no separate
@@ -223,3 +222,7 @@ validation and an item write are not a transaction across collections; a
 concurrent UI tag deletion can still race assignment. Reads are live, not atomic
 snapshots. The agent client permits these operations with the same read/mutation
 separation as the existing commands.
+
+# Structural locks
+
+Inventory items expose a dedicated `locked` system flag. `lock` and `unlock` are audited, version-checked agent mutations requiring `itemId` and `expectedVersion`. A locked item remains editable for metadata and contents, but shared move and delete operations reject it until an explicit unlock; creation is unaffected.

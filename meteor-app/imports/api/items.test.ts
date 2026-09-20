@@ -13,6 +13,8 @@ import {
     updateInventoryItem,
     moveItem,
     deleteInventoryItem,
+    lockInventoryItem,
+    unlockInventoryItem,
     getItemPath,
 } from './items';
 
@@ -322,6 +324,16 @@ describe('items', function () {
     });
 
     describe('moveItem', function () {
+        it('prevents moving a locked container until it is unlocked', async function () {
+            const parentId = await createTestItemDirect('Parent', true);
+            const lockedId = await createTestItemDirect('Locked', true, parentId);
+            const targetId = await createTestItemDirect('Target', true);
+
+            await lockInventoryItem(lockedId);
+            await assert.rejects(async () => await moveItem(lockedId, targetId), /locked/);
+            await unlockInventoryItem(lockedId);
+            assert.strictEqual(await moveItem(lockedId, targetId), 1);
+        });
         it('moves item to a container', async function () {
             const itemId = await createTestItemDirect('Item', false);
             const containerId = await createTestItemDirect('Container', true);
@@ -449,6 +461,11 @@ describe('items', function () {
     });
 
     describe('deleteInventoryItem', function () {
+        it('prevents deleting a locked item', async function () {
+            const itemId = await createTestItemDirect('Locked', false);
+            await lockInventoryItem(itemId);
+            await assert.rejects(async () => await deleteInventoryItem(itemId), /locked/);
+        });
         it('deletes a simple item', async function () {
             const itemId = await createTestItemDirect('Item', false);
 

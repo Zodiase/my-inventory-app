@@ -11,6 +11,7 @@ export interface Item {
     name: string;
     description?: string;
     isContainer: boolean;
+    locked?: boolean;
     containerId?: string;
     tagIds: string[];
     properties?: PropertyValues;
@@ -42,6 +43,8 @@ export interface Request {
         | 'create'
         | 'update'
         | 'move'
+        | 'lock'
+        | 'unlock'
         | 'bindIdentity'
         | 'get'
         | 'lookup'
@@ -120,6 +123,7 @@ export interface Backend {
     create: (item: NonNullable<Request['item']>, id: string) => Promise<string>;
     update: (item: Item, changes: NonNullable<Request['changes']>) => Promise<boolean>;
     move: (item: Item, parent: string | null) => Promise<boolean>;
+    setLocked: (item: Item, locked: boolean) => Promise<boolean>;
     bind: (identity: Identity, itemId: string) => Promise<void>;
 }
 export class AgentError extends Error {
@@ -179,7 +183,7 @@ const tagIds = (value: unknown): void => {
 };
 export const parseRequest = (input: unknown): Request => {
     const r = object(input);
-    const mutation = ['create', 'update', 'move', 'bindIdentity', 'createTag'].includes(String(r.op));
+    const mutation = ['create', 'update', 'move', 'lock', 'unlock', 'bindIdentity', 'createTag'].includes(String(r.op));
     const fields: Record<string, string[]> = {
         create: ['item', 'externalIdentity'],
         createTag: ['tag'],
@@ -188,6 +192,8 @@ export const parseRequest = (input: unknown): Request => {
         taggedItems: ['tagId', 'after', 'limit'],
         update: ['itemId', 'expectedVersion', 'changes'],
         move: ['itemId', 'expectedVersion', 'containerId'],
+        lock: ['itemId', 'expectedVersion'],
+        unlock: ['itemId', 'expectedVersion'],
         bindIdentity: ['itemId', 'expectedVersion', 'externalIdentity'],
         status: ['requestId'],
         get: ['itemId'],
@@ -207,9 +213,9 @@ export const parseRequest = (input: unknown): Request => {
         string(source.reference, 'source.reference', LIMIT_REFERENCE);
         if (r.note !== undefined) string(r.note, 'note', LIMIT_NOTE);
     }
-    if (['get', 'history', 'update', 'move', 'bindIdentity', 'hierarchy'].includes(String(r.op)))
+    if (['get', 'history', 'update', 'move', 'lock', 'unlock', 'bindIdentity', 'hierarchy'].includes(String(r.op)))
         string(r.itemId, 'itemId', LIMIT_ID);
-    if (['update', 'move', 'bindIdentity'].includes(String(r.op)))
+    if (['update', 'move', 'bindIdentity', 'lock', 'unlock'].includes(String(r.op)))
         string(r.expectedVersion, 'expectedVersion', LIMIT_VERSION);
     if (r.externalIdentity !== undefined) {
         const identity = object(r.externalIdentity);
@@ -437,6 +443,10 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
                 fail('conflict', 'Item changed during correction');
             if (r.op === 'move' && !(await db.move(required(before).item, required(r.containerId))))
                 fail('conflict', 'Item changed during move');
+            if (r.op === 'lock' && !(await db.setLocked(required(before).item, true)))
+                fail('conflict', 'Item changed during lock');
+            if (r.op === 'unlock' && !(await db.setLocked(required(before).item, false)))
+                fail('conflict', 'Item changed during unlock');
             if (r.externalIdentity !== undefined) await db.bind(r.externalIdentity, required(itemId));
             const after = await read(required(itemId));
             await db.complete({ ...event, itemId, after, status: 'completed', completedAt: new Date() });

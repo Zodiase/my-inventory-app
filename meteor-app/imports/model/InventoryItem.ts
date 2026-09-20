@@ -26,6 +26,9 @@ export interface InventoryItem extends CollectionItem {
      */
     isContainer: boolean;
 
+    /** Dedicated system flag preventing parent changes and deletion. */
+    locked?: boolean;
+
     /**
      * Array of tag IDs applied to this item (many-to-many relationship)
      */

@@ -199,6 +199,18 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
         }
     };
 
+    const handleToggleLock = async (): Promise<void> => {
+        try {
+            setIsSubmitting(true);
+            setErrorMessage(undefined);
+            await (item.locked ? Items.unlockItem : Items.lockItem)(item._id);
+        } catch (error) {
+            setErrorMessage(getErrorMessage(error));
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleDeleteItem = async (): Promise<void> => {
         if (item.isContainer && childCount > 0) {
             setErrorMessage(getNonEmptyContainerMessage(childCount));
@@ -246,6 +258,9 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
                     setIsConfirmingDelete(false);
                     setMoveTargetId(item.containerId);
                     setIsMoving(true);
+                }}
+                onToggleLock={() => {
+                    void handleToggleLock();
                 }}
                 onDelete={() => {
                     setErrorMessage(undefined);
