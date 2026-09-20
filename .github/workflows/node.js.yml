@@ -226,3 +226,41 @@ jobs:
             - run: npm ci --ignore-scripts --prefix meteor-app
             - run: npx playwright install --with-deps chromium
             - run: npm run test:e2e:storybook -- --project=storybook-chromium --workers=1 --reporter=line
+
+    quality-gate:
+        name: PR Quality Gate
+        runs-on: ubuntu-latest
+        if: always()
+        needs:
+            - script-tests
+            - type-check
+            - code-style-check
+            - tests
+            - app-e2e-status
+            - storybook-e2e
+        steps:
+            - name: Verify required app checks
+              env:
+                  SCRIPT_TESTS: ${{ needs.script-tests.result }}
+                  TYPE_CHECK: ${{ needs.type-check.result }}
+                  CODE_STYLE: ${{ needs.code-style-check.result }}
+                  UNIT_TESTS: ${{ needs.tests.result }}
+                  APP_E2E: ${{ needs.app-e2e-status.result }}
+                  STORYBOOK_E2E: ${{ needs.storybook-e2e.result }}
+              run: |
+                  failed=0
+                  for result in \
+                      "Script tests:${SCRIPT_TESTS}" \
+                      "Type check:${TYPE_CHECK}" \
+                      "Code style:${CODE_STYLE}" \
+                      "Unit tests:${UNIT_TESTS}" \
+                      "App E2E:${APP_E2E}" \
+                      "Storybook E2E:${STORYBOOK_E2E}"; do
+                      name="${result%%:*}"
+                      status="${result#*:}"
+                      echo "${name}: ${status}"
+                      if [[ "${status}" != "success" ]]; then
+                          failed=1
+                      fi
+                  done
+                  exit "${failed}"
