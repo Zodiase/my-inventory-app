@@ -12,24 +12,6 @@ on:
         branches:
             - 'master'
             - 'twig/**'
-        paths:
-            - '.github/workflows/pr-visual-evidence.yml'
-            - 'meteor-app/client/**'
-            - 'meteor-app/imports/api/**'
-            - 'meteor-app/imports/model/**'
-            - 'meteor-app/imports/ui/**'
-            - 'meteor-app/imports/utility/**'
-            - 'meteor-app/package-lock.json'
-            - 'meteor-app/package.json'
-            - 'package-lock.json'
-            - 'package.json'
-            - 'playwright.config.js'
-            - 'scripts/visual-diff-report.mjs'
-            - 'scripts/visual-diff-report.test.mjs'
-            - 'scripts/visual-scenarios.mjs'
-            - 'scripts/visual-scenarios.test.mjs'
-            - 'tests/e2e/app/**'
-            - 'tests/e2e/helpers/**'
 
 concurrency:
     group: pr-visual-evidence-${{ github.event.pull_request.number }}
@@ -414,3 +396,46 @@ jobs:
                   else
                       echo "Skipping Items Add Filter regression; scenario was not selected."
                   fi
+
+    visual-evidence-status:
+        name: Visual Evidence
+        runs-on: ubuntu-latest
+        if: always()
+        needs:
+            - select-visual-scenarios
+            - visual-evidence
+            - publish-visual-evidence
+            - verify-selected-head-layout-regression
+        steps:
+            - name: Verify visual evidence workflow
+              env:
+                  SELECTION_RESULT: ${{ needs.select-visual-scenarios.result }}
+                  HAS_SCENARIOS: ${{ needs.select-visual-scenarios.outputs.has-scenarios }}
+                  VISUAL_EVIDENCE_RESULT: ${{ needs.visual-evidence.result }}
+                  PUBLISH_RESULT: ${{ needs.publish-visual-evidence.result }}
+                  HEAD_REGRESSION_RESULT: ${{ needs.verify-selected-head-layout-regression.result }}
+                  SAME_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+              run: |
+                  echo "Scenario selection: ${SELECTION_RESULT}"
+                  if [[ "${SELECTION_RESULT}" != "success" ]]; then
+                      exit 1
+                  fi
+
+                  if [[ "${HAS_SCENARIOS}" != "true" || "${SAME_REPOSITORY}" != "true" ]]; then
+                      echo "No same-repository visual scenarios require evidence."
+                      exit 0
+                  fi
+
+                  failed=0
+                  for result in \
+                      "Visual evidence:${VISUAL_EVIDENCE_RESULT}" \
+                      "Publish evidence:${PUBLISH_RESULT}" \
+                      "Head regression:${HEAD_REGRESSION_RESULT}"; do
+                      name="${result%%:*}"
+                      status="${result#*:}"
+                      echo "${name}: ${status}"
+                      if [[ "${status}" != "success" ]]; then
+                          failed=1
+                      fi
+                  done
+                  exit "${failed}"
