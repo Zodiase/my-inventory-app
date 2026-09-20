@@ -63,20 +63,24 @@ export const AppShell = ({ children, location, headerContent }: AppShellProps): 
                         icon={<Menu color="white" />}
                         aria-label="Open navigation menu"
                         aria-expanded={menuOpen}
-                        onClick={() => setMenuOpen((open) => !open)}
+                        onClick={() => {
+                            setMenuOpen((open) => !open);
+                        }}
                         className="app-shell-menu-button"
                     />
                     <Text as="span" color="white" weight="bold" className="app-shell-title">
                         Inventory
                     </Text>
-                    <Box flex="grow" style={{ minWidth: 0 }}>
+                    <Box flex="grow" style={{ minWidth: 0 }} className="app-shell-header-content">
                         {headerContent}
                     </Box>
                     <Link
                         href="/search"
                         aria-label="Search inventory"
                         aria-current={location.startsWith('/search') ? 'page' : undefined}
-                        className={`app-shell-search-link${location.startsWith('/search') ? ' app-shell-search-link-active' : ''}`}
+                        className={`app-shell-search-link${
+                            location.startsWith('/search') ? ' app-shell-search-link-active' : ''
+                        }`}
                     >
                         <SearchIcon aria-hidden="true" />
                     </Link>
@@ -93,7 +97,9 @@ export const AppShell = ({ children, location, headerContent }: AppShellProps): 
                                 href={item.href}
                                 aria-current={getAriaCurrent(active)}
                                 className={`app-shell-menu-link${active ? ' app-shell-menu-link-active' : ''}`}
-                                onClick={() => setMenuOpen(false)}
+                                onClick={() => {
+                                    setMenuOpen(false);
+                                }}
                             >
                                 <Box aria-hidden="true" className="app-shell-nav-link-icon">
                                     {item.icon}
@@ -115,7 +121,6 @@ export const AppShell = ({ children, location, headerContent }: AppShellProps): 
             >
                 {children}
             </Main>
-
         </Box>
     );
 };
