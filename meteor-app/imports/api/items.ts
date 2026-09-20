@@ -373,7 +373,8 @@ export const setInventoryItemLocked = async (itemId: string, locked: boolean): P
 };
 
 export const lockInventoryItem = async (itemId: string): Promise<number> => await setInventoryItemLocked(itemId, true);
-export const unlockInventoryItem = async (itemId: string): Promise<number> => await setInventoryItemLocked(itemId, false);
+export const unlockInventoryItem = async (itemId: string): Promise<number> =>
+    await setInventoryItemLocked(itemId, false);
 
 /**
  * Get the breadcrumb path for an item (all ancestors from root to item).
@@ -524,6 +525,24 @@ if (Meteor.isServer) {
         return InventoryItemsCollection.find({
             $or: [{ containerId: normalizedContainerId }, { isContainer: true }],
         });
+    });
+
+    /** Publish direct children for logical containers projected into their parent's view. */
+    Meteor.publish('items.byContainers', function publishItemsByContainers(containerIds: unknown) {
+        if (
+            !Array.isArray(containerIds) ||
+            containerIds.length > 100 ||
+            containerIds.some((containerId) => typeof containerId !== 'string' || containerId === '')
+        ) {
+            throw new Meteor.Error('invalid-container-ids', 'Container IDs must be an array of non-empty strings.');
+        }
+
+        if (containerIds.length === 0) {
+            this.ready();
+            return;
+        }
+
+        return InventoryItemsCollection.find({ containerId: { $in: containerIds } });
     });
 
     /**

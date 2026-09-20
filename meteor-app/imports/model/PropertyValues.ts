@@ -31,6 +31,9 @@ export interface StoragePlacement {
 }
 
 export interface PropertyValues {
+    /** Requests that this container's children be projected as a compact group in its parent's view. */
+    childrenPresentation?: 'hoist-in-parent';
+
     /** Serial number or identification code, max 500 chars */
     serialNumber?: string;
 

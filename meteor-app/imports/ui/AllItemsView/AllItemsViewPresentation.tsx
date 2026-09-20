@@ -14,6 +14,7 @@ import type { InventoryItem } from '/imports/model/InventoryItem';
 import { getStructuredStorageLayoutKind } from '/imports/model/StructuredStorageLayout';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
+import { HoistedContainerGroup } from '/imports/ui/HoistedContainerGroup';
 import { StructuredStorageStack } from '/imports/ui/StructuredStorageStack';
 import { usePullToRefresh } from '/imports/utility/pullToRefresh';
 import { useSwipeNavigation } from '/imports/utility/swipeNavigation';
@@ -128,6 +129,9 @@ export interface AllItemsViewPresentationProps {
      */
     items: InventoryItem[];
 
+    /** Children projected into marked logical containers, keyed by that container's ID. */
+    hoistedItemsByContainerId?: Readonly<Record<string, InventoryItem[]>>;
+
     /** Identity bindings keyed by item ID for visible inventory labels. */
     identities?: InventoryIdentity[];
 
@@ -174,6 +178,7 @@ export interface AllItemsViewPresentationProps {
 
 export const AllItemsViewPresentation = ({
     items,
+    hoistedItemsByContainerId = {},
     identities = [],
     containerPath,
     onNavigateToContainer,
@@ -225,6 +230,11 @@ export const AllItemsViewPresentation = ({
         ) : (
             <List data={items} pad="none" border={false}>
                 {(item: InventoryItem) => {
+                    const hoistedItems = hoistedItemsByContainerId[item._id];
+                    if (item.properties?.childrenPresentation === 'hoist-in-parent' && hoistedItems !== undefined) {
+                        return <HoistedContainerGroup key={item._id} container={item} items={hoistedItems} />;
+                    }
+
                     const menuActions = [];
                     const identity = identitiesByItemId.get(item._id);
 
@@ -267,7 +277,6 @@ export const AllItemsViewPresentation = ({
                                     align="center"
                                     pad="small"
                                     gap="small"
-                                    background="background-front"
                                     hoverIndicator="background-contrast"
                                     style={{
                                         minHeight: '44px',

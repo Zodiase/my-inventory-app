@@ -3,6 +3,29 @@ import { expect, test } from '@playwright/test';
 import { gotoStory } from '../helpers/storybook-helpers';
 
 test.describe('AllItemsView Component (Storybook)', () => {
+    test('integrates a hoisted logical container into the full inventory list', async ({ page }) => {
+        await gotoStory(page, 'ui-allitemsview', 'hoisted-logical-container');
+
+        const list = page.getByTestId('items-list');
+        const group = list.getByRole('group', { name: 'Third floor contents' });
+        await expect(group).toBeVisible();
+        await expect(group.getByRole('link', { name: 'Open container Third floor' })).toHaveAttribute(
+            'href',
+            '/container/third-floor'
+        );
+        await expect(group.getByRole('link', { name: 'Open container Laundry room' })).toBeVisible();
+        await expect(group.getByRole('link', { name: 'Open container Main bedroom' })).toBeVisible();
+        await expect(group.getByRole('link', { name: 'Open container Secondary bedroom' })).toBeVisible();
+        await expect(list.getByRole('link', { name: 'Open container Garage' })).toBeVisible();
+        await expect(list.getByRole('link', { name: 'View item Mountain Bike' })).toBeVisible();
+        await expect(list.getByRole('link', { name: 'Open container Third floor' })).toHaveCount(1);
+
+        for (const name of ['Open container Garage', 'View item Mountain Bike']) {
+            const row = list.getByRole('link', { name }).locator('> div');
+            await expect(row).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+        }
+    });
+
     test('renders structured stack placement instead of alphabetical flat rows', async ({ page }) => {
         await gotoStory(page, 'ui-allitemsview', 'structured-bedside-stack');
 
