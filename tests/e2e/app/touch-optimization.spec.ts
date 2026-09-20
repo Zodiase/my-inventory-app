@@ -26,8 +26,7 @@ const SWIPE_BACK_END_X_PX = 150;
 
 const expectInventoryReady = async (page: Page): Promise<void> => {
     await waitForMeteorReady(page);
-    await expect(page.getByText('Inventory App', { exact: true })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Inventory App' })).toHaveCount(0);
+    await expect(page.locator('.app-shell-title')).toHaveText('Inventory');
     await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
 };
 
@@ -230,22 +229,26 @@ test.describe('Touch Optimization - User Story 5', () => {
         // 2. Navigate into the parent container
         await page.getByText('Parent Container', { exact: true }).click();
 
-        // Should see breadcrumb showing we're inside
-        await expect(page.locator('nav').filter({ hasText: 'Parent Container' })).toBeVisible({ timeout: 5000 });
+        // Confirm the route and current container heading before exercising swipe-back.
+        await expect(page).toHaveURL(/\/container\/[^/]+$/);
+        await expect(page.getByRole('heading', { name: 'Parent Container', exact: true })).toBeVisible({ timeout: 5000 });
 
         // 3. Now test swipe-back navigation
         // Swipe from left edge (within 50px) to the right (100px+ movement)
-        const viewport = page.viewportSize();
-        if (!viewport) throw new Error('No viewport');
+        const itemsList = page.getByTestId('items-list');
+        const itemsListBox = await requireBoundingBox(itemsList, 'Swipe navigation surface');
 
         const startX = SWIPE_BACK_START_X_PX; // Near left edge
-        const startY = viewport.height / 2;
+        const startY = itemsListBox.y + itemsListBox.height / 2;
         const endX = SWIPE_BACK_END_X_PX; // 140px movement (more than 100px threshold)
         const endY = startY; // Minimal vertical movement
 
-        // Perform swipe gesture
-        await dragPointer(page, { x: startX, y: startY }, { x: endX, y: endY });
-        await releasePointer(page);
+        // Dispatch touch pointer events on the actual gesture surface. Playwright's
+        // mouse API reports a mouse pointer even in emulated touch projects.
+        const pointer = { pointerId: 1, pointerType: 'touch', isPrimary: true };
+        await itemsList.dispatchEvent('pointerdown', { ...pointer, clientX: startX, clientY: startY });
+        await itemsList.dispatchEvent('pointermove', { ...pointer, clientX: endX, clientY: endY });
+        await itemsList.dispatchEvent('pointerup', { ...pointer, clientX: endX, clientY: endY });
 
         // Should navigate back to root (All Items)
         // Breadcrumb should no longer show Parent Container as current

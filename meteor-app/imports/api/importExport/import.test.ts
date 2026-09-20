@@ -104,11 +104,11 @@ describe('importExport/import', function () {
             });
 
             // Call the Meteor method
-            const jsonStr = await Meteor.callAsync('inventory.export.json');
-            assert(typeof jsonStr === 'string', 'Expected jsonStr to be a string');
+            const jsonResult: unknown = await Meteor.callAsync('inventory.export.json');
+            assert(typeof jsonResult === 'string', 'Expected jsonStr to be a string');
 
             // Pass the result into importJson
-            const report = await importJson(jsonStr, { dryRun: true });
+            const report = await importJson(jsonResult, { dryRun: true });
             assert.strictEqual(report.exactDuplicates, 1, 'reports 1 exact duplicate');
             assert.strictEqual(report.toCreate, 0, 'creates nothing');
         });

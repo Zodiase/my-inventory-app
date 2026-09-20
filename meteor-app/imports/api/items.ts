@@ -21,6 +21,7 @@ import { buildSearchQuery } from '/imports/utility/searchQuery';
 export type { InventoryItem } from '/imports/model/InventoryItem';
 
 const logger = createLogger(module);
+const MAX_CONTAINER_SUBSCRIPTION_IDS = 100;
 
 export const InventoryItemsCollection = new NamedCollection<InventoryItem>('items');
 
@@ -30,7 +31,7 @@ export const snapshotSelector = (item: InventoryItem): Mongo.Selector<InventoryI
     description: item.description ?? { $exists: false },
     containerId: item.containerId ?? { $exists: false },
     isContainer: item.isContainer,
-    locked: item.locked === undefined ? { $in: [false, undefined] } : item.locked,
+    locked: item.locked ?? { $in: [false, undefined] },
     $expr: { $eq: ['$tagIds', { $literal: item.tagIds }] },
     properties: item.properties ?? { $exists: false },
     createdAt: item.createdAt,
@@ -209,7 +210,7 @@ export const moveItem = async (
         throw new RecordNotFoundException('Item not found', { _id: itemId });
     }
 
-    if (item.locked) throw new Error('Cannot move locked item. Unlock it first.');
+    if (item.locked === true) throw new Error('Cannot move locked item. Unlock it first.');
 
     // Normalize empty string and null to undefined
     const normalizedTargetId =
@@ -319,7 +320,7 @@ export const deleteInventoryItem = async (itemId: string): Promise<number> => {
         throw new RecordNotFoundException('Item not found', { _id: itemId });
     }
 
-    if (item.locked) throw new Error('Cannot delete locked item. Unlock it first.');
+    if (item.locked === true) throw new Error('Cannot delete locked item. Unlock it first.');
 
     // Check if this is a container with children
     if (item.isContainer) {
@@ -531,7 +532,7 @@ if (Meteor.isServer) {
     Meteor.publish('items.byContainers', function publishItemsByContainers(containerIds: unknown) {
         if (
             !Array.isArray(containerIds) ||
-            containerIds.length > 100 ||
+            containerIds.length > MAX_CONTAINER_SUBSCRIPTION_IDS ||
             containerIds.some((containerId) => typeof containerId !== 'string' || containerId === '')
         ) {
             throw new Meteor.Error('invalid-container-ids', 'Container IDs must be an array of non-empty strings.');

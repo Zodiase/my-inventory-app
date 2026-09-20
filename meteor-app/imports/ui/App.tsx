@@ -8,8 +8,8 @@ import { Meteor } from 'meteor/meteor';
 import React, { type ReactElement, useState, useEffect } from 'react';
 import { Route, Switch, useLocation } from 'wouter';
 
-import Items, { InventoryItemsCollection } from '/imports/api/items';
 import { getInventoryIdLabel, InventoryIdentitiesCollection } from '/imports/api/identities';
+import Items, { InventoryItemsCollection } from '/imports/api/items';
 import { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { SearchFragment } from '/imports/model/SearchFragment';
@@ -20,11 +20,11 @@ import type RecordInput from '/imports/utility/RecordInput';
 import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';
 import { AppShell } from './AppShell';
+import { BreadcrumbTrail } from './BreadcrumbTrail';
 import { FilterBar } from './FilterBar';
 import { ItemDetailView } from './ItemDetailView';
 import { ItemDialog } from './ItemDialog';
 import { ItemForm } from './ItemForm';
-import { BreadcrumbTrail } from './BreadcrumbTrail';
 import { ItemsByTagView } from './ItemsByTagView';
 import { NotFoundView } from './NotFoundView';
 import { SearchBar } from './SearchBar';
@@ -364,8 +364,12 @@ export const App = (): ReactElement => {
                             path={headerParentPath}
                             showHomeIcon
                             lastCrumbIsCurrent={false}
-                            onNavigateRoot={() => setLocation('/items')}
-                            onNavigate={(item) => setLocation(`/container/${item._id}`)}
+                            onNavigateRoot={() => {
+                                setLocation('/items');
+                            }}
+                            onNavigate={(item) => {
+                                setLocation(`/container/${item._id}`);
+                            }}
                             className="app-shell-breadcrumb"
                         />
                     ) : undefined
