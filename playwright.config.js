@@ -26,7 +26,8 @@ const isAppOnlyRun =
     (selectedProjects.length > 0 && selectedProjects.every((project) => appProjects.has(project)));
 const isStorybookOnlyRun =
     (hasStorybookTestPath && !hasAppTestPath) ||
-    (selectedProjects.length > 0 && selectedProjects.every((project) => project === 'storybook-chromium'));
+    (selectedProjects.length > 0 &&
+        selectedProjects.every((project) => ['storybook-chromium', 'storybook-webkit'].includes(project)));
 const appPort = process.env.PLAYWRIGHT_APP_PORT ?? '3000';
 const appBaseURL = process.env.PLAYWRIGHT_APP_BASE_URL ?? `http://localhost:${appPort}`;
 const meteorLocalDir =
@@ -126,6 +127,15 @@ export default defineConfig({
                 baseURL: 'http://localhost:6006',
             },
             testMatch: /tests\/e2e\/storybook\/.*\.spec\.ts/,
+            testIgnore: /.*\.webkit\.spec\.ts/,
+        },
+        {
+            name: 'storybook-webkit',
+            use: {
+                ...devices['Desktop Safari'],
+                baseURL: 'http://localhost:6006',
+            },
+            testMatch: /tests\/e2e\/storybook\/HoistedContainerGroup\.webkit\.spec\.ts/,
         },
     ],
 

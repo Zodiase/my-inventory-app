@@ -126,6 +126,29 @@ export const AllItemsViewContainer = ({
         return InventoryItemsCollection.find(baseQuery).fetch().sort(compareItemsForDisplay);
     }, [currentContainerId, JSON.stringify(filters), refreshTrigger]);
 
+    const hoistedContainerIds = items
+        .filter((item) => item.isContainer && item.properties?.childrenPresentation === 'hoist-in-parent')
+        .map((item) => item._id);
+    const hoistedContainerIdsKey = JSON.stringify(hoistedContainerIds);
+    const isLoadingHoistedItems = useSubscribe('items.byContainers', hoistedContainerIds);
+    const hoistedItemsByContainerId = useTracker(() => {
+        const grouped: Record<string, InventoryItem[]> = {};
+        for (const containerId of hoistedContainerIds) grouped[containerId] = [];
+
+        if (hoistedContainerIds.length === 0) return grouped;
+
+        InventoryItemsCollection.find({
+            containerId: { $in: hoistedContainerIds },
+        } as Mongo.Selector<InventoryItem>)
+            .fetch()
+            .sort(compareItemsForDisplay)
+            .forEach((item) => {
+                if (item.containerId !== undefined) grouped[item.containerId]?.push(item);
+            });
+
+        return grouped;
+    }, [hoistedContainerIdsKey, refreshTrigger]);
+
     const identities = useTracker(() => InventoryIdentitiesCollection.find({}).fetch(), [refreshTrigger]);
 
     // Fetch current container path for breadcrumb
@@ -160,7 +183,7 @@ export const AllItemsViewContainer = ({
         setLocation(containerId === undefined ? '/items' : `/container/${containerId}`);
     };
 
-    if (isLoadingItems() || isLoadingTags() || isLoadingIdentities()) {
+    if (isLoadingItems() || isLoadingHoistedItems() || isLoadingTags() || isLoadingIdentities()) {
         return <LoadingState />;
     }
 
@@ -168,6 +191,7 @@ export const AllItemsViewContainer = ({
         <AllItemsViewPresentation
             {...rootElementProps}
             items={items}
+            hoistedItemsByContainerId={hoistedItemsByContainerId}
             identities={identities}
             containerPath={containerPath}
             onNavigateToContainer={(containerId) => {

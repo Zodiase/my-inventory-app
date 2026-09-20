@@ -111,6 +111,33 @@ const bike: InventoryItem = {
     modifiedAt: new Date('2024-01-07'),
 };
 
+const thirdFloor: InventoryItem = {
+    ...garage,
+    _id: 'third-floor',
+    name: 'Third floor',
+    description: '',
+    containerId: 'home',
+    properties: { childrenPresentation: 'hoist-in-parent' },
+};
+
+const thirdFloorRooms: InventoryItem[] = [
+    { ...garage, _id: 'laundry-room', name: 'Laundry room', description: '', containerId: thirdFloor._id },
+    {
+        ...garage,
+        _id: 'main-bedroom',
+        name: 'Main bedroom',
+        description: 'Has its own bathroom',
+        containerId: thirdFloor._id,
+    },
+    {
+        ...garage,
+        _id: 'secondary-bedroom',
+        name: 'Secondary bedroom',
+        description: 'Has its own bathroom',
+        containerId: thirdFloor._id,
+    },
+];
+
 const scrollRegressionItems: InventoryItem[] = [
     garage,
     ...Array.from({ length: 24 }, (_, index) => ({
@@ -190,6 +217,18 @@ export const RootWithMixedItems: Story = {
         onBreadcrumbNavigate: () => {
             console.log('Breadcrumb navigate');
         },
+    },
+};
+
+/** Frontend integration: the full list view projects a marked logical container inline. */
+export const HoistedLogicalContainer: Story = {
+    args: {
+        items: [garage, thirdFloor, { ...bike, containerId: 'home' }],
+        hoistedItemsByContainerId: { [thirdFloor._id]: thirdFloorRooms },
+        containerPath: [home],
+        showHomeIcon: true,
+        onNavigateToContainer: () => undefined,
+        onBreadcrumbNavigate: () => undefined,
     },
 };
 
