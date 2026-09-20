@@ -11,7 +11,7 @@ import { Link } from 'wouter';
 
 import { getInventoryIdLabel, type InventoryIdentity } from '/imports/model/InventoryIdentity';
 import type { InventoryItem } from '/imports/model/InventoryItem';
-import { hasStackTowerLayout } from '/imports/model/StructuredStorageLayout';
+import { getStructuredStorageLayoutKind } from '/imports/model/StructuredStorageLayout';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
 import { StructuredStorageStack } from '/imports/ui/StructuredStorageStack';
@@ -310,7 +310,7 @@ export const AllItemsViewPresentation = ({
         );
 
     const currentContainer = containerPath.at(-1);
-    const usesStructuredStack = hasStackTowerLayout(currentContainer, items);
+    const structuredLayoutKind = getStructuredStorageLayoutKind(currentContainer, items);
 
     return (
         <Box {...rootElementProps} fill gap="small" pad="small">
@@ -339,9 +339,11 @@ export const AllItemsViewPresentation = ({
 
             {/* Scrollable container */}
             <ScrollableContainer ref={containerRef} data-testid="items-list">
-                {usesStructuredStack && currentContainer !== undefined ? (
+                {structuredLayoutKind !== undefined && currentContainer !== undefined ? (
                     <StructuredStorageStack
                         containerName={currentContainer.name}
+                        layoutKind={structuredLayoutKind}
+                        layout={currentContainer.properties?.storageLayout}
                         items={items}
                         identities={identities}
                         listFallback={flatItemsList}
