@@ -9,10 +9,12 @@ import React, { type ComponentProps, type ReactElement, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { Link } from 'wouter';
 
-import type { InventoryItem } from '/imports/model/InventoryItem';
 import { getInventoryIdLabel, type InventoryIdentity } from '/imports/model/InventoryIdentity';
+import type { InventoryItem } from '/imports/model/InventoryItem';
+import { hasStackTowerLayout } from '/imports/model/StructuredStorageLayout';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
 import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
+import { StructuredStorageStack } from '/imports/ui/StructuredStorageStack';
 import { usePullToRefresh } from '/imports/utility/pullToRefresh';
 import { useSwipeNavigation } from '/imports/utility/swipeNavigation';
 
@@ -215,6 +217,101 @@ export const AllItemsViewPresentation = ({
         }
     );
 
+    const flatItemsList =
+        items.length === 0 ? (
+            <Box align="center" justify="center" pad="large">
+                <Text color="text-weak">No items at this level</Text>
+            </Box>
+        ) : (
+            <List data={items} pad="none" border={false}>
+                {(item: InventoryItem) => {
+                    const menuActions = [];
+                    const identity = identitiesByItemId.get(item._id);
+
+                    if (onViewItemDetails !== undefined) {
+                        menuActions.push({
+                            label: 'View Details',
+                            onClick: () => {
+                                onViewItemDetails(item._id);
+                            },
+                        });
+                    }
+
+                    if (onEditItem !== undefined) {
+                        menuActions.push({
+                            label: 'Edit',
+                            onClick: () => {
+                                onEditItem(item._id);
+                            },
+                        });
+                    }
+
+                    if (onDeleteItem !== undefined) {
+                        menuActions.push({
+                            label: 'Delete',
+                            onClick: () => {
+                                onDeleteItem(item._id);
+                            },
+                            variant: 'danger' as const,
+                        });
+                    }
+
+                    return (
+                        <LongPressContextMenu key={item._id} actions={menuActions}>
+                            <ItemRowLink
+                                href={item.isContainer ? `/container/${item._id}` : `/items/${item._id}`}
+                                aria-label={item.isContainer ? `Open container ${item.name}` : `View item ${item.name}`}
+                            >
+                                <Box
+                                    direction="row"
+                                    align="center"
+                                    pad="small"
+                                    gap="small"
+                                    background="background-front"
+                                    hoverIndicator="background-contrast"
+                                    style={{
+                                        minHeight: '44px',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    {item.isContainer && <Folder size="medium" color="brand" />}
+                                    <Box flex style={{ minWidth: 0 }}>
+                                        <Text weight={item.isContainer ? 'bold' : 'normal'} truncate>
+                                            {item.name}
+                                        </Text>
+                                        {identity !== undefined && (
+                                            <Text
+                                                size="small"
+                                                color="brand"
+                                                weight="bold"
+                                                style={{
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                }}
+                                                title={identity.value}
+                                            >
+                                                ID: {getInventoryIdLabel(identity, item.isContainer)}
+                                            </Text>
+                                        )}
+                                        {item.description !== '' && item.description !== undefined && (
+                                            <Text size="small" color="text-weak" truncate>
+                                                {item.description}
+                                            </Text>
+                                        )}
+                                    </Box>
+                                    {item.isContainer && <Next size="medium" color="text-weak" />}
+                                </Box>
+                            </ItemRowLink>
+                        </LongPressContextMenu>
+                    );
+                }}
+            </List>
+        );
+
+    const currentContainer = containerPath.at(-1);
+    const usesStructuredStack = hasStackTowerLayout(currentContainer, items);
+
     return (
         <Box {...rootElementProps} fill gap="small" pad="small">
             {/* Pull-to-refresh indicator */}
@@ -242,107 +339,15 @@ export const AllItemsViewPresentation = ({
 
             {/* Scrollable container */}
             <ScrollableContainer ref={containerRef} data-testid="items-list">
-                {/* Items list */}
-                {items.length === 0 ? (
-                    <Box align="center" justify="center" pad="large">
-                        <Text color="text-weak">No items at this level</Text>
-                    </Box>
+                {usesStructuredStack && currentContainer !== undefined ? (
+                    <StructuredStorageStack
+                        containerName={currentContainer.name}
+                        items={items}
+                        identities={identities}
+                        listFallback={flatItemsList}
+                    />
                 ) : (
-                    <List data={items} pad="none" border={false}>
-                        {(item: InventoryItem) => {
-                            // Build context menu actions
-                            const menuActions = [];
-
-                            // Always add View Details - navigates to /items/:itemId
-                            if (onViewItemDetails !== undefined) {
-                                menuActions.push({
-                                    label: 'View Details',
-                                    onClick: () => {
-                                        onViewItemDetails(item._id);
-                                    },
-                                });
-                            }
-
-                            if (onEditItem !== undefined) {
-                                menuActions.push({
-                                    label: 'Edit',
-                                    onClick: () => {
-                                        onEditItem(item._id);
-                                    },
-                                });
-                            }
-
-                            if (onDeleteItem !== undefined) {
-                                menuActions.push({
-                                    label: 'Delete',
-                                    onClick: () => {
-                                        onDeleteItem(item._id);
-                                    },
-                                    variant: 'danger' as const,
-                                });
-                            }
-                            return (
-                                <LongPressContextMenu key={item._id} actions={menuActions}>
-                                    <ItemRowLink
-                                        href={item.isContainer ? `/container/${item._id}` : `/items/${item._id}`}
-                                        aria-label={
-                                            item.isContainer ? `Open container ${item.name}` : `View item ${item.name}`
-                                        }
-                                    >
-                                        <Box
-                                            direction="row"
-                                            align="center"
-                                            pad="small"
-                                            gap="small"
-                                            background="background-front"
-                                            hoverIndicator="background-contrast"
-                                            style={{
-                                                minHeight: '44px',
-                                                cursor: 'pointer',
-                                            }}
-                                        >
-                                            {/* Icon for containers */}
-                                            {item.isContainer && <Folder size="medium" color="brand" />}
-
-                                            {/* Item name */}
-                                            <Box flex style={{ minWidth: 0 }}>
-                                                <Text weight={item.isContainer ? 'bold' : 'normal'} truncate>
-                                                    {item.name}
-                                                </Text>
-                                                {identitiesByItemId.has(item._id) && (
-                                                    <Text
-                                                        size="small"
-                                                        color="brand"
-                                                        weight="bold"
-                                                        style={{
-                                                            whiteSpace: 'nowrap',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis',
-                                                        }}
-                                                        title={identitiesByItemId.get(item._id)?.value}
-                                                    >
-                                                        ID:{' '}
-                                                        {getInventoryIdLabel(
-                                                            identitiesByItemId.get(item._id)!,
-                                                            item.isContainer
-                                                        )}
-                                                    </Text>
-                                                )}
-                                                {item.description !== '' && item.description !== undefined && (
-                                                    <Text size="small" color="text-weak" truncate>
-                                                        {item.description}
-                                                    </Text>
-                                                )}
-                                            </Box>
-
-                                            {/* Navigation arrow for containers */}
-                                            {item.isContainer && <Next size="medium" color="text-weak" />}
-                                        </Box>
-                                    </ItemRowLink>
-                                </LongPressContextMenu>
-                            );
-                        }}
-                    </List>
+                    flatItemsList
                 )}
             </ScrollableContainer>
         </Box>

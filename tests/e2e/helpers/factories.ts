@@ -25,6 +25,16 @@ export interface CreateItemOptions {
         model?: string;
         manufacturer?: string;
         notes?: string;
+        storageLayout?: {
+            modelId: string;
+            tierCount: number;
+            positions: Array<'left' | 'right'>;
+        };
+        storagePlacement?: {
+            modelId: string;
+            tier: number;
+            position: 'left' | 'right';
+        };
     };
 }
 

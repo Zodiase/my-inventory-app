@@ -1,3 +1,8 @@
+/**
+ * Storybook scenarios for the inventory browser's presentation states.
+ * Fixtures stay generic and deterministic so layout, interaction, and overflow
+ * behavior can be exercised without Meteor or personal inventory data.
+ */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Button, Header, Heading, Main, Nav, Text as GrommetText } from 'grommet';
 import { Add, Apps, Filter, Search as SearchIcon, Tag as TagIcon } from 'grommet-icons';
@@ -541,5 +546,83 @@ export const LongPressContextMenu: Story = {
                 </Box>
             </Box>
         );
+    },
+};
+
+const bedsideStack: InventoryItem = {
+    ...toolBox,
+    _id: 'bedside-stack',
+    name: 'Bedside stack',
+    containerId: undefined,
+    properties: {
+        storageLayout: {
+            modelId: 'stack-tower-2col-5tier-v1',
+            tierCount: 5,
+            positions: ['left', 'right'],
+        },
+    },
+};
+
+const positionedStackItems: InventoryItem[] = [
+    {
+        ...toolBox,
+        _id: 'alpha-right-bottom',
+        name: 'Alpha supplies',
+        containerId: bedsideStack._id,
+        properties: {
+            storagePlacement: { modelId: 'stack-tower-2col-5tier-v1', tier: 4, position: 'right' },
+        },
+    },
+    {
+        ...toolBox,
+        _id: 'zulu-left-top',
+        name: 'Zulu supplies with an intentionally long descriptive name',
+        containerId: bedsideStack._id,
+        properties: {
+            storagePlacement: { modelId: 'stack-tower-2col-5tier-v1', tier: 1, position: 'left' },
+        },
+    },
+    {
+        ...toolBox,
+        _id: 'duplicate-left-top',
+        name: 'Duplicate top placement',
+        containerId: bedsideStack._id,
+        properties: {
+            storagePlacement: { modelId: 'stack-tower-2col-5tier-v1', tier: 1, position: 'left' },
+        },
+    },
+    {
+        ...hammer,
+        _id: 'invalid-tier',
+        name: 'Invalid tier item',
+        containerId: bedsideStack._id,
+        properties: {
+            storagePlacement: { modelId: 'stack-tower-2col-5tier-v1', tier: 9, position: 'right' },
+        },
+    },
+    {
+        ...hammer,
+        _id: 'unplaced-item',
+        name: 'Unplaced item',
+        containerId: bedsideStack._id,
+    },
+];
+
+/** Physical stack regression: alphabetical order must not obscure tier and side. */
+export const StructuredBedsideStack: Story = {
+    args: {
+        items: positionedStackItems,
+        identities: positionedStackItems.map((item, index) => ({
+            itemId: item._id,
+            identity: { namespace: 'storybook.inventory', value: `1000000${index}-0000-4000-8000-000000000000` },
+        })),
+        containerPath: [bedsideStack],
+        showHomeIcon: true,
+        onNavigateToContainer: () => {
+            console.log('Navigate to container');
+        },
+        onBreadcrumbNavigate: () => {
+            console.log('Breadcrumb navigate');
+        },
     },
 };

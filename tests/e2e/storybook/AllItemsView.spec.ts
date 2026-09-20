@@ -3,6 +3,81 @@ import { expect, test } from '@playwright/test';
 import { gotoStory } from '../helpers/storybook-helpers';
 
 test.describe('AllItemsView Component (Storybook)', () => {
+    test('renders structured stack placement instead of alphabetical flat rows', async ({ page }) => {
+        await gotoStory(page, 'ui-allitemsview', 'structured-bedside-stack');
+
+        const layout = page.getByRole('region', { name: 'Bedside stack physical layout' });
+        await expect(layout).toBeVisible();
+        await expect(layout.getByRole('row')).toHaveCount(5);
+
+        const tierOne = layout.getByRole('row', { name: 'Tier 1' });
+        await expect(tierOne.getByRole('link', { name: /Zulu supplies/ })).toHaveAttribute(
+            'href',
+            '/container/zulu-left-top'
+        );
+        await expect(tierOne.getByText('Empty right slot')).toBeVisible();
+
+        const tierFour = layout.getByRole('row', { name: 'Tier 4' });
+        await expect(tierFour.getByText('Empty left slot')).toBeVisible();
+        await expect(tierFour.getByRole('link', { name: /Alpha supplies/ })).toBeVisible();
+
+        const tierFive = layout.getByRole('row', { name: 'Tier 5' });
+        await expect(tierFive.getByText('Empty left slot')).toBeVisible();
+        await expect(tierFive.getByText('Empty right slot')).toBeVisible();
+
+        await expect(page.getByRole('region', { name: 'Placement issues' })).toContainText('Duplicate top placement');
+        await expect(page.getByRole('region', { name: 'Placement issues' })).toContainText('Invalid tier item');
+        await expect(page.getByRole('region', { name: 'Placement issues' })).toContainText('Unplaced item');
+
+        const compactId = page.getByTestId('stack-id-zulu-left-top');
+        await expect(compactId).toHaveText('ID: 箱-10000001');
+        expect(await compactId.evaluate((element) => getComputedStyle(element).whiteSpace)).toBe('nowrap');
+    });
+
+    for (const viewport of [
+        { name: 'desktop', width: 1100, height: 850 },
+        { name: 'phone', width: 390, height: 844 },
+    ]) {
+        test(`keeps all five tiers readable without horizontal overflow on ${viewport.name}`, async ({ page }) => {
+            await page.setViewportSize({ width: viewport.width, height: viewport.height });
+            await gotoStory(page, 'ui-allitemsview', 'structured-bedside-stack');
+
+            const layout = page.getByRole('region', { name: 'Bedside stack physical layout' });
+            const metrics = await layout.evaluate((element) => {
+                const rows = [...element.querySelectorAll('[role="row"]')];
+                const firstCells = [...rows[0]!.querySelectorAll('[role="cell"]')];
+                const longName = element.querySelector('[aria-label*="Zulu supplies"] span');
+
+                return {
+                    viewportWidth: document.documentElement.clientWidth,
+                    documentWidth: document.documentElement.scrollWidth,
+                    layoutWidth: element.getBoundingClientRect().width,
+                    rowTops: rows.map((row) => row.getBoundingClientRect().top),
+                    firstCellLefts: firstCells.map((cell) => cell.getBoundingClientRect().left),
+                    longNameWidth: longName?.getBoundingClientRect().width ?? 0,
+                    firstCellWidth: firstCells[0]?.getBoundingClientRect().width ?? 0,
+                };
+            });
+
+            expect(metrics.documentWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+            expect(metrics.layoutWidth).toBeLessThanOrEqual(metrics.viewportWidth);
+            expect(metrics.rowTops).toEqual([...metrics.rowTops].sort((first, second) => first - second));
+            expect(metrics.firstCellLefts[1]).toBeGreaterThan(metrics.firstCellLefts[0]!);
+            expect(metrics.longNameWidth).toBeLessThanOrEqual(metrics.firstCellWidth);
+            await expect(layout).toHaveScreenshot(`structured-stack-${viewport.name}.png`);
+        });
+    }
+
+    test('supports keyboard navigation from an occupied slot', async ({ page }) => {
+        await gotoStory(page, 'ui-allitemsview', 'structured-bedside-stack');
+
+        const topLeft = page.getByRole('link', { name: /Zulu supplies/ });
+        await topLeft.focus();
+        await expect(topLeft).toBeFocused();
+        await page.keyboard.press('Enter');
+        await expect(page).toHaveURL(/\/container\/zulu-left-top$/);
+    });
+
     test('keeps scrolling isolated to the items list in the app-shell regression story', async ({ page }) => {
         await gotoStory(page, 'ui-allitemsview', 'app-shell-scroll-regression');
 
