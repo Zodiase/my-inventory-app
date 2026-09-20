@@ -59,6 +59,9 @@ export const Default: Story = {
   args: {
     // your props here
   },
+  parameters: {
+    introduction: 'Describe the visible state, behavior, and important regression expectations.',
+  },
 };
 
 export const AnotherVariant: Story = {
@@ -67,6 +70,12 @@ export const AnotherVariant: Story = {
   },
 };
 ```
+
+Every story appears with an **Introduction** panel outside the preview iframe. By
+default the panel derives a concise expectation from the component and story names.
+Add `parameters.introduction` when the scenario has behavior, interaction, responsive,
+or regression expectations that its name does not fully communicate. Existing
+`parameters.docs.description.story` text is used as a fallback before generated copy.
 
 ## Configuration Files
 
