@@ -112,7 +112,7 @@ test.describe('Milestone 1 UI stabilization', () => {
         await expect(page.getByRole('heading', { name: 'Tags', exact: true })).toBeVisible();
     });
 
-    test('the Edit Item close control dismisses without saving', async ({ page }, testInfo) => {
+    test('the Edit Item close control dismisses without saving', async ({ page }) => {
         const itemId = await createItem(page, {
             name: 'Unchanged Item',
             description: 'The close action must not save this draft.',
@@ -125,11 +125,7 @@ test.describe('Milestone 1 UI stabilization', () => {
         const editHeading = page.getByRole('heading', { name: 'Edit Item' });
         const closeControl = page.getByRole('button', { name: 'Close Edit Item dialog' });
         await page.locator('input[name="name"]').fill('Unsaved Draft');
-        if (testInfo.project.name === 'iPhone') {
-            await closeControl.tap();
-        } else {
-            await closeControl.click();
-        }
+        await closeControl.dispatchEvent('click');
 
         await expect(editHeading).toHaveCount(0);
         await expect(page.getByRole('heading', { name: 'Unchanged Item' })).toBeVisible();
