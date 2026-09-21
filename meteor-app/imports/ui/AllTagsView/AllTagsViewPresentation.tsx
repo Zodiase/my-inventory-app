@@ -1,5 +1,9 @@
-import { Box, Button, Form, FormField, Heading, Layer, Text, TextInput } from 'grommet';
-import { Add, Close, Edit, Tag as TagIcon, Trash } from 'grommet-icons';
+/**
+ * Presents the tag-management toolbar, hierarchy, row actions, and confirmation flows.
+ * Responsive hierarchy and action disclosure belong here; data loading and persistence stay in the container.
+ */
+import { Box, Button, Form, FormField, Heading, Layer, Menu, Text, TextInput } from 'grommet';
+import { Add, Close, Edit, MoreVertical, Tag as TagIcon, Trash } from 'grommet-icons';
 import React, {
     type ChangeEvent,
     type ComponentProps,
@@ -13,12 +17,16 @@ import styled from 'styled-components';
 import type { TagRecord } from '/imports/model/TagRecord';
 import { CreateTagDialog } from '/imports/ui/CreateTagDialog';
 import { LongPressContextMenu, type ContextMenuAction } from '/imports/ui/LongPressContextMenu';
+import { uiTokens } from '/imports/ui/theme';
 
 interface TagWithChildren extends TagRecord {
     children: TagWithChildren[];
 }
 
 type DivProps = Omit<ComponentProps<'div'>, 'ref'>;
+
+const MAX_MOBILE_INDENT_DEPTH = 3;
+const PARENT_PATH_INDEX_FROM_END = -2;
 
 type DialogState =
     | { type: 'create'; parentTagId: string }
@@ -149,6 +157,7 @@ const Row = styled.div<{ $depth: number }>`
     align-items: center;
     background: #ffffff;
     border-bottom: 1px solid #eeeeee;
+    box-sizing: border-box;
     display: flex;
     gap: 0.75rem;
     min-height: 52px;
@@ -195,11 +204,25 @@ const Row = styled.div<{ $depth: number }>`
         overflow-wrap: anywhere;
     }
 
+    .tag-mobile-metadata-row {
+        display: contents;
+    }
+
+    .tag-item-summary {
+        color: #6f7785;
+        font-size: 0.875rem;
+        font-weight: normal;
+    }
+
     .tag-item-count,
     .tag-path {
         color: #6f7785;
         font-size: 0.875rem;
         font-weight: normal;
+    }
+
+    .tag-mobile-hierarchy {
+        display: none;
     }
 
     .tag-actions-container {
@@ -214,6 +237,95 @@ const Row = styled.div<{ $depth: number }>`
     .tag-action-button {
         min-height: 44px;
         min-width: 44px;
+    }
+
+    .tag-overflow-action {
+        display: none;
+        min-height: ${uiTokens.size.touchTarget};
+        min-width: ${uiTokens.size.touchTarget};
+        padding: 0;
+    }
+
+    @media (max-width: 600px) {
+        gap: ${uiTokens.space.sm};
+        min-height: 56px;
+        padding-block: ${uiTokens.space.xs};
+        padding-inline: calc(
+                ${uiTokens.space.sm} + ${(props) => Math.min(props.$depth, MAX_MOBILE_INDENT_DEPTH)} *
+                    ${uiTokens.space.md}
+            )
+            ${uiTokens.space.xs};
+
+        > svg {
+            flex: 0 0 auto;
+            height: 20px;
+            width: 20px;
+        }
+
+        .tag-name-button {
+            gap: ${uiTokens.space.xxs};
+        }
+
+        .tag-name {
+            display: -webkit-box;
+            line-height: ${uiTokens.font.lineHeightTight};
+            overflow: hidden;
+            overflow-wrap: anywhere;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+
+        .tag-mobile-metadata-row {
+            align-items: baseline;
+            display: flex;
+            gap: ${uiTokens.space.xs};
+            max-width: 100%;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .tag-item-summary {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
+        .tag-child-count {
+            display: none;
+        }
+
+        .tag-path {
+            display: none;
+        }
+
+        .tag-mobile-hierarchy {
+            align-items: baseline;
+            color: ${uiTokens.color.textWeak};
+            display: flex;
+            font-size: ${uiTokens.font.sizeSmall};
+            gap: ${uiTokens.space.xs};
+            min-width: 0;
+        }
+
+        .tag-hierarchy-level {
+            flex: 0 0 auto;
+            font-weight: ${uiTokens.font.weightMedium};
+        }
+
+        .tag-parent-name {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tag-desktop-actions {
+            display: none;
+        }
+
+        .tag-overflow-action {
+            display: inline-flex;
+            flex: 0 0 ${uiTokens.size.touchTarget};
+        }
     }
 `;
 
@@ -251,6 +363,7 @@ interface TagRowProps {
 const TagRow = ({ tag, depth, usageCounts, onAddChild, onRename, onDelete, onTagClick }: TagRowProps): ReactElement => {
     const itemCount = usageCounts[tag._id] ?? 0;
     const pathLabel = tag.path.length > 1 ? tag.path.map(({ name }) => name).join(' / ') : undefined;
+    const parentName = tag.path.at(PARENT_PATH_INDEX_FROM_END)?.name;
     const menuActions: ContextMenuAction[] = [
         {
             label: 'Add Child',
@@ -294,16 +407,40 @@ const TagRow = ({ tag, depth, usageCounts, onAddChild, onRename, onDelete, onTag
                         }}
                     >
                         <span className="tag-name">{tag.name}</span>
-                        <span className="tag-item-count">
-                            {itemCount === 1 ? '1 item' : `${itemCount} items`}
-                            {tag.children.length > 0
-                                ? `, ${tag.children.length} ${tag.children.length === 1 ? 'child' : 'children'}`
-                                : ''}
+                        <span className="tag-mobile-metadata-row">
+                            <span className="tag-item-summary">
+                                <span className="tag-item-count">
+                                    {itemCount === 1 ? '1 item' : `${itemCount} items`}
+                                </span>
+                                {tag.children.length > 0 && (
+                                    <span className="tag-child-count">
+                                        {`, ${tag.children.length} ${tag.children.length === 1 ? 'child' : 'children'}`}
+                                    </span>
+                                )}
+                            </span>
+                            {depth > 0 && (
+                                <span
+                                    className="tag-mobile-hierarchy"
+                                    aria-label={`Hierarchy level ${depth + 1}, under ${parentName ?? 'unknown parent'}`}
+                                    title={pathLabel}
+                                >
+                                    <span className="tag-hierarchy-level">Level {depth + 1}</span>
+                                    <span aria-hidden="true">·</span>
+                                    <span className="tag-parent-name">under {parentName ?? 'unknown parent'}</span>
+                                </span>
+                            )}
                         </span>
-                        {pathLabel !== undefined && <span className="tag-path">{pathLabel}</span>}
+                        {pathLabel !== undefined && (
+                            <span className="tag-path" title={pathLabel}>
+                                {pathLabel}
+                            </span>
+                        )}
                     </button>
                 </div>
-                <span className="tag-actions-container" aria-label={`Actions for ${tag.name}`}>
+                <span
+                    className="tag-actions-container tag-desktop-actions"
+                    aria-label={`Direct actions for ${tag.name}`}
+                >
                     <Button
                         className="tag-action-button new-child-action"
                         icon={<Add />}
@@ -338,6 +475,37 @@ const TagRow = ({ tag, depth, usageCounts, onAddChild, onRename, onDelete, onTag
                         }}
                     />
                 </span>
+                <Menu
+                    className="tag-overflow-action"
+                    a11yTitle={`Actions for ${tag.name}`}
+                    icon={<MoreVertical />}
+                    items={[
+                        {
+                            label: 'Add child',
+                            icon: <Add />,
+                            onClick: () => {
+                                onAddChild(tag._id);
+                            },
+                        },
+                        {
+                            label: 'Rename',
+                            icon: <Edit />,
+                            onClick: () => {
+                                onRename(tag);
+                            },
+                        },
+                        {
+                            label: <Text color="status-critical">Delete</Text>,
+                            icon: <Trash color="status-critical" />,
+                            onClick: () => {
+                                onDelete(tag);
+                            },
+                        },
+                    ]}
+                    dropAlign={{ top: 'bottom', right: 'right' }}
+                    hoverIndicator
+                    plain
+                />
             </Row>
         </LongPressContextMenu>
     );

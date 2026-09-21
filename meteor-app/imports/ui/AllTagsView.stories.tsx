@@ -5,8 +5,8 @@
  * and utility views for detached tags and tags missing path information. Each tag shows usage count
  * (how many items have that tag).
  *
- * These stories demonstrate various states: empty, few tags, nested hierarchies, with usage counts,
- * and fully interactive management scenarios.
+ * These stories demonstrate empty, routine, interactive, and hierarchy-stress states, including
+ * long names and depths that exercise the responsive row constraints.
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from 'grommet';
@@ -107,6 +107,31 @@ const manyTags: TagRecord[] = Array.from({ length: 15 }, (_, i) => ({
     modifiedAt: new Date('2024-01-01'),
 }));
 
+const hierarchyStressNames = [
+    'Household equipment',
+    'Seasonal storage',
+    'Outdoor recreation',
+    'Cold weather camping',
+    'Safety systems',
+    'Emergency communication and navigation equipment with rechargeable backup power',
+];
+
+const hierarchyStressTags: TagRecord[] = hierarchyStressNames.map((name, index) => {
+    const id = `hierarchy-stress-${index + 1}`;
+
+    return {
+        _id: id,
+        name,
+        parentTagId: index === 0 ? '' : `hierarchy-stress-${index}`,
+        path: hierarchyStressNames.slice(0, index + 1).map((pathName, pathIndex) => ({
+            _id: `hierarchy-stress-${pathIndex + 1}`,
+            name: pathName,
+        })),
+        createdAt: new Date('2024-01-01'),
+        modifiedAt: new Date('2024-01-01'),
+    };
+});
+
 // Story: Empty state - no tags exist
 export const Empty: Story = {
     args: {
@@ -165,6 +190,32 @@ export const NestedHierarchy: Story = {
         },
         onDelete: (tag: TagRecord) => {
             console.log('Delete', tag.name);
+        },
+    },
+};
+
+export const HierarchyStress: Story = {
+    args: {
+        tags: hierarchyStressTags,
+        usageCounts: {
+            'hierarchy-stress-1': 42,
+            'hierarchy-stress-2': 31,
+            'hierarchy-stress-3': 24,
+            'hierarchy-stress-4': 16,
+            'hierarchy-stress-5': 8,
+            'hierarchy-stress-6': 37,
+        },
+        onAddChild: (parentTagId: string, tagName: string) => {
+            console.log('Add child', parentTagId, tagName);
+        },
+        onRename: (tag: TagRecord, newName: string) => {
+            console.log('Rename', tag.name, 'to', newName);
+        },
+        onDelete: (tag: TagRecord) => {
+            console.log('Delete', tag.name);
+        },
+        onTagClick: (tagId: string) => {
+            console.log('Open tagged items', tagId);
         },
     },
 };
