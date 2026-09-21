@@ -68,32 +68,35 @@ test.describe('App Smoke Tests', () => {
     test('should load the app homepage', async ({ page }) => {
         await page.goto('/');
 
-        // Should show app header without adding a competing heading before the page title
-        await expect(page.getByText('Inventory App', { exact: true })).toBeVisible();
-        await expect(page.getByRole('heading', { name: 'Inventory App' })).toHaveCount(0);
+        const banner = page.getByRole('banner');
+        await expect(banner.getByText('Inventory', { exact: true })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Inventory' })).toHaveCount(0);
+        await expect(page.getByRole('button', { name: 'Open navigation menu' })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Search inventory' })).toBeVisible();
 
-        // Should show navigation tabs as links, not nested interactive link-button pairs
-        const desktopNav = page.getByRole('navigation', { name: 'Desktop primary navigation' });
-        await expect(desktopNav.getByRole('link', { name: 'Items' })).toBeVisible();
-        await expect(desktopNav.getByRole('link', { name: 'Tags' })).toBeVisible();
-        await expect(desktopNav.locator('a button')).toHaveCount(0);
+        await page.getByRole('button', { name: 'Open navigation menu' }).click();
+        const primaryNav = page.getByRole('navigation', { name: 'Primary navigation' });
+        await expect(primaryNav.getByRole('link', { name: 'Items' })).toBeVisible();
+        await expect(primaryNav.getByRole('link', { name: 'Tags' })).toBeVisible();
+        await expect(primaryNav.locator('a button')).toHaveCount(0);
     });
 
     test('home page should not duplicate the Items nav label as a page heading', async ({ page }) => {
         await page.goto('/');
 
-        const visibleItemsLabels = page
-            .getByRole('link', { name: 'Items', exact: true })
-            .or(page.getByRole('heading', { name: 'Items', exact: true }));
-
         await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Items', exact: true })).toHaveCount(0);
-        await expect(visibleItemsLabels).toHaveCount(1);
+        await page.getByRole('button', { name: 'Open navigation menu' }).click();
+        await expect(
+            page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Items' })
+        ).toHaveCount(1);
 
         await page.setViewportSize({ width: 390, height: 844 });
         await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Items', exact: true })).toHaveCount(0);
-        await expect(visibleItemsLabels).toHaveCount(1);
+        await expect(
+            page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Items' })
+        ).toHaveCount(1);
     });
 
     test('should navigate between Items and Tags views', async ({ page }) => {
@@ -103,20 +106,23 @@ test.describe('App Smoke Tests', () => {
         await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
         await expect(page.getByRole('button', { name: 'Create Item' })).toBeVisible();
 
-        const desktopNav = page.getByRole('navigation', { name: 'Desktop primary navigation' });
-        await expect(desktopNav).toBeVisible();
-        await expect(desktopNav.getByRole('link', { name: 'Items' })).toHaveAttribute('aria-current', 'page');
+        await page.getByRole('button', { name: 'Open navigation menu' }).click();
+        const primaryNav = page.getByRole('navigation', { name: 'Primary navigation' });
+        await expect(primaryNav.getByRole('link', { name: 'Items' })).toHaveAttribute('aria-current', 'page');
 
         // Click Tags tab
-        await desktopNav.getByRole('link', { name: 'Tags' }).click();
+        await primaryNav.getByRole('link', { name: 'Tags' }).click();
 
         // Should show tags view (AllTagsView component)
         // Note: Need to check what's actually rendered in AllTagsView
         await page.waitForTimeout(500); // Brief wait for view transition
-        await expect(desktopNav.getByRole('link', { name: 'Tags' })).toHaveAttribute('aria-current', 'page');
+        await page.getByRole('button', { name: 'Open navigation menu' }).click();
+        await expect(
+            page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Tags' })
+        ).toHaveAttribute('aria-current', 'page');
 
         // Click back to Items tab
-        await desktopNav.getByRole('link', { name: 'Items' }).click();
+        await page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Items' }).click();
 
         // Should be back to items view
         await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
@@ -163,9 +169,11 @@ test.describe('App Smoke Tests', () => {
         await expect(page).toHaveURL(new RegExp(`/container/${containerId}$`));
         await expect(rootBreadcrumb).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Regression Room' })).toBeVisible();
+        await page.getByRole('button', { name: 'Open navigation menu' }).click();
         await expect(
-            page.getByRole('navigation', { name: 'Desktop primary navigation' }).getByRole('link', { name: 'Items' })
+            page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Items' })
         ).toHaveAttribute('aria-current', 'page');
+        await page.getByRole('button', { name: 'Open navigation menu' }).click();
 
         await page.goBack();
         await expect(page).toHaveURL(/\/items$/);
@@ -255,39 +263,33 @@ test.describe('App Smoke Tests', () => {
         await expect(page.getByRole('button', { name: 'Navigate to all items' })).toBeVisible();
     });
 
-    test('should provide touch-friendly mobile bottom navigation without horizontal overflow', async ({ page }) => {
+    test('should provide touch-friendly mobile navigation without horizontal overflow', async ({ page }) => {
         await page.setViewportSize({ width: 390, height: 844 });
         await page.goto('/');
         await waitForMeteorReady(page);
 
-        const mobileNav = page.getByRole('navigation', { name: 'Mobile primary navigation' });
-        await expect(mobileNav).toBeVisible();
-
-        const mobileTabs = ['Items', 'Tags', 'Search', 'Data'];
-
-        for (const tab of mobileTabs) {
-            const link = mobileNav.getByRole('link', { name: tab });
-            await expect(link).toBeVisible();
-
-            const box = await link.boundingBox();
-            if (box === null) throw new Error(`${tab} mobile tab is not visible`);
-            expect(box.width, `${tab} mobile tab width`).toBeGreaterThanOrEqual(44);
-            expect(box.height, `${tab} mobile tab height`).toBeGreaterThanOrEqual(44);
-
-            await link.click();
-            await expect(link).toHaveAttribute('aria-current', 'page');
+        const menuButton = page.getByRole('button', { name: 'Open navigation menu' });
+        const searchLink = page.getByRole('link', { name: 'Search inventory' });
+        for (const [name, control] of [
+            ['menu', menuButton],
+            ['search', searchLink],
+        ] as const) {
+            const box = await control.boundingBox();
+            if (box === null) throw new Error(`${name} mobile control is not visible`);
+            expect(box.width, `${name} mobile control width`).toBeGreaterThanOrEqual(44);
+            expect(box.height, `${name} mobile control height`).toBeGreaterThanOrEqual(44);
         }
 
-        await mobileNav.getByRole('link', { name: 'Items' }).click();
-        await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
+        await menuButton.click();
+        const primaryNav = page.getByRole('navigation', { name: 'Primary navigation' });
+        await primaryNav.getByRole('link', { name: 'Tags' }).click();
+        await expect(page.getByRole('heading', { name: 'Tags', exact: true })).toBeVisible();
 
-        await mobileNav.getByRole('link', { name: 'Tags' }).click();
-        await expect(page.getByRole('heading', { name: 'Tags' })).toBeVisible();
-
-        await mobileNav.getByRole('link', { name: 'Search' }).click();
+        await searchLink.click();
         await expect(page.getByRole('heading', { name: 'Search' })).toBeVisible();
 
-        await mobileNav.getByRole('link', { name: 'Data' }).click();
+        await menuButton.click();
+        await page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Data' }).click();
         await expect(page.getByRole('heading', { name: 'Please use a computer' })).toBeVisible();
 
         const hasHorizontalOverflow = await page.evaluate(() => {
@@ -325,10 +327,8 @@ test.describe('App Smoke Tests', () => {
         await waitForMeteorReady(page);
         await expect(page.getByRole('heading', { name: 'Search' })).toBeVisible();
 
-        await page
-            .getByRole('navigation', { name: 'Desktop primary navigation' })
-            .getByRole('link', { name: 'Items' })
-            .click();
+        await page.getByRole('button', { name: 'Open navigation menu' }).click();
+        await page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Items' }).click();
         await expect(page).toHaveURL(/\/items$/);
         await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
 

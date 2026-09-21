@@ -19,7 +19,12 @@ const getListItemLocator = (page: Page, text: string) => {
 const reloadAndWait = async (page: Page): Promise<void> => {
     await page.reload({ waitUntil: 'networkidle' });
     await waitForMeteorReady(page);
-    await page.waitForSelector('text=Inventory App');
+    await expect(page.getByRole('banner').getByText('Inventory', { exact: true })).toBeVisible();
+};
+
+const navigateFromMenu = async (page: Page, destination: 'Items' | 'Tags' | 'Data'): Promise<void> => {
+    await page.getByRole('button', { name: 'Open navigation menu' }).click();
+    await page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: destination }).click();
 };
 
 const expectItemNameToBeTruncated = async (page: Page, name: string): Promise<void> => {
@@ -202,10 +207,7 @@ test.describe('Items view', () => {
 
 test.describe('Tags view', () => {
     test('supports creating, renaming, and deleting tags', async ({ page }) => {
-        await page
-            .getByRole('navigation', { name: 'Desktop primary navigation' })
-            .getByRole('link', { name: 'Tags' })
-            .click();
+        await navigateFromMenu(page, 'Tags');
 
         const tagName = `Tag ${Date.now()}`;
         await page
@@ -241,10 +243,7 @@ test.describe('Tags view', () => {
 
         await reloadAndWait(page);
 
-        await page
-            .getByRole('navigation', { name: 'Desktop primary navigation' })
-            .getByRole('link', { name: 'Tags' })
-            .click();
+        await navigateFromMenu(page, 'Tags');
         await expect(page.locator('.tag-body', { hasText: tagName }).filter({ hasText: '1 item' })).toBeVisible({
             timeout: 10000,
         });
