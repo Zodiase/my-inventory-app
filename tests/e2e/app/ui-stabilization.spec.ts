@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Milestone 1 UI stabilization', () => {
-    test('renders one primary navigation without wrapping or overflow', async ({ page }, testInfo) => {
+    test('renders one responsive application header without overflow', async ({ page }, testInfo) => {
         test.setTimeout(60_000);
 
         for (const viewport of navigationViewports) {
@@ -25,20 +25,18 @@ test.describe('Milestone 1 UI stabilization', () => {
             await page.goto('/items');
             await waitForMeteorReady(page);
 
-            const desktopNav = page.getByRole('navigation', { name: 'Desktop primary navigation' });
-            const mobileNav = page.getByRole('navigation', { name: 'Mobile primary navigation' });
-            const expectMobileNavigation = viewport.width <= 640;
+            const header = page.getByRole('banner');
+            const menuButton = page.getByRole('button', { name: 'Open navigation menu' });
+            const searchLink = page.getByRole('link', { name: 'Search inventory' });
 
             await page.screenshot({
                 path: testInfo.outputPath(`navigation-${viewport.width}px.png`),
             });
 
-            expect
-                .soft(await desktopNav.isVisible(), `${viewport.width}px desktop navigation visibility`)
-                .toBe(!expectMobileNavigation);
-            expect
-                .soft(await mobileNav.isVisible(), `${viewport.width}px mobile navigation visibility`)
-                .toBe(expectMobileNavigation);
+            await expect.soft(header, `${viewport.width}px application header`).toHaveCount(1);
+            await expect.soft(header.getByText('Inventory', { exact: true })).toBeVisible();
+            await expect.soft(menuButton).toBeVisible();
+            await expect.soft(searchLink).toBeVisible();
 
             const hasHorizontalOverflow = await page.evaluate(() => {
                 const root = document.scrollingElement ?? document.documentElement;
@@ -46,63 +44,19 @@ test.describe('Milestone 1 UI stabilization', () => {
             });
             expect.soft(hasHorizontalOverflow, `${viewport.width}px horizontal overflow`).toBe(false);
 
-            if (!expectMobileNavigation) {
-                const desktopLinks = desktopNav.locator('a');
-                await expect.soft(desktopLinks, `${viewport.width}px desktop tab count`).toHaveCount(4);
-                await expect.soft(desktopLinks.nth(1)).toHaveAttribute('href', '/tags');
-                await desktopLinks.nth(1).click();
-                await expect(page).toHaveURL(/\/tags$/);
-                await expect(desktopLinks.nth(1)).toHaveAttribute('aria-current', 'page');
-                continue;
-            }
-
-            const navBox = await mobileNav.boundingBox();
-            if (navBox === null) throw new Error(`${viewport.width}px mobile navigation has no bounding box`);
-
-            const tabNames = ['Items', 'Tags', 'Search', 'Data'];
-            const mobileLinks = mobileNav.locator('a');
-            await expect.soft(mobileLinks, `${viewport.width}px mobile tab count`).toHaveCount(tabNames.length);
-            const tabBoxes = await Promise.all(
-                tabNames.map(async (name, index) => {
-                    const link = mobileLinks.nth(index);
-                    await expect.soft(link, `${viewport.width}px ${name} tab`).toBeVisible();
-                    await expect.soft(link, `${viewport.width}px ${name} accessible name`).toHaveAccessibleName(name);
-                    const box = await link.boundingBox();
-                    if (box === null) throw new Error(`${viewport.width}px ${name} tab has no bounding box`);
-                    return box;
-                })
-            );
-
-            expect.soft(navBox.x, `${viewport.width}px navigation left edge`).toBeGreaterThanOrEqual(0);
-            expect
-                .soft(navBox.x + navBox.width, `${viewport.width}px navigation right edge`)
-                .toBeLessThanOrEqual(viewport.width);
-            expect
-                .soft(navBox.y + navBox.height, `${viewport.width}px navigation bottom edge`)
-                .toBeLessThanOrEqual(viewport.height);
-            expect.soft(new Set(tabBoxes.map(({ y }) => Math.round(y))).size, `${viewport.width}px tab rows`).toBe(1);
-
-            for (const [index, box] of tabBoxes.entries()) {
-                expect.soft(box.width, `${viewport.width}px tab ${index + 1} width`).toBeGreaterThanOrEqual(44);
-                expect.soft(box.height, `${viewport.width}px tab ${index + 1} height`).toBeGreaterThanOrEqual(44);
-                expect.soft(box.x, `${viewport.width}px tab ${index + 1} left edge`).toBeGreaterThanOrEqual(0);
+            for (const [name, control] of [
+                ['menu', menuButton],
+                ['search', searchLink],
+            ] as const) {
+                const box = await control.boundingBox();
+                if (box === null) throw new Error(`${viewport.width}px ${name} control has no bounding box`);
+                expect.soft(box.width, `${viewport.width}px ${name} control width`).toBeGreaterThanOrEqual(44);
+                expect.soft(box.height, `${viewport.width}px ${name} control height`).toBeGreaterThanOrEqual(44);
+                expect.soft(box.x, `${viewport.width}px ${name} control left edge`).toBeGreaterThanOrEqual(0);
                 expect
-                    .soft(box.x + box.width, `${viewport.width}px tab ${index + 1} right edge`)
+                    .soft(box.x + box.width, `${viewport.width}px ${name} control right edge`)
                     .toBeLessThanOrEqual(viewport.width);
             }
-
-            await expect.soft(mobileLinks.nth(0)).toHaveAttribute('aria-current', 'page');
-
-            const contentBottomPadding = await page
-                .locator('main.app-shell-main')
-                .evaluate((main) => Number.parseFloat(getComputedStyle(main).paddingBottom));
-            expect
-                .soft(contentBottomPadding, `${viewport.width}px content clearance for fixed navigation`)
-                .toBeGreaterThanOrEqual(navBox.height);
-
-            await mobileLinks.nth(1).click();
-            await expect(page).toHaveURL(/\/tags$/);
-            await expect(mobileLinks.nth(1)).toHaveAttribute('aria-current', 'page');
         }
     });
 
