@@ -214,7 +214,9 @@ test.describe('Touch Optimization - User Story 5', () => {
      * - Works in breadcrumb navigation
      * - Visual feedback during swipe
      */
-    test('T053d: Swipe-back navigation works in hierarchy', async ({ page }) => {
+    test('T053d: Swipe-back navigation works in hierarchy', async ({ page }, testInfo) => {
+        test.skip(!testInfo.project.use.hasTouch, 'Swipe navigation requires a touch-enabled browser context');
+
         // Seed a container; item creation behavior is covered by item-creation specs.
         await callMeteorMethod<string>(page, 'items.createItem', {
             name: 'Parent Container',

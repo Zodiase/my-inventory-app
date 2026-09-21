@@ -142,10 +142,7 @@ test.describe('Item detail routing', () => {
 
         await page.goto(`/container/${containerId}`);
         await waitForMeteorReady(page);
-        await page
-            .getByRole('navigation', { name: 'Desktop primary navigation' })
-            .getByRole('link', { name: 'Search' })
-            .click();
+        await page.getByRole('link', { name: 'Search inventory' }).click();
 
         const scopedSearchButton = page.getByRole('button', { name: 'Scoped search', exact: true });
 
@@ -192,10 +189,7 @@ test.describe('Item detail routing', () => {
 
         await page.goto(`/container/${containerId}`);
         await waitForMeteorReady(page);
-        await page
-            .getByRole('navigation', { name: 'Desktop primary navigation' })
-            .getByRole('link', { name: 'Search' })
-            .click();
+        await page.getByRole('link', { name: 'Search inventory' }).click();
 
         const scopedSearchButton = page.getByRole('button', { name: 'Scoped search', exact: true });
 
@@ -243,10 +237,7 @@ test.describe('Item detail routing', () => {
 
         await page.goto(`/container/${containerId}`);
         await waitForMeteorReady(page);
-        await page
-            .getByRole('navigation', { name: 'Desktop primary navigation' })
-            .getByRole('link', { name: 'Search' })
-            .click();
+        await page.getByRole('link', { name: 'Search inventory' }).click();
 
         const scopedSearchButton = page.getByRole('button', { name: 'Scoped search', exact: true });
 
