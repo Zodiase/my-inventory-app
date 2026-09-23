@@ -36,6 +36,30 @@ describe('searchQuery utility', function () {
                 expect(query.name).to.have.property('$options', 'i');
             });
 
+            it('searches names, descriptions, and aliases as literal case-insensitive text', function () {
+                const query: AnyQuery = buildSearchQuery([{ type: 'text', value: 'bottle [large].*' }]);
+
+                expect(query.$or).to.deep.equal([
+                    { name: { $regex: 'bottle \\[large\\]\\.\\*', $options: 'i' } },
+                    { description: { $regex: 'bottle \\[large\\]\\.\\*', $options: 'i' } },
+                    { 'properties.searchAliases': { $regex: 'bottle \\[large\\]\\.\\*', $options: 'i' } },
+                ]);
+            });
+
+            it('does not turn empty free text into a match-all query', function () {
+                expect(buildSearchQuery([{ type: 'text', value: '   ' }])).to.deep.equal({ _id: { $in: [] } });
+            });
+
+            it('treats structured name and property searches as literal text', function () {
+                const query: AnyQuery = buildSearchQuery([
+                    { type: 'name', value: 'box (A)' },
+                    { type: 'property', field: 'make', value: 'ACME+' },
+                ]);
+
+                expect(query.$and[0].name.$regex).to.equal('box \\(A\\)');
+                expect(query.$and[1]['properties.make'].$regex).to.equal('ACME\\+');
+            });
+
             it('handles tagInclude fragment with single tag', function () {
                 const fragments: SearchFragment[] = [
                     {

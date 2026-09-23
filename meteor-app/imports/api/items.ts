@@ -419,6 +419,7 @@ export const getItemPath = async (itemId: string): Promise<InventoryItem[]> => {
  * into MongoDB queries. Multiple fragments are combined with AND logic.
  *
  * Supported fragment types:
+ * - text: Partial, case-insensitive search across name, description, and aliases
  * - name: Partial, case-insensitive name search
  * - tagInclude: Items must have specified tags
  * - tagExclude: Items must NOT have specified tags

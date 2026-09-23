@@ -64,7 +64,35 @@ function fixture() {
             return id;
         },
         get: async (id) => copy(items.get(id)),
-        search: async (name) => copy([...items.values()].filter((i) => i.name.includes(name))),
+        lookupName: async (name) =>
+            copy([...items.values()].filter((i) => i.name.toLowerCase().includes(name.toLowerCase())).slice(0, 100)),
+        search: async (query, after, limit) => {
+            const needle = query.toLowerCase();
+            return copy(
+                [...items.values()]
+                    .filter(
+                        (i) =>
+                            (after === undefined || i._id > after) &&
+                            [i.name, i.description, ...(i.properties?.searchAliases ?? [])].some((value) =>
+                                value?.toLowerCase().includes(needle)
+                            )
+                    )
+                    .sort((a, b) => (a._id < b._id ? -1 : a._id > b._id ? 1 : 0))
+                    .slice(0, limit)
+            );
+        },
+        path: async (itemId) => {
+            const path = [];
+            const seen = new Set();
+            let current = items.get(itemId);
+            while (current !== undefined) {
+                assert(!seen.has(current._id));
+                seen.add(current._id);
+                path.unshift(current);
+                current = current.containerId === undefined ? undefined : items.get(current.containerId);
+            }
+            return copy(path);
+        },
         children: async (parent, after, limit) =>
             copy(
                 [...items.values()]
@@ -422,6 +450,55 @@ test('children pagination covers large sibling sets and root items without silen
     );
     await rejects(() => f.execute({ op: 'hierarchy', itemId: home._id, maxNodes: 104 }), 'limit_exceeded');
     assert.equal((await f.execute({ op: 'hierarchy', itemId: home._id, maxNodes: 105 })).result.items.length, 105);
+});
+
+test('bounded search finds names, descriptions and aliases with current location context', async () => {
+    const f = fixture();
+    const home = (await f.execute(create('search-home', 'Fictional home', { isContainer: true }))).result.item;
+    const garage = (await f.execute(create('search-garage', 'Garage', { isContainer: true, containerId: home._id })))
+        .result.item;
+    const drinkware = (
+        await f.execute(
+            create('search-drinkware', 'Drinkware box', {
+                isContainer: true,
+                containerId: garage._id,
+                description: 'Insulated metal water bottles and tumblers',
+                properties: { searchAliases: ['barware', 'cocktail equipment'] },
+            })
+        )
+    ).result.item;
+    await f.execute(create('search-other', 'Water filter', { containerId: garage._id }));
+
+    for (const query of ['DRINKWARE', 'water bottles', 'tumblers', 'barware', 'cocktail']) {
+        const result = (await f.execute({ op: 'search', query, limit: 1 })).result;
+        assert.equal(result.matches[0].item.item._id, drinkware._id);
+        assert.deepEqual(
+            result.matches[0].path.map((entry) => entry.name),
+            ['Fictional home', 'Garage', 'Drinkware box']
+        );
+    }
+
+    const first = (await f.execute({ op: 'search', query: 'water', limit: 1 })).result;
+    assert.equal(first.matches.length, 1);
+    assert.notEqual(first.nextCursor, null);
+    const second = (await f.execute({ op: 'search', query: 'water', limit: 1, after: first.nextCursor })).result;
+    assert.equal(second.matches.length, 1);
+    assert.equal(second.nextCursor, null);
+    assert.deepEqual((await f.execute({ op: 'search', query: 'missing' })).result, {
+        matches: [],
+        nextCursor: null,
+    });
+
+    for (const request of [
+        { op: 'search', query: '' },
+        { op: 'search', query: 'water', limit: 0 },
+        { op: 'search', query: 'water', limit: 101 },
+        { op: 'search', query: 'water', after: '' },
+    ])
+        await rejects(() => f.execute(request), 'invalid_input');
+
+    assert.equal((await f.execute({ op: 'lookup', name: 'barware' })).result.items.length, 0);
+    assert.equal((await f.execute({ op: 'lookup', name: 'Drinkware' })).result.items[0].item._id, drinkware._id);
 });
 
 test('hierarchy rejects cycles, invalid selectors and missing or noncontainer roots', async () => {

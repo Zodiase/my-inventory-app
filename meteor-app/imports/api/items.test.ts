@@ -16,6 +16,7 @@ import {
     lockInventoryItem,
     unlockInventoryItem,
     getItemPath,
+    searchItems,
 } from './items';
 
 describe('items', function () {
@@ -30,7 +31,12 @@ describe('items', function () {
     };
 
     // Helper to create test items directly in DB
-    const createTestItemDirect = async (name: string, isContainer: boolean, containerId?: string): Promise<string> => {
+    const createTestItemDirect = async (
+        name: string,
+        isContainer: boolean,
+        containerId?: string,
+        extra: Partial<InventoryItem> = {}
+    ): Promise<string> => {
         const now = new Date();
         const item: NoId<InventoryItem> & Record<string, unknown> = {
             name,
@@ -39,6 +45,7 @@ describe('items', function () {
             containerId,
             createdAt: now,
             modifiedAt: now,
+            ...extra,
             ...tracer,
         };
 
@@ -549,6 +556,36 @@ describe('items', function () {
 
         it('throws RecordNotFoundException when item does not exist', async function () {
             await assert.rejects(async () => await getItemPath('nonexistent123'), RecordNotFoundException);
+        });
+    });
+
+    describe('searchItems', function () {
+        it('finds a container by name, description, and explicit aliases without changing name-only search', async function () {
+            const drinkwareId = await createTestItemDirect('Drinkware box', true, undefined, {
+                description: 'Insulated metal water bottles and tumblers',
+                properties: { searchAliases: ['barware', 'cocktail equipment'] },
+            });
+
+            for (const value of ['DRINKWARE', 'water bottles', 'tumblers', 'barware', 'cocktail']) {
+                const results = await searchItems([{ type: 'text', value }]);
+                assert.deepStrictEqual(
+                    results.map((item) => item._id),
+                    [drinkwareId]
+                );
+            }
+
+            assert.deepStrictEqual(await searchItems([{ type: 'name', value: 'barware' }]), []);
+        });
+
+        it('treats free-text punctuation literally', async function () {
+            const literalId = await createTestItemDirect('Bin [A].*', true);
+            await createTestItemDirect('Bin A wildcard', true);
+
+            const results = await searchItems([{ type: 'text', value: '[A].*' }]);
+            assert.deepStrictEqual(
+                results.map((item) => item._id),
+                [literalId]
+            );
         });
     });
 });

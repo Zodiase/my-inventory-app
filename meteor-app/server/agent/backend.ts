@@ -9,12 +9,14 @@ import { InventoryIdentitiesCollection } from '/imports/api/identities';
 import {
     InventoryItemsCollection,
     createInventoryItem,
+    getItemPath,
     updateInventoryItem,
     moveItem,
     setInventoryItemLocked,
 } from '/imports/api/items';
 import { TagsCollection, createTag } from '/imports/api/tags';
 import detectCircularReference from '/imports/utility/circularReference';
+import { escapeSearchText } from '/imports/utility/searchText';
 
 import { AgentError, identityKey } from './service';
 import type { Backend, Event } from './service';
@@ -49,11 +51,30 @@ export const agentBackend: Backend = {
         ).fetchAsync(),
     createTag: async (tag, id) => await createTag(tag, id),
     get: async (id) => await InventoryItemsCollection.findOneAsync(id),
-    search: async (name) =>
+    lookupName: async (name) =>
         await InventoryItemsCollection.find(
-            { name: { $regex: name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i' } },
+            { name: { $regex: escapeSearchText(name), $options: 'i' } },
             { limit: 100, sort: { _id: 1 } }
         ).fetchAsync(),
+    search: async (query, after, limit) => {
+        const literal = escapeSearchText(query);
+        return await InventoryItemsCollection.find(
+            {
+                $and: [
+                    {
+                        $or: [
+                            { name: { $regex: literal, $options: 'i' } },
+                            { description: { $regex: literal, $options: 'i' } },
+                            { 'properties.searchAliases': { $regex: literal, $options: 'i' } },
+                        ],
+                    },
+                    ...(after === undefined ? [] : [{ _id: { $gt: after } }]),
+                ],
+            },
+            { limit, sort: { _id: 1 } }
+        ).fetchAsync();
+    },
+    path: async (itemId) => await getItemPath(itemId),
     children: async (containerId, after, limit) =>
         await InventoryItemsCollection.find(
             {

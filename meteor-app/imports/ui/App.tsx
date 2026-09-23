@@ -175,9 +175,9 @@ export const App = (): ReactElement => {
                 fragments.unshift({ type: 'containerScope', containerRootId: currentItemsContainerId });
             }
 
-            // Add name fragment if search query exists
+            // The primary search covers user-facing retrieval vocabulary.
             if (searchQuery.trim() !== '') {
-                fragments.push({ type: 'name', value: searchQuery.trim() });
+                fragments.push({ type: 'text', value: searchQuery.trim() });
             }
 
             // Call search method

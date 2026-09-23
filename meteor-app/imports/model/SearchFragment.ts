@@ -45,6 +45,15 @@ export interface NameFragment extends BaseSearchFragment {
 }
 
 /**
+ * Search the user-facing retrieval fields: name, description, and explicit aliases.
+ * This fragment powers the primary free-text search without changing name-only filters.
+ */
+export interface TextFragment extends BaseSearchFragment {
+    type: 'text';
+    value: string;
+}
+
+/**
  * Search for items with ANY of the specified tags (OR logic).
  *
  * @remarks
@@ -163,6 +172,7 @@ export interface PropertyFragment extends BaseSearchFragment {
  */
 export type SearchFragment =
     | NameFragment
+    | TextFragment
     | TagIncludeFragment
     | TagExcludeFragment
     | ContainerTypeFragment

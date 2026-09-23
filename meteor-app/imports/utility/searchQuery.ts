@@ -1,7 +1,13 @@
+/**
+ * Converts typed inventory filters into MongoDB selectors.
+ * Free text searches user-facing retrieval fields while structured name filters stay name-only.
+ */
 import type { Filter } from 'mongodb';
 
 import type InventoryItem from '/imports/model/InventoryItem';
 import type SearchFragment from '/imports/model/SearchFragment';
+
+import { escapeSearchText } from './searchText';
 
 /**
  * Build a MongoDB query from search fragments.
@@ -40,12 +46,32 @@ export const buildSearchQuery = (fragments: SearchFragment[]): Filter<InventoryI
     for (const fragment of fragments) {
         switch (fragment.type) {
             case 'name': {
-                // Partial match, case-insensitive
+                if (fragment.value.trim() === '') {
+                    conditions.push({ _id: { $in: [] } });
+                    break;
+                }
                 const condition: Filter<InventoryItem> = {
                     name: {
-                        $regex: fragment.value,
+                        $regex: escapeSearchText(fragment.value),
                         $options: 'i',
                     },
+                };
+                conditions.push(condition);
+                break;
+            }
+
+            case 'text': {
+                if (fragment.value.trim() === '') {
+                    conditions.push({ _id: { $in: [] } });
+                    break;
+                }
+                const literal = escapeSearchText(fragment.value);
+                const condition: Filter<InventoryItem> = {
+                    $or: [
+                        { name: { $regex: literal, $options: 'i' } },
+                        { description: { $regex: literal, $options: 'i' } },
+                        { 'properties.searchAliases': { $regex: literal, $options: 'i' } },
+                    ],
                 };
                 conditions.push(condition);
                 break;
@@ -113,10 +139,14 @@ export const buildSearchQuery = (fragments: SearchFragment[]): Filter<InventoryI
                     };
                     conditions.push(condition);
                 } else {
+                    if (fragment.value.trim() === '') {
+                        conditions.push({ _id: { $in: [] } });
+                        break;
+                    }
                     // Partial match, case-insensitive for strings
                     const condition: Filter<InventoryItem> = {
                         [fieldPath]: {
-                            $regex: fragment.value,
+                            $regex: escapeSearchText(fragment.value),
                             $options: 'i',
                         },
                     };

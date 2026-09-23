@@ -66,12 +66,21 @@ Every mutation requires `requestId` and `source: {system, reference}`. Optional 
 | `hierarchy`    | `itemId`, optional `maxNodes`                                                                           | `{root: Readback, items: Readback[]}`             |
 | `get`          | `itemId`                                                                                                | Readback                                          |
 | `lookup`       | Exactly one of nonempty `name` or `externalIdentity`                                                    | `{items: Readback[]}`                             |
+| `search`       | Nonempty `query`, optional `after`, `limit`                                                             | `{matches: SearchMatch[], nextCursor}`            |
 | `history`      | `itemId`                                                                                                | `{events: Event[]}`                               |
 | `status`       | `requestId`                                                                                             | `{event: Event \| null}`                          |
 
 A Readback is `{item, version, externalIdentities}`. Read operations do not take source, note or requestId (except status), and do not have a replayed flag. Mutation responses include `replayed`. `version` describes the inventory item snapshot, not the set of external identities. Bindings are additive; one identity can name only one item, and an item may have multiple identities. There is no unbind/reassign operation.
 
-Name lookup is a case-insensitive literal substring search, capped at 100 results in app-ID order; empty name is invalid. History returns the first 1000 events in time/ID order, including pending events. Name lookup and history do not paginate; the children operation supports pagination. Status returns one exact request regardless of history limits. Treat lookup/history as bounded inspection, not full database export.
+Name lookup remains a case-insensitive literal substring search over `name` only, capped at 100 results in app-ID order; empty name is invalid. Use it for compatibility and identity-oriented discovery, not natural-language recall.
+
+`search` is the bounded natural-language retrieval operation. It searches `name`, `description`, and `properties.searchAliases` as case-insensitive literal substrings. User punctuation is escaped rather than interpreted as a regular expression. Results are sorted by app ID; `limit` defaults to 100 and accepts 1–100. Continue with the returned `nextCursor` as `after` until it is null. Each match contains the full current item Readback plus a root-first `path` of `{_id,name,isContainer}` entries ending with the match, so callers can answer where it is from current containment rather than intake memory:
+
+```json
+{ "op": "search", "query": "water bottles", "limit": 25 }
+```
+
+Aliases improve retrieval vocabulary without creating duplicate inventory items or changing containment. Store only factually supported user terms in `properties.searchAliases`. History returns the first 1000 events in time/ID order, including pending events. Name lookup and history do not paginate; search and children do. Status returns one exact request regardless of history limits. Treat lookup/search/history as bounded inspection, not full database export.
 
 To create a nested box, supply the returned room app ID as `item.containerId`. Create its contents with `isContainer:false` and the box app ID. Do not send sticker UUIDs as containerId. Either include an existing external identity on create or bind an already existing app record explicitly:
 
@@ -157,7 +166,7 @@ Use the project-owned client from any directory; pass the exact intended checkou
 /path/to/checkout/scripts/inventory-agent.mjs --project-dir /path/to/checkout --allow-mutation < mutation-request.json
 ```
 
-The first form permits only get/lookup/history/status/children/hierarchy. The second explicitly permits supported mutations; normal requestId/source/version rules still apply. The client sends exactly once over loopback inside the selected app container through Docker Compose exec. It does not expose the token on the host command line, weaken remote-address checks, or retry on errors. A timeout may have an indeterminate write outcome; inspect status with the original key. Docker permission prompts remain governed by the host, not this script.
+The first form permits get/lookup/search/history/status/children/hierarchy and tag reads. The second explicitly permits supported mutations; normal requestId/source/version rules still apply. The client sends exactly once over loopback inside the selected app container through Docker Compose exec. It does not expose the token on the host command line, weaken remote-address checks, or retry on errors. A timeout may have an indeterminate write outcome; inspect status with the original key. Docker permission prompts remain governed by the host, not this script.
 
 Rebuild with `docker compose build meteorapp`, then start with `docker compose up -d meteorapp`. Preserve the named volume; never use `down -v` for routine shutdown. Container recreation is not a data backup. Inventory export currently omits the agent ledger and bindings, so recovery must retain all Mongo collections together as well as the independent source archive.
 

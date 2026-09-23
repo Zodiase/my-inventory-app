@@ -31,6 +31,9 @@ export interface StoragePlacement {
 }
 
 export interface PropertyValues {
+    /** User-supported vocabulary that should resolve this item during natural-language search. */
+    searchAliases?: string[];
+
     /** Requests that this container's children be projected as a compact group in its parent's view. */
     childrenPresentation?: 'hoist-in-parent';
 

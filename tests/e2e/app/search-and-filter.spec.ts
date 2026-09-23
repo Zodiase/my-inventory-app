@@ -368,6 +368,39 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
         await expect(result).toContainText('Cabinet');
     });
 
+    test('primary search recalls a container from described contents and aliases', async ({ page }, testInfo) => {
+        const browserErrors: string[] = [];
+        page.on('console', (message) => {
+            if (message.type() === 'error') browserErrors.push(message.text());
+        });
+        page.on('pageerror', (error) => browserErrors.push(error.message));
+
+        const garageId = await createItem(page, {
+            name: 'Garage',
+            isContainer: true,
+        });
+        await createItem(page, {
+            name: 'Drinkware box',
+            description: 'Insulated metal water bottles and tumblers',
+            containerId: garageId,
+            isContainer: true,
+            properties: { searchAliases: ['barware', 'cocktail equipment'] },
+        });
+
+        await page.goto('/search');
+        await waitForMeteorReady(page);
+
+        for (const query of ['water bottles', 'tumblers', 'barware', 'cocktail']) {
+            await page.getByRole('textbox', { name: 'Search query' }).fill(query);
+            await page.getByRole('button', { name: 'Submit search' }).click();
+            const result = page.locator('button').filter({ hasText: 'Drinkware box' }).first();
+            await expect(result).toBeVisible();
+            await expect(result).toContainText('Garage');
+        }
+        await page.screenshot({ path: testInfo.outputPath('metadata-search.png') });
+        expect(browserErrors).toEqual([]);
+    });
+
     test('T067j: Prevent contradictory filters (same tag included and excluded)', async ({ page }) => {
         // Create tag
         const testTagId = await createTag(page, { name: 'Test' });

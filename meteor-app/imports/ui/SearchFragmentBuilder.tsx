@@ -355,6 +355,8 @@ export const SearchFragmentBuilder: React.FC<SearchFragmentBuilderProps> = ({
         switch (fragment.type) {
             case 'name':
                 return { type: 'Name', value: `"${fragment.value}"` };
+            case 'text':
+                return { type: 'Search', value: `"${fragment.value}"` };
             case 'tagInclude':
                 return {
                     type: 'Has Tag',

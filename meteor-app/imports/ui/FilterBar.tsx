@@ -167,6 +167,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         switch (filter.type) {
             case 'name':
                 return { type: 'Name', value: `"${filter.value}"` };
+            case 'text':
+                return { type: 'Search', value: `"${filter.value}"` };
             case 'tagInclude':
                 return {
                     type: 'Has',
