@@ -3,8 +3,8 @@
  *
  * @remarks
  * Each fragment represents a single search criterion. Multiple fragments can be
- * combined with AND logic to create complex queries. Fragments are converted to
- * MongoDB queries by the searchQuery utility.
+ * combined with AND logic to create complex queries. The primary text fragment
+ * is handled by ranked retrieval; structured filters become MongoDB selectors.
  *
  * The fragment system provides:
  * - Type-safe search query building
@@ -41,6 +41,12 @@ export interface BaseSearchFragment {
  */
 export interface NameFragment extends BaseSearchFragment {
     type: 'name';
+    value: string;
+}
+
+/** Primary natural-language query handled by the ranked local search service. */
+export interface TextFragment extends BaseSearchFragment {
+    type: 'text';
     value: string;
 }
 
@@ -163,6 +169,7 @@ export interface PropertyFragment extends BaseSearchFragment {
  */
 export type SearchFragment =
     | NameFragment
+    | TextFragment
     | TagIncludeFragment
     | TagExcludeFragment
     | ContainerTypeFragment

@@ -89,6 +89,36 @@
             "vocabulary_zh": ["园艺用品", "水培用品"],
             "vocabulary_ja": ["園芸用品", "水耕栽培用品"],
             "containerId": "garage"
+        },
+        {
+            "id": "laundry-room",
+            "identifier": "",
+            "name": "Laundry room",
+            "description": "Laundry and household-cleaning storage",
+            "vocabulary_en": ["laundry"],
+            "vocabulary_zh": ["洗衣房"],
+            "vocabulary_ja": ["洗濯室"],
+            "containerId": "home"
+        },
+        {
+            "id": "laundry-cleaning-cabinet",
+            "identifier": "",
+            "name": "Laundry cleaning-supplies cabinet",
+            "description": "Cleaners, trash or garbage-can bags, and furniture or moving pads",
+            "vocabulary_en": ["cleaning supplies", "garbage bags", "trash bags", "moving pads", "furniture pads"],
+            "vocabulary_zh": ["清洁用品", "垃圾袋", "搬家毯"],
+            "vocabulary_ja": ["掃除用品", "ゴミ袋", "引越しパッド"],
+            "containerId": "laundry-room"
+        },
+        {
+            "id": "laundry-cleaning-cabinet-top-shelf",
+            "identifier": "",
+            "name": "Laundry cleaning-supplies cabinet top shelf",
+            "description": "Furniture pads and moving pads",
+            "vocabulary_en": ["furniture pads", "moving pads", "moving blankets"],
+            "vocabulary_zh": ["家具保护垫", "搬家毯"],
+            "vocabulary_ja": ["家具保護パッド", "引越しパッド"],
+            "containerId": "laundry-cleaning-cabinet"
         }
     ],
     "queries": [
@@ -198,6 +228,30 @@
                 "agent-cd74e9123fc9995dd5ed91ddec2818cc5cf4ca4243889b71b1890af1aebefe2a",
                 "agent-048790ac14af66c9b49b12efc22fede3a1f7ef389edaf9099648e8030c038c8b"
             ]
+        },
+        {
+            "id": "real-intake-moving-pads",
+            "query": "moving pads",
+            "mustInclude": ["laundry-cleaning-cabinet-top-shelf"],
+            "expectedTop1": "laundry-cleaning-cabinet-top-shelf"
+        },
+        {
+            "id": "real-intake-furniture-pads",
+            "query": "furniture pads",
+            "mustInclude": ["laundry-cleaning-cabinet-top-shelf"],
+            "expectedTop1": "laundry-cleaning-cabinet-top-shelf"
+        },
+        {
+            "id": "real-intake-garbage-bags",
+            "query": "garbage bags",
+            "mustInclude": ["laundry-cleaning-cabinet"],
+            "expectedTop1": "laundry-cleaning-cabinet"
+        },
+        {
+            "id": "real-intake-cleaners",
+            "query": "cleaners",
+            "mustInclude": ["laundry-cleaning-cabinet"],
+            "expectedTop1": "laundry-cleaning-cabinet"
         }
     ]
 }

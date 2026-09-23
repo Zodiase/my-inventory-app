@@ -19,6 +19,7 @@ const HTTP = {
     large: 413,
     content: 415,
     internal: 500,
+    unavailable: 503,
 };
 const MAX_BYTES = 32768;
 const LOOPBACK = ['127.0.0.1', '::1', '::ffff:127.0.0.1'];
@@ -108,7 +109,9 @@ export const createAgentHandler =
         } catch (error) {
             if (error instanceof AgentError) {
                 const status =
-                    error.code === 'not_found'
+                    error.code === 'search_unavailable'
+                        ? HTTP.unavailable
+                        : error.code === 'not_found'
                         ? HTTP.disabled
                         : ['conflict', 'busy', 'indeterminate'].includes(error.code)
                         ? HTTP.conflict

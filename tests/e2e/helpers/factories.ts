@@ -25,6 +25,7 @@ export interface CreateItemOptions {
         model?: string;
         manufacturer?: string;
         notes?: string;
+        searchAliases?: string[];
         childrenPresentation?: 'hoist-in-parent';
         storageLayout?: {
             modelId: string;

@@ -20,6 +20,7 @@ import {
 import createLogger from '/imports/utility/Logger';
 
 import { initializeGridFS } from './gridfs';
+import { initializeInventorySearch } from './search';
 import '/imports/api/importExport/export';
 import '/imports/api/importExport/import';
 
@@ -149,6 +150,8 @@ Meteor.startup(async () => {
 
         logger.log(`Seeded ${createdRecordsCount} rich fixture items for development audit.`);
     }
+
+    await initializeInventorySearch();
 
     watchAndFixMissingPath().catch((reason: unknown) => {
         logger.warn('Error starting watching for tags without path.', reason);

@@ -35,7 +35,18 @@ try {
     input = readFileSync(0, 'utf8');
     if (Buffer.byteLength(input) > 32768) throw new Error('size');
     const request = JSON.parse(input);
-    const reads = ['get', 'lookup', 'history', 'status', 'children', 'hierarchy', 'getTag', 'tags', 'taggedItems'];
+    const reads = [
+        'get',
+        'lookup',
+        'search',
+        'history',
+        'status',
+        'children',
+        'hierarchy',
+        'getTag',
+        'tags',
+        'taggedItems',
+    ];
     const writes = ['create', 'update', 'move', 'lock', 'unlock', 'bindIdentity', 'createTag'];
     if (!request || typeof request !== 'object' || ![...reads, ...writes].includes(request.op)) throw new Error('op');
     if (writes.includes(request.op) && !args.includes('--allow-mutation')) {
