@@ -7,6 +7,8 @@ This directory contains React components for the inventory management applicatio
 -   App-level Grommet theme and shared UI tokens live in `theme.ts`.
 -   Design principles, token meanings, component standards, and feature design requirement prompts live in
     `/docs/DESIGN_SYSTEM.md`.
+-   Container Hoisting behavior, terminology, data configuration, and verification guidance live in
+    `/docs/CONTAINER_HOISTING.md`.
 -   Prefer Grommet `Button` for standard actions and `TouchButton` when custom pressed-state feedback is needed.
 -   `StyledButton` is deprecated and should not be used in new code.
 
