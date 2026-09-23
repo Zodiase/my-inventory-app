@@ -5,6 +5,7 @@ import { Random } from 'meteor/random';
 
 import type InventoryItem from '/imports/model/InventoryItem';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
+import { registerInventorySearchProvider } from '/imports/search/InventorySearchProvider';
 import type NoId from '/imports/utility/NoId';
 
 import {
@@ -16,6 +17,8 @@ import {
     lockInventoryItem,
     unlockInventoryItem,
     getItemPath,
+    searchInventory,
+    searchInventoryMethod,
 } from './items';
 
 describe('items', function () {
@@ -30,7 +33,12 @@ describe('items', function () {
     };
 
     // Helper to create test items directly in DB
-    const createTestItemDirect = async (name: string, isContainer: boolean, containerId?: string): Promise<string> => {
+    const createTestItemDirect = async (
+        name: string,
+        isContainer: boolean,
+        containerId?: string,
+        extra: Partial<InventoryItem> = {}
+    ): Promise<string> => {
         const now = new Date();
         const item: NoId<InventoryItem> & Record<string, unknown> = {
             name,
@@ -39,6 +47,7 @@ describe('items', function () {
             containerId,
             createdAt: now,
             modifiedAt: now,
+            ...extra,
             ...tracer,
         };
 
@@ -190,6 +199,51 @@ describe('items', function () {
                 async () => await createInventoryItem({ name: 'Item', containerId: nonContainerId }),
                 /Parent must be a container/
             );
+        });
+    });
+
+    describe('ranked inventory search', function () {
+        it('preserves ranked order, match evidence, and authoritative Mongo paths', async function () {
+            const roomId = await createTestItemDirect('Laundry room', true);
+            const cabinetId = await createTestItemDirect('Cleaning cabinet', true, roomId);
+            const shelfId = await createTestItemDirect('Top shelf', true, cabinetId, {
+                description: 'Furniture pads and moving pads',
+            });
+            const restore = registerInventorySearchProvider({
+                health: async () => undefined,
+                search: async () => ({
+                    estimatedTotalHits: 1,
+                    hits: [{ id: shelfId, score: 0.94, matchedFields: ['description'] }],
+                }),
+            });
+
+            try {
+                const results = await searchInventory([{ type: 'text', value: 'moving pads' }]);
+                assert.strictEqual(results.length, 1);
+                assert.strictEqual(results[0].item._id, shelfId);
+                assert.deepStrictEqual(
+                    results[0].path.map((item) => item.name),
+                    ['Laundry room', 'Cleaning cabinet', 'Top shelf']
+                );
+                assert.deepStrictEqual(results[0].evidence, {
+                    score: 0.94,
+                    matchedFields: ['description'],
+                });
+            } finally {
+                restore();
+            }
+        });
+
+        it('reports unavailable search distinctly from zero matches', async function () {
+            const restore = registerInventorySearchProvider(undefined);
+            try {
+                await assert.rejects(
+                    async () => await searchInventoryMethod([{ type: 'text', value: 'moving pads' }]),
+                    (error: unknown) => error instanceof Meteor.Error && error.error === 'search-unavailable'
+                );
+            } finally {
+                restore();
+            }
         });
     });
 

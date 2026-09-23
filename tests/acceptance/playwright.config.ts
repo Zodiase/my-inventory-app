@@ -27,7 +27,14 @@ export default defineConfig({
         url: 'http://127.0.0.1:3287',
         reuseExistingServer: false,
         timeout: 240000,
-        env: { METEOR_LOCAL_DIR: localDir, INVENTORY_AGENT_TOKEN: token },
+        env: {
+            METEOR_LOCAL_DIR: localDir,
+            INVENTORY_AGENT_TOKEN: token,
+            INVENTORY_SEARCH_URL: process.env.INVENTORY_SEARCH_URL ?? 'http://127.0.0.1:7700',
+            INVENTORY_SEARCH_API_KEY:
+                process.env.INVENTORY_SEARCH_API_KEY ?? 'inventory-search-internal-development-key-32-chars',
+            INVENTORY_SEARCH_INDEX: process.env.INVENTORY_SEARCH_INDEX ?? 'inventory_agent_acceptance',
+        },
         stdout: 'pipe',
         stderr: 'pipe',
     },

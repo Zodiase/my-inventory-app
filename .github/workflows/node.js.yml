@@ -108,6 +108,24 @@ jobs:
     tests:
         name: Unit tests
         runs-on: ubuntu-latest
+        env:
+            INVENTORY_SEARCH_URL: http://127.0.0.1:7700
+            INVENTORY_SEARCH_API_KEY: inventory-search-ci-key-at-least-32-characters
+            INVENTORY_SEARCH_INDEX: inventory_unit_ci
+        services:
+            meilisearch:
+                image: getmeili/meilisearch:v1.37.0
+                env:
+                    MEILI_ENV: production
+                    MEILI_NO_ANALYTICS: 'true'
+                    MEILI_MASTER_KEY: inventory-search-ci-key-at-least-32-characters
+                ports:
+                    - 7700:7700
+                options: >-
+                    --health-cmd "curl --fail --silent http://localhost:7700/health"
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 24
         strategy:
             matrix:
                 node-version: ['22.x', '24.x']
@@ -141,6 +159,24 @@ jobs:
         name: App E2E (${{ matrix.project }})
         runs-on: ubuntu-latest
         timeout-minutes: 30
+        env:
+            INVENTORY_SEARCH_URL: http://127.0.0.1:7700
+            INVENTORY_SEARCH_API_KEY: inventory-search-ci-key-at-least-32-characters
+            INVENTORY_SEARCH_INDEX: inventory_app_e2e_${{ matrix.project }}
+        services:
+            meilisearch:
+                image: getmeili/meilisearch:v1.37.0
+                env:
+                    MEILI_ENV: production
+                    MEILI_NO_ANALYTICS: 'true'
+                    MEILI_MASTER_KEY: inventory-search-ci-key-at-least-32-characters
+                ports:
+                    - 7700:7700
+                options: >-
+                    --health-cmd "curl --fail --silent http://localhost:7700/health"
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 24
         strategy:
             fail-fast: false
             matrix:
@@ -227,6 +263,54 @@ jobs:
             - run: npx playwright install --with-deps chromium
             - run: npm run test:e2e:storybook -- --project=storybook-chromium --workers=1 --reporter=line
 
+    agent-acceptance:
+        name: Agent search acceptance
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        env:
+            INVENTORY_SEARCH_URL: http://127.0.0.1:7700
+            INVENTORY_SEARCH_API_KEY: inventory-search-ci-key-at-least-32-characters
+            INVENTORY_SEARCH_INDEX: inventory_agent_acceptance
+            INVENTORY_SEED_SAMPLE_DATA: '0'
+        services:
+            meilisearch:
+                image: getmeili/meilisearch:v1.37.0
+                env:
+                    MEILI_ENV: production
+                    MEILI_NO_ANALYTICS: 'true'
+                    MEILI_MASTER_KEY: inventory-search-ci-key-at-least-32-characters
+                ports:
+                    - 7700:7700
+                options: >-
+                    --health-cmd "curl --fail --silent http://localhost:7700/health"
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 24
+        steps:
+            - uses: actions/checkout@v7
+            - name: Use Node.js 22
+              uses: actions/setup-node@v6
+              with:
+                  node-version: '22.x'
+                  cache: 'npm'
+                  cache-dependency-path: |
+                      package-lock.json
+                      meteor-app/package-lock.json
+            - name: Cache Meteor installation
+              uses: actions/cache@v6
+              with:
+                  path: ~/.meteor
+                  key: ${{ runner.os }}-meteor-${{ env.METEOR_VERSION }}
+            - name: Install Meteor ${{ env.METEOR_VERSION }}
+              run: |
+                  curl "https://install.meteor.com/?release=${METEOR_VERSION}" | sh
+                  echo "$HOME/.meteor" >> "$GITHUB_PATH"
+                  "$HOME/.meteor/meteor" --version
+            - run: npm ci --ignore-scripts
+            - run: npm ci --ignore-scripts --prefix meteor-app
+            - run: npx playwright install --with-deps chromium
+            - run: npx playwright test --config tests/acceptance/playwright.config.ts --reporter=line
+
     quality-gate:
         name: PR Quality Gate
         runs-on: ubuntu-latest
@@ -238,6 +322,7 @@ jobs:
             - tests
             - app-e2e-status
             - storybook-e2e
+            - agent-acceptance
         steps:
             - name: Verify required app checks
               env:
@@ -247,6 +332,7 @@ jobs:
                   UNIT_TESTS: ${{ needs.tests.result }}
                   APP_E2E: ${{ needs.app-e2e-status.result }}
                   STORYBOOK_E2E: ${{ needs.storybook-e2e.result }}
+                  AGENT_ACCEPTANCE: ${{ needs.agent-acceptance.result }}
               run: |
                   failed=0
                   for result in \
@@ -255,7 +341,8 @@ jobs:
                       "Code style:${CODE_STYLE}" \
                       "Unit tests:${UNIT_TESTS}" \
                       "App E2E:${APP_E2E}" \
-                      "Storybook E2E:${STORYBOOK_E2E}"; do
+                      "Storybook E2E:${STORYBOOK_E2E}" \
+                      "Agent acceptance:${AGENT_ACCEPTANCE}"; do
                       name="${result%%:*}"
                       status="${result#*:}"
                       echo "${name}: ${status}"

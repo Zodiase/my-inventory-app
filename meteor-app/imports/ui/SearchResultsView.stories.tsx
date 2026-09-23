@@ -168,6 +168,80 @@ export const MultipleResults: Story = {
     },
 };
 
+/** Result found through described contents or explicit retrieval aliases. */
+export const MetadataMatch: Story = {
+    args: {
+        items: [
+            {
+                _id: 'drinkware-box',
+                name: 'Drinkware box',
+                description: 'Insulated metal water bottles and tumblers',
+                isContainer: true,
+                tagIds: [],
+                containerId: 'garage',
+                properties: { searchAliases: ['barware', 'cocktail equipment'] },
+                createdAt: new Date(),
+                modifiedAt: new Date(),
+            },
+        ],
+        loading: false,
+        getItemPath: () => [
+            {
+                _id: 'home',
+                name: 'Fictional home',
+                isContainer: true,
+                tagIds: [],
+                createdAt: new Date(),
+                modifiedAt: new Date(),
+            },
+            {
+                _id: 'garage',
+                name: 'Garage',
+                isContainer: true,
+                tagIds: [],
+                containerId: 'home',
+                createdAt: new Date(),
+                modifiedAt: new Date(),
+            },
+            {
+                _id: 'drinkware-box',
+                name: 'Drinkware box',
+                description: 'Insulated metal water bottles and tumblers',
+                isContainer: true,
+                tagIds: [],
+                containerId: 'garage',
+                properties: { searchAliases: ['barware', 'cocktail equipment'] },
+                createdAt: new Date(),
+                modifiedAt: new Date(),
+            },
+        ],
+    },
+};
+
+/** Ranked service result with authoritative current location and match evidence. */
+export const RankedDescriptionMatch: Story = {
+    args: {
+        results: [
+            {
+                ...mockItems[0],
+                item: mockItems[0],
+                path: mockPath.item1,
+                evidence: { score: 0.93, matchedFields: ['description', 'vocabulary_en'] },
+            },
+        ],
+        loading: false,
+    },
+};
+
+/** Required local search dependency is down; this must not look like zero matches. */
+export const ServiceUnavailable: Story = {
+    args: {
+        results: [],
+        loading: false,
+        errorMessage: 'Search is temporarily unavailable. Try again after the local search service recovers.',
+    },
+};
+
 /**
  * Results without breadcrumb paths
  */

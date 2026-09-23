@@ -49,6 +49,7 @@ export interface Request {
         | 'bindIdentity'
         | 'get'
         | 'lookup'
+        | 'search'
         | 'history'
         | 'status'
         | 'children'
@@ -80,11 +81,23 @@ export interface Request {
     containerId?: string | null;
     externalIdentity?: Identity;
     name?: string;
+    query?: string;
 }
 export interface Readback {
     item: Item;
     version: string;
     externalIdentities: Identity[];
+}
+export interface SearchMatch {
+    item: Readback;
+    /** Root-first containment path, including the matched item as the final entry. */
+    path: Array<{ _id: string; name: string; isContainer: boolean }>;
+    evidence: { score: number; matchedFields: string[] };
+}
+export interface BackendSearchHit {
+    item: Item;
+    score: number;
+    matchedFields: string[];
 }
 export interface Event {
     _id: string;
@@ -110,7 +123,13 @@ export interface Backend {
     taggedItems: (tagId: string, after: string | undefined, limit: number) => Promise<Item[]>;
     createTag: (tag: NonNullable<Request['tag']>, id: string) => Promise<string>;
     get: (id: string) => Promise<Item | undefined>;
-    search: (name: string) => Promise<Item[]>;
+    lookupName: (name: string) => Promise<Item[]>;
+    search: (
+        query: string,
+        after: string | undefined,
+        limit: number
+    ) => Promise<{ hits: BackendSearchHit[]; nextCursor: string | null }>;
+    path: (itemId: string) => Promise<Item[]>;
     children: (containerId: string | null, after: string | undefined, limit: number) => Promise<Item[]>;
     identities: (id: string) => Promise<Identity[]>;
     resolve: (identity: Identity) => Promise<string | undefined>;
@@ -148,6 +167,7 @@ export interface Response {
         | TagReadback
         | { tags: TagReadback[]; nextCursor: string | null }
         | { items: Readback[]; nextCursor?: string | null; root?: Readback }
+        | { matches: SearchMatch[]; nextCursor: string | null }
         | { events: Event[] }
         | { event: Event | null };
     replayed?: boolean;
@@ -199,6 +219,7 @@ export const parseRequest = (input: unknown): Request => {
         status: ['requestId'],
         get: ['itemId'],
         lookup: ['name', 'externalIdentity'],
+        search: ['query', 'after', 'limit'],
         history: ['itemId'],
         children: ['containerId', 'after', 'limit'],
         hierarchy: ['itemId', 'maxNodes'],
@@ -256,7 +277,7 @@ export const parseRequest = (input: unknown): Request => {
         if (r.name !== undefined) string(r.name, 'name');
     }
     if (r.op === 'move' && r.containerId !== null) string(r.containerId, 'containerId', LIMIT_ID);
-    if (['children', 'tags', 'taggedItems'].includes(String(r.op))) {
+    if (['children', 'tags', 'taggedItems', 'search'].includes(String(r.op))) {
         if (r.op === 'children' && r.containerId !== null) string(r.containerId, 'containerId', LIMIT_ID);
         if (r.after !== undefined) string(r.after, 'after', LIMIT_ID);
         if (
@@ -279,6 +300,7 @@ export const parseRequest = (input: unknown): Request => {
             fail('invalid_input', 'Specify exactly one lookup selector');
         if (r.name !== undefined) string(r.name, 'name');
     }
+    if (r.op === 'search') string(r.query, 'query');
     return r as unknown as Request;
 };
 export const canonical = (value: unknown): string => {
@@ -386,12 +408,35 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
             }
             return { ok: true as const, result: { root, items } };
         }
+        if (r.op === 'search') {
+            const limit = r.limit ?? LIMIT_CHILDREN;
+            const page = await db.search(required(r.query), r.after, limit);
+            const matches = await Promise.all(
+                page.hits.map(
+                    async (hit): Promise<SearchMatch> => ({
+                        item: await snapshot(hit.item),
+                        path: (
+                            await db.path(hit.item._id)
+                        ).map(({ _id, name, isContainer }) => ({
+                            _id,
+                            name,
+                            isContainer,
+                        })),
+                        evidence: { score: hit.score, matchedFields: hit.matchedFields },
+                    })
+                )
+            );
+            return {
+                ok: true as const,
+                result: { matches, nextCursor: page.nextCursor },
+            };
+        }
         if (r.op === 'lookup') {
             let items: Item[] = [];
             if (r.externalIdentity !== undefined) {
                 const id = await db.resolve(r.externalIdentity);
                 items = id === undefined ? [] : [(await read(id)).item];
-            } else items = await db.search(required(r.name));
+            } else items = await db.lookupName(required(r.name));
             return {
                 ok: true as const,
                 result: { items: await Promise.all(items.map(async (item) => await read(item._id))) },

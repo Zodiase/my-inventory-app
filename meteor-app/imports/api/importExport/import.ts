@@ -13,6 +13,7 @@ import { parseJson } from '/imports/model/importExport/json';
 import type { ImportReport } from '/imports/model/ImportReport';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
+import { rebuildInventorySearchIndex } from '/imports/search/InventorySearchSync';
 import type NoId from '/imports/utility/NoId';
 
 export function buildJsonContainerPath(itemId: string, itemsById: Map<string, InventoryItem>): string | undefined {
@@ -190,6 +191,14 @@ export async function importJson(payload: string, opts: { dryRun: boolean }): Pr
         }
 
         report.info = generateLikelyRelatedGroups(candidates);
+        if (!opts.dryRun && (createdItemIds.length > 0 || report.supersetMerges > 0)) {
+            try {
+                await rebuildInventorySearchIndex();
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : String(err);
+                report.errors.push(`Inventory imported, but search index rebuild failed: ${errorMessage}`);
+            }
+        }
     } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : String(err);
         report.errors.push(`Import failed: ${errorMessage}`);
@@ -297,6 +306,14 @@ export async function importCsv(
         }
 
         report.info = generateLikelyRelatedGroups(candidates);
+        if (!opts.dryRun && (createdItemIds.length > 0 || report.supersetMerges > 0)) {
+            try {
+                await rebuildInventorySearchIndex();
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : String(err);
+                report.errors.push(`Inventory imported, but search index rebuild failed: ${errorMessage}`);
+            }
+        }
     } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : String(err);
         report.errors.push(`Import failed: ${errorMessage}`);
