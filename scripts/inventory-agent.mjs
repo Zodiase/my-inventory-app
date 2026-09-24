@@ -7,6 +7,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { isAbsolute, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
+import { operationKind } from './inventory-agent-operations.mjs';
+
 const usage = 'Usage: inventory-agent.mjs --project-dir /absolute/checkout [--allow-mutation] < request.json';
 const args = process.argv.slice(2);
 if (args.length === 1 && args[0] === '--help') {
@@ -35,10 +37,9 @@ try {
     input = readFileSync(0, 'utf8');
     if (Buffer.byteLength(input) > 32768) throw new Error('size');
     const request = JSON.parse(input);
-    const reads = ['get', 'lookup', 'history', 'status', 'children', 'hierarchy', 'getTag', 'tags', 'taggedItems'];
-    const writes = ['create', 'update', 'move', 'lock', 'unlock', 'bindIdentity', 'createTag'];
-    if (!request || typeof request !== 'object' || ![...reads, ...writes].includes(request.op)) throw new Error('op');
-    if (writes.includes(request.op) && !args.includes('--allow-mutation')) {
+    const kind = request && typeof request === 'object' ? operationKind(request.op) : undefined;
+    if (kind === undefined) throw new Error('op');
+    if (kind === 'mutation' && !args.includes('--allow-mutation')) {
         console.error('Mutation requires --allow-mutation and a durable requestId/source.');
         process.exit(64);
     }

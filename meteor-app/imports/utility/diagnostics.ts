@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-import { InventoryItemsCollection } from '/imports/api/items';
+import { activeInventoryItemSelector, InventoryItemsCollection } from '/imports/api/items';
 import { TagsCollection } from '/imports/api/tags';
 
 import { BoundedBuffer } from './BoundedBuffer';
@@ -59,8 +59,12 @@ export function setupDiagnostics(): void {
                 rejections: rejectionsBuffer.get(),
                 route: window.location.pathname,
                 counts: {
-                    items: InventoryItemsCollection.find({ isContainer: { $ne: true } }).count(),
-                    containers: InventoryItemsCollection.find({ isContainer: true }).count(),
+                    items: InventoryItemsCollection.find(
+                        activeInventoryItemSelector({ isContainer: { $ne: true } })
+                    ).count(),
+                    containers: InventoryItemsCollection.find(
+                        activeInventoryItemSelector({ isContainer: true })
+                    ).count(),
                     tags: TagsCollection.find({}).count(),
                 },
                 timestamp: Date.now(),

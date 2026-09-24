@@ -2,7 +2,16 @@ import { test, expect } from '@playwright/test';
 import scenario from './fixtures/alder-lantern.json';
 import { callMeteorMethod, waitForMeteorReady } from '../e2e/helpers/database';
 
-type Item = { _id: string; name: string; isContainer: boolean; containerId?: string; description?: string };
+type Item = {
+    _id: string;
+    name: string;
+    isContainer: boolean;
+    containerId?: string;
+    description?: string;
+    deletedAt?: string;
+    deletedByRequestId?: string;
+    deletedBy?: { system: string; reference: string };
+};
 type Identity = { namespace: string; value: string };
 type Snapshot = { item: Item; version: string; externalIdentities: Identity[] };
 type AuditEvent = {
@@ -258,6 +267,110 @@ test('fictional townhouse ingestion, safe replay, corrections, and UI parity', a
             (r: Snapshot) => r.item._id === lateRoom.item._id
         )
     ).toBe(true);
+});
+
+test('agent and UI deletion retain tombstones while every ordinary read hides them', async ({ request, page }) => {
+    const invoke = async (payload: object, status = 200) => {
+        const response = await request.post('/api/agent/v1', {
+            headers: { Authorization: `Bearer ${process.env.INVENTORY_ACCEPTANCE_TOKEN}` },
+            data: payload,
+        });
+        const body = await response.json();
+        expect(response.status(), JSON.stringify(body)).toBe(status);
+        return body;
+    };
+    const source = { system: 'synthetic-acceptance', reference: 'logical-delete' };
+    await page.goto('/');
+    await waitForMeteorReady(page);
+
+    const identity = { namespace: 'fictional-sticker', value: 'DELETE-RETAINED-1' };
+    const created = (
+        await invoke({
+            op: 'create',
+            requestId: 'delete-acceptance-create',
+            source,
+            item: { name: 'Fixture logically deleted by agent', isContainer: false },
+            externalIdentity: identity,
+        })
+    ).result as Snapshot;
+    const firstPreparation = (
+        await invoke({
+            op: 'prepareDelete',
+            requestId: 'delete-acceptance-agent',
+            source,
+            itemId: created.item._id,
+            expectedVersion: created.version,
+            note: 'Synthetic acceptance deletion',
+        })
+    ).result;
+    const preparation = (
+        await invoke({
+            op: 'prepareDelete',
+            requestId: 'delete-acceptance-agent',
+            source,
+            itemId: created.item._id,
+            expectedVersion: created.version,
+            note: 'Synthetic acceptance deletion',
+        })
+    ).result;
+    expect(preparation.deletionAuthorizationId).not.toBe(firstPreparation.deletionAuthorizationId);
+    expect(
+        (
+            await invoke(
+                {
+                    op: 'confirmDelete',
+                    requestId: 'delete-acceptance-agent',
+                    deletionAuthorizationId: firstPreparation.deletionAuthorizationId,
+                },
+                400
+            )
+        ).error.code
+    ).toBe('invalid_authorization');
+    const refreshedPreparation = (
+        await invoke({
+            op: 'prepareDelete',
+            requestId: 'delete-acceptance-agent',
+            source,
+            itemId: created.item._id,
+            expectedVersion: created.version,
+            note: 'Synthetic acceptance deletion',
+        })
+    ).result;
+    const confirmation = {
+        op: 'confirmDelete',
+        requestId: 'delete-acceptance-agent',
+        deletionAuthorizationId: refreshedPreparation.deletionAuthorizationId,
+    };
+    const deleted = await invoke(confirmation);
+    expect(deleted.result.item).toMatchObject({
+        _id: created.item._id,
+        deletedByRequestId: 'delete-acceptance-agent',
+        deletedBy: source,
+    });
+    expect((await invoke(confirmation)).replayed).toBe(true);
+    expect((await invoke({ op: 'get', itemId: created.item._id }, 404)).error.code).toBe('not_found');
+    expect((await invoke({ op: 'lookup', name: 'Fixture logically deleted by agent' })).result.items).toEqual([]);
+    expect((await invoke({ op: 'lookup', externalIdentity: identity })).result.items).toEqual([]);
+    const retained = (await invoke({ op: 'auditGet', itemId: created.item._id })).result as Snapshot;
+    expect(retained.externalIdentities).toEqual([identity]);
+    expect(retained.item.deletedAt).toBeTruthy();
+    expect((await invoke({ op: 'history', itemId: created.item._id })).result.events.at(-1).after).toEqual(retained);
+    const activeItems = await callMeteorMethod<Item[]>(page, 'items.search', []);
+    expect(activeItems.some((item) => item._id === created.item._id)).toBe(false);
+
+    const uiCreated = (
+        await invoke({
+            op: 'create',
+            requestId: 'delete-acceptance-ui-create',
+            source,
+            item: { name: 'Fixture logically deleted by UI', isContainer: false },
+        })
+    ).result as Snapshot;
+    expect(await callMeteorMethod<number>(page, 'items.deleteItem', uiCreated.item._id)).toBe(1);
+    expect((await invoke({ op: 'get', itemId: uiCreated.item._id }, 404)).error.code).toBe('not_found');
+    expect((await invoke({ op: 'auditGet', itemId: uiCreated.item._id })).result.item.deletedBy.system).toBe(
+        'inventory-ui'
+    );
 });
 
 test('agent labels share UI tags and support safe assignment and retrieval', async ({ request, page }) => {

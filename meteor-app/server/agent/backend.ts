@@ -7,8 +7,10 @@ import { Mongo } from 'meteor/mongo';
 
 import { InventoryIdentitiesCollection } from '/imports/api/identities';
 import {
+    activeInventoryItemSelector,
     InventoryItemsCollection,
     createInventoryItem,
+    logicalDeleteInventoryItem,
     updateInventoryItem,
     moveItem,
     setInventoryItemLocked,
@@ -41,27 +43,30 @@ export const agentBackend: Backend = {
         ).fetchAsync(),
     taggedItems: async (tagId, after, limit) =>
         await InventoryItemsCollection.find(
-            {
+            activeInventoryItemSelector({
                 tagIds: tagId,
                 ...(after === undefined ? {} : { _id: { $gt: after } }),
-            },
+            }),
             { limit, sort: { _id: 1 } }
         ).fetchAsync(),
     createTag: async (tag, id) => await createTag(tag, id),
-    get: async (id) => await InventoryItemsCollection.findOneAsync(id),
+    get: async (id) => await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: id })),
+    getIncludingDeleted: async (id) => await InventoryItemsCollection.findOneAsync(id),
     search: async (name) =>
         await InventoryItemsCollection.find(
-            { name: { $regex: name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i' } },
+            activeInventoryItemSelector({
+                name: { $regex: name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i' },
+            }),
             { limit: 100, sort: { _id: 1 } }
         ).fetchAsync(),
     children: async (containerId, after, limit) =>
         await InventoryItemsCollection.find(
-            {
+            activeInventoryItemSelector({
                 ...(containerId === null
                     ? { $or: [{ containerId: { $exists: false } }, { containerId: { $type: 'null' as const } }] }
                     : { containerId }),
                 ...(after === undefined ? {} : { _id: { $gt: after } }),
-            },
+            }),
             { limit, sort: { _id: 1 } }
         ).fetchAsync(),
     identities: async (id) => (await bindings.find({ itemId: id }).fetchAsync()).map((binding) => binding.identity),
@@ -84,10 +89,55 @@ export const agentBackend: Backend = {
     reserve: async (event) => {
         await events.insertAsync(event);
     },
-    complete: async (event) => {
+    rotateDeleteAuthorization: async (event) => {
         const { _id, ...fields } = event;
-        const result = await events.updateAsync({ _id, status: 'pending' }, { $set: fields });
+        const result = await events.updateAsync(
+            { _id, fingerprint: event.fingerprint, status: 'prepared' },
+            {
+                $set: fields,
+                $unset: {
+                    confirmationFingerprint: true,
+                    deletionAuthorizationAttemptedAt: true,
+                    failure: true,
+                    completedAt: true,
+                },
+            }
+        );
+        return result === 1;
+    },
+    complete: async (event) => {
+        const { _id, deletionAuthorizationHash: _hash, ...fields } = event;
+        const result = await events.updateAsync(
+            { _id, status: 'pending' },
+            { $set: fields, $unset: { deletionAuthorizationHash: true } }
+        );
         if (result !== 1) throw new Error('Could not finalize request ledger');
+    },
+    beginDeleteConfirmation: async (requestId, confirmationFingerprint, attemptedAt) => {
+        const prepared = await events.findOneAsync({ _id: requestId, status: 'prepared' });
+        if (prepared?.deletionAuthorizationHash === undefined) return undefined;
+        const result = await events.updateAsync(
+            {
+                _id: requestId,
+                status: 'prepared',
+                deletionAuthorizationHash: prepared.deletionAuthorizationHash,
+            },
+            {
+                $set: {
+                    status: 'pending',
+                    confirmationFingerprint,
+                    deletionAuthorizationAttemptedAt: attemptedAt,
+                },
+                $unset: { deletionAuthorizationHash: true },
+            }
+        );
+        if (result !== 1) return undefined;
+        return {
+            ...prepared,
+            status: 'pending',
+            confirmationFingerprint,
+            deletionAuthorizationAttemptedAt: attemptedAt,
+        };
     },
     validate: async (request, before) => {
         if (request.op === 'move' && before?.locked === true)
@@ -110,7 +160,7 @@ export const agentBackend: Backend = {
                 ? request.containerId
                 : undefined;
         if (target !== undefined && target !== null) {
-            const parent = await InventoryItemsCollection.findOneAsync(target);
+            const parent = await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: target }));
             if (parent?.isContainer !== true)
                 throw new AgentError('invalid_input', 'Parent must be an existing container');
             if (before !== undefined && (await detectCircularReference(before._id, target, InventoryItemsCollection)))
@@ -121,6 +171,19 @@ export const agentBackend: Backend = {
     update: async (item, changes) => (await updateInventoryItem(item._id, changes, item)) === 1,
     move: async (item, target) => (await moveItem(item._id, target, item)) === 1,
     setLocked: async (item, locked) => (await setInventoryItemLocked(item._id, locked)) === 1,
+    logicalDelete: async (item, request, deletedAt) => {
+        if (request.source === undefined) throw new AgentError('invalid_input', 'Deletion source is required');
+        return (
+            (await logicalDeleteInventoryItem(item, {
+                requestId: request.requestId ?? '',
+                source: request.source,
+                note: request.note,
+                deletedAt,
+            })) === 1
+        );
+    },
+    activeChildCount: async (itemId) =>
+        await InventoryItemsCollection.find(activeInventoryItemSelector({ containerId: itemId })).countAsync(),
     bind: async (identity, itemId) => {
         const id = identityKey(identity);
         const existing = await bindings.findOneAsync(id);

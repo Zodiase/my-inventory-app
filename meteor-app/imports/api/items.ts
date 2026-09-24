@@ -25,6 +25,18 @@ const MAX_CONTAINER_SUBSCRIPTION_IDS = 100;
 
 export const InventoryItemsCollection = new NamedCollection<InventoryItem>('items');
 
+export interface InventoryDeletionMetadata {
+    requestId: string;
+    source: { system: string; reference: string };
+    note?: string;
+    deletedAt?: Date;
+}
+
+/** Add the canonical active-record predicate to an inventory selector. */
+export const activeInventoryItemSelector = (
+    selector: Mongo.Selector<InventoryItem> = {}
+): Mongo.Selector<InventoryItem> => ({ ...selector, deletedAt: { $exists: false } });
+
 export const snapshotSelector = (item: InventoryItem): Mongo.Selector<InventoryItem> => ({
     _id: item._id,
     name: item.name,
@@ -34,6 +46,10 @@ export const snapshotSelector = (item: InventoryItem): Mongo.Selector<InventoryI
     locked: item.locked ?? { $in: [false, undefined] },
     $expr: { $eq: ['$tagIds', { $literal: item.tagIds }] },
     properties: item.properties ?? { $exists: false },
+    deletedAt: item.deletedAt ?? { $exists: false },
+    deletedByRequestId: item.deletedByRequestId ?? { $exists: false },
+    deletedBy: item.deletedBy ?? { $exists: false },
+    deletionNote: item.deletionNote ?? { $exists: false },
     createdAt: item.createdAt,
     modifiedAt: item.modifiedAt,
 });
@@ -60,7 +76,9 @@ export const createInventoryItem = async (
 
     // Validate containerId if provided
     if (typeof containerId !== 'undefined' && containerId !== '') {
-        const parentContainer = await InventoryItemsCollection.findOneAsync({ _id: containerId });
+        const parentContainer = await InventoryItemsCollection.findOneAsync(
+            activeInventoryItemSelector({ _id: containerId })
+        );
 
         if (typeof parentContainer === 'undefined') {
             throw new Error('Parent container not found.');
@@ -109,7 +127,7 @@ export const updateInventoryItem = async (
     updates: Partial<Pick<InventoryItem, 'name' | 'description' | 'isContainer' | 'tagIds' | 'properties'>>,
     expected?: InventoryItem
 ): Promise<number> => {
-    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+    const item = await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: itemId }));
 
     if (typeof item === 'undefined') {
         throw new RecordNotFoundException('Item not found', { _id: itemId });
@@ -204,7 +222,7 @@ export const moveItem = async (
     targetContainerId: string | null | undefined,
     expected?: InventoryItem
 ): Promise<number> => {
-    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+    const item = await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: itemId }));
 
     if (typeof item === 'undefined') {
         throw new RecordNotFoundException('Item not found', { _id: itemId });
@@ -220,9 +238,9 @@ export const moveItem = async (
 
     // Validate target container if specified
     if (typeof normalizedTargetId !== 'undefined') {
-        const targetContainer: InventoryItem | undefined = await InventoryItemsCollection.findOneAsync({
-            _id: normalizedTargetId,
-        });
+        const targetContainer: InventoryItem | undefined = await InventoryItemsCollection.findOneAsync(
+            activeInventoryItemSelector({ _id: normalizedTargetId })
+        );
 
         if (typeof targetContainer === 'undefined') {
             throw new RecordNotFoundException('Target container not found', { _id: normalizedTargetId });
@@ -296,47 +314,63 @@ export const safelyMoveItem = async (
 };
 
 /**
- * Delete an inventory item.
+ * Logically delete an inventory item through a version-checked tombstone update.
  *
  * @param itemId - ID of the item to delete
- * @returns Promise resolving to the number of items deleted (0 or 1)
- *
- * @remarks
- * This method performs an unconditional delete based on itemId only.
- * For optimistic locking (to prevent race conditions), use safelyDeleteInventoryItem instead.
- *
- * For containers (isContainer: true), this method only deletes the container itself.
- * Child items must be handled separately based on the deletion strategy:
- * - Option A: Move children to parent container and tag with "no container"
- * - Option B: Prompt user to select new container for children
- * - Option C: Recursively delete all children (with confirmation)
- *
- * The UI should implement the deletion strategy and handle children before calling this method.
+ * @returns Promise resolving to the number of records marked deleted (0 or 1)
  */
-export const deleteInventoryItem = async (itemId: string): Promise<number> => {
-    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
-
-    if (typeof item === 'undefined') {
-        throw new RecordNotFoundException('Item not found', { _id: itemId });
-    }
-
+export const logicalDeleteInventoryItem = async (
+    item: InventoryItem,
+    metadata: InventoryDeletionMetadata
+): Promise<number> => {
+    if (item.deletedAt !== undefined) throw new Error('Item is already deleted.');
     if (item.locked === true) throw new Error('Cannot delete locked item. Unlock it first.');
 
-    // Check if this is a container with children
     if (item.isContainer) {
-        const childCount = await InventoryItemsCollection.find({ containerId: itemId }).countAsync();
+        const childCount = await InventoryItemsCollection.find(
+            activeInventoryItemSelector({ containerId: item._id })
+        ).countAsync();
 
         if (childCount > 0) {
             throw new Error(`Cannot delete container with ${childCount} child items. Move or delete children first.`);
         }
     }
 
-    const result = await InventoryItemsCollection.removeAsync({ _id: itemId });
+    const deletedAt = metadata.deletedAt ?? new Date();
+    const result = await InventoryItemsCollection.updateAsync(activeInventoryItemSelector(snapshotSelector(item)), {
+        $set: {
+            deletedAt,
+            deletedByRequestId: metadata.requestId,
+            deletedBy: metadata.source,
+            ...(metadata.note === undefined ? {} : { deletionNote: metadata.note }),
+            modifiedAt: deletedAt,
+        },
+    });
 
-    logger.log('Item deleted', { itemId, name: item.name, isContainer: item.isContainer, rowsAffected: result });
+    logger.log('Item logically deleted', {
+        itemId: item._id,
+        name: item.name,
+        isContainer: item.isContainer,
+        requestId: metadata.requestId,
+        rowsAffected: result,
+    });
 
     return result;
 };
+
+/** UI deletion entrypoint; agent deletion calls the same conditional tombstone operation. */
+export const deleteInventoryItem = async (itemId: string): Promise<number> => {
+    const item = await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: itemId }));
+    if (typeof item === 'undefined') throw new RecordNotFoundException('Item not found', { _id: itemId });
+    return await logicalDeleteInventoryItem(item, {
+        requestId: `ui-delete-${item._id}-${item.modifiedAt.getTime()}`,
+        source: { system: 'inventory-ui', reference: 'items.deleteItem' },
+    });
+};
+
+/** Deliberate maintenance lookup that includes logically deleted records. */
+export const getInventoryItemForAudit = async (itemId: string): Promise<InventoryItem | undefined> =>
+    await InventoryItemsCollection.findOneAsync({ _id: itemId });
 
 /**
  * Safely delete an inventory item with optimistic locking.
@@ -360,17 +394,19 @@ export const deleteInventoryItem = async (itemId: string): Promise<number> => {
  * }
  * ```
  */
-export const safelyDeleteInventoryItem = async (_item: InventoryItem): Promise<number> => {
-    // TODO: Implement optimistic locking version
-    // This will use strictSelector(item, ['name', 'isContainer', 'containerId'])
-    throw new Error('safelyDeleteInventoryItem not yet implemented');
-};
+export const safelyDeleteInventoryItem = async (item: InventoryItem): Promise<number> =>
+    await logicalDeleteInventoryItem(item, {
+        requestId: `safe-delete-${item._id}-${item.modifiedAt.getTime()}`,
+        source: { system: 'inventory-api', reference: 'safelyDeleteInventoryItem' },
+    });
 
 /** Change only the dedicated structural lock state; metadata and contents remain editable. */
 export const setInventoryItemLocked = async (itemId: string, locked: boolean): Promise<number> => {
-    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+    const item = await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: itemId }));
     if (typeof item === 'undefined') throw new RecordNotFoundException('Item not found', { _id: itemId });
-    return await InventoryItemsCollection.updateAsync({ _id: itemId }, { $set: { locked, modifiedAt: new Date() } });
+    return await InventoryItemsCollection.updateAsync(activeInventoryItemSelector({ _id: itemId }), {
+        $set: { locked, modifiedAt: new Date() },
+    });
 };
 
 export const lockInventoryItem = async (itemId: string): Promise<number> => await setInventoryItemLocked(itemId, true);
@@ -395,7 +431,7 @@ export const unlockInventoryItem = async (itemId: string): Promise<number> =>
  * ```
  */
 export const getItemPath = async (itemId: string): Promise<InventoryItem[]> => {
-    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+    const item = await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: itemId }));
 
     if (typeof item === 'undefined') {
         throw new RecordNotFoundException('Item not found', { _id: itemId });
@@ -459,8 +495,9 @@ export const searchItems = async (fragments: SearchFragment[]): Promise<Inventor
         }
     }
 
-    const query: Mongo.Selector<InventoryItem> =
-        conditions.length === 0 ? {} : conditions.length === 1 ? conditions[0] : { $and: conditions };
+    const query = activeInventoryItemSelector(
+        conditions.length === 0 ? {} : conditions.length === 1 ? conditions[0] : { $and: conditions }
+    );
 
     logger.log('Searching items', { fragments, query });
 
@@ -473,10 +510,12 @@ const getContainerScopeIds = async (containerRootId: string): Promise<string[]> 
     let pendingContainerIds = [containerRootId];
 
     while (pendingContainerIds.length > 0) {
-        const childContainers = await InventoryItemsCollection.find({
-            containerId: { $in: pendingContainerIds },
-            isContainer: true,
-        }).fetchAsync();
+        const childContainers = await InventoryItemsCollection.find(
+            activeInventoryItemSelector({
+                containerId: { $in: pendingContainerIds },
+                isContainer: true,
+            })
+        ).fetchAsync();
 
         pendingContainerIds = childContainers
             .map((container) => container._id)
@@ -501,7 +540,7 @@ if (Meteor.isServer) {
      */
     Meteor.publish('items.all', function publishAllItems() {
         logger.log('Publishing items.all');
-        return InventoryItemsCollection.find({});
+        return InventoryItemsCollection.find(activeInventoryItemSelector());
     });
 
     /**
@@ -523,9 +562,16 @@ if (Meteor.isServer) {
             typeof containerId === 'undefined' || containerId === null || containerId === '' ? undefined : containerId;
 
         // Include all containers so scoped item views can still build breadcrumbs and parent labels.
-        return InventoryItemsCollection.find({
-            $or: [{ containerId: normalizedContainerId }, { isContainer: true }],
-        });
+        return InventoryItemsCollection.find(
+            activeInventoryItemSelector({
+                $or: [
+                    normalizedContainerId === undefined
+                        ? { $or: [{ containerId: { $exists: false } }, { containerId: { $type: 'null' } }] }
+                        : { containerId: normalizedContainerId },
+                    { isContainer: true },
+                ],
+            })
+        );
     });
 
     /** Publish direct children for logical containers projected into their parent's view. */
@@ -543,7 +589,7 @@ if (Meteor.isServer) {
             return;
         }
 
-        return InventoryItemsCollection.find({ containerId: { $in: containerIds } });
+        return InventoryItemsCollection.find(activeInventoryItemSelector({ containerId: { $in: containerIds } }));
     });
 
     /**
@@ -565,9 +611,11 @@ if (Meteor.isServer) {
             return;
         }
 
-        return InventoryItemsCollection.find({
-            $or: [{ tagIds: { $in: tagIds } }, { isContainer: true }],
-        });
+        return InventoryItemsCollection.find(
+            activeInventoryItemSelector({
+                $or: [{ tagIds: { $in: tagIds } }, { isContainer: true }],
+            })
+        );
     });
 
     /**
@@ -584,7 +632,7 @@ if (Meteor.isServer) {
             return;
         }
 
-        return InventoryItemsCollection.find({ _id: itemId });
+        return InventoryItemsCollection.find(activeInventoryItemSelector({ _id: itemId }));
     });
 }
 

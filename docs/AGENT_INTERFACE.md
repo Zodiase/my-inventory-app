@@ -54,24 +54,60 @@ Open `/items/<result.item._id>` for UI readback. Descriptions are the visible it
 
 Unknown fields, wrong types, empty required strings and unsupported operations are rejected. Names are at most 500 characters; descriptions and audit notes at most 5000. `requestId`, `itemId`, identity namespace and source system are at most 200 characters; identity values at most 500 and source reference at most 2000. Identity strings are exact and case-sensitive, with no UUID normalization or validation against an external registry. Use the external system's canonical spelling.
 
-Every mutation requires `requestId` and `source: {system, reference}`. Optional `note` explains the observation or correction. Request IDs are global within this inventory database, not scoped to source; callers should prefix them with their workflow/fixture identity. Use one stable key per logical mutation. IDs are retained indefinitely in v1.
+Every mutation requires `requestId`. Mutations other than `confirmDelete` also require `source: {system, reference}`; confirmation inherits the source and optional note from its matching preparation. Request IDs are global within this inventory database, not scoped to source; callers should prefix them with their workflow/fixture identity. Use one stable key per logical mutation. IDs are retained indefinitely in v1.
 
-| `op`           | Other fields                                                                                            | Result                                            |
-| -------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `create`       | `item: {name, isContainer, description?, containerId?}`, optional `externalIdentity: {namespace,value}` | Readback                                          |
-| `update`       | `itemId`, `expectedVersion`, `changes: {name?,description?}` (nonempty)                                 | Readback                                          |
-| `move`         | `itemId`, `expectedVersion`, `containerId` (app ID or `null` for root)                                  | Readback                                          |
-| `bindIdentity` | `itemId`, `expectedVersion`, `externalIdentity: {namespace,value}`                                      | Readback                                          |
-| `children`     | `containerId` (ID or null), optional `after`, `limit`                                                   | `{items: Readback[], nextCursor: string or null}` |
-| `hierarchy`    | `itemId`, optional `maxNodes`                                                                           | `{root: Readback, items: Readback[]}`             |
-| `get`          | `itemId`                                                                                                | Readback                                          |
-| `lookup`       | Exactly one of nonempty `name` or `externalIdentity`                                                    | `{items: Readback[]}`                             |
-| `history`      | `itemId`                                                                                                | `{events: Event[]}`                               |
-| `status`       | `requestId`                                                                                             | `{event: Event \| null}`                          |
+| `op`            | Other fields                                                                                            | Result                                            |
+| --------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `create`        | `item: {name, isContainer, description?, containerId?}`, optional `externalIdentity: {namespace,value}` | Readback                                          |
+| `update`        | `itemId`, `expectedVersion`, `changes: {name?,description?}` (nonempty)                                 | Readback                                          |
+| `move`          | `itemId`, `expectedVersion`, `containerId` (app ID or `null` for root)                                  | Readback                                          |
+| `bindIdentity`  | `itemId`, `expectedVersion`, `externalIdentity: {namespace,value}`                                      | Readback                                          |
+| `children`      | `containerId` (ID or null), optional `after`, `limit`                                                   | `{items: Readback[], nextCursor: string or null}` |
+| `hierarchy`     | `itemId`, optional `maxNodes`                                                                           | `{root: Readback, items: Readback[]}`             |
+| `get`           | `itemId`                                                                                                | Readback                                          |
+| `auditGet`      | `itemId`                                                                                                | Readback, including a retained tombstone          |
+| `lookup`        | Exactly one of nonempty `name` or `externalIdentity`                                                    | `{items: Readback[]}`                             |
+| `history`       | `itemId`                                                                                                | `{events: Event[]}`                               |
+| `status`        | `requestId`                                                                                             | `{event: Event \| null}`                          |
+| `prepareDelete` | `itemId`, `expectedVersion`                                                                             | Five-minute single-use authorization              |
+| `confirmDelete` | Same `requestId` plus `deletionAuthorizationId`                                                         | Retained tombstone Readback                       |
 
 A Readback is `{item, version, externalIdentities}`. Read operations do not take source, note or requestId (except status), and do not have a replayed flag. Mutation responses include `replayed`. `version` describes the inventory item snapshot, not the set of external identities. Bindings are additive; one identity can name only one item, and an item may have multiple identities. There is no unbind/reassign operation.
 
 Name lookup is a case-insensitive literal substring search, capped at 100 results in app-ID order; empty name is invalid. History returns the first 1000 events in time/ID order, including pending events. Name lookup and history do not paginate; the children operation supports pagination. Status returns one exact request regardless of history limits. Treat lookup/history as bounded inspection, not full database export.
+
+Ordinary reads (`get`, `lookup`, `children`, `hierarchy`, `taggedItems`, UI publications, search, imports and exports) omit logically deleted items. `auditGet` is the deliberate maintenance path for proving that a tombstoned document and its external identities remain present. It is not an ordinary inventory-discovery operation.
+
+## Two-step logical deletion
+
+Deletion never physically removes an inventory item. The UI and agent API call the same version-checked tombstone operation, which records `deletedAt`, the request ID and source while preserving the stable item ID, external identities and audit history. Empty containers may be deleted; locked items and containers with active children are rejected.
+
+Prepare with the current item version:
+
+```json
+{
+    "op": "prepareDelete",
+    "requestId": "example-delete-1",
+    "source": { "system": "synthetic-example", "reference": "reviewed-retirement" },
+    "itemId": "<item app ID>",
+    "expectedVersion": "<get result.version>",
+    "note": "Reviewed fictional retirement"
+}
+```
+
+The result contains `deletionAuthorizationId`, `itemId`, `expectedVersion` and `expiresAt`. The authorization is generated from cryptographic randomness and only a request-bound hash is stored. It expires exactly five minutes after the server issued it and is consumed by the first confirmation attempt whether that attempt succeeds or fails. Repeating the exact same preparation revalidates the immutable deletion intent, issues a fresh five-minute authorization, and invalidates the previous authorization. Keep the same request ID for the whole deletion workflow; changing the item, version, source, note, or other intent under that ID conflicts.
+
+Confirm using only the same global request ID and returned authorization:
+
+```json
+{
+    "op": "confirmDelete",
+    "requestId": "example-delete-1",
+    "deletionAuthorizationId": "<one-time value>"
+}
+```
+
+Confirmation rechecks the expected version, lock state, active children and existing tombstone before the conditional write. An exact retry of a completed confirmation returns the original tombstone Readback with `replayed:true`, including after the original authorization expiry, while any other authorization value conflicts. If the process stops after the tombstone write but before ledger completion, retry the exact confirmation: the retained `deletedByRequestId` lets the service reconcile the request without applying a second mutation. A rejected or expired attempt consumes its authorization; repeat the unchanged preparation to obtain a replacement.
 
 To create a nested box, supply the returned room app ID as `item.containerId`. Create its contents with `isContainer:false` and the box app ID. Do not send sticker UUIDs as containerId. Either include an existing external identity on create or bind an already existing app record explicitly:
 
@@ -134,7 +170,7 @@ Errors are `{ok:false,error:{code,message}}`: 400 `invalid_input`/`limit_exceede
 
 Run focused tests with `node --test scripts/agent-interface.test.mjs` after installing meteor-app dependencies. They transpile and exercise the actual service and HTTP modules with a synthetic in-memory persistence adapter; they do not prove Mongo/Meteor or browser integration. Run `npm run check:type --prefix meteor-app` and targeted ESLint/Prettier checks for the production files. The [independent acceptance suite](../tests/acceptance/README.md) exercises the Mongo adapter and UI against a fresh disposable Meteor database. It passed the synthetic townhouse scenario on 2026-09-08; this does not establish deployment or personal-database readiness.
 
-The API excludes deletion, attachment ingestion, property editing and tag renaming/moving/deletion, changing an item's container flag, batch transactions, external registry validation, and journal synchronization. Existing CRUD/import/export behavior is unchanged. The auxiliary collections are not currently included in inventory exports/backups by app code; back up Mongo collections together. Restoring only inventory items loses replay/history/binding state and is not a supported agent recovery procedure.
+The API excludes physical deletion, restoration, attachment ingestion, property editing and tag renaming/moving/deletion, changing an item's container flag, batch transactions, external registry validation, and journal synchronization. The auxiliary collections are not currently included in inventory exports/backups by app code; back up Mongo collections together. Restoring only inventory items loses replay/history/binding state and is not a supported agent recovery procedure.
 
 The writer lock covers agent calls only. Existing UI/import writers can still race hierarchy validation, delete parent records, or make other changes outside this interface. Atomic item preconditions protect the corrected item's snapshot; they do not make an entire hierarchy transactionally consistent. Before real-data operation, integration owners must assess those limitations, independent acceptance results, backup coverage, and the manual recovery path. This v1 implementation does not establish whole-system or household-intake readiness.
 
@@ -157,7 +193,7 @@ Use the project-owned client from any directory; pass the exact intended checkou
 /path/to/checkout/scripts/inventory-agent.mjs --project-dir /path/to/checkout --allow-mutation < mutation-request.json
 ```
 
-The first form permits only get/lookup/history/status/children/hierarchy. The second explicitly permits supported mutations; normal requestId/source/version rules still apply. The client sends exactly once over loopback inside the selected app container through Docker Compose exec. It does not expose the token on the host command line, weaken remote-address checks, or retry on errors. A timeout may have an indeterminate write outcome; inspect status with the original key. Docker permission prompts remain governed by the host, not this script.
+The first form permits the documented reads, including `auditGet`. The second explicitly permits supported mutations, including both deletion steps; normal requestId/source/version rules still apply. The client sends exactly once over loopback inside the selected app container through Docker Compose exec. It does not expose the token on the host command line, weaken remote-address checks, or retry on errors. A timeout may have an indeterminate write outcome; inspect status with the original key. Docker permission prompts remain governed by the host, not this script.
 
 Rebuild with `docker compose build meteorapp`, then start with `docker compose up -d meteorapp`. Preserve the named volume; never use `down -v` for routine shutdown. Container recreation is not a data backup. Inventory export currently omits the agent ledger and bindings, so recovery must retain all Mongo collections together as well as the independent source archive.
 

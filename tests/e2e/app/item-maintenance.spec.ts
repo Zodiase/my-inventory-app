@@ -167,7 +167,11 @@ test.describe('Item maintenance happy paths', () => {
         await page.goto(`/items/${itemId}`);
         await page.getByRole('button', { name: /Delete$/ }).click();
 
-        await expect(page.getByText('Delete "Disposable Item"? This cannot be undone.')).toBeVisible();
+        await expect(
+            page.getByText(
+                'Remove "Disposable Item" from ordinary inventory views? Its record and history will be retained.'
+            )
+        ).toBeVisible();
         await page.getByRole('button', { name: 'Cancel' }).click();
         await expect(page.getByRole('heading', { name: 'Disposable Item' })).toBeVisible();
 
@@ -187,6 +191,10 @@ test.describe('Item maintenance happy paths', () => {
         await page.getByRole('button', { name: 'Delete Item', exact: true }).click();
 
         await expect(page.getByText(/Cannot delete container with 1 child item/)).toBeVisible();
-        await expect(page.getByText('Delete "Full Container"? This cannot be undone.')).toBeVisible();
+        await expect(
+            page.getByText(
+                'Remove "Full Container" from ordinary inventory views? Its record and history will be retained.'
+            )
+        ).toBeVisible();
     });
 });

@@ -13,9 +13,11 @@ import {
     updateInventoryItem,
     moveItem,
     deleteInventoryItem,
+    getInventoryItemForAudit,
     lockInventoryItem,
     unlockInventoryItem,
     getItemPath,
+    searchItems,
 } from './items';
 
 describe('items', function () {
@@ -466,24 +468,29 @@ describe('items', function () {
             await lockInventoryItem(itemId);
             await assert.rejects(async () => await deleteInventoryItem(itemId), /locked/);
         });
-        it('deletes a simple item', async function () {
+        it('retains a simple item as a tombstone and excludes it from active search', async function () {
             const itemId = await createTestItemDirect('Item', false);
 
             const result = await deleteInventoryItem(itemId);
 
             assert.strictEqual(result, 1);
-            const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
-            assert.strictEqual(item, undefined);
+            const item = await getInventoryItemForAudit(itemId);
+            assert.ok(item?.deletedAt instanceof Date);
+            assert.strictEqual(item?.deletedBy?.system, 'inventory-ui');
+            assert.strictEqual(
+                (await searchItems([{ type: 'name', value: 'Item' }])).some((result) => result._id === itemId),
+                false
+            );
         });
 
-        it('deletes an empty container', async function () {
+        it('retains an empty container as a tombstone', async function () {
             const containerId = await createTestItemDirect('Empty Container', true);
 
             const result = await deleteInventoryItem(containerId);
 
             assert.strictEqual(result, 1);
-            const item = await InventoryItemsCollection.findOneAsync({ _id: containerId });
-            assert.strictEqual(item, undefined);
+            const item = await getInventoryItemForAudit(containerId);
+            assert.ok(item?.deletedAt instanceof Date);
         });
 
         it('throws error when deleting container with children', async function () {
@@ -498,6 +505,16 @@ describe('items', function () {
 
         it('throws RecordNotFoundException when item does not exist', async function () {
             await assert.rejects(async () => await deleteInventoryItem('nonexistent123'), RecordNotFoundException);
+        });
+
+        it('ignores tombstoned children when deleting a container', async function () {
+            const containerId = await createTestItemDirect('Container', true);
+            const childId = await createTestItemDirect('Child Item', false, containerId);
+            await deleteInventoryItem(childId);
+
+            assert.strictEqual(await deleteInventoryItem(containerId), 1);
+            assert.ok((await getInventoryItemForAudit(childId))?.deletedAt instanceof Date);
+            assert.ok((await getInventoryItemForAudit(containerId))?.deletedAt instanceof Date);
         });
     });
 
