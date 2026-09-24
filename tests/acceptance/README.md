@@ -21,7 +21,7 @@ Discovery-only check (no server or database):
 npx playwright test --config tests/acceptance/playwright.config.ts --list
 ```
 
-The suite uses the authenticated `POST /api/agent/v1` contract. It verifies create/get, hierarchy and unresolved notes, duplicate-free replay, changed-payload conflict, external identity uniqueness, optimistic concurrency, correction/move audit history, replay after later mutation, and identity lookup after movement. It compares every agent item with the app's `items.search` results and checks rendered item name, description and location. No private data, global reset, or deployment is involved.
+The suite uses the authenticated `POST /api/agent/v1` contract. It verifies create/get, hierarchy and unresolved notes, duplicate-free replay, changed-payload conflict, external identity uniqueness, optimistic concurrency, correction/move audit history, replay after later mutation, identity lookup after movement, two-step agent logical deletion, and UI logical deletion. It proves ordinary reads hide tombstones while `auditGet` retains the document and identity binding. It compares every active agent item with the app's `items.search` results and checks rendered item name, description and location. No private data, global reset, or deployment is involved.
 
 Verified 2026-09-08: the revised implementation passes the unchanged live scenario (1 passed in 17.8 seconds) in the independent acceptance checkout. The earlier HTTP 403 blocker was caused by Meteor development proxy forwarding headers, not an observed browser Origin header. The development-only single-loopback-hop handling resolves it; production still rejects proxy headers. Rerun this suite after integration or transport changes.
 

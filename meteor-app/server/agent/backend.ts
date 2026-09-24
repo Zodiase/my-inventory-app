@@ -7,8 +7,10 @@ import { Mongo } from 'meteor/mongo';
 
 import { InventoryIdentitiesCollection } from '/imports/api/identities';
 import {
+    activeInventoryItemSelector,
     InventoryItemsCollection,
     createInventoryItem,
+    logicalDeleteInventoryItem,
     updateInventoryItem,
     moveItem,
     setInventoryItemLocked,
@@ -17,9 +19,10 @@ import { TagsCollection, createTag } from '/imports/api/tags';
 import detectCircularReference from '/imports/utility/circularReference';
 
 import { AgentError, identityKey } from './service';
-import type { Backend, Event } from './service';
+import type { Backend, DeleteAuthorization, Event } from './service';
 
 const events = new Mongo.Collection<Event>('agent_requests');
+const deleteAuthorizations = new Mongo.Collection<DeleteAuthorization>('agent_delete_authorizations');
 const bindings = InventoryIdentitiesCollection;
 const locks = new Mongo.Collection<{ _id: string; requestId: string }>('agent_locks');
 const DUPLICATE_KEY = 11000;
@@ -41,27 +44,30 @@ export const agentBackend: Backend = {
         ).fetchAsync(),
     taggedItems: async (tagId, after, limit) =>
         await InventoryItemsCollection.find(
-            {
+            activeInventoryItemSelector({
                 tagIds: tagId,
                 ...(after === undefined ? {} : { _id: { $gt: after } }),
-            },
+            }),
             { limit, sort: { _id: 1 } }
         ).fetchAsync(),
     createTag: async (tag, id) => await createTag(tag, id),
-    get: async (id) => await InventoryItemsCollection.findOneAsync(id),
+    get: async (id) => await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: id })),
+    getIncludingDeleted: async (id) => await InventoryItemsCollection.findOneAsync(id),
     search: async (name) =>
         await InventoryItemsCollection.find(
-            { name: { $regex: name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i' } },
+            activeInventoryItemSelector({
+                name: { $regex: name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i' },
+            }),
             { limit: 100, sort: { _id: 1 } }
         ).fetchAsync(),
     children: async (containerId, after, limit) =>
         await InventoryItemsCollection.find(
-            {
+            activeInventoryItemSelector({
                 ...(containerId === null
                     ? { $or: [{ containerId: { $exists: false } }, { containerId: { $type: 'null' as const } }] }
                     : { containerId }),
                 ...(after === undefined ? {} : { _id: { $gt: after } }),
-            },
+            }),
             { limit, sort: { _id: 1 } }
         ).fetchAsync(),
     identities: async (id) => (await bindings.find({ itemId: id }).fetchAsync()).map((binding) => binding.identity),
@@ -89,6 +95,32 @@ export const agentBackend: Backend = {
         const result = await events.updateAsync({ _id, status: 'pending' }, { $set: fields });
         if (result !== 1) throw new Error('Could not finalize request ledger');
     },
+    createDeleteAuthorization: async (authorization) => {
+        await deleteAuthorizations.insertAsync(authorization);
+    },
+    deleteAuthorization: async (authorizationHash) => await deleteAuthorizations.findOneAsync(authorizationHash),
+    claimDeleteAuthorization: async (authorizationHash, confirmationRequestId, attemptedAt) => {
+        const result = await deleteAuthorizations.updateAsync(
+            { _id: authorizationHash, consumedAt: { $exists: false } },
+            { $set: { consumedAt: attemptedAt, confirmationRequestId } }
+        );
+        if (result === 1)
+            return await deleteAuthorizations.findOneAsync({ _id: authorizationHash, confirmationRequestId });
+        return await deleteAuthorizations.findOneAsync(authorizationHash);
+    },
+    finishDeleteAuthorization: async (authorizationHash, confirmationRequestId, terminal) => {
+        const result = await deleteAuthorizations.updateAsync(
+            {
+                _id: authorizationHash,
+                confirmationRequestId,
+                completedAt: { $exists: false },
+            },
+            { $set: terminal }
+        );
+        if (result === 1) return true;
+        const existing = await deleteAuthorizations.findOneAsync({ _id: authorizationHash, confirmationRequestId });
+        return existing?.completedAt !== undefined;
+    },
     validate: async (request, before) => {
         if (request.op === 'move' && before?.locked === true)
             throw new AgentError('conflict', 'Item is locked; unlock it before changing its parent');
@@ -110,7 +142,7 @@ export const agentBackend: Backend = {
                 ? request.containerId
                 : undefined;
         if (target !== undefined && target !== null) {
-            const parent = await InventoryItemsCollection.findOneAsync(target);
+            const parent = await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: target }));
             if (parent?.isContainer !== true)
                 throw new AgentError('invalid_input', 'Parent must be an existing container');
             if (before !== undefined && (await detectCircularReference(before._id, target, InventoryItemsCollection)))
@@ -121,6 +153,18 @@ export const agentBackend: Backend = {
     update: async (item, changes) => (await updateInventoryItem(item._id, changes, item)) === 1,
     move: async (item, target) => (await moveItem(item._id, target, item)) === 1,
     setLocked: async (item, locked) => (await setInventoryItemLocked(item._id, locked)) === 1,
+    logicalDelete: async (item, metadata, deletedAt) => {
+        return (
+            (await logicalDeleteInventoryItem(item, {
+                requestId: metadata.requestId,
+                source: metadata.source,
+                note: metadata.note,
+                deletedAt,
+            })) === 1
+        );
+    },
+    activeChildCount: async (itemId) =>
+        await InventoryItemsCollection.find(activeInventoryItemSelector({ containerId: itemId })).countAsync(),
     bind: async (identity, itemId) => {
         const id = identityKey(identity);
         const existing = await bindings.findOneAsync(id);

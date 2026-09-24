@@ -283,7 +283,9 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
                         setIsConfirmingDelete(false);
                     }}
                 >
-                    <Text>Delete "{item.name}"? This cannot be undone.</Text>
+                    <Text>
+                        Remove "{item.name}" from ordinary inventory views? Its record and history will be retained.
+                    </Text>
                     {item.isContainer && (
                         <Text color="text-weak" size="small">
                             Containers must be empty before they can be deleted.
