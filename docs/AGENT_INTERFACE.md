@@ -124,6 +124,12 @@ The history event contains `_id` (requestId), `request` (including source/note),
 
 Identical parsed JSON, including source and note, replays the originally recorded result with `replayed:true`. Object key order is ignored; other changes are significant. Replay returns the original snapshot even if later corrections changed the item. Use get for current state. A requestId with changed payload returns HTTP 409 `conflict`. Stale expectedVersion also returns 409 `conflict` before mutation. Update/move use a snapshot predicate at the Mongo write, so a concurrent edit cannot be silently overwritten. If that write races after preflight, the conservative result is `indeterminate`, requiring reconciliation.
 
+The planned two-step logical-deletion workflow is a documented exception to
+the one-exact-body rule: its prepare and confirm calls share one workflow
+request ID and use phase-aware replay checks. Different deletion intent still
+conflicts. Authorization rotation and completed-confirmation replay semantics
+are defined in [Logical deletion and cold-storage roadmap](LOGICAL_DELETION.md).
+
 A durable, non-expiring lock serializes agent mutations across server processes. A competing mutation returns HTTP 409 `busy` without starting a write. A durable request event is reserved before mutation. If a process dies or persistence fails after reservation, a same-key retry returns HTTP 409 `indeterminate`; new writes remain stopped if the writer lock was retained. Reads continue. There is deliberately no timer that assumes an unfinished write failed.
 
 A create's pending event records its deterministic candidate app ID before insert. To investigate an interrupted operation:
