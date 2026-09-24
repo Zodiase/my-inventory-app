@@ -203,6 +203,25 @@ describe('items', function () {
     });
 
     describe('ranked inventory search', function () {
+        it('returns no results for whitespace-only text without querying the search service', async function () {
+            await createTestItemDirect('Should not be returned', false);
+            let providerCalls = 0;
+            const restore = registerInventorySearchProvider({
+                health: async () => undefined,
+                search: async () => {
+                    providerCalls++;
+                    return { estimatedTotalHits: 0, hits: [] };
+                },
+            });
+
+            try {
+                assert.deepStrictEqual(await searchInventory([{ type: 'text', value: '   \t  ' }]), []);
+                assert.strictEqual(providerCalls, 0);
+            } finally {
+                restore();
+            }
+        });
+
         it('preserves ranked order, match evidence, and authoritative Mongo paths', async function () {
             const roomId = await createTestItemDirect('Laundry room', true);
             const cabinetId = await createTestItemDirect('Cleaning cabinet', true, roomId);

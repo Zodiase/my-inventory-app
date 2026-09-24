@@ -62,11 +62,10 @@ interface ProcessRowContext {
     rowIndex: number;
     baseNow: number;
     virtualItems: InventoryItem[];
-    createdItemIds: string[];
 }
 
 async function processRow(candidate: NormalizedRow, ctx: ProcessRowContext): Promise<void> {
-    const { dryRun, report, rowIndex, baseNow, virtualItems, createdItemIds } = ctx;
+    const { dryRun, report, rowIndex, baseNow, virtualItems } = ctx;
     const dbMatches = await InventoryItemsCollection.find({ name: candidate.name }).fetchAsync();
     const virtualMatches = virtualItems.filter((v) => v.name === candidate.name);
     const existingMatches = [...dbMatches, ...virtualMatches];
@@ -105,8 +104,7 @@ async function processRow(candidate: NormalizedRow, ctx: ProcessRowContext): Pro
         };
 
         if (!dryRun) {
-            const id = await InventoryItemsCollection.insertAsync(newItem);
-            createdItemIds.push(id);
+            await InventoryItemsCollection.insertAsync(newItem);
         } else {
             const virtualItem: InventoryItem = {
                 _id: `virtual-item-${report.toCreate}`,
@@ -130,7 +128,6 @@ export async function importJson(payload: string, opts: { dryRun: boolean }): Pr
         info: [],
         samplePreview: [],
     };
-    const createdItemIds: string[] = [];
     const virtualItems: InventoryItem[] = [];
     try {
         const parsed = parseJson(payload);
@@ -181,7 +178,6 @@ export async function importJson(payload: string, opts: { dryRun: boolean }): Pr
                     rowIndex: i,
                     baseNow,
                     virtualItems,
-                    createdItemIds,
                 });
             } catch (err: unknown) {
                 const errorMessage = err instanceof Error ? err.message : String(err);
@@ -191,7 +187,7 @@ export async function importJson(payload: string, opts: { dryRun: boolean }): Pr
         }
 
         report.info = generateLikelyRelatedGroups(candidates);
-        if (!opts.dryRun && (createdItemIds.length > 0 || report.supersetMerges > 0)) {
+        if (!opts.dryRun) {
             try {
                 await rebuildInventorySearchIndex();
             } catch (err: unknown) {
@@ -220,7 +216,6 @@ export async function importCsv(
         info: [],
         samplePreview: [],
     };
-    const createdItemIds: string[] = [];
     const virtualItems: InventoryItem[] = [];
 
     try {
@@ -296,7 +291,6 @@ export async function importCsv(
                     rowIndex: i,
                     baseNow,
                     virtualItems,
-                    createdItemIds,
                 });
             } catch (err: unknown) {
                 const errorMessage = err instanceof Error ? err.message : String(err);
@@ -306,7 +300,7 @@ export async function importCsv(
         }
 
         report.info = generateLikelyRelatedGroups(candidates);
-        if (!opts.dryRun && (createdItemIds.length > 0 || report.supersetMerges > 0)) {
+        if (!opts.dryRun) {
             try {
                 await rebuildInventorySearchIndex();
             } catch (err: unknown) {

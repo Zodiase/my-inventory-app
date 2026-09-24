@@ -14,10 +14,16 @@ const has = (name) => process.argv.includes(name);
 const url = option('--url', 'http://127.0.0.1:7700').replace(/\/$/u, '');
 const key = option('--key', 'inventory-search-internal-development-key-32-chars');
 const index = option('--index', `inventory_benchmark_${Date.now()}`);
+const explicitIndex = has('--index');
 const restartContainer = option('--restart-container', undefined);
 const headers = { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
 
-if (!/^[A-Za-z0-9_-]+$/u.test(index)) throw new Error('Benchmark index must be a valid disposable index UID');
+if (!/^inventory_benchmark_[A-Za-z0-9_-]+$/u.test(index)) {
+    throw new Error('Benchmark index must use the disposable inventory_benchmark_ prefix');
+}
+if (explicitIndex && !has('--confirm-disposable')) {
+    throw new Error('An explicit --index requires --confirm-disposable');
+}
 if (restartContainer !== undefined && !has('--confirm-disposable')) {
     throw new Error('--restart-container requires --confirm-disposable');
 }

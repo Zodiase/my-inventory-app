@@ -15,11 +15,11 @@ import {
 import { registerInventorySearchSync } from '/imports/search/InventorySearchSync';
 import createLogger from '/imports/utility/Logger';
 
+import { requireInventorySearchApiKey } from './config';
 import { MeilisearchInventoryClient, type SearchDocument } from './meilisearch';
 
 const logger = createLogger(module);
 const DEFAULT_URL = 'http://127.0.0.1:7700';
-const DEFAULT_KEY = 'inventory-search-internal-development-key-32-chars';
 const DEFAULT_INDEX = 'inventory_items';
 const MINUTES_TO_MILLISECONDS = 60_000;
 const DEFAULT_RECONCILE_MINUTES = 15;
@@ -51,7 +51,7 @@ const toSearchDocument = (item: InventoryItem): SearchDocument => ({
 
 const client = new MeilisearchInventoryClient({
     url: process.env.INVENTORY_SEARCH_URL ?? DEFAULT_URL,
-    apiKey: process.env.INVENTORY_SEARCH_API_KEY ?? DEFAULT_KEY,
+    apiKey: requireInventorySearchApiKey(),
     index: process.env.INVENTORY_SEARCH_INDEX ?? DEFAULT_INDEX,
     timeoutMs: Number(process.env.INVENTORY_SEARCH_TIMEOUT_MS ?? DEFAULT_TIMEOUT_MS),
 });
@@ -111,7 +111,9 @@ export const initializeInventorySearch = async (): Promise<void> => {
     const reconcileMs = Number(process.env.INVENTORY_SEARCH_RECONCILE_MS ?? DEFAULT_RECONCILE_MS);
     if (Number.isFinite(reconcileMs) && reconcileMs > 0) {
         const timer = setInterval(() => {
-            void enqueue(rebuildInventorySearch);
+            void enqueue(rebuildInventorySearch).catch((error: unknown) => {
+                logger.warn('Periodic inventory search reconciliation failed', error);
+            });
         }, reconcileMs);
         timer.unref();
     }

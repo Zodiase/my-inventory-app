@@ -504,6 +504,7 @@ export const searchInventory = async (fragments: SearchFragment[]): Promise<Inve
         .map((fragment) => fragment.value.trim())
         .filter(Boolean)
         .join(' ');
+    if (textFragments.length > 0 && textQuery === '') return [];
     const rankedPage = textQuery === '' ? undefined : await searchInventoryIndex(textQuery, 0, MAX_SEARCH_CANDIDATES);
     const rankedIds = rankedPage?.hits.map((hit) => hit.id);
     if (rankedIds?.length === 0) return [];
