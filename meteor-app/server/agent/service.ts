@@ -129,7 +129,7 @@ export interface Backend {
         after: string | undefined,
         limit: number
     ) => Promise<{ hits: BackendSearchHit[]; nextCursor: string | null }>;
-    path: (itemId: string) => Promise<Item[]>;
+    path: (itemId: string) => Promise<Item[] | undefined>;
     children: (containerId: string | null, after: string | undefined, limit: number) => Promise<Item[]>;
     identities: (id: string) => Promise<Identity[]>;
     resolve: (identity: Identity) => Promise<string | undefined>;
@@ -411,21 +411,18 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
         if (r.op === 'search') {
             const limit = r.limit ?? LIMIT_CHILDREN;
             const page = await db.search(required(r.query), r.after, limit);
-            const matches = await Promise.all(
-                page.hits.map(
-                    async (hit): Promise<SearchMatch> => ({
+            const resolvedMatches = await Promise.all(
+                page.hits.map(async (hit): Promise<SearchMatch | undefined> => {
+                    const path = await db.path(hit.item._id);
+                    if (path === undefined) return undefined;
+                    return {
                         item: await snapshot(hit.item),
-                        path: (
-                            await db.path(hit.item._id)
-                        ).map(({ _id, name, isContainer }) => ({
-                            _id,
-                            name,
-                            isContainer,
-                        })),
+                        path: path.map(({ _id, name, isContainer }) => ({ _id, name, isContainer })),
                         evidence: { score: hit.score, matchedFields: hit.matchedFields },
-                    })
-                )
+                    };
+                })
             );
+            const matches = resolvedMatches.filter((match): match is SearchMatch => match !== undefined);
             return {
                 ok: true as const,
                 result: { matches, nextCursor: page.nextCursor },

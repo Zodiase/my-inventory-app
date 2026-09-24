@@ -17,6 +17,7 @@ import {
     lockInventoryItem,
     unlockInventoryItem,
     getItemPath,
+    searchItems,
     searchInventory,
     searchInventoryMethod,
 } from './items';
@@ -251,6 +252,79 @@ describe('items', function () {
             } finally {
                 restore();
             }
+        });
+
+        it('pages beyond the first candidate batch before applying structured filters', async function () {
+            const matchingId = await createTestItemDirect('Matching container', true);
+            const calls: Array<{ offset: number; limit: number }> = [];
+            const restore = registerInventorySearchProvider({
+                health: async () => undefined,
+                search: async (_query, offset, limit) => {
+                    calls.push({ offset, limit });
+                    if (offset === 0) {
+                        return {
+                            estimatedTotalHits: 1001,
+                            hits: Array.from({ length: 1000 }, (_, index) => ({
+                                id: `missing-${index}`,
+                                score: 1,
+                                matchedFields: ['name'],
+                            })),
+                        };
+                    }
+                    return {
+                        estimatedTotalHits: 1001,
+                        hits: [{ id: matchingId, score: 0.5, matchedFields: ['name'] }],
+                    };
+                },
+            });
+
+            try {
+                const results = await searchInventory([
+                    { type: 'text', value: 'matching' },
+                    { type: 'containerType', value: 'containers' },
+                ]);
+                assert.deepStrictEqual(
+                    results.map((result) => result.item._id),
+                    [matchingId]
+                );
+                assert.deepStrictEqual(calls, [
+                    { offset: 0, limit: 1000 },
+                    { offset: 1000, limit: 1000 },
+                ]);
+            } finally {
+                restore();
+            }
+        });
+
+        it('omits stale index hits without failing valid search results', async function () {
+            const liveId = await createTestItemDirect('Live result', false);
+            const restore = registerInventorySearchProvider({
+                health: async () => undefined,
+                search: async () => ({
+                    estimatedTotalHits: 2,
+                    hits: [
+                        { id: 'deleted-result', score: 1, matchedFields: ['name'] },
+                        { id: liveId, score: 0.9, matchedFields: ['name'] },
+                    ],
+                }),
+            });
+
+            try {
+                const results = await searchInventory([{ type: 'text', value: 'result' }]);
+                assert.deepStrictEqual(
+                    results.map((result) => result.item._id),
+                    [liveId]
+                );
+            } finally {
+                restore();
+            }
+        });
+
+        it('rejects text fragments on the legacy unranked search entry point', async function () {
+            await assert.rejects(
+                async () => await searchItems([{ type: 'text', value: 'item' }]),
+                /require ranked searchInventory/u
+            );
         });
 
         it('reports unavailable search distinctly from zero matches', async function () {

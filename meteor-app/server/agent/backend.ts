@@ -15,6 +15,7 @@ import {
     setInventoryItemLocked,
 } from '/imports/api/items';
 import { TagsCollection, createTag } from '/imports/api/tags';
+import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import { InventorySearchUnavailableError, searchInventoryIndex } from '/imports/search/InventorySearchProvider';
 import detectCircularReference from '/imports/utility/circularReference';
 import { escapeSearchText } from '/imports/utility/searchText';
@@ -81,7 +82,14 @@ export const agentBackend: Backend = {
             throw error;
         }
     },
-    path: async (itemId) => await getItemPath(itemId),
+    path: async (itemId) => {
+        try {
+            return await getItemPath(itemId);
+        } catch (error) {
+            if (error instanceof RecordNotFoundException) return undefined;
+            throw error;
+        }
+    },
     children: async (containerId, after, limit) =>
         await InventoryItemsCollection.find(
             {

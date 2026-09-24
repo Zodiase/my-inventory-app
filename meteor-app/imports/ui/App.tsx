@@ -189,7 +189,15 @@ export const App = (): ReactElement => {
         } catch (error) {
             console.error('Search failed:', error);
             setSearchResults([]);
-            setSearchError('Search is temporarily unavailable. Try again after the local search service recovers.');
+            const errorCode =
+                typeof error === 'object' && error !== null && 'error' in error
+                    ? Reflect.get(error, 'error')
+                    : undefined;
+            setSearchError(
+                errorCode === 'search-unavailable'
+                    ? 'Search is temporarily unavailable. Try again after the local search service recovers.'
+                    : 'Search failed. Please try again.'
+            );
         } finally {
             setSearchLoading(false);
         }
