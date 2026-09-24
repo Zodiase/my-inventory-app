@@ -5,6 +5,7 @@ import { Random } from 'meteor/random';
 
 import type InventoryItem from '/imports/model/InventoryItem';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
+import { registerInventorySearchProvider } from '/imports/search/InventorySearchProvider';
 import type NoId from '/imports/utility/NoId';
 
 import {
@@ -16,6 +17,9 @@ import {
     lockInventoryItem,
     unlockInventoryItem,
     getItemPath,
+    searchItems,
+    searchInventory,
+    searchInventoryMethod,
 } from './items';
 
 describe('items', function () {
@@ -30,7 +34,12 @@ describe('items', function () {
     };
 
     // Helper to create test items directly in DB
-    const createTestItemDirect = async (name: string, isContainer: boolean, containerId?: string): Promise<string> => {
+    const createTestItemDirect = async (
+        name: string,
+        isContainer: boolean,
+        containerId?: string,
+        extra: Partial<InventoryItem> = {}
+    ): Promise<string> => {
         const now = new Date();
         const item: NoId<InventoryItem> & Record<string, unknown> = {
             name,
@@ -39,6 +48,7 @@ describe('items', function () {
             containerId,
             createdAt: now,
             modifiedAt: now,
+            ...extra,
             ...tracer,
         };
 
@@ -190,6 +200,143 @@ describe('items', function () {
                 async () => await createInventoryItem({ name: 'Item', containerId: nonContainerId }),
                 /Parent must be a container/
             );
+        });
+    });
+
+    describe('ranked inventory search', function () {
+        it('returns no results for whitespace-only text without querying the search service', async function () {
+            await createTestItemDirect('Should not be returned', false);
+            let providerCalls = 0;
+            const restore = registerInventorySearchProvider({
+                health: async () => undefined,
+                search: async () => {
+                    providerCalls++;
+                    return { estimatedTotalHits: 0, hits: [] };
+                },
+            });
+
+            try {
+                assert.deepStrictEqual(await searchInventory([{ type: 'text', value: '   \t  ' }]), []);
+                assert.strictEqual(providerCalls, 0);
+            } finally {
+                restore();
+            }
+        });
+
+        it('preserves ranked order, match evidence, and authoritative Mongo paths', async function () {
+            const roomId = await createTestItemDirect('Laundry room', true);
+            const cabinetId = await createTestItemDirect('Cleaning cabinet', true, roomId);
+            const shelfId = await createTestItemDirect('Top shelf', true, cabinetId, {
+                description: 'Furniture pads and moving pads',
+            });
+            const restore = registerInventorySearchProvider({
+                health: async () => undefined,
+                search: async () => ({
+                    estimatedTotalHits: 1,
+                    hits: [{ id: shelfId, score: 0.94, matchedFields: ['description'] }],
+                }),
+            });
+
+            try {
+                const results = await searchInventory([{ type: 'text', value: 'moving pads' }]);
+                assert.strictEqual(results.length, 1);
+                assert.strictEqual(results[0].item._id, shelfId);
+                assert.deepStrictEqual(
+                    results[0].path.map((item) => item.name),
+                    ['Laundry room', 'Cleaning cabinet', 'Top shelf']
+                );
+                assert.deepStrictEqual(results[0].evidence, {
+                    score: 0.94,
+                    matchedFields: ['description'],
+                });
+            } finally {
+                restore();
+            }
+        });
+
+        it('pages beyond the first candidate batch before applying structured filters', async function () {
+            const matchingId = await createTestItemDirect('Matching container', true);
+            const calls: Array<{ offset: number; limit: number }> = [];
+            const restore = registerInventorySearchProvider({
+                health: async () => undefined,
+                search: async (_query, offset, limit) => {
+                    calls.push({ offset, limit });
+                    if (offset === 0) {
+                        return {
+                            estimatedTotalHits: 1001,
+                            hits: Array.from({ length: 1000 }, (_, index) => ({
+                                id: `missing-${index}`,
+                                score: 1,
+                                matchedFields: ['name'],
+                            })),
+                        };
+                    }
+                    return {
+                        estimatedTotalHits: 1001,
+                        hits: [{ id: matchingId, score: 0.5, matchedFields: ['name'] }],
+                    };
+                },
+            });
+
+            try {
+                const results = await searchInventory([
+                    { type: 'text', value: 'matching' },
+                    { type: 'containerType', value: 'containers' },
+                ]);
+                assert.deepStrictEqual(
+                    results.map((result) => result.item._id),
+                    [matchingId]
+                );
+                assert.deepStrictEqual(calls, [
+                    { offset: 0, limit: 1000 },
+                    { offset: 1000, limit: 1000 },
+                ]);
+            } finally {
+                restore();
+            }
+        });
+
+        it('omits stale index hits without failing valid search results', async function () {
+            const liveId = await createTestItemDirect('Live result', false);
+            const restore = registerInventorySearchProvider({
+                health: async () => undefined,
+                search: async () => ({
+                    estimatedTotalHits: 2,
+                    hits: [
+                        { id: 'deleted-result', score: 1, matchedFields: ['name'] },
+                        { id: liveId, score: 0.9, matchedFields: ['name'] },
+                    ],
+                }),
+            });
+
+            try {
+                const results = await searchInventory([{ type: 'text', value: 'result' }]);
+                assert.deepStrictEqual(
+                    results.map((result) => result.item._id),
+                    [liveId]
+                );
+            } finally {
+                restore();
+            }
+        });
+
+        it('rejects text fragments on the legacy unranked search entry point', async function () {
+            await assert.rejects(
+                async () => await searchItems([{ type: 'text', value: 'item' }]),
+                /require ranked searchInventory/u
+            );
+        });
+
+        it('reports unavailable search distinctly from zero matches', async function () {
+            const restore = registerInventorySearchProvider(undefined);
+            try {
+                await assert.rejects(
+                    async () => await searchInventoryMethod([{ type: 'text', value: 'moving pads' }]),
+                    (error: unknown) => error instanceof Meteor.Error && error.error === 'search-unavailable'
+                );
+            } finally {
+                restore();
+            }
         });
     });
 

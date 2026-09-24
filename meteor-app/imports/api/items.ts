@@ -6,9 +6,12 @@ import { Meteor } from 'meteor/meteor';
 import type { Mongo } from 'meteor/mongo';
 
 import type InventoryItem from '/imports/model/InventoryItem';
+import type InventorySearchResult from '/imports/model/InventorySearchResult';
 import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from '/imports/model/ItemConstants';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import type { SearchFragment } from '/imports/model/SearchFragment';
+import { InventorySearchUnavailableError, searchInventoryIndex } from '/imports/search/InventorySearchProvider';
+import { syncInventorySearchDelete, syncInventorySearchUpsert } from '/imports/search/InventorySearchSync';
 import detectCircularReference, { getAncestorChain } from '/imports/utility/circularReference';
 import createLogger from '/imports/utility/Logger';
 import asMeteorMethods from '/imports/utility/MeteorMethods';
@@ -22,6 +25,18 @@ export type { InventoryItem } from '/imports/model/InventoryItem';
 
 const logger = createLogger(module);
 const MAX_CONTAINER_SUBSCRIPTION_IDS = 100;
+const SEARCH_CANDIDATE_PAGE_SIZE = 1000;
+
+const scheduleSearchSync = (operation: 'upsert' | 'delete', itemId: string): void => {
+    const request = operation === 'upsert' ? syncInventorySearchUpsert(itemId) : syncInventorySearchDelete(itemId);
+    void request.catch((error: unknown) => {
+        logger.warn('Inventory mutation committed but derived search synchronization failed', {
+            operation,
+            itemId,
+            error,
+        });
+    });
+};
 
 export const InventoryItemsCollection = new NamedCollection<InventoryItem>('items');
 
@@ -88,6 +103,7 @@ export const createInventoryItem = async (
     );
 
     logger.log('Item created', { itemId, name: newItem.name, isContainer });
+    scheduleSearchSync('upsert', itemId);
 
     return itemId;
 };
@@ -151,6 +167,7 @@ export const updateInventoryItem = async (
     );
 
     logger.log('Item updated', { itemId, updatedFields: Object.keys(updates), rowsAffected: result });
+    if (result === 1) scheduleSearchSync('upsert', itemId);
 
     return result;
 };
@@ -261,6 +278,7 @@ export const moveItem = async (
     );
 
     logger.log('Item moved', { itemId, from: item.containerId, to: normalizedTargetId, rowsAffected: result });
+    if (result === 1) scheduleSearchSync('upsert', itemId);
 
     return result;
 };
@@ -334,6 +352,7 @@ export const deleteInventoryItem = async (itemId: string): Promise<number> => {
     const result = await InventoryItemsCollection.removeAsync({ _id: itemId });
 
     logger.log('Item deleted', { itemId, name: item.name, isContainer: item.isContainer, rowsAffected: result });
+    if (result === 1) scheduleSearchSync('delete', itemId);
 
     return result;
 };
@@ -370,7 +389,12 @@ export const safelyDeleteInventoryItem = async (_item: InventoryItem): Promise<n
 export const setInventoryItemLocked = async (itemId: string, locked: boolean): Promise<number> => {
     const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
     if (typeof item === 'undefined') throw new RecordNotFoundException('Item not found', { _id: itemId });
-    return await InventoryItemsCollection.updateAsync({ _id: itemId }, { $set: { locked, modifiedAt: new Date() } });
+    const result = await InventoryItemsCollection.updateAsync(
+        { _id: itemId },
+        { $set: { locked, modifiedAt: new Date() } }
+    );
+    if (result === 1) scheduleSearchSync('upsert', itemId);
+    return result;
 };
 
 export const lockInventoryItem = async (itemId: string): Promise<number> => await setInventoryItemLocked(itemId, true);
@@ -439,6 +463,9 @@ export const searchItems = async (fragments: SearchFragment[]): Promise<Inventor
     if (!Array.isArray(fragments)) {
         throw new Error('Search fragments must be an array');
     }
+    if (fragments.some((fragment) => fragment.type === 'text')) {
+        throw new Error('Text fragments require ranked searchInventory retrieval');
+    }
 
     const scopeFragments = fragments.filter(
         (fragment) =>
@@ -466,6 +493,120 @@ export const searchItems = async (fragments: SearchFragment[]): Promise<Inventor
 
     // Execute query and return results
     return await InventoryItemsCollection.find(query).fetchAsync();
+};
+
+/** Run ranked natural-language retrieval and resolve every hit from authoritative MongoDB state. */
+export const searchInventory = async (fragments: SearchFragment[]): Promise<InventorySearchResult[]> => {
+    if (!Array.isArray(fragments)) throw new Error('Search fragments must be an array');
+
+    const textFragments = fragments.filter(
+        (fragment): fragment is Extract<SearchFragment, { type: 'text' }> => fragment.type === 'text'
+    );
+    const structuredFragments = fragments.filter((fragment) => fragment.type !== 'text');
+    const textQuery = textFragments
+        .map((fragment) => fragment.value.trim())
+        .filter(Boolean)
+        .join(' ');
+    if (textFragments.length > 0 && textQuery === '') return [];
+    const scopeFragments = structuredFragments.filter(
+        (fragment) =>
+            fragment.type === 'containerScope' && fragment.containerRootId !== null && fragment.containerRootId !== ''
+    );
+    const nonScopeFragments = structuredFragments.filter((fragment) => fragment.type !== 'containerScope');
+    const conditions: Array<Mongo.Selector<InventoryItem>> = [];
+    const structuredQuery = buildSearchQuery(nonScopeFragments) as Mongo.Selector<InventoryItem>;
+    if (Object.keys(structuredQuery).length > 0) conditions.push(structuredQuery);
+    for (const fragment of scopeFragments) {
+        if (fragment.type === 'containerScope' && fragment.containerRootId !== null) {
+            conditions.push({ containerId: { $in: await getContainerScopeIds(fragment.containerRootId) } });
+        }
+    }
+    const structuredSelector: Mongo.Selector<InventoryItem> =
+        conditions.length === 0 ? {} : conditions.length === 1 ? conditions[0] : { $and: conditions };
+    const evidenceById = new Map<string, { score: number; matchedFields: string[] }>();
+    let ordered: InventoryItem[] = [];
+
+    if (textQuery === '') {
+        ordered = await InventoryItemsCollection.find(structuredSelector, { sort: { _id: 1 } }).fetchAsync();
+    } else {
+        let offset = 0;
+        while (true) {
+            const page = await searchInventoryIndex(textQuery, offset, SEARCH_CANDIDATE_PAGE_SIZE);
+            if (page.hits.length === 0) break;
+            const pageIds = page.hits.map((hit) => hit.id);
+            const pageSelector: Mongo.Selector<InventoryItem> =
+                Object.keys(structuredSelector).length === 0
+                    ? { _id: { $in: pageIds } }
+                    : { $and: [structuredSelector, { _id: { $in: pageIds } }] };
+            const pageItems = await InventoryItemsCollection.find(pageSelector).fetchAsync();
+            const pageItemsById = new Map(pageItems.map((item) => [item._id, item]));
+            for (const hit of page.hits) {
+                const item = pageItemsById.get(hit.id);
+                if (item !== undefined) {
+                    ordered.push(item);
+                    evidenceById.set(hit.id, { score: hit.score, matchedFields: hit.matchedFields });
+                }
+            }
+            offset += page.hits.length;
+            if (offset >= page.estimatedTotalHits) break;
+        }
+    }
+
+    const paths = await getInventoryItemPaths(ordered);
+    return ordered.map((item) => {
+        const evidence = evidenceById.get(item._id);
+        return {
+            ...item,
+            item,
+            path: paths.get(item._id) ?? [item],
+            ...(evidence === undefined ? {} : { evidence }),
+        };
+    });
+};
+
+/** Resolve result paths in bounded Mongo batches instead of one ancestor walk per hit. */
+const getInventoryItemPaths = async (items: InventoryItem[]): Promise<Map<string, InventoryItem[]>> => {
+    const byId = new Map(items.map((item) => [item._id, item]));
+    let pending = [...new Set(items.map((item) => item.containerId).filter((id): id is string => id !== undefined))];
+    while (pending.length > 0) {
+        const parents = await InventoryItemsCollection.find({ _id: { $in: pending } }).fetchAsync();
+        for (const parent of parents) byId.set(parent._id, parent);
+        pending = [
+            ...new Set(
+                parents
+                    .map((parent) => parent.containerId)
+                    .filter((id): id is string => id !== undefined && !byId.has(id))
+            ),
+        ];
+    }
+
+    return new Map(
+        items.map((item) => {
+            const path = [item];
+            const visited = new Set([item._id]);
+            let parentId = item.containerId;
+            while (parentId !== undefined && !visited.has(parentId)) {
+                const parent = byId.get(parentId);
+                if (parent === undefined) break;
+                path.unshift(parent);
+                visited.add(parent._id);
+                parentId = parent.containerId;
+            }
+            return [item._id, path];
+        })
+    );
+};
+
+/** Convert dependency failure into a stable client-visible Meteor error. */
+export const searchInventoryMethod = async (fragments: SearchFragment[]): Promise<InventorySearchResult[]> => {
+    try {
+        return await searchInventory(fragments);
+    } catch (error) {
+        if (error instanceof InventorySearchUnavailableError) {
+            throw new Meteor.Error('search-unavailable', 'The local inventory search service is unavailable.');
+        }
+        throw error;
+    }
 };
 
 const getContainerScopeIds = async (containerRootId: string): Promise<string[]> => {
@@ -596,5 +737,5 @@ export default asMeteorMethods(InventoryItemsCollection, {
     lockItem: lockInventoryItem,
     unlockItem: unlockInventoryItem,
     getPath: getItemPath,
-    search: searchItems,
+    search: searchInventoryMethod,
 });

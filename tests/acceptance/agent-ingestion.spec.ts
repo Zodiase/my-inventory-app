@@ -344,3 +344,114 @@ test('agent labels share UI tags and support safe assignment and retrieval', asy
     expect((await invoke({ op: 'taggedItems', tagId: person.tag._id })).result.items).toEqual([]);
     expect((await invoke({ op: 'history', itemId: room.item._id })).result.events.at(-1).before).toEqual(tagged);
 });
+
+test('ranked search stays synchronized and agrees across agent and application paths', async ({ request, page }) => {
+    const invoke = async (payload: object, status = 200) => {
+        const response = await request.post('/api/agent/v1', {
+            headers: { Authorization: `Bearer ${process.env.INVENTORY_ACCEPTANCE_TOKEN}` },
+            data: payload,
+        });
+        const body = await response.json();
+        expect(response.status(), JSON.stringify(body)).toBe(status);
+        return body;
+    };
+    const source = { system: 'synthetic-acceptance', reference: 'ranked-search' };
+    const create = async (requestId: string, item: object) =>
+        (
+            await invoke({
+                op: 'create',
+                requestId,
+                source,
+                item,
+            })
+        ).result as Snapshot;
+    const waitForSearch = async (
+        query: string,
+        predicate: (matches: Array<{ item: Snapshot; path: Item[] }>) => boolean
+    ) => {
+        const deadline = Date.now() + 15000;
+        while (Date.now() < deadline) {
+            const result = (await invoke({ op: 'search', query })).result;
+            if (predicate(result.matches)) return result;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        throw new Error(`Timed out waiting for search index to reflect query: ${query}`);
+    };
+
+    const home = await create('search-home', { name: 'Search fixture home', isContainer: true });
+    const laundry = await create('search-laundry', {
+        name: 'Search fixture laundry room',
+        isContainer: true,
+        containerId: home.item._id,
+    });
+    const garage = await create('search-garage', {
+        name: 'Search fixture garage',
+        isContainer: true,
+        containerId: home.item._id,
+    });
+    const pads = await create('search-pads', {
+        name: 'Fixture protective textiles',
+        description: 'Photogrammetry calibration quilts and moving pads',
+        isContainer: false,
+        containerId: laundry.item._id,
+    });
+
+    const created = await waitForSearch('calibration quilts', (matches) =>
+        matches.some(({ item }) => item.item._id === pads.item._id)
+    );
+    const createdMatch = created.matches.find(({ item }: { item: Snapshot }) => item.item._id === pads.item._id);
+    expect(createdMatch.path.map((item: Item) => item.name)).toEqual([
+        home.item.name,
+        laundry.item.name,
+        pads.item.name,
+    ]);
+    expect(createdMatch.evidence.matchedFields).toContain('description');
+
+    await page.goto('/search');
+    await waitForMeteorReady(page);
+    await page.getByRole('textbox', { name: 'Search query' }).fill('calibration quilts');
+    await page.getByRole('button', { name: 'Submit search' }).click();
+    await expect(page.getByRole('button', { name: new RegExp(pads.item.name) })).toContainText(laundry.item.name);
+    await expect(page.getByText(/Matched description/)).toBeVisible();
+
+    const updated = (
+        await invoke({
+            op: 'update',
+            requestId: 'search-pads-update',
+            source,
+            itemId: pads.item._id,
+            expectedVersion: pads.version,
+            changes: { description: 'Spectral moving blankets for delicate furniture' },
+        })
+    ).result as Snapshot;
+    await waitForSearch('spectral blankets', (matches) => matches.some(({ item }) => item.item._id === pads.item._id));
+    await waitForSearch('calibration quilts', (matches) =>
+        matches.every(({ item }) => item.item._id !== pads.item._id)
+    );
+
+    const moved = (
+        await invoke({
+            op: 'move',
+            requestId: 'search-pads-move',
+            source,
+            itemId: pads.item._id,
+            expectedVersion: updated.version,
+            containerId: garage.item._id,
+        })
+    ).result as Snapshot;
+    const movedResult = await waitForSearch('spectral blankets', (matches) =>
+        matches.some(
+            ({ item, path }) =>
+                item.item._id === pads.item._id && path.some((pathItem) => pathItem._id === garage.item._id)
+        )
+    );
+    expect(
+        movedResult.matches
+            .find(({ item }: { item: Snapshot }) => item.item._id === pads.item._id)
+            .path.map((item: Item) => item.name)
+    ).toEqual([home.item.name, garage.item.name, pads.item.name]);
+    expect(moved.item.containerId).toBe(garage.item._id);
+
+    await callMeteorMethod(page, 'items.deleteItem', pads.item._id);
+    await waitForSearch('spectral blankets', (matches) => matches.every(({ item }) => item.item._id !== pads.item._id));
+});

@@ -143,7 +143,7 @@ npm test --prefix meteor-app
 
 ### Prerequisites
 
-Playwright starts the required Meteor and Storybook servers automatically. Use the `test:e2e:skip-server:*` scripts only when intentionally testing against servers you started yourself.
+Playwright starts the required Meteor, Meilisearch, and Storybook servers automatically. Local app-mode runs require Docker for the disposable loopback-only Meilisearch container. Set `INVENTORY_SEARCH_URL`, `INVENTORY_SEARCH_API_KEY`, and `INVENTORY_SEARCH_INDEX` together to use an already-running disposable search service instead. Use the `test:e2e:skip-server:*` scripts only when intentionally testing against servers you started yourself.
 
 ### Quick Reference
 

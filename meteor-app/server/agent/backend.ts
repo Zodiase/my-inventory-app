@@ -9,12 +9,16 @@ import { InventoryIdentitiesCollection } from '/imports/api/identities';
 import {
     InventoryItemsCollection,
     createInventoryItem,
+    getItemPath,
     updateInventoryItem,
     moveItem,
     setInventoryItemLocked,
 } from '/imports/api/items';
 import { TagsCollection, createTag } from '/imports/api/tags';
+import RecordNotFoundException from '/imports/model/RecordNotFoundException';
+import { InventorySearchUnavailableError, searchInventoryIndex } from '/imports/search/InventorySearchProvider';
 import detectCircularReference from '/imports/utility/circularReference';
+import { escapeSearchText } from '/imports/utility/searchText';
 
 import { AgentError, identityKey } from './service';
 import type { Backend, Event } from './service';
@@ -49,11 +53,43 @@ export const agentBackend: Backend = {
         ).fetchAsync(),
     createTag: async (tag, id) => await createTag(tag, id),
     get: async (id) => await InventoryItemsCollection.findOneAsync(id),
-    search: async (name) =>
+    lookupName: async (name) =>
         await InventoryItemsCollection.find(
-            { name: { $regex: name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i' } },
+            { name: { $regex: escapeSearchText(name), $options: 'i' } },
             { limit: 100, sort: { _id: 1 } }
         ).fetchAsync(),
+    search: async (query, after, limit) => {
+        const offset = after === undefined ? 0 : Number(/^offset:(\d+)$/u.exec(after)?.[1]);
+        if (!Number.isInteger(offset) || offset < 0) throw new AgentError('invalid_input', 'Invalid search cursor');
+        try {
+            const page = await searchInventoryIndex(query, offset, limit);
+            const items = await InventoryItemsCollection.find({
+                _id: { $in: page.hits.map((hit) => hit.id) },
+            }).fetchAsync();
+            const byId = new Map(items.map((item) => [item._id, item]));
+            const hits = page.hits.flatMap((hit) => {
+                const item = byId.get(hit.id);
+                return item === undefined ? [] : [{ item, score: hit.score, matchedFields: hit.matchedFields }];
+            });
+            const nextOffset = offset + page.hits.length;
+            return {
+                hits,
+                nextCursor: nextOffset < page.estimatedTotalHits ? `offset:${nextOffset}` : null,
+            };
+        } catch (error) {
+            if (error instanceof InventorySearchUnavailableError)
+                throw new AgentError('search_unavailable', 'Inventory search service is unavailable');
+            throw error;
+        }
+    },
+    path: async (itemId) => {
+        try {
+            return await getItemPath(itemId);
+        } catch (error) {
+            if (error instanceof RecordNotFoundException) return undefined;
+            throw error;
+        }
+    },
     children: async (containerId, after, limit) =>
         await InventoryItemsCollection.find(
             {

@@ -11,6 +11,8 @@
         "start:throwaway": "cd meteor-app && npm run start:throwaway",
         "storybook": "cd meteor-app && npm run storybook",
         "test:scripts": "node --test scripts/*.test.mjs",
+        "evaluate:search": "node scripts/search-engine-bakeoff.mjs",
+        "benchmark:search": "node scripts/search-index-benchmark.mjs",
         "format": "prettier --write . && (cd meteor-app && npm run format)",
         "format:check": "prettier --check . && (cd meteor-app && npm run format:check)",
         "test:e2e": "playwright test",

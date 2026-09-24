@@ -12,6 +12,7 @@ import { getInventoryIdLabel, InventoryIdentitiesCollection } from '/imports/api
 import Items, { InventoryItemsCollection } from '/imports/api/items';
 import { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import type InventorySearchResult from '/imports/model/InventorySearchResult';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { LoadingState } from '/imports/ui/common/LoadingState';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
@@ -79,7 +80,8 @@ export const App = (): ReactElement => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchScope, setSearchScope] = useState<'global' | 'scoped'>('global');
     const [searchFragments, setSearchFragments] = useState<SearchFragment[]>([]);
-    const [searchResults, setSearchResults] = useState<InventoryItem[]>([]);
+    const [searchResults, setSearchResults] = useState<InventorySearchResult[]>([]);
+    const [searchError, setSearchError] = useState<string | undefined>();
     const [searchLoading, setSearchLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
     const [showSearchFilters, setShowSearchFilters] = useState(false);
@@ -167,6 +169,7 @@ export const App = (): ReactElement => {
     const handleSearch = async (): Promise<void> => {
         setHasSearched(true);
         setSearchLoading(true);
+        setSearchError(undefined);
         try {
             // Build fragments from current state
             const fragments: SearchFragment[] = [...searchFragments];
@@ -175,17 +178,26 @@ export const App = (): ReactElement => {
                 fragments.unshift({ type: 'containerScope', containerRootId: currentItemsContainerId });
             }
 
-            // Add name fragment if search query exists
+            // Send the primary query to ranked natural-language retrieval.
             if (searchQuery.trim() !== '') {
-                fragments.push({ type: 'name', value: searchQuery.trim() });
+                fragments.push({ type: 'text', value: searchQuery.trim() });
             }
 
             // Call search method
-            const results = (await Meteor.callAsync('items.search', fragments)) as unknown as InventoryItem[];
+            const results = (await Meteor.callAsync('items.search', fragments)) as unknown as InventorySearchResult[];
             setSearchResults(results);
         } catch (error) {
             console.error('Search failed:', error);
             setSearchResults([]);
+            const errorCode =
+                typeof error === 'object' && error !== null && 'error' in error
+                    ? Reflect.get(error, 'error')
+                    : undefined;
+            setSearchError(
+                errorCode === 'search-unavailable'
+                    ? 'Search is temporarily unavailable. Try again after the local search service recovers.'
+                    : 'Search failed. Please try again.'
+            );
         } finally {
             setSearchLoading(false);
         }
@@ -461,11 +473,11 @@ export const App = (): ReactElement => {
 
                                         {/* Search results */}
                                         <SearchResultsView
-                                            items={searchResults}
+                                            results={searchResults}
                                             onItemClick={handleSearchItemClick}
                                             loading={searchLoading}
                                             hasSearched={hasSearched}
-                                            getItemPath={getItemPath}
+                                            errorMessage={searchError}
                                             availableTags={allTags}
                                         />
                                     </>

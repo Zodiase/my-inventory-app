@@ -30,6 +30,20 @@ const isStorybookOnlyRun =
         selectedProjects.every((project) => ['storybook-chromium', 'storybook-webkit'].includes(project)));
 const appPort = process.env.PLAYWRIGHT_APP_PORT ?? '3000';
 const appBaseURL = process.env.PLAYWRIGHT_APP_BASE_URL ?? `http://localhost:${appPort}`;
+const externalSearchConfiguration = [
+    process.env.INVENTORY_SEARCH_URL,
+    process.env.INVENTORY_SEARCH_API_KEY,
+    process.env.INVENTORY_SEARCH_INDEX,
+];
+if (externalSearchConfiguration.some(Boolean) && !externalSearchConfiguration.every(Boolean)) {
+    throw new Error(
+        'Set INVENTORY_SEARCH_URL, INVENTORY_SEARCH_API_KEY, and INVENTORY_SEARCH_INDEX together for Playwright.'
+    );
+}
+const usesExternalSearch = externalSearchConfiguration.every(Boolean);
+const searchUrl = process.env.INVENTORY_SEARCH_URL ?? 'http://127.0.0.1:7700';
+const searchApiKey = process.env.INVENTORY_SEARCH_API_KEY ?? 'inventory-search-playwright-key-at-least-32-characters';
+const searchIndex = process.env.INVENTORY_SEARCH_INDEX ?? 'inventory_app_e2e_local';
 const meteorLocalDir =
     process.env.PLAYWRIGHT_METEOR_LOCAL_DIR === undefined
         ? ''
@@ -43,6 +57,26 @@ const appWebServer = {
     stdout: 'pipe',
     stderr: 'pipe',
     cwd: './meteor-app',
+    env: {
+        INVENTORY_SEARCH_URL: searchUrl,
+        INVENTORY_SEARCH_API_KEY: searchApiKey,
+        INVENTORY_SEARCH_INDEX: searchIndex,
+    },
+};
+
+const searchWebServer = {
+    command:
+        'docker run --rm --name inventory-playwright-search -p 127.0.0.1:7700:7700 -e MEILI_ENV -e MEILI_NO_ANALYTICS -e MEILI_MASTER_KEY getmeili/meilisearch:v1.37.0',
+    url: `${searchUrl.replace(/\/$/u, '')}/health`,
+    reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: {
+        MEILI_ENV: 'production',
+        MEILI_NO_ANALYTICS: 'true',
+        MEILI_MASTER_KEY: searchApiKey,
+    },
 };
 
 const storybookWebServer = {
@@ -55,7 +89,10 @@ const storybookWebServer = {
     cwd: './meteor-app',
 };
 
-const webServer = [...(isStorybookOnlyRun ? [] : [appWebServer]), ...(isAppOnlyRun ? [] : [storybookWebServer])];
+const webServer = [
+    ...(isStorybookOnlyRun ? [] : [...(usesExternalSearch ? [] : [searchWebServer]), appWebServer]),
+    ...(isAppOnlyRun ? [] : [storybookWebServer]),
+];
 
 /**
  * Playwright configuration for testing the Meteor inventory app.

@@ -3,6 +3,8 @@ import type { Filter } from 'mongodb';
 import type InventoryItem from '/imports/model/InventoryItem';
 import type SearchFragment from '/imports/model/SearchFragment';
 
+import { escapeSearchText } from './searchText';
+
 /**
  * Build a MongoDB query from search fragments.
  *
@@ -40,10 +42,13 @@ export const buildSearchQuery = (fragments: SearchFragment[]): Filter<InventoryI
     for (const fragment of fragments) {
         switch (fragment.type) {
             case 'name': {
-                // Partial match, case-insensitive
+                if (fragment.value.trim() === '') {
+                    conditions.push({ _id: { $in: [] } });
+                    break;
+                }
                 const condition: Filter<InventoryItem> = {
                     name: {
-                        $regex: fragment.value,
+                        $regex: escapeSearchText(fragment.value),
                         $options: 'i',
                     },
                 };
@@ -113,10 +118,14 @@ export const buildSearchQuery = (fragments: SearchFragment[]): Filter<InventoryI
                     };
                     conditions.push(condition);
                 } else {
+                    if (fragment.value.trim() === '') {
+                        conditions.push({ _id: { $in: [] } });
+                        break;
+                    }
                     // Partial match, case-insensitive for strings
                     const condition: Filter<InventoryItem> = {
                         [fieldPath]: {
-                            $regex: fragment.value,
+                            $regex: escapeSearchText(fragment.value),
                             $options: 'i',
                         },
                     };

@@ -36,6 +36,20 @@ describe('searchQuery utility', function () {
                 expect(query.name).to.have.property('$options', 'i');
             });
 
+            it('treats structured name and property searches as literal text', function () {
+                const query: AnyQuery = buildSearchQuery([
+                    { type: 'name', value: 'box (A)' },
+                    { type: 'property', field: 'make', value: 'ACME+' },
+                ]);
+
+                expect(query.$and[0].name.$regex).to.equal('box \\(A\\)');
+                expect(query.$and[1]['properties.make'].$regex).to.equal('ACME\\+');
+            });
+
+            it('does not turn an empty structured text filter into a match-all query', function () {
+                expect(buildSearchQuery([{ type: 'name', value: '   ' }])).to.deep.equal({ _id: { $in: [] } });
+            });
+
             it('handles tagInclude fragment with single tag', function () {
                 const fragments: SearchFragment[] = [
                     {
