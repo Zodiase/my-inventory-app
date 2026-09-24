@@ -35,12 +35,20 @@ is exposed by the current v1 API:
    and performs the logical deletion only after repeating all safety checks and
    matching all three fields to the prepared journal record.
 
-Callers do not supply request IDs for deletion. The server assigns a distinct
-request ID to every prepare, confirm, status or retry call and returns it for
-cross-endpoint tracing and triage. These request IDs are observational only:
-they do not identify the deletion workflow, authorize deletion, or control
-idempotency. A confirm retry therefore receives a new request ID while still
-resolving to the original terminal result.
+The server assigns a distinct `requestId` to every prepare, confirm, result
+lookup or retry call and returns it for cross-endpoint tracing and triage. A
+caller may also supply optional `clientRequestId` metadata. On mutation calls,
+including confirmation, a supplied client request ID has the interface's normal
+idempotency semantics; on read-only result lookup it is correlation metadata
+only. Neither request ID authorizes deletion or identifies the deletion
+workflow. A confirm retry therefore receives a new server request ID while
+still resolving to the original terminal result through the authorization and
+journal.
+
+Until the target request-envelope migration is implemented consistently across
+the interface, deletion operations must reject `clientRequestId` rather than
+accepting it with weaker or surprising semantics. Authorization-based replay is
+sufficient for deletion correctness during that transition.
 
 The authorization is cryptographically random, stored only as a hash, bound to
 the item ID, expected version and other safety-relevant preparation fields, and
@@ -61,7 +69,8 @@ Replay semantics are part of the protocol:
   authorization, item ID and expected version returns the original journaled
   result with `replayed: true`, even if the authorization's five-minute window
   has since elapsed. The retry has a new server request ID and never writes a
-  second tombstone.
+  second tombstone. If supplied, its client request ID must also satisfy the
+  ordinary mutation idempotency rules.
 - A mismatched item ID, expected version or authorization returns a conflict
   and never replays a successful result.
 - Result lookup uses the authorization, item ID and expected version to find
@@ -113,6 +122,8 @@ default filtering across every active read surface; retained documents,
 identities and history; restoration or maintenance visibility; stale versions,
 locks and active-child races; authorization expiry; lost prepare responses;
 successful confirm replay before and after authorization expiry; mismatched
-intent; distinct server request IDs across calls and retries; concurrent
-confirmations causing one tombstone transition; and a regression assertion that
-normal production deletion never performs physical removal.
+intent; distinct server request IDs across calls and retries; optional client
+request ID replay and changed-payload conflict on mutations; correlation-only
+behavior on reads; concurrent confirmations causing one tombstone transition;
+and a regression assertion that normal production deletion never performs
+physical removal.
