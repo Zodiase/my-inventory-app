@@ -1,5 +1,12 @@
 # Local inventory agent interface v1
 
+The target inventory-deletion design is defined by
+[`LOGICAL_DELETION.md`](LOGICAL_DELETION.md): same-collection tombstones first,
+with physical cold storage deferred until measured performance justifies it.
+Deletion remains excluded from the current v1 agent API. Its planned two-step
+protocol must preserve records, identities and history rather than physically
+removing documents.
+
 This opt-in JSON interface writes the same `items` collection used by the UI. It reuses the application's create/update/move business functions and supports nested containers and ordinary items. It does not issue stickers, write a household journal, ingest real household data automatically, or deploy anything.
 
 ## Run against disposable local data
@@ -55,6 +62,26 @@ Open `/items/<result.item._id>` for UI readback. Descriptions are the visible it
 Unknown fields, wrong types, empty required strings and unsupported operations are rejected. Names are at most 500 characters; descriptions and audit notes at most 5000. `requestId`, `itemId`, identity namespace and source system are at most 200 characters; identity values at most 500 and source reference at most 2000. Identity strings are exact and case-sensitive, with no UUID normalization or validation against an external registry. Use the external system's canonical spelling.
 
 Every mutation requires `requestId` and `source: {system, reference}`. Optional `note` explains the observation or correction. Request IDs are global within this inventory database, not scoped to source; callers should prefix them with their workflow/fixture identity. Use one stable key per logical mutation. IDs are retained indefinitely in v1.
+
+### Target request-envelope model
+
+The current required caller-supplied `requestId` contract above remains the v1
+behavior until a separate interface migration is implemented. The target model
+separates two concepts that v1 combines:
+
+- The server generates a unique `requestId` for every received call and returns
+  it for tracing and triage. Retries receive new server request IDs.
+- A caller may provide an optional `clientRequestId`. On a mutation, the pair of
+  authenticated caller scope and `clientRequestId` is an idempotency key:
+  identical canonical input replays the original result, while changed input
+  conflicts. On a read, it is correlation metadata only and may be echoed; read
+  responses do not require replay storage.
+
+An endpoint may also have an intrinsic idempotency handle, such as the planned
+deletion authorization. That handle remains authoritative for its operation;
+if a mutation also supplies `clientRequestId`, the ordinary mutation
+idempotency rules still apply. Documentation for every operation must state
+whether it is a read or mutation and identify any intrinsic replay handle.
 
 | `op`           | Other fields                                                                                            | Result                                            |
 | -------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
@@ -116,6 +143,14 @@ The history event contains `_id` (requestId), `request` (including source/note),
 ## Replay, conflicts and interrupted writes
 
 Identical parsed JSON, including source and note, replays the originally recorded result with `replayed:true`. Object key order is ignored; other changes are significant. Replay returns the original snapshot even if later corrections changed the item. Use get for current state. A requestId with changed payload returns HTTP 409 `conflict`. Stale expectedVersion also returns 409 `conflict` before mutation. Update/move use a snapshot predicate at the Mongo write, so a concurrent edit cannot be silently overwritten. If that write races after preflight, the conservative result is `indeterminate`, requiring reconciliation.
+
+The planned two-step logical-deletion workflow uses the target envelope. The
+server assigns a different tracing request ID to every prepare, confirm, result
+lookup and retry. An optional client request ID follows the target read or
+mutation semantics, but the deletion authorization, item ID and expected
+version intrinsically bind the workflow and resolve completed confirmation
+retries through the append-only journal. The complete protocol is defined in
+[Logical deletion and cold-storage roadmap](LOGICAL_DELETION.md).
 
 A durable, non-expiring lock serializes agent mutations across server processes. A competing mutation returns HTTP 409 `busy` without starting a write. A durable request event is reserved before mutation. If a process dies or persistence fails after reservation, a same-key retry returns HTTP 409 `indeterminate`; new writes remain stopped if the writer lock was retained. Reads continue. There is deliberately no timer that assumes an unfinished write failed.
 
