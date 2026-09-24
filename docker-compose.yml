@@ -14,7 +14,7 @@ services:
             PORT: 3000
             INVENTORY_AGENT_TOKEN: '${INVENTORY_AGENT_TOKEN:-}'
             INVENTORY_SEARCH_URL: http://meilisearch:7700
-            INVENTORY_SEARCH_API_KEY: '${INVENTORY_SEARCH_API_KEY:-inventory-search-internal-development-key-32-chars}'
+            INVENTORY_SEARCH_API_KEY: '${INVENTORY_SEARCH_API_KEY:?INVENTORY_SEARCH_API_KEY must be set}'
             INVENTORY_SEARCH_INDEX: inventory_items
             INVENTORY_SEED_SAMPLE_DATA: '0'
         depends_on:
@@ -28,7 +28,7 @@ services:
         environment:
             MEILI_ENV: production
             MEILI_NO_ANALYTICS: 'true'
-            MEILI_MASTER_KEY: '${INVENTORY_SEARCH_API_KEY:-inventory-search-internal-development-key-32-chars}'
+            MEILI_MASTER_KEY: '${INVENTORY_SEARCH_API_KEY:?INVENTORY_SEARCH_API_KEY must be set}'
         volumes:
             - inventory_app_search_data:/meili_data
         healthcheck:
