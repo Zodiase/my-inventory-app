@@ -293,68 +293,54 @@ test('agent and UI deletion retain tombstones while every ordinary read hides th
             externalIdentity: identity,
         })
     ).result as Snapshot;
-    const firstPreparation = (
-        await invoke({
+    const prepare = () =>
+        invoke({
             op: 'prepareDelete',
-            requestId: 'delete-acceptance-agent',
             source,
             itemId: created.item._id,
             expectedVersion: created.version,
             note: 'Synthetic acceptance deletion',
-        })
-    ).result;
-    const preparation = (
-        await invoke({
-            op: 'prepareDelete',
-            requestId: 'delete-acceptance-agent',
-            source,
-            itemId: created.item._id,
-            expectedVersion: created.version,
-            note: 'Synthetic acceptance deletion',
-        })
-    ).result;
+        });
+    const firstPreparedResponse = await prepare();
+    const firstPreparation = firstPreparedResponse.result;
+    const preparedResponse = await prepare();
+    const preparation = preparedResponse.result;
     expect(preparation.deletionAuthorizationId).not.toBe(firstPreparation.deletionAuthorizationId);
-    expect(
-        (
-            await invoke(
-                {
-                    op: 'confirmDelete',
-                    requestId: 'delete-acceptance-agent',
-                    deletionAuthorizationId: firstPreparation.deletionAuthorizationId,
-                },
-                400
-            )
-        ).error.code
-    ).toBe('invalid_authorization');
-    const refreshedPreparation = (
-        await invoke({
-            op: 'prepareDelete',
-            requestId: 'delete-acceptance-agent',
-            source,
-            itemId: created.item._id,
-            expectedVersion: created.version,
-            note: 'Synthetic acceptance deletion',
-        })
-    ).result;
+    expect(preparedResponse.requestId).not.toBe(firstPreparedResponse.requestId);
     const confirmation = {
         op: 'confirmDelete',
-        requestId: 'delete-acceptance-agent',
-        deletionAuthorizationId: refreshedPreparation.deletionAuthorizationId,
+        deletionAuthorizationId: preparation.deletionAuthorizationId,
+        itemId: preparation.itemId,
+        expectedVersion: preparation.expectedVersion,
     };
     const deleted = await invoke(confirmation);
     expect(deleted.result.item).toMatchObject({
         _id: created.item._id,
-        deletedByRequestId: 'delete-acceptance-agent',
+        deletedByRequestId: deleted.requestId,
         deletedBy: source,
     });
-    expect((await invoke(confirmation)).replayed).toBe(true);
+    const replay = await invoke(confirmation);
+    expect(replay.replayed).toBe(true);
+    expect(replay.requestId).not.toBe(deleted.requestId);
+    const deletionResult = await invoke({
+        op: 'getDeleteResult',
+        deletionAuthorizationId: preparation.deletionAuthorizationId,
+        itemId: preparation.itemId,
+        expectedVersion: preparation.expectedVersion,
+    });
+    expect(deletionResult.requestId).not.toBe(replay.requestId);
+    expect(deletionResult.result.status).toBe('completed');
+    expect(deletionResult.result.result).toEqual(deleted.result);
     expect((await invoke({ op: 'get', itemId: created.item._id }, 404)).error.code).toBe('not_found');
     expect((await invoke({ op: 'lookup', name: 'Fixture logically deleted by agent' })).result.items).toEqual([]);
     expect((await invoke({ op: 'lookup', externalIdentity: identity })).result.items).toEqual([]);
     const retained = (await invoke({ op: 'auditGet', itemId: created.item._id })).result as Snapshot;
     expect(retained.externalIdentities).toEqual([identity]);
     expect(retained.item.deletedAt).toBeTruthy();
-    expect((await invoke({ op: 'history', itemId: created.item._id })).result.events.at(-1).after).toEqual(retained);
+    const history = (await invoke({ op: 'history', itemId: created.item._id })).result.events;
+    expect(history.at(-1).after).toEqual(retained);
+    expect(JSON.stringify(history)).not.toContain(preparation.deletionAuthorizationId);
+    expect(new Set(history.map((event: { _id: string }) => event._id)).size).toBe(history.length);
     const activeItems = await callMeteorMethod<Item[]>(page, 'items.search', []);
     expect(activeItems.some((item) => item._id === created.item._id)).toBe(false);
 

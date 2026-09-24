@@ -31,8 +31,8 @@ export const createAgentHandler =
             res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
             res.end(JSON.stringify(value));
         };
-        const reject = (status: number, code: string, message: string): void => {
-            send(status, { ok: false, error: { code, message } });
+        const reject = (status: number, code: string, message: string, requestId?: string): void => {
+            send(status, { ok: false, ...(requestId === undefined ? {} : { requestId }), error: { code, message } });
         };
         if (token === undefined || token.length < MIN_TOKEN_LENGTH) {
             reject(HTTP.disabled, 'disabled', 'Agent API is disabled');
@@ -113,7 +113,7 @@ export const createAgentHandler =
                         : ['conflict', 'busy', 'indeterminate'].includes(error.code)
                         ? HTTP.conflict
                         : HTTP.invalid;
-                reject(status, error.code, error.message);
+                reject(status, error.code, error.message, error.requestId);
             } else
                 reject(
                     HTTP.internal,

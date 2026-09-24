@@ -40,7 +40,7 @@ try {
     const kind = request && typeof request === 'object' ? operationKind(request.op) : undefined;
     if (kind === undefined) throw new Error('op');
     if (kind === 'mutation' && !args.includes('--allow-mutation')) {
-        console.error('Mutation requires --allow-mutation and a durable requestId/source.');
+        console.error('Mutation requires --allow-mutation; provide the fields required by its API contract.');
         process.exit(64);
     }
 } catch {
@@ -64,7 +64,7 @@ fetch('http://127.0.0.1:3000/api/agent/v1', {
     process.stdout.write(body+'\n');
     process.exitCode = response.ok ? 0 : 1;
 }).catch(() => {
-    console.error('Transport failed; outcome may be indeterminate. Inspect status with the original requestId; do not submit a new mutation key.');
+    console.error('Transport failed; outcome may be indeterminate. Use status for ordinary mutations or getDeleteResult for deletion.');
     process.exitCode = 75;
 });
 `;
@@ -94,7 +94,9 @@ const result = spawnSync(
 if (result.stdout) process.stdout.write(result.stdout);
 if (result.stderr) process.stderr.write(result.stderr);
 if (result.error || result.signal) {
-    console.error('Container invocation failed; do not retry a mutation with a new requestId.');
+    console.error(
+        'Container invocation failed; reconcile the operation through its documented status lookup before retrying.'
+    );
     process.exit(75);
 }
 process.exit(result.status ?? 75);

@@ -13,6 +13,7 @@ import {
     updateInventoryItem,
     moveItem,
     deleteInventoryItem,
+    logicalDeleteInventoryItem,
     getInventoryItemForAudit,
     lockInventoryItem,
     unlockInventoryItem,
@@ -515,6 +516,48 @@ describe('items', function () {
             assert.strictEqual(await deleteInventoryItem(containerId), 1);
             assert.ok((await getInventoryItemForAudit(childId))?.deletedAt instanceof Date);
             assert.ok((await getInventoryItemForAudit(containerId))?.deletedAt instanceof Date);
+        });
+
+        it('serializes deletion before a competing child creation', async function () {
+            const containerId = await createTestItemDirect('Race Container', true);
+            const container = await InventoryItemsCollection.findOneAsync(containerId);
+            assert.ok(container);
+
+            const [deleted, child] = await Promise.allSettled([
+                logicalDeleteInventoryItem(container, {
+                    requestId: 'race-delete-first',
+                    source: { system: 'test', reference: 'delete-first' },
+                }),
+                createInventoryItem({ name: 'Late Child', containerId }),
+            ]);
+
+            assert.strictEqual(deleted.status, 'fulfilled');
+            assert.strictEqual(child.status, 'rejected');
+            const childError: unknown = child.status === 'rejected' ? child.reason : undefined;
+            assert.ok(childError instanceof Error);
+            assert.match(childError.message, /Parent container not found/);
+            assert.ok((await getInventoryItemForAudit(containerId))?.deletedAt instanceof Date);
+        });
+
+        it('serializes child creation before a competing container deletion', async function () {
+            const containerId = await createTestItemDirect('Race Container', true);
+            const container = await InventoryItemsCollection.findOneAsync(containerId);
+            assert.ok(container);
+
+            const [child, deleted] = await Promise.allSettled([
+                createInventoryItem({ name: 'Winning Child', containerId }),
+                logicalDeleteInventoryItem(container, {
+                    requestId: 'race-create-first',
+                    source: { system: 'test', reference: 'create-first' },
+                }),
+            ]);
+
+            assert.strictEqual(child.status, 'fulfilled');
+            assert.strictEqual(deleted.status, 'rejected');
+            const deleteError: unknown = deleted.status === 'rejected' ? deleted.reason : undefined;
+            assert.ok(deleteError instanceof Error);
+            assert.match(deleteError.message, /child items/);
+            assert.strictEqual((await getInventoryItemForAudit(containerId))?.deletedAt, undefined);
         });
     });
 

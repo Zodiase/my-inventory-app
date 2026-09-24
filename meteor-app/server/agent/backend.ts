@@ -19,9 +19,10 @@ import { TagsCollection, createTag } from '/imports/api/tags';
 import detectCircularReference from '/imports/utility/circularReference';
 
 import { AgentError, identityKey } from './service';
-import type { Backend, Event } from './service';
+import type { Backend, DeleteAuthorization, Event } from './service';
 
 const events = new Mongo.Collection<Event>('agent_requests');
+const deleteAuthorizations = new Mongo.Collection<DeleteAuthorization>('agent_delete_authorizations');
 const bindings = InventoryIdentitiesCollection;
 const locks = new Mongo.Collection<{ _id: string; requestId: string }>('agent_locks');
 const DUPLICATE_KEY = 11000;
@@ -89,55 +90,36 @@ export const agentBackend: Backend = {
     reserve: async (event) => {
         await events.insertAsync(event);
     },
-    rotateDeleteAuthorization: async (event) => {
-        const { _id, ...fields } = event;
-        const result = await events.updateAsync(
-            { _id, fingerprint: event.fingerprint, status: 'prepared' },
-            {
-                $set: fields,
-                $unset: {
-                    confirmationFingerprint: true,
-                    deletionAuthorizationAttemptedAt: true,
-                    failure: true,
-                    completedAt: true,
-                },
-            }
-        );
-        return result === 1;
-    },
     complete: async (event) => {
-        const { _id, deletionAuthorizationHash: _hash, ...fields } = event;
-        const result = await events.updateAsync(
-            { _id, status: 'pending' },
-            { $set: fields, $unset: { deletionAuthorizationHash: true } }
-        );
+        const { _id, ...fields } = event;
+        const result = await events.updateAsync({ _id, status: 'pending' }, { $set: fields });
         if (result !== 1) throw new Error('Could not finalize request ledger');
     },
-    beginDeleteConfirmation: async (requestId, confirmationFingerprint, attemptedAt) => {
-        const prepared = await events.findOneAsync({ _id: requestId, status: 'prepared' });
-        if (prepared?.deletionAuthorizationHash === undefined) return undefined;
-        const result = await events.updateAsync(
-            {
-                _id: requestId,
-                status: 'prepared',
-                deletionAuthorizationHash: prepared.deletionAuthorizationHash,
-            },
-            {
-                $set: {
-                    status: 'pending',
-                    confirmationFingerprint,
-                    deletionAuthorizationAttemptedAt: attemptedAt,
-                },
-                $unset: { deletionAuthorizationHash: true },
-            }
+    createDeleteAuthorization: async (authorization) => {
+        await deleteAuthorizations.insertAsync(authorization);
+    },
+    deleteAuthorization: async (authorizationHash) => await deleteAuthorizations.findOneAsync(authorizationHash),
+    claimDeleteAuthorization: async (authorizationHash, confirmationRequestId, attemptedAt) => {
+        const result = await deleteAuthorizations.updateAsync(
+            { _id: authorizationHash, consumedAt: { $exists: false } },
+            { $set: { consumedAt: attemptedAt, confirmationRequestId } }
         );
-        if (result !== 1) return undefined;
-        return {
-            ...prepared,
-            status: 'pending',
-            confirmationFingerprint,
-            deletionAuthorizationAttemptedAt: attemptedAt,
-        };
+        if (result === 1)
+            return await deleteAuthorizations.findOneAsync({ _id: authorizationHash, confirmationRequestId });
+        return await deleteAuthorizations.findOneAsync(authorizationHash);
+    },
+    finishDeleteAuthorization: async (authorizationHash, confirmationRequestId, terminal) => {
+        const result = await deleteAuthorizations.updateAsync(
+            {
+                _id: authorizationHash,
+                confirmationRequestId,
+                completedAt: { $exists: false },
+            },
+            { $set: terminal }
+        );
+        if (result === 1) return true;
+        const existing = await deleteAuthorizations.findOneAsync({ _id: authorizationHash, confirmationRequestId });
+        return existing?.completedAt !== undefined;
     },
     validate: async (request, before) => {
         if (request.op === 'move' && before?.locked === true)
@@ -171,13 +153,12 @@ export const agentBackend: Backend = {
     update: async (item, changes) => (await updateInventoryItem(item._id, changes, item)) === 1,
     move: async (item, target) => (await moveItem(item._id, target, item)) === 1,
     setLocked: async (item, locked) => (await setInventoryItemLocked(item._id, locked)) === 1,
-    logicalDelete: async (item, request, deletedAt) => {
-        if (request.source === undefined) throw new AgentError('invalid_input', 'Deletion source is required');
+    logicalDelete: async (item, metadata, deletedAt) => {
         return (
             (await logicalDeleteInventoryItem(item, {
-                requestId: request.requestId ?? '',
-                source: request.source,
-                note: request.note,
+                requestId: metadata.requestId,
+                source: metadata.source,
+                note: metadata.note,
                 deletedAt,
             })) === 1
         );

@@ -25,6 +25,23 @@ const MAX_CONTAINER_SUBSCRIPTION_IDS = 100;
 
 export const InventoryItemsCollection = new NamedCollection<InventoryItem>('items');
 
+let hierarchyMutationTail = Promise.resolve();
+
+/** Serialize hierarchy mutations so parent validation and writes share one boundary. */
+export const withInventoryHierarchyMutationLock = async <T>(operation: () => Promise<T>): Promise<T> => {
+    let release: () => void = () => undefined;
+    const previous = hierarchyMutationTail;
+    hierarchyMutationTail = new Promise<void>((resolve) => {
+        release = resolve;
+    });
+    await previous;
+    try {
+        return await operation();
+    } finally {
+        release();
+    }
+};
+
 export interface InventoryDeletionMetadata {
     requestId: string;
     source: { system: string; reference: string };
@@ -57,58 +74,59 @@ export const snapshotSelector = (item: InventoryItem): Mongo.Selector<InventoryI
 export const createInventoryItem = async (
     itemInput: RecordInput<InventoryItem>,
     assignedId?: string
-): Promise<string> => {
-    const { name, description, containerId, isContainer = false, tagIds = [], properties } = itemInput;
+): Promise<string> =>
+    await withInventoryHierarchyMutationLock(async () => {
+        const { name, description, containerId, isContainer = false, tagIds = [], properties } = itemInput;
 
-    if (typeof name === 'undefined' || name.trim() === '') {
-        throw new Error('Item must have a name.');
-    }
+        if (typeof name === 'undefined' || name.trim() === '') {
+            throw new Error('Item must have a name.');
+        }
 
-    // Validate name length
-    if (name.length > MAX_ITEM_NAME_LENGTH) {
-        throw new Error(`Item name must be ${MAX_ITEM_NAME_LENGTH} characters or less.`);
-    }
+        // Validate name length
+        if (name.length > MAX_ITEM_NAME_LENGTH) {
+            throw new Error(`Item name must be ${MAX_ITEM_NAME_LENGTH} characters or less.`);
+        }
 
-    // Validate description length if provided
-    if (typeof description !== 'undefined' && description.length > MAX_ITEM_DESCRIPTION_LENGTH) {
-        throw new Error(`Item description must be ${MAX_ITEM_DESCRIPTION_LENGTH} characters or less.`);
-    }
+        // Validate description length if provided
+        if (typeof description !== 'undefined' && description.length > MAX_ITEM_DESCRIPTION_LENGTH) {
+            throw new Error(`Item description must be ${MAX_ITEM_DESCRIPTION_LENGTH} characters or less.`);
+        }
 
-    // Validate containerId if provided
-    if (typeof containerId !== 'undefined' && containerId !== '') {
-        const parentContainer = await InventoryItemsCollection.findOneAsync(
-            activeInventoryItemSelector({ _id: containerId })
+        // Validate containerId if provided
+        if (typeof containerId !== 'undefined' && containerId !== '') {
+            const parentContainer = await InventoryItemsCollection.findOneAsync(
+                activeInventoryItemSelector({ _id: containerId })
+            );
+
+            if (typeof parentContainer === 'undefined') {
+                throw new Error('Parent container not found.');
+            }
+
+            if (!parentContainer.isContainer) {
+                throw new Error('Parent must be a container (isContainer: true).');
+            }
+        }
+
+        const now = new Date();
+        const newItem: NoId<InventoryItem> = {
+            name: name.trim(),
+            description: typeof description !== 'undefined' ? description.trim() : undefined,
+            containerId: typeof containerId !== 'undefined' && containerId !== '' ? containerId : undefined,
+            isContainer,
+            tagIds: [...tagIds], // Create a copy to avoid mutations
+            properties,
+            createdAt: now,
+            modifiedAt: now,
+        };
+
+        const itemId = await InventoryItemsCollection.insertAsync(
+            assignedId === undefined ? newItem : { ...newItem, _id: assignedId }
         );
 
-        if (typeof parentContainer === 'undefined') {
-            throw new Error('Parent container not found.');
-        }
+        logger.log('Item created', { itemId, name: newItem.name, isContainer });
 
-        if (!parentContainer.isContainer) {
-            throw new Error('Parent must be a container (isContainer: true).');
-        }
-    }
-
-    const now = new Date();
-    const newItem: NoId<InventoryItem> = {
-        name: name.trim(),
-        description: typeof description !== 'undefined' ? description.trim() : undefined,
-        containerId: typeof containerId !== 'undefined' && containerId !== '' ? containerId : undefined,
-        isContainer,
-        tagIds: [...tagIds], // Create a copy to avoid mutations
-        properties,
-        createdAt: now,
-        modifiedAt: now,
-    };
-
-    const itemId = await InventoryItemsCollection.insertAsync(
-        assignedId === undefined ? newItem : { ...newItem, _id: assignedId }
-    );
-
-    logger.log('Item created', { itemId, name: newItem.name, isContainer });
-
-    return itemId;
-};
+        return itemId;
+    });
 
 /**
  * Update an existing inventory item.
@@ -221,67 +239,72 @@ export const moveItem = async (
     itemId: string,
     targetContainerId: string | null | undefined,
     expected?: InventoryItem
-): Promise<number> => {
-    const item = await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: itemId }));
+): Promise<number> =>
+    await withInventoryHierarchyMutationLock(async () => {
+        const item = await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: itemId }));
 
-    if (typeof item === 'undefined') {
-        throw new RecordNotFoundException('Item not found', { _id: itemId });
-    }
+        if (typeof item === 'undefined') {
+            throw new RecordNotFoundException('Item not found', { _id: itemId });
+        }
 
-    if (item.locked === true) throw new Error('Cannot move locked item. Unlock it first.');
+        if (item.locked === true) throw new Error('Cannot move locked item. Unlock it first.');
 
-    // Normalize empty string and null to undefined
-    const normalizedTargetId =
-        typeof targetContainerId === 'undefined' || targetContainerId === null || targetContainerId === ''
-            ? undefined
-            : targetContainerId;
+        // Normalize empty string and null to undefined
+        const normalizedTargetId =
+            typeof targetContainerId === 'undefined' || targetContainerId === null || targetContainerId === ''
+                ? undefined
+                : targetContainerId;
 
-    // Validate target container if specified
-    if (typeof normalizedTargetId !== 'undefined') {
-        const targetContainer: InventoryItem | undefined = await InventoryItemsCollection.findOneAsync(
-            activeInventoryItemSelector({ _id: normalizedTargetId })
+        // Validate target container if specified
+        if (typeof normalizedTargetId !== 'undefined') {
+            const targetContainer: InventoryItem | undefined = await InventoryItemsCollection.findOneAsync(
+                activeInventoryItemSelector({ _id: normalizedTargetId })
+            );
+
+            if (typeof targetContainer === 'undefined') {
+                throw new RecordNotFoundException('Target container not found', { _id: normalizedTargetId });
+            }
+
+            if (!targetContainer.isContainer) {
+                throw new Error('Target must be a container (isContainer: true).');
+            }
+
+            // Check for circular reference
+            const wouldCreateCycle = await detectCircularReference(
+                itemId,
+                normalizedTargetId,
+                InventoryItemsCollection
+            );
+
+            if (wouldCreateCycle) {
+                throw new Error('Cannot move item: would create circular reference in container hierarchy.');
+            }
+        }
+
+        // MongoDB doesn't support $set with undefined values
+        // Use $unset to remove the field when moving to root, otherwise use $set
+        const updateOp =
+            typeof normalizedTargetId === 'undefined'
+                ? {
+                      $unset: { containerId: true as const },
+                      $set: { modifiedAt: new Date() },
+                  }
+                : {
+                      $set: {
+                          containerId: normalizedTargetId,
+                          modifiedAt: new Date(),
+                      },
+                  };
+
+        const result = await InventoryItemsCollection.updateAsync(
+            expected === undefined ? { _id: itemId } : snapshotSelector(expected),
+            updateOp
         );
 
-        if (typeof targetContainer === 'undefined') {
-            throw new RecordNotFoundException('Target container not found', { _id: normalizedTargetId });
-        }
+        logger.log('Item moved', { itemId, from: item.containerId, to: normalizedTargetId, rowsAffected: result });
 
-        if (!targetContainer.isContainer) {
-            throw new Error('Target must be a container (isContainer: true).');
-        }
-
-        // Check for circular reference
-        const wouldCreateCycle = await detectCircularReference(itemId, normalizedTargetId, InventoryItemsCollection);
-
-        if (wouldCreateCycle) {
-            throw new Error('Cannot move item: would create circular reference in container hierarchy.');
-        }
-    }
-
-    // MongoDB doesn't support $set with undefined values
-    // Use $unset to remove the field when moving to root, otherwise use $set
-    const updateOp =
-        typeof normalizedTargetId === 'undefined'
-            ? {
-                  $unset: { containerId: true as const },
-                  $set: { modifiedAt: new Date() },
-              }
-            : {
-                  $set: {
-                      containerId: normalizedTargetId,
-                      modifiedAt: new Date(),
-                  },
-              };
-
-    const result = await InventoryItemsCollection.updateAsync(
-        expected === undefined ? { _id: itemId } : snapshotSelector(expected),
-        updateOp
-    );
-
-    logger.log('Item moved', { itemId, from: item.containerId, to: normalizedTargetId, rowsAffected: result });
-
-    return result;
-};
+        return result;
+    });
 
 /**
  * Safely move an item to a different container with optimistic locking.
@@ -322,41 +345,44 @@ export const safelyMoveItem = async (
 export const logicalDeleteInventoryItem = async (
     item: InventoryItem,
     metadata: InventoryDeletionMetadata
-): Promise<number> => {
-    if (item.deletedAt !== undefined) throw new Error('Item is already deleted.');
-    if (item.locked === true) throw new Error('Cannot delete locked item. Unlock it first.');
+): Promise<number> =>
+    await withInventoryHierarchyMutationLock(async () => {
+        if (item.deletedAt !== undefined) throw new Error('Item is already deleted.');
+        if (item.locked === true) throw new Error('Cannot delete locked item. Unlock it first.');
 
-    if (item.isContainer) {
-        const childCount = await InventoryItemsCollection.find(
-            activeInventoryItemSelector({ containerId: item._id })
-        ).countAsync();
+        if (item.isContainer) {
+            const childCount = await InventoryItemsCollection.find(
+                activeInventoryItemSelector({ containerId: item._id })
+            ).countAsync();
 
-        if (childCount > 0) {
-            throw new Error(`Cannot delete container with ${childCount} child items. Move or delete children first.`);
+            if (childCount > 0) {
+                throw new Error(
+                    `Cannot delete container with ${childCount} child items. Move or delete children first.`
+                );
+            }
         }
-    }
 
-    const deletedAt = metadata.deletedAt ?? new Date();
-    const result = await InventoryItemsCollection.updateAsync(activeInventoryItemSelector(snapshotSelector(item)), {
-        $set: {
-            deletedAt,
-            deletedByRequestId: metadata.requestId,
-            deletedBy: metadata.source,
-            ...(metadata.note === undefined ? {} : { deletionNote: metadata.note }),
-            modifiedAt: deletedAt,
-        },
+        const deletedAt = metadata.deletedAt ?? new Date();
+        const result = await InventoryItemsCollection.updateAsync(activeInventoryItemSelector(snapshotSelector(item)), {
+            $set: {
+                deletedAt,
+                deletedByRequestId: metadata.requestId,
+                deletedBy: metadata.source,
+                ...(metadata.note === undefined ? {} : { deletionNote: metadata.note }),
+                modifiedAt: deletedAt,
+            },
+        });
+
+        logger.log('Item logically deleted', {
+            itemId: item._id,
+            name: item.name,
+            isContainer: item.isContainer,
+            requestId: metadata.requestId,
+            rowsAffected: result,
+        });
+
+        return result;
     });
-
-    logger.log('Item logically deleted', {
-        itemId: item._id,
-        name: item.name,
-        isContainer: item.isContainer,
-        requestId: metadata.requestId,
-        rowsAffected: result,
-    });
-
-    return result;
-};
 
 /** UI deletion entrypoint; agent deletion calls the same conditional tombstone operation. */
 export const deleteInventoryItem = async (itemId: string): Promise<number> => {

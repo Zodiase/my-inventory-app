@@ -3,7 +3,7 @@
  * Persistence and inventory rules are injected so crash boundaries can be tested
  * without a running Meteor server or access to household data.
  */
-import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 
 import type { PropertyValues } from '/imports/model/PropertyValues';
 
@@ -53,6 +53,7 @@ export interface Request {
         | 'bindIdentity'
         | 'prepareDelete'
         | 'confirmDelete'
+        | 'getDeleteResult'
         | 'get'
         | 'auditGet'
         | 'lookup'
@@ -98,7 +99,7 @@ export interface Event {
     _id: string;
     fingerprint: string;
     request: Request;
-    status: 'prepared' | 'pending' | 'completed' | 'failed';
+    status: 'pending' | 'completed' | 'failed';
     createdAt: Date;
     completedAt?: Date;
     itemId?: string;
@@ -109,7 +110,22 @@ export interface Event {
     deletionAuthorizationHash?: string;
     deletionAuthorizationExpiresAt?: Date;
     deletionAuthorizationAttemptedAt?: Date;
-    confirmationFingerprint?: string;
+    replayed?: boolean;
+    failure?: { code: string; message: string };
+}
+export interface DeleteAuthorization {
+    _id: string;
+    itemId: string;
+    expectedVersion: string;
+    source: Source;
+    note?: string;
+    preparedRequestId: string;
+    createdAt: Date;
+    expiresAt: Date;
+    consumedAt?: Date;
+    confirmationRequestId?: string;
+    completedAt?: Date;
+    after?: Readback;
     failure?: { code: string; message: string };
 }
 export interface DeletionPreparation {
@@ -117,6 +133,14 @@ export interface DeletionPreparation {
     expectedVersion: string;
     deletionAuthorizationId: string;
     expiresAt: Date;
+}
+export interface DeletionResult {
+    status: 'prepared' | 'expired' | 'pending' | 'completed' | 'failed';
+    itemId: string;
+    expectedVersion: string;
+    expiresAt: Date;
+    result?: Readback;
+    failure?: { code: string; message: string };
 }
 export interface Backend {
     getTag: (id: string) => Promise<Tag | undefined>;
@@ -139,27 +163,39 @@ export interface Backend {
     lock: (requestId: string) => Promise<boolean>;
     unlock: (requestId: string) => Promise<void>;
     reserve: (event: Event) => Promise<void>;
-    rotateDeleteAuthorization: (event: Event) => Promise<boolean>;
     complete: (event: Event) => Promise<void>;
-    beginDeleteConfirmation: (
-        requestId: string,
-        confirmationFingerprint: string,
+    createDeleteAuthorization: (authorization: DeleteAuthorization) => Promise<void>;
+    deleteAuthorization: (authorizationHash: string) => Promise<DeleteAuthorization | undefined>;
+    claimDeleteAuthorization: (
+        authorizationHash: string,
+        confirmationRequestId: string,
         attemptedAt: Date
-    ) => Promise<Event | undefined>;
+    ) => Promise<DeleteAuthorization | undefined>;
+    finishDeleteAuthorization: (
+        authorizationHash: string,
+        confirmationRequestId: string,
+        terminal: Pick<DeleteAuthorization, 'completedAt' | 'after' | 'failure'>
+    ) => Promise<boolean>;
     validate: (request: Request, before?: Item) => Promise<void>;
     create: (item: NonNullable<Request['item']>, id: string) => Promise<string>;
     update: (item: Item, changes: NonNullable<Request['changes']>) => Promise<boolean>;
     move: (item: Item, parent: string | null) => Promise<boolean>;
     setLocked: (item: Item, locked: boolean) => Promise<boolean>;
-    logicalDelete: (item: Item, request: Request, deletedAt: Date) => Promise<boolean>;
+    logicalDelete: (
+        item: Item,
+        metadata: { requestId: string; source: Source; note?: string },
+        deletedAt: Date
+    ) => Promise<boolean>;
     activeChildCount: (itemId: string) => Promise<number>;
     bind: (identity: Identity, itemId: string) => Promise<void>;
 }
 export class AgentError extends Error {
     code: string;
-    constructor(code: string, message: string) {
+    requestId?: string;
+    constructor(code: string, message: string, requestId?: string) {
         super(message);
         this.code = code;
+        this.requestId = requestId;
     }
 }
 const LIMIT_ID = 200;
@@ -173,8 +209,10 @@ const DELETE_AUTHORIZATION_TTL_MINUTES = 5;
 const MILLISECONDS_PER_MINUTE = 60_000;
 const DELETE_AUTHORIZATION_TTL_MS = DELETE_AUTHORIZATION_TTL_MINUTES * MILLISECONDS_PER_MINUTE;
 const DELETE_AUTHORIZATION_BYTES = 32;
+const TRACE_ID_BYTES = 16;
 export interface Response {
     ok: true;
+    requestId?: string;
     result:
         | Readback
         | TagReadback
@@ -182,7 +220,8 @@ export interface Response {
         | { items: Readback[]; nextCursor?: string | null; root?: Readback }
         | { events: Event[] }
         | { event: Event | null }
-        | DeletionPreparation;
+        | DeletionPreparation
+        | DeletionResult;
     replayed?: boolean;
 }
 const required = <T>(value: T | undefined): T => {
@@ -217,17 +256,8 @@ const tagIds = (value: unknown): void => {
 };
 export const parseRequest = (input: unknown): Request => {
     const r = object(input);
-    const mutation = [
-        'create',
-        'update',
-        'move',
-        'lock',
-        'unlock',
-        'bindIdentity',
-        'createTag',
-        'prepareDelete',
-        'confirmDelete',
-    ].includes(String(r.op));
+    const mutation = ['create', 'update', 'move', 'lock', 'unlock', 'bindIdentity', 'createTag'].includes(String(r.op));
+    const deletionOperation = ['prepareDelete', 'confirmDelete', 'getDeleteResult'].includes(String(r.op));
     const fields: Record<string, string[]> = {
         create: ['item', 'externalIdentity'],
         createTag: ['tag'],
@@ -240,7 +270,8 @@ export const parseRequest = (input: unknown): Request => {
         unlock: ['itemId', 'expectedVersion'],
         bindIdentity: ['itemId', 'expectedVersion', 'externalIdentity'],
         prepareDelete: ['itemId', 'expectedVersion'],
-        confirmDelete: ['deletionAuthorizationId'],
+        confirmDelete: ['deletionAuthorizationId', 'itemId', 'expectedVersion'],
+        getDeleteResult: ['deletionAuthorizationId', 'itemId', 'expectedVersion'],
         status: ['requestId'],
         get: ['itemId'],
         auditGet: ['itemId'],
@@ -250,7 +281,7 @@ export const parseRequest = (input: unknown): Request => {
         hierarchy: ['itemId', 'maxNodes'],
     };
     if (typeof r.op !== 'string' || !Object.hasOwn(fields, r.op)) fail('invalid_input', 'Unknown operation');
-    const sourcedMutation = mutation && r.op !== 'confirmDelete';
+    const sourcedMutation = mutation || r.op === 'prepareDelete';
     keys(r, [
         'op',
         ...(mutation ? ['requestId'] : []),
@@ -278,12 +309,26 @@ export const parseRequest = (input: unknown): Request => {
             'bindIdentity',
             'hierarchy',
             'prepareDelete',
+            'confirmDelete',
+            'getDeleteResult',
         ].includes(String(r.op))
     )
         string(r.itemId, 'itemId', LIMIT_ID);
-    if (['update', 'move', 'bindIdentity', 'lock', 'unlock', 'prepareDelete'].includes(String(r.op)))
+    if (
+        [
+            'update',
+            'move',
+            'bindIdentity',
+            'lock',
+            'unlock',
+            'prepareDelete',
+            'confirmDelete',
+            'getDeleteResult',
+        ].includes(String(r.op))
+    )
         string(r.expectedVersion, 'expectedVersion', LIMIT_VERSION);
-    if (r.op === 'confirmDelete') string(r.deletionAuthorizationId, 'deletionAuthorizationId', LIMIT_ID);
+    if (['confirmDelete', 'getDeleteResult'].includes(String(r.op)))
+        string(r.deletionAuthorizationId, 'deletionAuthorizationId', LIMIT_NAME);
     if (r.externalIdentity !== undefined) {
         const identity = object(r.externalIdentity);
         keys(identity, ['namespace', 'value']);
@@ -345,6 +390,8 @@ export const parseRequest = (input: unknown): Request => {
             fail('invalid_input', 'Specify exactly one lookup selector');
         if (r.name !== undefined) string(r.name, 'name');
     }
+    if (deletionOperation && r.requestId !== undefined)
+        fail('invalid_input', 'Deletion operations use server-generated request IDs');
     return r as unknown as Request;
 };
 export const canonical = (value: unknown): string => {
@@ -365,6 +412,7 @@ export const identityKey = (identity: Identity): string =>
 export interface AgentServiceOptions {
     now?: () => Date;
     random?: (size: number) => Buffer;
+    traceId?: () => string;
 }
 
 export const createAgentService = (
@@ -373,6 +421,7 @@ export const createAgentService = (
 ): ((input: unknown) => Promise<Response>) => {
     const now = options.now ?? (() => new Date());
     const random = options.random ?? randomBytes;
+    const nextTraceId = options.traceId ?? (() => `delete-${random(TRACE_ID_BYTES).toString('base64url')}`);
     const snapshot = async (item: Item): Promise<Readback> => ({
         item,
         version: version(item),
@@ -407,47 +456,31 @@ export const createAgentService = (
         const { deletionAuthorizationHash: _hash, ...visible } = event;
         return visible;
     };
-    const deletionBinding = (event: Event): unknown => ({
-        operation: 'confirmDelete',
-        requestFingerprint: event.fingerprint,
-        requestId: event._id,
-        itemId: required(event.itemId),
-        expectedVersion: required(event.request.expectedVersion),
-    });
-    const deletionAuthorizationHash = (authorizationId: string, event: Event): string =>
-        createHash('sha256')
-            .update(authorizationId)
-            .update(canonical(deletionBinding(event)))
-            .digest('hex');
-    const authorizationMatches = (expected: string, supplied: string): boolean => {
-        const expectedBytes = Buffer.from(expected, 'hex');
-        const suppliedBytes = Buffer.from(supplied, 'hex');
-        return expectedBytes.length === suppliedBytes.length && timingSafeEqual(expectedBytes, suppliedBytes);
-    };
-    const replayDeleteConfirmation = (event: Event, fingerprint: string): Response => {
-        if (event.confirmationFingerprint !== fingerprint)
-            return fail('conflict', 'requestId already used with a different confirmation payload');
-        if (event.status === 'failed') return fail(required(event.failure).code, required(event.failure).message);
-        if (event.status !== 'completed')
-            return fail(
-                'indeterminate',
-                'Delete confirmation is pending; retry the exact confirmation to reconcile it.'
-            );
-        return { ok: true as const, result: required(event.after), replayed: true };
-    };
-    const failDelete = async (event: Event, code: string, message: string): Promise<never> => {
-        const { deletionAuthorizationHash: _hash, ...safeEvent } = event;
-        await db.complete({
-            ...safeEvent,
-            status: 'prepared',
-            failure: { code, message },
-        });
-        return fail(code, message);
+    const deletionAuthorizationHash = (authorizationId: string): string =>
+        createHash('sha256').update(authorizationId).digest('hex');
+    const matchesDeleteBinding = (authorization: DeleteAuthorization, request: Request): boolean =>
+        authorization.itemId === request.itemId && authorization.expectedVersion === request.expectedVersion;
+    const deletionFailure = async (
+        event: Event,
+        code: string,
+        message: string,
+        authorization?: DeleteAuthorization
+    ): Promise<never> => {
+        const completedAt = now();
+        if (authorization?.confirmationRequestId === event._id)
+            await db.finishDeleteAuthorization(authorization._id, event._id, {
+                completedAt,
+                failure: { code, message },
+            });
+        await db.complete({ ...event, status: 'failed', completedAt, failure: { code, message } });
+        throw new AgentError(code, message, event._id);
     };
     return async (input: unknown) => {
         const r = parseRequest(input);
         if (r.op === 'status') {
             const event = await db.event(required(r.requestId));
+            if (event !== undefined && ['prepareDelete', 'confirmDelete', 'getDeleteResult'].includes(event.request.op))
+                fail('invalid_input', 'Use getDeleteResult for deletion outcomes');
             return { ok: true as const, result: { event: event === undefined ? null : publicEvent(event) } };
         }
         if (r.op === 'getTag') return { ok: true as const, result: await readTag(required(r.tagId)) };
@@ -527,163 +560,245 @@ export const createAgentService = (
                 result: { items: await Promise.all(items.map(async (item) => await read(item._id))) },
             };
         }
-        const requestId = required(r.requestId);
-        const fingerprint = version(r);
-
-        if (r.op === 'prepareDelete') {
-            const previous = await db.event(requestId);
-            if (previous !== undefined) {
-                if (previous.fingerprint !== fingerprint)
-                    fail('conflict', 'requestId already used with a different payload');
-                if (previous.status === 'completed') fail('conflict', 'Deletion workflow is already completed');
-                if (previous.status === 'failed')
-                    fail(required(previous.failure).code, required(previous.failure).message);
-                if (previous.status === 'pending')
-                    fail('indeterminate', 'Delete confirmation is pending; retry that exact confirmation');
-            }
-            if (!(await db.lock(requestId)))
-                return fail('busy', 'Agent writer is busy; no deletion authorization was created');
+        if (['prepareDelete', 'confirmDelete', 'getDeleteResult'].includes(r.op)) {
+            const requestId = nextTraceId();
+            const authorizationHash =
+                r.deletionAuthorizationId === undefined
+                    ? undefined
+                    : deletionAuthorizationHash(r.deletionAuthorizationId);
+            const { deletionAuthorizationId: _authorizationId, ...journalRequest } = r;
+            const event: Event = {
+                _id: requestId,
+                fingerprint: version({
+                    op: r.op,
+                    itemId: r.itemId,
+                    expectedVersion: r.expectedVersion,
+                    requestId,
+                }),
+                request: journalRequest,
+                status: 'pending',
+                createdAt: now(),
+                itemId: r.itemId,
+                ...(authorizationHash === undefined ? {} : { deletionAuthorizationHash: authorizationHash }),
+            };
+            await db.reserve(event);
             try {
-                const existing = await db.event(requestId);
-                if (existing !== undefined) {
-                    if (existing.fingerprint !== fingerprint)
-                        fail('conflict', 'requestId already used with a different payload');
-                    if (existing.status === 'completed') fail('conflict', 'Deletion workflow is already completed');
-                    if (existing.status === 'failed')
-                        fail(required(existing.failure).code, required(existing.failure).message);
-                    if (existing.status === 'pending')
-                        fail('indeterminate', 'Delete confirmation is pending; retry that exact confirmation');
+                if (r.op === 'prepareDelete') {
+                    if (!(await db.lock(requestId)))
+                        return await deletionFailure(
+                            event,
+                            'busy',
+                            'Agent writer is busy; no deletion authorization was created'
+                        );
+                    try {
+                        const before = await read(required(r.itemId));
+                        if (before.version !== r.expectedVersion)
+                            fail('conflict', 'Item version changed; read again before deleting');
+                        if (before.item.locked === true) fail('conflict', 'Item is locked; unlock it before deleting');
+                        if ((await db.activeChildCount(before.item._id)) > 0)
+                            fail('conflict', 'Container has active children; move or delete them first');
+                        const issuedAt = now();
+                        const expiresAt = new Date(issuedAt.getTime() + DELETE_AUTHORIZATION_TTL_MS);
+                        const authorizationId = random(DELETE_AUTHORIZATION_BYTES).toString('base64url');
+                        const preparedHash = deletionAuthorizationHash(authorizationId);
+                        await db.createDeleteAuthorization({
+                            _id: preparedHash,
+                            itemId: before.item._id,
+                            expectedVersion: before.version,
+                            source: required(r.source),
+                            note: r.note,
+                            preparedRequestId: requestId,
+                            createdAt: issuedAt,
+                            expiresAt,
+                        });
+                        await db.complete({
+                            ...event,
+                            status: 'completed',
+                            completedAt: now(),
+                            before,
+                            deletionAuthorizationHash: preparedHash,
+                            deletionAuthorizationExpiresAt: expiresAt,
+                        });
+                        return {
+                            ok: true as const,
+                            requestId,
+                            result: {
+                                itemId: before.item._id,
+                                expectedVersion: before.version,
+                                deletionAuthorizationId: authorizationId,
+                                expiresAt,
+                            },
+                            replayed: false,
+                        };
+                    } finally {
+                        await db.unlock(requestId);
+                    }
                 }
-                const before = await read(required(r.itemId));
-                if (before.version !== r.expectedVersion)
-                    fail('conflict', 'Item version changed; read again before deleting');
-                if (before.item.locked === true) fail('conflict', 'Item is locked; unlock it before deleting');
-                if ((await db.activeChildCount(before.item._id)) > 0)
-                    fail('conflict', 'Container has active children; move or delete them first');
-                const issuedAt = now();
-                const expiresAt = new Date(issuedAt.getTime() + DELETE_AUTHORIZATION_TTL_MS);
-                const authorizationId = random(DELETE_AUTHORIZATION_BYTES).toString('base64url');
-                const event: Event = {
-                    _id: requestId,
-                    fingerprint,
-                    request: r,
-                    status: 'prepared',
-                    createdAt: existing?.createdAt ?? issuedAt,
-                    itemId: before.item._id,
-                    before,
-                    deletionAuthorizationExpiresAt: expiresAt,
-                };
-                event.deletionAuthorizationHash = deletionAuthorizationHash(authorizationId, event);
-                if (existing === undefined) await db.reserve(event);
-                else if (!(await db.rotateDeleteAuthorization(event)))
-                    fail('conflict', 'Deletion workflow changed while authorization was being refreshed');
-                return {
-                    ok: true as const,
-                    result: {
-                        itemId: before.item._id,
-                        expectedVersion: before.version,
-                        deletionAuthorizationId: authorizationId,
-                        expiresAt,
-                    },
-                    replayed: false,
-                };
-            } finally {
-                await db.unlock(requestId);
-            }
-        }
 
-        if (r.op === 'confirmDelete') {
-            let event = await db.event(requestId);
-            if (event?.request.op !== 'prepareDelete') return fail('not_found', 'Prepared deletion request not found');
-            if (event.status === 'completed' || event.status === 'failed')
-                return replayDeleteConfirmation(event, fingerprint);
-            let claimedNow = false;
-            if (event.status === 'prepared') {
-                const authorizationHash = deletionAuthorizationHash(required(r.deletionAuthorizationId), event);
-                const attemptedAt = now();
-                const claimed = await db.beginDeleteConfirmation(requestId, fingerprint, attemptedAt);
-                if (claimed === undefined) return fail('conflict', 'Deletion authorization was already attempted');
-                event = claimed;
-                claimedNow = true;
-                if (!authorizationMatches(required(event.deletionAuthorizationHash), authorizationHash))
-                    return await failDelete(event, 'invalid_authorization', 'Deletion authorization is invalid');
-                if (attemptedAt.getTime() >= required(event.deletionAuthorizationExpiresAt).getTime())
-                    return await failDelete(event, 'authorization_expired', 'Deletion authorization expired');
-            } else if (event.confirmationFingerprint !== fingerprint) {
-                return fail('conflict', 'requestId already used with a different confirmation payload');
-            }
-
-            if (!claimedNow) {
-                const retained = await db.getIncludingDeleted(required(event.itemId));
-                if (retained?.deletedByRequestId !== requestId)
-                    return fail(
-                        'indeterminate',
-                        'Delete confirmation is pending; retry only after the original attempt has stopped.'
-                    );
-                const after = await snapshot(retained);
-                await db.complete({
-                    ...event,
-                    deletionAuthorizationHash: undefined,
-                    after,
-                    status: 'completed',
-                    completedAt: now(),
-                });
-                await db.unlock(requestId);
-                return { ok: true as const, result: after, replayed: true };
-            }
-
-            if (!(await db.lock(requestId)))
-                return await failDelete(event, 'busy', 'Agent writer is busy; deletion was not performed');
-            let completed = false;
-            let mutationApplied = false;
-            try {
-                const item = await db.get(required(event.itemId));
-                if (item === undefined) {
-                    const retained = await db.getIncludingDeleted(required(event.itemId));
-                    if (retained?.deletedByRequestId !== requestId)
-                        throw new AgentError('conflict', 'Item is missing or already deleted');
-                    const after = await snapshot(retained);
+                const hash = required(authorizationHash);
+                if (r.op === 'getDeleteResult') {
+                    const authorization = await db.deleteAuthorization(hash);
+                    if (authorization === undefined || !matchesDeleteBinding(authorization, r))
+                        return await deletionFailure(event, 'conflict', 'Deletion authorization does not match');
+                    let current = authorization;
+                    if (
+                        current.consumedAt !== undefined &&
+                        current.after === undefined &&
+                        current.failure === undefined &&
+                        current.confirmationRequestId !== undefined
+                    ) {
+                        const retained = await db.getIncludingDeleted(current.itemId);
+                        if (retained?.deletedByRequestId === current.confirmationRequestId) {
+                            const after = await snapshot(retained);
+                            await db.finishDeleteAuthorization(hash, current.confirmationRequestId, {
+                                completedAt: now(),
+                                after,
+                            });
+                            current = required(await db.deleteAuthorization(hash));
+                        }
+                    }
+                    const status: DeletionResult['status'] =
+                        current.after !== undefined
+                            ? 'completed'
+                            : current.failure !== undefined
+                            ? 'failed'
+                            : current.consumedAt !== undefined
+                            ? 'pending'
+                            : now().getTime() >= current.expiresAt.getTime()
+                            ? 'expired'
+                            : 'prepared';
+                    const result: DeletionResult = {
+                        status,
+                        itemId: current.itemId,
+                        expectedVersion: current.expectedVersion,
+                        expiresAt: current.expiresAt,
+                        ...(current.after === undefined ? {} : { result: current.after }),
+                        ...(current.failure === undefined ? {} : { failure: current.failure }),
+                    };
                     await db.complete({
                         ...event,
-                        deletionAuthorizationHash: undefined,
-                        after,
                         status: 'completed',
                         completedAt: now(),
+                        after: current.after,
                     });
-                    completed = true;
-                    return { ok: true as const, result: after, replayed: true };
+                    return { ok: true as const, requestId, result };
                 }
-                const current = await snapshot(item);
-                if (current.version !== event.request.expectedVersion)
-                    throw new AgentError('conflict', 'Item version changed; prepare deletion again');
-                if (item.locked === true)
-                    throw new AgentError('conflict', 'Item is locked; deletion was not performed');
-                if ((await db.activeChildCount(item._id)) > 0)
-                    throw new AgentError('conflict', 'Container gained active children; deletion was not performed');
-                if (!(await db.logicalDelete(item, event.request, now())))
-                    throw new AgentError('conflict', 'Item changed during deletion');
-                mutationApplied = true;
-                const after = await readIncludingDeleted(item._id);
-                await db.complete({
-                    ...event,
-                    deletionAuthorizationHash: undefined,
-                    after,
-                    status: 'completed',
-                    completedAt: now(),
-                });
-                completed = true;
-                return { ok: true as const, result: after, replayed: false };
+
+                const attemptedAt = now();
+                const authorization = await db.claimDeleteAuthorization(hash, requestId, attemptedAt);
+                if (authorization === undefined)
+                    return await deletionFailure(event, 'conflict', 'Deletion authorization does not match');
+                const claimedNow = authorization.confirmationRequestId === requestId;
+                if (!matchesDeleteBinding(authorization, r))
+                    return await deletionFailure(
+                        event,
+                        'conflict',
+                        'Deletion authorization does not match',
+                        authorization
+                    );
+                if (!claimedNow) {
+                    if (authorization.after !== undefined) {
+                        await db.complete({
+                            ...event,
+                            status: 'completed',
+                            completedAt: now(),
+                            after: authorization.after,
+                            replayed: true,
+                        });
+                        return { ok: true as const, requestId, result: authorization.after, replayed: true };
+                    }
+                    if (authorization.failure !== undefined)
+                        return await deletionFailure(event, authorization.failure.code, authorization.failure.message);
+                    const retained = await db.getIncludingDeleted(authorization.itemId);
+                    if (retained?.deletedByRequestId !== authorization.confirmationRequestId)
+                        return await deletionFailure(
+                            event,
+                            'indeterminate',
+                            'Delete confirmation is pending; retry after the original attempt has stopped'
+                        );
+                    const after = await snapshot(required(retained));
+                    await db.finishDeleteAuthorization(hash, required(authorization.confirmationRequestId), {
+                        completedAt: now(),
+                        after,
+                    });
+                    await db.complete({
+                        ...event,
+                        status: 'completed',
+                        completedAt: now(),
+                        after,
+                        replayed: true,
+                    });
+                    return { ok: true as const, requestId, result: after, replayed: true };
+                }
+                if (attemptedAt.getTime() >= authorization.expiresAt.getTime())
+                    return await deletionFailure(
+                        event,
+                        'authorization_expired',
+                        'Deletion authorization expired',
+                        authorization
+                    );
+                if (!(await db.lock(requestId)))
+                    return await deletionFailure(
+                        event,
+                        'busy',
+                        'Agent writer is busy; deletion was not performed',
+                        authorization
+                    );
+                let mutationApplied = false;
+                try {
+                    const item = await db.get(authorization.itemId);
+                    if (item === undefined) throw new AgentError('conflict', 'Item is missing or already deleted');
+                    const current = await snapshot(item);
+                    if (current.version !== authorization.expectedVersion)
+                        throw new AgentError('conflict', 'Item version changed; prepare deletion again');
+                    if (item.locked === true)
+                        throw new AgentError('conflict', 'Item is locked; deletion was not performed');
+                    if ((await db.activeChildCount(item._id)) > 0)
+                        throw new AgentError(
+                            'conflict',
+                            'Container gained active children; deletion was not performed'
+                        );
+                    if (
+                        !(await db.logicalDelete(
+                            item,
+                            {
+                                requestId,
+                                source: authorization.source,
+                                note: authorization.note,
+                            },
+                            now()
+                        ))
+                    )
+                        throw new AgentError('conflict', 'Item changed during deletion');
+                    mutationApplied = true;
+                    const after = await readIncludingDeleted(item._id);
+                    await db.finishDeleteAuthorization(hash, requestId, { completedAt: now(), after });
+                    await db.complete({ ...event, status: 'completed', completedAt: now(), after });
+                    return { ok: true as const, requestId, result: after, replayed: false };
+                } catch (error) {
+                    if (error instanceof AgentError && !mutationApplied)
+                        return await deletionFailure(event, error.code, error.message, authorization);
+                    if (mutationApplied)
+                        throw new AgentError(
+                            'indeterminate',
+                            'Delete may have completed; retry the same authorization tuple or call getDeleteResult',
+                            requestId
+                        );
+                    throw error;
+                } finally {
+                    await db.unlock(requestId);
+                }
             } catch (error) {
-                if (error instanceof AgentError && !mutationApplied)
-                    return await failDelete(event, error.code, error.message);
-                return fail(
-                    'indeterminate',
-                    'Delete outcome is indeterminate; retry the exact confirmation to reconcile it.'
-                );
-            } finally {
-                if (completed || !mutationApplied) await db.unlock(requestId);
+                if (error instanceof AgentError) {
+                    if (error.requestId === requestId) throw error;
+                    return await deletionFailure(event, error.code, error.message);
+                }
+                throw error;
             }
         }
+
+        const requestId = required(r.requestId);
+        const fingerprint = version(r);
 
         const previous = await db.event(requestId);
         if (previous !== undefined) return replay(previous, fingerprint);

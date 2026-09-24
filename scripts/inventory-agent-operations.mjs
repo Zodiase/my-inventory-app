@@ -9,6 +9,7 @@ export const READ_OPERATIONS = [
     'lookup',
     'history',
     'status',
+    'getDeleteResult',
     'children',
     'hierarchy',
     'getTag',
