@@ -1,10 +1,11 @@
 # Local inventory agent interface v1
 
-Inventory deletion is defined by
-[`LOGICAL_DELETION.md`](LOGICAL_DELETION.md): same-collection tombstones now,
+The target inventory-deletion design is defined by
+[`LOGICAL_DELETION.md`](LOGICAL_DELETION.md): same-collection tombstones first,
 with physical cold storage deferred until measured performance justifies it.
-The two-step agent protocol tracked for implementation must preserve records,
-identities and history rather than physically removing documents.
+Deletion remains excluded from the current v1 agent API. Its planned two-step
+protocol must preserve records, identities and history rather than physically
+removing documents.
 
 This opt-in JSON interface writes the same `items` collection used by the UI. It reuses the application's create/update/move business functions and supports nested containers and ordinary items. It does not issue stickers, write a household journal, ingest real household data automatically, or deploy anything.
 

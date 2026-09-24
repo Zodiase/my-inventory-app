@@ -1,8 +1,9 @@
 # Logical deletion and cold-storage roadmap
 
-Inventory deletion is logical retirement, not physical removal. The system must
-preserve records, stable IDs, external identities, relationships, and audit
-history after an item disappears from ordinary use.
+The target inventory-deletion model is logical retirement, not physical
+removal. The current implementation still removes documents and must be
+replaced. The target system preserves records, stable IDs, external identities,
+relationships, and audit history after an item disappears from ordinary use.
 
 ## Current target: same-collection tombstones
 
@@ -12,20 +13,21 @@ the request or actor responsible for the transition. Exact field names remain
 an implementation choice, but deletion must be a version-checked atomic state
 change rather than a MongoDB remove.
 
-Active application and agent queries exclude tombstoned records by default,
-including ordinary lists, navigation, search, lookup, children and hierarchy
-reads, duplicate-candidate discovery, and active-child checks. A deliberate
-maintenance/audit path may include tombstoned records for investigation and
-restoration. External identities remain reserved and must not be silently
-reused.
+Once implemented, active application and agent queries exclude tombstoned
+records by default, including ordinary lists, navigation, search, lookup,
+children and hierarchy reads, duplicate-candidate discovery, and active-child
+checks. A deliberate maintenance/audit path may include tombstoned records for
+investigation and restoration. External identities remain reserved and must
+not be silently reused.
 
-The UI and agent interface must use the same shared logical-delete business
-operation. Tests must fail if either path physically removes an inventory
-document.
+The UI and planned agent interface must use the same shared logical-delete
+business operation. Tests must fail if either path physically removes an
+inventory document.
 
 ## Agent confirmation protocol
 
-Agent deletion uses two explicit steps:
+The planned agent deletion protocol uses two explicit steps; neither operation
+is exposed by the current v1 API:
 
 1. `prepareDelete` validates the target snapshot and returns a single-use
    `deletionAuthorizationId`.
@@ -38,6 +40,15 @@ issuance according to the server clock. It is invalidated after any
 confirmation attempt. Expiration or a changed target requires a new
 preparation. Containers must have no active children, and locked or already
 deleted records are rejected.
+
+The active-child check and tombstone write must share one concurrency boundary
+with UI and agent mutations that can create, restore, move, or delete children.
+Use a transaction where the deployed database topology supports it, or a shared
+server-side hierarchy-mutation lock held across the final child recheck and
+conditional tombstone write. An agent-only lock is insufficient because UI
+writes could otherwise add or move a child after the check. The implementation
+must include a deterministic race test proving a container cannot become
+tombstoned while an active child is concurrently attached.
 
 The durable request ledger retains preparation and terminal outcomes. Exact
 replay of a completed confirmation returns the original result without another
