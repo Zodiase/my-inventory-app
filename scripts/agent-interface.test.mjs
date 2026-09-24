@@ -517,6 +517,24 @@ test('bounded search finds names, descriptions and aliases with current location
     assert.equal((await f.execute({ op: 'lookup', name: 'Drinkware' })).result.items[0].item._id, drinkware._id);
 });
 
+test('search omits a hit that disappears before its location path resolves', async () => {
+    const f = fixture();
+    const stale = (await f.execute(create('stale-search-item', 'Stale result'))).result.item;
+    const live = (await f.execute(create('live-search-item', 'Live result'))).result.item;
+    const originalPath = f.backend.path;
+    f.backend.search = async () => ({
+        hits: [stale, live].map((item) => ({ item, score: 1, matchedFields: ['name'] })),
+        nextCursor: null,
+    });
+    f.backend.path = async (itemId) => (itemId === stale._id ? undefined : await originalPath(itemId));
+
+    const result = (await f.execute({ op: 'search', query: 'result' })).result;
+    assert.deepEqual(
+        result.matches.map((match) => match.item.item._id),
+        [live._id]
+    );
+});
+
 test('hierarchy rejects cycles, invalid selectors and missing or noncontainer roots', async () => {
     const f = fixture();
     const home = (await f.execute(create('h', 'Home', { isContainer: true }))).result.item;
