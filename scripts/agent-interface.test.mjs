@@ -75,7 +75,7 @@ function fixture() {
         identities: async (id) => copy([...bindings.values()].filter((b) => b.itemId === id).map((b) => b.identity)),
         resolve: async (identity) => bindings.get(identityKey(identity))?.itemId,
         event: async (id) => copy(events.get(id)),
-        history: async (id) => copy([...events.values()].filter((e) => e.itemId === id)),
+        history: async (id) => copy([...events.values()].filter((e) => e.itemId === id || e.destinationItemId === id)),
         lock: async (id) => {
             if (lock) return false;
             lock = id;
@@ -136,6 +136,13 @@ function fixture() {
             const old = bindings.get(identityKey(identity));
             assert(!old || old.itemId === itemId);
             bindings.set(identityKey(identity), { identity, itemId });
+        },
+        reassign: async (identity, currentItemId, destinationItemId) => {
+            const key = identityKey(identity);
+            const old = bindings.get(key);
+            if (old?.itemId !== currentItemId) return false;
+            bindings.set(key, { identity, itemId: destinationItemId });
+            return true;
         },
     };
     return {
@@ -241,6 +248,66 @@ test('stale correction and external identity reuse conflict without mutation', a
     });
     await rejects(() => f.execute({ ...create('c', 'C'), externalIdentity: identity }), 'conflict');
     assert.equal(f.items.size, 2);
+});
+
+test('identity reassignment is audited, version guarded and bound to the exact current owner', async () => {
+    const f = fixture();
+    const sourceItem = (await f.execute(create('source-item', 'Source', { isContainer: true }))).result;
+    const destination = (await f.execute(create('destination-item', 'Destination', { isContainer: true }))).result;
+    const other = (await f.execute(create('other-item', 'Other', { isContainer: true }))).result;
+    const identity = { namespace: 'synthetic-container', value: 'rack-tier-label' };
+    const bound = await f.execute({
+        op: 'bindIdentity',
+        requestId: 'bind-source',
+        source,
+        itemId: sourceItem.item._id,
+        expectedVersion: sourceItem.version,
+        externalIdentity: identity,
+    });
+    const request = {
+        op: 'reassignIdentity',
+        requestId: 'reassign',
+        source,
+        itemId: sourceItem.item._id,
+        expectedVersion: bound.result.version,
+        destinationItemId: destination.item._id,
+        destinationExpectedVersion: destination.version,
+        externalIdentity: identity,
+        note: 'Corrected the observed physical label owner',
+    };
+    const reassigned = await f.execute(request);
+    assert.deepEqual(reassigned.result.source.externalIdentities, []);
+    assert.deepEqual(reassigned.result.destination.externalIdentities, [identity]);
+    assert.equal(
+        (await f.execute({ op: 'lookup', externalIdentity: identity })).result.items[0].item._id,
+        destination.item._id
+    );
+    assert.deepEqual((await f.execute(request)).result, reassigned.result);
+    assert.equal((await f.execute(request)).replayed, true);
+    const sourceHistory = (await f.execute({ op: 'history', itemId: sourceItem.item._id })).result.events;
+    const destinationHistory = (await f.execute({ op: 'history', itemId: destination.item._id })).result.events;
+    assert.equal(sourceHistory.at(-1)._id, request.requestId);
+    assert.equal(destinationHistory.at(-1)._id, request.requestId);
+    assert.deepEqual(sourceHistory.at(-1).before.externalIdentities, [identity]);
+    assert.deepEqual(sourceHistory.at(-1).after.externalIdentities, []);
+    assert.deepEqual(sourceHistory.at(-1).destinationBefore.externalIdentities, []);
+    assert.deepEqual(sourceHistory.at(-1).destinationAfter.externalIdentities, [identity]);
+
+    for (const [requestId, changes] of [
+        ['stale-source', { expectedVersion: 'stale' }],
+        ['stale-destination', { destinationExpectedVersion: 'stale' }],
+        ['wrong-owner', { itemId: other.item._id, expectedVersion: other.version }],
+        [
+            'duplicate-destination',
+            {
+                itemId: destination.item._id,
+                expectedVersion: destination.version,
+                destinationItemId: destination.item._id,
+            },
+        ],
+    ])
+        await rejects(() => f.execute({ ...request, ...changes, requestId }), 'conflict');
+    assert.equal((await f.execute({ op: 'lookup', externalIdentity: identity })).result.items.length, 1);
 });
 
 test('crash after inventory mutation before ledger completion stays indeterminate across restart', async () => {

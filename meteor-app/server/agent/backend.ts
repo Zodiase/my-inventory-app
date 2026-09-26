@@ -68,7 +68,9 @@ export const agentBackend: Backend = {
     resolve: async (identity) => (await bindings.findOneAsync(identityKey(identity)))?.itemId,
     event: async (id) => await events.findOneAsync(id),
     history: async (id) =>
-        await events.find({ itemId: id }, { sort: { createdAt: 1, _id: 1 }, limit: 1000 }).fetchAsync(),
+        await events
+            .find({ $or: [{ itemId: id }, { destinationItemId: id }] }, { sort: { createdAt: 1, _id: 1 }, limit: 1000 })
+            .fetchAsync(),
     lock: async (requestId) => {
         try {
             await locks.insertAsync({ _id: 'writer', requestId });
@@ -130,4 +132,9 @@ export const agentBackend: Backend = {
         }
         await bindings.insertAsync({ _id: id, itemId, identity });
     },
+    reassign: async (identity, currentItemId, destinationItemId) =>
+        (await bindings.updateAsync(
+            { _id: identityKey(identity), itemId: currentItemId },
+            { $set: { itemId: destinationItemId } }
+        )) === 1,
 };

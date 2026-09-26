@@ -56,20 +56,37 @@ Unknown fields, wrong types, empty required strings and unsupported operations a
 
 Every mutation requires `requestId` and `source: {system, reference}`. Optional `note` explains the observation or correction. Request IDs are global within this inventory database, not scoped to source; callers should prefix them with their workflow/fixture identity. Use one stable key per logical mutation. IDs are retained indefinitely in v1.
 
-| `op`           | Other fields                                                                                            | Result                                            |
-| -------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `create`       | `item: {name, isContainer, description?, containerId?}`, optional `externalIdentity: {namespace,value}` | Readback                                          |
-| `update`       | `itemId`, `expectedVersion`, `changes: {name?,description?}` (nonempty)                                 | Readback                                          |
-| `move`         | `itemId`, `expectedVersion`, `containerId` (app ID or `null` for root)                                  | Readback                                          |
-| `bindIdentity` | `itemId`, `expectedVersion`, `externalIdentity: {namespace,value}`                                      | Readback                                          |
-| `children`     | `containerId` (ID or null), optional `after`, `limit`                                                   | `{items: Readback[], nextCursor: string or null}` |
-| `hierarchy`    | `itemId`, optional `maxNodes`                                                                           | `{root: Readback, items: Readback[]}`             |
-| `get`          | `itemId`                                                                                                | Readback                                          |
-| `lookup`       | Exactly one of nonempty `name` or `externalIdentity`                                                    | `{items: Readback[]}`                             |
-| `history`      | `itemId`                                                                                                | `{events: Event[]}`                               |
-| `status`       | `requestId`                                                                                             | `{event: Event \| null}`                          |
+| `op`               | Other fields                                                                                            | Result                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `create`           | `item: {name, isContainer, description?, containerId?}`, optional `externalIdentity: {namespace,value}` | Readback                                          |
+| `update`           | `itemId`, `expectedVersion`, `changes: {name?,description?}` (nonempty)                                 | Readback                                          |
+| `move`             | `itemId`, `expectedVersion`, `containerId` (app ID or `null` for root)                                  | Readback                                          |
+| `bindIdentity`     | `itemId`, `expectedVersion`, `externalIdentity: {namespace,value}`                                      | Readback                                          |
+| `reassignIdentity` | `itemId`, `expectedVersion`, `destinationItemId`, `destinationExpectedVersion`, `externalIdentity`      | `{source: Readback, destination: Readback}`       |
+| `children`         | `containerId` (ID or null), optional `after`, `limit`                                                   | `{items: Readback[], nextCursor: string or null}` |
+| `hierarchy`        | `itemId`, optional `maxNodes`                                                                           | `{root: Readback, items: Readback[]}`             |
+| `get`              | `itemId`                                                                                                | Readback                                          |
+| `lookup`           | Exactly one of nonempty `name` or `externalIdentity`                                                    | `{items: Readback[]}`                             |
+| `history`          | `itemId`                                                                                                | `{events: Event[]}`                               |
+| `status`           | `requestId`                                                                                             | `{event: Event \| null}`                          |
 
-A Readback is `{item, version, externalIdentities}`. Read operations do not take source, note or requestId (except status), and do not have a replayed flag. Mutation responses include `replayed`. `version` describes the inventory item snapshot, not the set of external identities. Bindings are additive; one identity can name only one item, and an item may have multiple identities. There is no unbind/reassign operation.
+A Readback is `{item, version, externalIdentities}`. Read operations do not take source, note or requestId (except status), and do not have a replayed flag. Mutation responses include `replayed`. `version` describes the inventory item snapshot, not the set of external identities. Bindings are additive except for an explicit audited reassignment; one identity can name only one item, and an item may have multiple identities.
+
+`reassignIdentity` is the correction path for a verified label that belongs to a different existing item. `itemId` must be the identity's exact current owner, and both current and destination item versions must match fresh readbacks. The destination must differ from the current owner. The identity mapping is changed with one conditional database update, while the audit event preserves source and destination readbacks before and after the reassignment. The same event appears in both items' history. Wrong owners, stale versions and same-item destinations fail closed without moving the identity.
+
+```json
+{
+    "op": "reassignIdentity",
+    "requestId": "example-reassign-1",
+    "source": { "system": "synthetic-example", "reference": "corrected-sticker-observation" },
+    "itemId": "<current owner app ID>",
+    "expectedVersion": "<current owner version>",
+    "destinationItemId": "<destination app ID>",
+    "destinationExpectedVersion": "<destination version>",
+    "externalIdentity": { "namespace": "synthetic-sticker", "value": "00000000-0000-4000-8000-000000000001" },
+    "note": "Corrected the observed physical label owner"
+}
+```
 
 Name lookup is a case-insensitive literal substring search, capped at 100 results in app-ID order; empty name is invalid. History returns the first 1000 events in time/ID order, including pending events. Name lookup and history do not paginate; the children operation supports pagination. Status returns one exact request regardless of history limits. Treat lookup/history as bounded inspection, not full database export.
 

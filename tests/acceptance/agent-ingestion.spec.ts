@@ -10,6 +10,8 @@ type AuditEvent = {
     status: 'pending' | 'completed';
     before?: Snapshot;
     after?: Snapshot;
+    destinationBefore?: Snapshot;
+    destinationAfter?: Snapshot;
 };
 
 test('fictional townhouse ingestion, safe replay, corrections, and UI parity', async ({ request, page }) => {
@@ -122,6 +124,62 @@ test('fictional townhouse ingestion, safe replay, corrections, and UI parity', a
         (await invoke({ ...bind, requestId: 'alder-bind-collision', externalIdentity: identity }, 409)).error.code
     ).toBe('conflict');
     expect((await invoke({ op: 'get', itemId: refrigerator.item._id })).result).toEqual(bound);
+
+    const washer = records.get('washer')!;
+    const reassign = {
+        op: 'reassignIdentity',
+        requestId: 'alder-reassign-fridge-sticker',
+        source,
+        itemId: refrigerator.item._id,
+        expectedVersion: bound.version,
+        destinationItemId: washer.item._id,
+        destinationExpectedVersion: washer.version,
+        externalIdentity: bind.externalIdentity,
+        note: 'Corrected the fictional sticker owner after physical inspection.',
+    };
+    const reassigned = (await invoke(reassign)).result as { source: Snapshot; destination: Snapshot };
+    expect(reassigned.source.externalIdentities).not.toContainEqual(bind.externalIdentity);
+    expect(reassigned.destination.externalIdentities).toContainEqual(bind.externalIdentity);
+    expect((await invoke(reassign)).result).toEqual(reassigned);
+    expect((await invoke({ op: 'lookup', externalIdentity: bind.externalIdentity })).result.items).toEqual([
+        reassigned.destination,
+    ]);
+    expect(
+        (
+            await invoke(
+                {
+                    ...reassign,
+                    requestId: 'alder-reassign-wrong-owner',
+                    itemId: refrigerator.item._id,
+                },
+                409
+            )
+        ).error.code
+    ).toBe('conflict');
+    expect(
+        (
+            await invoke(
+                {
+                    ...reassign,
+                    requestId: 'alder-reassign-stale-destination',
+                    itemId: washer.item._id,
+                    expectedVersion: washer.version,
+                    destinationItemId: refrigerator.item._id,
+                    destinationExpectedVersion: 'stale',
+                },
+                409
+            )
+        ).error.code
+    ).toBe('conflict');
+    const reassignEvents = (await invoke({ op: 'history', itemId: washer.item._id })).result.events as AuditEvent[];
+    expect(reassignEvents.find((event) => event.request.note === reassign.note)).toMatchObject({
+        request: { source, note: reassign.note },
+        status: 'completed',
+        before: bound,
+        after: reassigned.source,
+        destinationBefore: washer,
+        destinationAfter: reassigned.destination,
+    });
 
     const correction = {
         op: 'update',

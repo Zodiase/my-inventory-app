@@ -47,6 +47,7 @@ export interface Request {
         | 'lock'
         | 'unlock'
         | 'bindIdentity'
+        | 'reassignIdentity'
         | 'get'
         | 'lookup'
         | 'history'
@@ -62,6 +63,8 @@ export interface Request {
     note?: string;
     itemId?: string;
     expectedVersion?: string;
+    destinationItemId?: string;
+    destinationExpectedVersion?: string;
     after?: string;
     limit?: number;
     maxNodes?: number;
@@ -94,10 +97,13 @@ export interface Event {
     createdAt: Date;
     completedAt?: Date;
     itemId?: string;
+    destinationItemId?: string;
     tagId?: string;
     afterTag?: TagReadback;
     before?: Readback;
     after?: Readback;
+    destinationBefore?: Readback;
+    destinationAfter?: Readback;
 }
 export interface Backend {
     getTag: (id: string) => Promise<Tag | undefined>;
@@ -126,6 +132,7 @@ export interface Backend {
     move: (item: Item, parent: string | null) => Promise<boolean>;
     setLocked: (item: Item, locked: boolean) => Promise<boolean>;
     bind: (identity: Identity, itemId: string) => Promise<void>;
+    reassign: (identity: Identity, currentItemId: string, destinationItemId: string) => Promise<boolean>;
 }
 export class AgentError extends Error {
     code: string;
@@ -149,7 +156,8 @@ export interface Response {
         | { tags: TagReadback[]; nextCursor: string | null }
         | { items: Readback[]; nextCursor?: string | null; root?: Readback }
         | { events: Event[] }
-        | { event: Event | null };
+        | { event: Event | null }
+        | { source: Readback; destination: Readback };
     replayed?: boolean;
 }
 const required = <T>(value: T | undefined): T => {
@@ -184,7 +192,16 @@ const tagIds = (value: unknown): void => {
 };
 export const parseRequest = (input: unknown): Request => {
     const r = object(input);
-    const mutation = ['create', 'update', 'move', 'lock', 'unlock', 'bindIdentity', 'createTag'].includes(String(r.op));
+    const mutation = [
+        'create',
+        'update',
+        'move',
+        'lock',
+        'unlock',
+        'bindIdentity',
+        'reassignIdentity',
+        'createTag',
+    ].includes(String(r.op));
     const fields: Record<string, string[]> = {
         create: ['item', 'externalIdentity'],
         createTag: ['tag'],
@@ -196,6 +213,13 @@ export const parseRequest = (input: unknown): Request => {
         lock: ['itemId', 'expectedVersion'],
         unlock: ['itemId', 'expectedVersion'],
         bindIdentity: ['itemId', 'expectedVersion', 'externalIdentity'],
+        reassignIdentity: [
+            'itemId',
+            'expectedVersion',
+            'destinationItemId',
+            'destinationExpectedVersion',
+            'externalIdentity',
+        ],
         status: ['requestId'],
         get: ['itemId'],
         lookup: ['name', 'externalIdentity'],
@@ -214,17 +238,35 @@ export const parseRequest = (input: unknown): Request => {
         string(source.reference, 'source.reference', LIMIT_REFERENCE);
         if (r.note !== undefined) string(r.note, 'note', LIMIT_NOTE);
     }
-    if (['get', 'history', 'update', 'move', 'lock', 'unlock', 'bindIdentity', 'hierarchy'].includes(String(r.op)))
+    if (
+        [
+            'get',
+            'history',
+            'update',
+            'move',
+            'lock',
+            'unlock',
+            'bindIdentity',
+            'reassignIdentity',
+            'hierarchy',
+        ].includes(String(r.op))
+    )
         string(r.itemId, 'itemId', LIMIT_ID);
-    if (['update', 'move', 'bindIdentity', 'lock', 'unlock'].includes(String(r.op)))
+    if (['update', 'move', 'bindIdentity', 'reassignIdentity', 'lock', 'unlock'].includes(String(r.op)))
         string(r.expectedVersion, 'expectedVersion', LIMIT_VERSION);
+    if (r.op === 'reassignIdentity') {
+        string(r.destinationItemId, 'destinationItemId', LIMIT_ID);
+        string(r.destinationExpectedVersion, 'destinationExpectedVersion', LIMIT_VERSION);
+        if (r.destinationItemId === r.itemId)
+            fail('conflict', 'Identity destination must differ from its current owner');
+    }
     if (r.externalIdentity !== undefined) {
         const identity = object(r.externalIdentity);
         keys(identity, ['namespace', 'value']);
         string(identity.namespace, 'externalIdentity.namespace', LIMIT_ID);
         string(identity.value, 'externalIdentity.value', LIMIT_NAME);
     }
-    if (r.op === 'bindIdentity' && r.externalIdentity === undefined)
+    if (['bindIdentity', 'reassignIdentity'].includes(String(r.op)) && r.externalIdentity === undefined)
         fail('invalid_input', 'externalIdentity is required');
     if (r.op === 'create') {
         const item = object(r.item);
@@ -320,7 +362,11 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
                 'indeterminate',
                 'Write outcome is indeterminate; inspect get/history and reconcile before retrying. Do not use a new requestId.'
             );
-        return { ok: true as const, result: required(event.afterTag ?? event.after), replayed: true };
+        const result =
+            event.request.op === 'reassignIdentity'
+                ? { source: required(event.after), destination: required(event.destinationAfter) }
+                : required(event.afterTag ?? event.after);
+        return { ok: true as const, result, replayed: true };
     };
     return async (input: unknown) => {
         const r = parseRequest(input);
@@ -411,7 +457,15 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
             const before = ['create', 'createTag'].includes(r.op) ? undefined : await read(required(r.itemId));
             if (before !== undefined && before.version !== r.expectedVersion)
                 fail('conflict', 'Item version changed; read again before correcting');
-            if (r.externalIdentity !== undefined) {
+            const destinationBefore =
+                r.op === 'reassignIdentity' ? await read(required(r.destinationItemId)) : undefined;
+            if (destinationBefore !== undefined && destinationBefore.version !== r.destinationExpectedVersion)
+                fail('conflict', 'Destination item version changed; read again before reassigning identity');
+            if (r.op === 'reassignIdentity') {
+                const owner = await db.resolve(required(r.externalIdentity));
+                if (owner !== r.itemId)
+                    fail('conflict', 'External identity is not bound to the specified current owner');
+            } else if (r.externalIdentity !== undefined) {
                 const owner = await db.resolve(r.externalIdentity);
                 if (owner !== undefined && (r.op === 'create' || owner !== r.itemId))
                     fail('conflict', 'External identity is already bound to another item');
@@ -426,8 +480,10 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
                 status: 'pending',
                 createdAt: new Date(),
                 itemId: candidateId,
+                destinationItemId: r.destinationItemId,
                 ...(r.op === 'createTag' ? { tagId: `agent-tag-${version(requestId)}` } : {}),
                 before,
+                destinationBefore,
             };
             await db.reserve(event);
             reserved = true;
@@ -448,11 +504,30 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
                 fail('conflict', 'Item changed during lock');
             if (r.op === 'unlock' && !(await db.setLocked(required(before).item, false)))
                 fail('conflict', 'Item changed during unlock');
-            if (r.externalIdentity !== undefined) await db.bind(r.externalIdentity, required(itemId));
+            if (
+                r.op === 'reassignIdentity' &&
+                !(await db.reassign(required(r.externalIdentity), required(r.itemId), required(r.destinationItemId)))
+            )
+                fail('conflict', 'Identity owner changed during reassignment');
+            if (r.externalIdentity !== undefined && r.op !== 'reassignIdentity')
+                await db.bind(r.externalIdentity, required(itemId));
             const after = await read(required(itemId));
-            await db.complete({ ...event, itemId, after, status: 'completed', completedAt: new Date() });
+            const destinationAfter =
+                r.op === 'reassignIdentity' ? await read(required(r.destinationItemId)) : undefined;
+            await db.complete({
+                ...event,
+                itemId,
+                after,
+                destinationAfter,
+                status: 'completed',
+                completedAt: new Date(),
+            });
             reserved = false;
-            return { ok: true as const, result: after, replayed: false };
+            return {
+                ok: true as const,
+                result: destinationAfter === undefined ? after : { source: after, destination: destinationAfter },
+                replayed: false,
+            };
         } catch (error) {
             if (reserved)
                 return fail(
