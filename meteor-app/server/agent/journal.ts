@@ -19,10 +19,9 @@ export const nextAgentJournalSequence = async (): Promise<number> => {
 
 /** Only completed events without a gap may be covered by a successful full rebuild. */
 export const completedAgentJournalPrefix = async (): Promise<number> => {
-    const events = await agentRequestEvents.find(
-        { journalSequence: { $exists: true } },
-        { sort: { journalSequence: 1 } }
-    ).fetchAsync();
+    const events = await agentRequestEvents
+        .find({ journalSequence: { $exists: true } }, { sort: { journalSequence: 1 } })
+        .fetchAsync();
     let expected = 1;
     for (const event of events) {
         if (event.journalSequence !== expected || event.status !== 'completed') break;

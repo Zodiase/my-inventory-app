@@ -351,7 +351,12 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
                 'indeterminate',
                 'Write outcome is indeterminate; inspect get/history and reconcile before retrying. Do not use a new requestId.'
             );
-        return { ok: true as const, result: required(event.afterTag ?? event.after), replayed: true, journalId: journalIdFor(event) };
+        return {
+            ok: true as const,
+            result: required(event.afterTag ?? event.after),
+            replayed: true,
+            journalId: journalIdFor(event),
+        };
     };
     return async (input: unknown) => {
         const r = parseRequest(input);

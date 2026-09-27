@@ -108,14 +108,13 @@ export const createAgentHandler =
             send(HTTP.ok, await execute(input));
         } catch (error) {
             if (error instanceof AgentError) {
-                const status =
-                    ['search_unavailable', 'search_not_caught_up'].includes(error.code)
-                        ? HTTP.unavailable
-                        : error.code === 'not_found'
-                        ? HTTP.disabled
-                        : ['conflict', 'busy', 'indeterminate'].includes(error.code)
-                        ? HTTP.conflict
-                        : HTTP.invalid;
+                const status = ['search_unavailable', 'search_not_caught_up'].includes(error.code)
+                    ? HTTP.unavailable
+                    : error.code === 'not_found'
+                    ? HTTP.disabled
+                    : ['conflict', 'busy', 'indeterminate'].includes(error.code)
+                    ? HTTP.conflict
+                    : HTTP.invalid;
                 reject(status, error.code, error.message);
             } else
                 reject(
