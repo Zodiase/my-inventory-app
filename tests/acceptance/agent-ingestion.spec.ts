@@ -356,15 +356,18 @@ test('ranked search stays synchronized and agrees across agent and application p
         return body;
     };
     const source = { system: 'synthetic-acceptance', reference: 'ranked-search' };
-    const create = async (requestId: string, item: object) =>
-        (
-            await invoke({
-                op: 'create',
-                requestId,
-                source,
-                item,
-            })
-        ).result as Snapshot;
+    let latestJournalId = '';
+    const create = async (requestId: string, item: object) => {
+        const response = await invoke({
+            op: 'create',
+            requestId,
+            source,
+            item,
+        });
+        latestJournalId = response.journalId;
+        expect(latestJournalId).toMatch(/^agent-journal:[1-9]\d*$/);
+        return response.result as Snapshot;
+    };
     const waitForSearch = async (
         query: string,
         predicate: (matches: Array<{ item: Snapshot; path: Item[] }>) => boolean
@@ -396,9 +399,8 @@ test('ranked search stays synchronized and agrees across agent and application p
         containerId: laundry.item._id,
     });
 
-    const created = await waitForSearch('calibration quilts', (matches) =>
-        matches.some(({ item }) => item.item._id === pads.item._id)
-    );
+    const created = (await invoke({ op: 'search', query: 'calibration quilts', journalId: latestJournalId })).result;
+    expect(created.matches.some(({ item }: { item: Snapshot }) => item.item._id === pads.item._id)).toBe(true);
     const createdMatch = created.matches.find(({ item }: { item: Snapshot }) => item.item._id === pads.item._id);
     expect(createdMatch.path.map((item: Item) => item.name)).toEqual([
         home.item.name,
@@ -414,37 +416,41 @@ test('ranked search stays synchronized and agrees across agent and application p
     await expect(page.getByRole('button', { name: new RegExp(pads.item.name) })).toContainText(laundry.item.name);
     await expect(page.getByText(/Matched description/)).toBeVisible();
 
-    const updated = (
-        await invoke({
-            op: 'update',
-            requestId: 'search-pads-update',
-            source,
-            itemId: pads.item._id,
-            expectedVersion: pads.version,
-            changes: { description: 'Spectral moving blankets for delicate furniture' },
-        })
-    ).result as Snapshot;
-    await waitForSearch('spectral blankets', (matches) => matches.some(({ item }) => item.item._id === pads.item._id));
-    await waitForSearch('calibration quilts', (matches) =>
-        matches.every(({ item }) => item.item._id !== pads.item._id)
-    );
+    const updateResponse = await invoke({
+        op: 'update',
+        requestId: 'search-pads-update',
+        source,
+        itemId: pads.item._id,
+        expectedVersion: pads.version,
+        changes: { description: 'Spectral moving blankets for delicate furniture' },
+    });
+    const updated = updateResponse.result as Snapshot;
+    const updatedSearch = (
+        await invoke({ op: 'search', query: 'spectral blankets', journalId: updateResponse.journalId })
+    ).result;
+    expect(updatedSearch.matches.some(({ item }: { item: Snapshot }) => item.item._id === pads.item._id)).toBe(true);
+    const obsoleteSearch = (
+        await invoke({ op: 'search', query: 'calibration quilts', journalId: updateResponse.journalId })
+    ).result;
+    expect(obsoleteSearch.matches.every(({ item }: { item: Snapshot }) => item.item._id !== pads.item._id)).toBe(true);
 
-    const moved = (
-        await invoke({
-            op: 'move',
-            requestId: 'search-pads-move',
-            source,
-            itemId: pads.item._id,
-            expectedVersion: updated.version,
-            containerId: garage.item._id,
-        })
-    ).result as Snapshot;
-    const movedResult = await waitForSearch('spectral blankets', (matches) =>
-        matches.some(
-            ({ item, path }) =>
+    const moveResponse = await invoke({
+        op: 'move',
+        requestId: 'search-pads-move',
+        source,
+        itemId: pads.item._id,
+        expectedVersion: updated.version,
+        containerId: garage.item._id,
+    });
+    const moved = moveResponse.result as Snapshot;
+    const movedResult = (await invoke({ op: 'search', query: 'spectral blankets', journalId: moveResponse.journalId }))
+        .result;
+    expect(
+        movedResult.matches.some(
+            ({ item, path }: { item: Snapshot; path: Item[] }) =>
                 item.item._id === pads.item._id && path.some((pathItem) => pathItem._id === garage.item._id)
         )
-    );
+    ).toBe(true);
     expect(
         movedResult.matches
             .find(({ item }: { item: Snapshot }) => item.item._id === pads.item._id)

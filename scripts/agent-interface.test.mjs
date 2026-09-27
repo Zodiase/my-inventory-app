@@ -28,6 +28,7 @@ function fixture() {
         events = new Map(),
         bindings = new Map();
     let lock,
+        indexedThrough = 0,
         failComplete = false;
     const copy = structuredClone;
     const backend = {
@@ -115,11 +116,25 @@ function fixture() {
         },
         reserve: async (event) => {
             assert(!events.has(event._id));
-            events.set(event._id, copy(event));
+            const reserved = { ...event, journalSequence: events.size + 1 };
+            events.set(event._id, copy(reserved));
+            return reserved;
         },
         complete: async (event) => {
             if (failComplete) throw Error('injected post-write crash');
             events.set(event._id, copy(event));
+        },
+        waitForSearchIndex: async (journalId) => {
+            const sequence = Number(/^agent-journal:([1-9]\d*)$/.exec(journalId)?.[1]);
+            if (
+                !Number.isSafeInteger(sequence) ||
+                ![...events.values()].some(
+                    (event) => event.journalSequence === sequence && event.status === 'completed'
+                )
+            )
+                throw new AgentError('invalid_input', 'Unknown or incomplete journalId');
+            if (indexedThrough < sequence)
+                throw new AgentError('search_not_caught_up', 'Search has not indexed the requested journalId');
         },
         validate: async (request) => {
             if (request.op === 'createTag') {
@@ -173,6 +188,9 @@ function fixture() {
         tags,
         events,
         backend,
+        indexThrough: (sequence) => {
+            indexedThrough = sequence;
+        },
         crash: () => {
             failComplete = true;
         },
@@ -241,8 +259,23 @@ test('exact replay survives service restart and changed payload conflicts', asyn
     const repeated = await restarted({ item: request.item, source, requestId: 'once', op: 'create' });
     assert.equal(repeated.replayed, true);
     assert.deepEqual(repeated.result, first.result);
+    assert.equal(repeated.journalId, first.journalId);
     assert.equal(f.items.size, 1);
     await rejects(() => restarted(create('once', 'Different')), 'conflict');
+});
+
+test('search journal barrier rejects lag, then permits retrieval at the completed point', async () => {
+    const f = fixture();
+    const created = await f.execute(create('indexed-record', 'Fictional Indexed Fixture'));
+    assert.equal(created.journalId, 'agent-journal:1');
+    await rejects(
+        () => f.execute({ op: 'search', query: 'indexed', journalId: created.journalId }),
+        'search_not_caught_up'
+    );
+    await rejects(() => f.execute({ op: 'search', query: 'indexed', journalId: 'agent-journal:9' }), 'invalid_input');
+    f.indexThrough(1);
+    const result = await f.execute({ op: 'search', query: 'indexed', journalId: created.journalId });
+    assert.equal(result.result.matches[0].item.item._id, created.result.item._id);
 });
 
 test('stale correction and external identity reuse conflict without mutation', async () => {
@@ -373,6 +406,16 @@ test('HTTP reports required search dependency failure distinctly', async () => {
         ok: false,
         error: { code: 'search_unavailable', message: 'Inventory search service is unavailable' },
     });
+});
+
+test('HTTP reports search journal lag distinctly from an empty result', async () => {
+    const response = await http({
+        execute: async () => {
+            throw new AgentError('search_not_caught_up', 'Search has not indexed the requested journalId');
+        },
+    });
+    assert.equal(response.status, 503);
+    assert.equal(response.response.error.code, 'search_not_caught_up');
 });
 
 test('Meteor dev proxy accepts one verified loopback hop, retaining auth and production isolation', async () => {

@@ -20,10 +20,13 @@ import { InventorySearchUnavailableError, searchInventoryIndex } from '/imports/
 import detectCircularReference from '/imports/utility/circularReference';
 import { escapeSearchText } from '/imports/utility/searchText';
 
-import { AgentError, identityKey } from './service';
-import type { Backend, Event } from './service';
+import { scheduleAgentJournalIndex, waitForAgentJournalSequence } from '../search';
 
-const events = new Mongo.Collection<Event>('agent_requests');
+import { agentRequestEvents, nextAgentJournalSequence } from './journal';
+import { AgentError, identityKey } from './service';
+import type { Backend } from './service';
+
+const events = agentRequestEvents;
 const bindings = InventoryIdentitiesCollection;
 const locks = new Mongo.Collection<{ _id: string; requestId: string }>('agent_locks');
 const DUPLICATE_KEY = 11000;
@@ -118,12 +121,23 @@ export const agentBackend: Backend = {
         await locks.removeAsync({ _id: 'writer', requestId });
     },
     reserve: async (event) => {
-        await events.insertAsync(event);
+        const reserved = { ...event, journalSequence: await nextAgentJournalSequence() };
+        await events.insertAsync(reserved);
+        return reserved;
     },
     complete: async (event) => {
         const { _id, ...fields } = event;
         const result = await events.updateAsync({ _id, status: 'pending' }, { $set: fields });
         if (result !== 1) throw new Error('Could not finalize request ledger');
+        scheduleAgentJournalIndex(event);
+    },
+    waitForSearchIndex: async (journalId) => {
+        const sequence = Number(/^agent-journal:([1-9]\d*)$/u.exec(journalId)?.[1]);
+        if (!Number.isSafeInteger(sequence)) throw new AgentError('invalid_input', 'Invalid journalId');
+        const event = await events.findOneAsync({ journalSequence: sequence });
+        if (event?.status !== 'completed') throw new AgentError('invalid_input', 'Unknown or incomplete journalId');
+        if (!(await waitForAgentJournalSequence(sequence)))
+            throw new AgentError('search_not_caught_up', 'Search has not indexed the requested journalId; retry later');
     },
     validate: async (request, before) => {
         if (request.op === 'move' && before?.locked === true)

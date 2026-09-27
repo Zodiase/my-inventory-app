@@ -15,6 +15,9 @@ import {
 import { registerInventorySearchSync } from '/imports/search/InventorySearchSync';
 import createLogger from '/imports/utility/Logger';
 
+import { completedAgentJournalPrefix } from '../agent/journal';
+import type { Event } from '../agent/service';
+
 import { requireInventorySearchApiKey } from './config';
 import { MeilisearchInventoryClient, type SearchDocument } from './meilisearch';
 
@@ -57,6 +60,45 @@ const client = new MeilisearchInventoryClient({
 });
 
 let queue = Promise.resolve();
+let indexReady = false;
+let indexedThrough = 0;
+const indexedAhead = new Set<number>();
+const JOURNAL_WAIT_MS = 5_000;
+const JOURNAL_POLL_MS = 50;
+
+const markIndexed = (sequence: number): void => {
+    if (sequence <= indexedThrough) return;
+    indexedAhead.add(sequence);
+    while (indexedAhead.delete(indexedThrough + 1)) indexedThrough++;
+};
+
+/** Schedule after ledger completion; a failed task leaves a gap until rebuild. */
+export const scheduleAgentJournalIndex = (event: Event): void => {
+    const sequence = event.journalSequence;
+    if (sequence === undefined) return; // Events from before journal sequencing was introduced.
+    void enqueue(async () => {
+        if (event.itemId !== undefined) {
+            const item = await InventoryItemsCollection.findOneAsync(event.itemId);
+            if (item === undefined) await client.delete(event.itemId);
+            else await client.upsert(toSearchDocument(item));
+        }
+        // Tag writes do not alter item search documents.
+        markIndexed(sequence);
+    }).catch((error: unknown) => {
+        logger.warn('Agent journal search synchronization failed', { sequence, error });
+    });
+};
+
+/** A bounded wait prevents a lagging index from masquerading as an empty result. */
+export const waitForAgentJournalSequence = async (sequence: number): Promise<boolean> => {
+    const deadline = Date.now() + JOURNAL_WAIT_MS;
+    for (;;) {
+        if (indexReady && indexedThrough >= sequence) return true;
+        if (Date.now() >= deadline) return false;
+        await new Promise((resolve) => setTimeout(resolve, JOURNAL_POLL_MS));
+    }
+};
+
 const enqueue = async (work: () => Promise<void>): Promise<void> => {
     const next = queue.then(work, work);
     queue = next.catch((error: unknown) => {
@@ -93,8 +135,14 @@ registerInventorySearchSync({
 });
 
 export const rebuildInventorySearch = async (): Promise<void> => {
+    // Capture the completed prefix before the item snapshot. Later writes queue their own sync.
+    const completedPrefix = await completedAgentJournalPrefix();
     const items = await InventoryItemsCollection.find({}, { sort: { _id: 1 } }).fetchAsync();
     await client.rebuild(items.map(toSearchDocument));
+    indexedThrough = Math.max(indexedThrough, completedPrefix);
+    for (const sequence of indexedAhead) if (sequence <= indexedThrough) indexedAhead.delete(sequence);
+    while (indexedAhead.delete(indexedThrough + 1)) indexedThrough++;
+    indexReady = true;
     logger.log('Inventory search index rebuilt', { count: items.length });
 };
 

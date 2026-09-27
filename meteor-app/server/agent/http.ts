@@ -109,7 +109,7 @@ export const createAgentHandler =
         } catch (error) {
             if (error instanceof AgentError) {
                 const status =
-                    error.code === 'search_unavailable'
+                    ['search_unavailable', 'search_not_caught_up'].includes(error.code)
                         ? HTTP.unavailable
                         : error.code === 'not_found'
                         ? HTTP.disabled

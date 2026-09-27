@@ -32,6 +32,7 @@ The result has this shape (IDs, dates and version hashes are illustrative):
 {
     "ok": true,
     "replayed": false,
+    "journalId": "agent-journal:1",
     "result": {
         "item": {
             "_id": "agent-<hash>",
@@ -66,11 +67,11 @@ Every mutation requires `requestId` and `source: {system, reference}`. Optional 
 | `hierarchy`    | `itemId`, optional `maxNodes`                                                                           | `{root: Readback, items: Readback[]}`             |
 | `get`          | `itemId`                                                                                                | Readback                                          |
 | `lookup`       | Exactly one of nonempty `name` or `externalIdentity`                                                    | `{items: Readback[]}`                             |
-| `search`       | Nonempty `query`, optional `after`, `limit`                                                             | `{matches: SearchMatch[], nextCursor}`            |
+| `search`       | Nonempty `query`, optional `after`, `limit`, `journalId`                                                | `{matches: SearchMatch[], nextCursor}`            |
 | `history`      | `itemId`                                                                                                | `{events: Event[]}`                               |
 | `status`       | `requestId`                                                                                             | `{event: Event \| null}`                          |
 
-A Readback is `{item, version, externalIdentities}`. Read operations do not take source, note or requestId (except status), and do not have a replayed flag. Mutation responses include `replayed`. `version` describes the inventory item snapshot, not the set of external identities. Bindings are additive; one identity can name only one item, and an item may have multiple identities. There is no unbind/reassign operation.
+A Readback is `{item, version, externalIdentities}`. Read operations do not take source, note or requestId (except status), and do not have a replayed flag. Mutation responses include `replayed` and a stable `journalId`; exact replay returns the same ID. `version` describes the inventory item snapshot, not the set of external identities. Bindings are additive; one identity can name only one item, and an item may have multiple identities. There is no unbind/reassign operation.
 
 Name lookup remains a case-insensitive literal substring search over `name` only, capped at 100 results in app-ID order; empty name is invalid. Use it for compatibility and exact identity-oriented discovery.
 
@@ -81,6 +82,8 @@ Name lookup remains a case-insensitive literal substring search over `name` only
 ```
 
 Aliases and multilingual vocabulary improve recall without creating duplicate inventory records or changing containment. Store only factually supported terms in `properties.searchAliases` and `properties.searchVocabulary`. A search-service outage returns `search_unavailable` rather than an empty match set. History returns the first 1000 events in time/ID order, including pending events. Name lookup and history do not paginate; search and children do. Treat lookup/search/history as bounded inspection, not full database export.
+
+Write confirmation is the MongoDB readback in the mutation response; it does not wait for full-text indexing. For search after an agent write, pass its returned `journalId`, for example `{ "op": "search", "query": "water bottles", "journalId": "agent-journal:1" }`. Search waits up to five seconds for the highest contiguous completed agent journal sequence indexed by Meilisearch. It then returns results or HTTP 503 `search_not_caught_up` for a lagging index; retry the same search later. A missing or incomplete journal ID is invalid input. Successful full rebuilds repair index gaps and advance the watermark only through events completed before their item snapshot. This guarantee covers agent-journaled writes, not UI edits or imports. Search without `journalId` has no read-after-write guarantee, and a direct Mongo literal lookup cannot establish absence from fuzzy search.
 
 To create a nested box, supply the returned room app ID as `item.containerId`. Create its contents with `isContainer:false` and the box app ID. Do not send sticker UUIDs as containerId. Either include an existing external identity on create or bind an already existing app record explicitly:
 
@@ -137,13 +140,13 @@ A create's pending event records its deterministic candidate app ID before inser
 
 The unit suite deterministically injects failure after item insertion and before ledger completion, restarts the service over the same store, verifies one item, checks status/get readback, and verifies that same-key and new-key retries cannot insert another item.
 
-Errors are `{ok:false,error:{code,message}}`: 400 `invalid_input`/`limit_exceeded`, 401 `unauthorized`, 403 `forbidden`, 404 `disabled`/`not_found`, 409 `conflict`/`busy`/`indeterminate`, 405 for non-POST, 413 for oversized bodies, 415 for wrong content type, 500 `internal_error`, and 503 `search_unavailable`. After any uncertain network/500 response, inspect status and retry only the identical request; never change keys to work around uncertainty.
+Errors are `{ok:false,error:{code,message}}`: 400 `invalid_input`/`limit_exceeded`, 401 `unauthorized`, 403 `forbidden`, 404 `disabled`/`not_found`, 409 `conflict`/`busy`/`indeterminate`, 405 for non-POST, 413 for oversized bodies, 415 for wrong content type, 500 `internal_error`, and 503 `search_unavailable`/`search_not_caught_up`. After any uncertain network/500 response, inspect status and retry only the identical request; never change keys to work around uncertainty.
 
 ## Scope and validation
 
 Run focused tests with `node --test scripts/agent-interface.test.mjs` after installing meteor-app dependencies. They transpile and exercise the actual service and HTTP modules with a synthetic in-memory persistence adapter; they do not prove Mongo/Meteor or browser integration. Run `npm run check:type --prefix meteor-app` and targeted ESLint/Prettier checks for the production files. The [independent acceptance suite](../tests/acceptance/README.md) exercises the Mongo adapter and UI against a fresh disposable Meteor database. It passed the synthetic townhouse scenario on 2026-09-08; this does not establish deployment or personal-database readiness.
 
-The API excludes deletion, attachment ingestion, property editing and tag renaming/moving/deletion, changing an item's container flag, batch transactions, external registry validation, and journal synchronization. Existing CRUD/import/export behavior is unchanged. The auxiliary collections are not currently included in inventory exports/backups by app code; back up Mongo collections together. Restoring only inventory items loses replay/history/binding state and is not a supported agent recovery procedure.
+The API excludes deletion, attachment ingestion, property editing and tag renaming/moving/deletion, changing an item's container flag, batch transactions, external registry validation, and synchronization for non-agent writes. Existing CRUD/import/export behavior is unchanged. The auxiliary collections are not currently included in inventory exports/backups by app code; back up Mongo collections together. Restoring only inventory items loses replay/history/binding state and is not a supported agent recovery procedure.
 
 The writer lock covers agent calls only. Existing UI/import writers can still race hierarchy validation, delete parent records, or make other changes outside this interface. Atomic item preconditions protect the corrected item's snapshot; they do not make an entire hierarchy transactionally consistent. Before real-data operation, integration owners must assess those limitations, independent acceptance results, backup coverage, and the manual recovery path. This v1 implementation does not establish whole-system or household-intake readiness.
 
@@ -199,26 +202,26 @@ ownership column or person model is introduced. Names remain globally unique
 (case-insensitive), including across parents. Discover an existing name before
 creating it. Names are trimmed at creation; regex punctuation is treated literally.
 
-- `createTag`: mutation with requestId/source/note and `tag: {name, parentTagId?}`.
-  Omit parentTagId or use the empty string for a root. Returns `{tag, version}`.
-  Stable candidate IDs and `afterTag` snapshots are retained in the existing
-  agent ledger; exact replay returns the original tag snapshot. For an interrupted
-  creation, inspect `status` then `getTag` using the event's `tagId`. The same
-  conservative writer-lock and manual recovery rules apply as for items.
-- `getTag`: `{op:"getTag", tagId}` returns `{tag, version}`.
-- `tags`: optional `parentTagId`, `name`, `after`, `limit`. Parent omitted searches
-  all tags; empty string selects roots. Name is a literal case-insensitive
-  substring. Returns `{tags:[{tag,version}], nextCursor}`. Continue with identical
-  filters until nextCursor is null. Default/max page size 100, sorted by ID.
-- `taggedItems`: required `tagId`, optional `after`/`limit`; returns paginated
-  `{items:[Readback], nextCursor}`. Matches only explicitly assigned tag IDs.
-  It does not implicitly include child tags or items inside tagged containers.
-- Item `create.item.tagIds` and `update.changes.tagIds` accept up to 100 unique
-  existing tag IDs. An update replaces the whole list; read first, preserve other
-  tags, and supply expectedVersion. An empty list removes all assignments.
-  Assignment/removal uses the existing conditional item write and before/after
-  history. Missing tags, duplicate IDs, malformed input and stale item versions
-  are rejected before mutation. Omission leaves tags unchanged on update.
+-   `createTag`: mutation with requestId/source/note and `tag: {name, parentTagId?}`.
+    Omit parentTagId or use the empty string for a root. Returns `{tag, version}`.
+    Stable candidate IDs and `afterTag` snapshots are retained in the existing
+    agent ledger; exact replay returns the original tag snapshot. For an interrupted
+    creation, inspect `status` then `getTag` using the event's `tagId`. The same
+    conservative writer-lock and manual recovery rules apply as for items.
+-   `getTag`: `{op:"getTag", tagId}` returns `{tag, version}`.
+-   `tags`: optional `parentTagId`, `name`, `after`, `limit`. Parent omitted searches
+    all tags; empty string selects roots. Name is a literal case-insensitive
+    substring. Returns `{tags:[{tag,version}], nextCursor}`. Continue with identical
+    filters until nextCursor is null. Default/max page size 100, sorted by ID.
+-   `taggedItems`: required `tagId`, optional `after`/`limit`; returns paginated
+    `{items:[Readback], nextCursor}`. Matches only explicitly assigned tag IDs.
+    It does not implicitly include child tags or items inside tagged containers.
+-   Item `create.item.tagIds` and `update.changes.tagIds` accept up to 100 unique
+    existing tag IDs. An update replaces the whole list; read first, preserve other
+    tags, and supply expectedVersion. An empty list removes all assignments.
+    Assignment/removal uses the existing conditional item write and before/after
+    history. Missing tags, duplicate IDs, malformed input and stale item versions
+    are rejected before mutation. Omission leaves tags unchanged on update.
 
 For a bedroom occupant, create or resolve `Occupant`, then `Xingchen` beneath it,
 then apply the person's leaf tag to the room. `Owner` would be a separate meaning;
