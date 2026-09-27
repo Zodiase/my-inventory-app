@@ -26,3 +26,17 @@ Prefer an automated smoke test for the full shell so regressions fail determinis
   reactive updates, real application routing, and complete user workflows.
 - Do not duplicate every assertion across both layers. Prove detailed UI states in Storybook,
   then keep app tests focused on the backend boundary and critical end-to-end path.
+
+## Design and code review priorities
+
+- Start with the stated requirement and acceptance criteria. Identify a concrete failure path
+  before calling an edge case a defect or a merge blocker.
+- Move quickly and accept bounded, recoverable imperfections. Do not require speculative
+  hardening or exhaustive tests when a focused check establishes the requested behavior.
+- Treat a plausible path to irreversible data loss, an unintended mutation of another record,
+  or a silent wrong identity or location as a blocker. A failed operation is recoverable only
+  when the affected data and intended action can be identified and repaired from retained
+  evidence; merely returning an error does not establish recoverability.
+- For other data risks, state what could change, how the failure would be detected, what
+  evidence survives, and how it would be repaired. Recommend the smallest safeguard or test
+  that closes a material gap. Distinguish requirement gaps from optional follow-up work.
