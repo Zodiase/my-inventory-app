@@ -212,7 +212,6 @@ export class MeilisearchInventoryClient {
                 attributesToRetrieve: SEARCH_RESULT_ATTRIBUTES,
                 attributesToHighlight: ['*'],
                 showRankingScore: true,
-                sort: ['id:asc'],
             }),
         });
         return {

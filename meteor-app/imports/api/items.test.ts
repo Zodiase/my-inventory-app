@@ -5,6 +5,7 @@ import { Random } from 'meteor/random';
 
 import type InventoryItem from '/imports/model/InventoryItem';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
+import type { SearchFragment } from '/imports/model/SearchFragment';
 import { registerInventorySearchProvider } from '/imports/search/InventorySearchProvider';
 import type NoId from '/imports/utility/NoId';
 
@@ -204,6 +205,19 @@ describe('items', function () {
     });
 
     describe('ranked inventory search', function () {
+        it('rejects malformed runtime fragments with a stable validation error', async function () {
+            await assert.rejects(
+                async () =>
+                    await searchInventory([
+                        { type: 'text', value: 42 } as unknown as Extract<SearchFragment, { type: 'text' }>,
+                    ]),
+                (error: unknown) =>
+                    error instanceof Meteor.Error &&
+                    error.error === 'invalid-search-fragments' &&
+                    (error.reason ?? '').includes('value must be a string')
+            );
+        });
+
         it('returns no results for whitespace-only text without querying the search service', async function () {
             await createTestItemDirect('Should not be returned', false);
             let providerCalls = 0;

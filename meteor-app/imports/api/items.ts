@@ -26,6 +26,69 @@ export type { InventoryItem } from '/imports/model/InventoryItem';
 const logger = createLogger(module);
 const MAX_CONTAINER_SUBSCRIPTION_IDS = 100;
 const SEARCH_CANDIDATE_PAGE_SIZE = 1000;
+const PROPERTY_SEARCH_FIELDS = new Set([
+    'serialNumber',
+    'make',
+    'model',
+    'purchaseFrom',
+    'purchasePrice',
+    'marketValue',
+    'condition',
+]);
+
+const invalidSearchFragments = (reason: string): never => {
+    throw new Meteor.Error('invalid-search-fragments', reason);
+};
+
+/** Reject malformed runtime values before the public search methods inspect their fields. */
+function validateSearchFragments(value: unknown): asserts value is SearchFragment[] {
+    if (!Array.isArray(value)) {
+        throw new Meteor.Error('invalid-search-fragments', 'Search fragments must be an array.');
+    }
+    const fragments: unknown[] = value;
+
+    fragments.forEach((fragment: unknown, index: number) => {
+        if (typeof fragment !== 'object' || fragment === null) {
+            invalidSearchFragments(`Search fragment ${index} must be an object.`);
+        }
+
+        const candidate = fragment as Record<string, unknown>;
+        switch (candidate.type) {
+            case 'name':
+            case 'text':
+                if (typeof candidate.value !== 'string') {
+                    invalidSearchFragments(`Search fragment ${index} value must be a string.`);
+                }
+                break;
+            case 'tagInclude':
+            case 'tagExclude':
+                if (!Array.isArray(candidate.tagIds) || candidate.tagIds.some((tagId) => typeof tagId !== 'string')) {
+                    invalidSearchFragments(`Search fragment ${index} tagIds must be an array of strings.`);
+                }
+                break;
+            case 'containerType':
+                if (candidate.value !== 'all' && candidate.value !== 'containers' && candidate.value !== 'items') {
+                    invalidSearchFragments(`Search fragment ${index} has an invalid item type.`);
+                }
+                break;
+            case 'containerScope':
+                if (candidate.containerRootId !== null && typeof candidate.containerRootId !== 'string') {
+                    invalidSearchFragments(`Search fragment ${index} containerRootId must be a string or null.`);
+                }
+                break;
+            case 'property':
+                if (typeof candidate.field !== 'string' || !PROPERTY_SEARCH_FIELDS.has(candidate.field)) {
+                    invalidSearchFragments(`Search fragment ${index} has an invalid property field.`);
+                }
+                if (typeof candidate.value !== 'string' && typeof candidate.value !== 'number') {
+                    invalidSearchFragments(`Search fragment ${index} property value must be a string or number.`);
+                }
+                break;
+            default:
+                invalidSearchFragments(`Search fragment ${index} has an unsupported type.`);
+        }
+    });
+}
 
 const scheduleSearchSync = (operation: 'upsert' | 'delete', itemId: string): void => {
     const request = operation === 'upsert' ? syncInventorySearchUpsert(itemId) : syncInventorySearchDelete(itemId);
@@ -460,9 +523,7 @@ export const getItemPath = async (itemId: string): Promise<InventoryItem[]> => {
  * ```
  */
 export const searchItems = async (fragments: SearchFragment[]): Promise<InventoryItem[]> => {
-    if (!Array.isArray(fragments)) {
-        throw new Error('Search fragments must be an array');
-    }
+    validateSearchFragments(fragments);
     if (fragments.some((fragment) => fragment.type === 'text')) {
         throw new Error('Text fragments require ranked searchInventory retrieval');
     }
@@ -497,7 +558,7 @@ export const searchItems = async (fragments: SearchFragment[]): Promise<Inventor
 
 /** Run ranked natural-language retrieval and resolve every hit from authoritative MongoDB state. */
 export const searchInventory = async (fragments: SearchFragment[]): Promise<InventorySearchResult[]> => {
-    if (!Array.isArray(fragments)) throw new Error('Search fragments must be an array');
+    validateSearchFragments(fragments);
 
     const textFragments = fragments.filter(
         (fragment): fragment is Extract<SearchFragment, { type: 'text' }> => fragment.type === 'text'

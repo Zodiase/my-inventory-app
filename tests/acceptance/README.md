@@ -13,7 +13,7 @@ npx playwright install chromium
 npx playwright test --config tests/acceptance/playwright.config.ts
 ```
 
-The dedicated configuration starts Meteor on `127.0.0.1:3287` with a newly allocated temporary `METEOR_LOCAL_DIR` for each invocation. It removes inherited Mongo connection variables, never reuses an existing server, supplies a fictional test token, and does not enable the database reset endpoint. An occupied port causes failure. Do not substitute the general E2E config or an existing personal server. Temporary directories use the `inventory-agent-acceptance-` prefix and may be removed after the spawned server exits if no longer needed for diagnosis.
+The dedicated configuration starts Meteor on `127.0.0.1:3287` with a newly allocated temporary `METEOR_LOCAL_DIR` for each invocation. It also starts a disposable, loopback-only Meilisearch container on port `7787`; Docker must be available. To use another disposable search service instead, set `INVENTORY_SEARCH_URL`, `INVENTORY_SEARCH_API_KEY`, and `INVENTORY_SEARCH_INDEX` together. It removes inherited Mongo connection variables, never reuses an existing server, supplies a fictional test token, and does not enable the database reset endpoint. An occupied port causes failure. Do not substitute the general E2E config or an existing personal server. Temporary directories use the `inventory-agent-acceptance-` prefix and may be removed after the spawned server exits if no longer needed for diagnosis.
 
 Discovery-only check (no server or database):
 
