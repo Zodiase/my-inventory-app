@@ -1,5 +1,7 @@
 /** Runtime-independent identity metadata and printed-label formatting for UI consumers. */
 export interface InventoryIdentity {
+    /** Deterministic key derived from the external identity namespace and value. */
+    _id?: string;
     itemId: string;
     identity: {
         namespace: string;
