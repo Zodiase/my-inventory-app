@@ -1,13 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 
 import { DEFAULT_CONTAINER_PATH_SEPARATOR } from '/imports/api/importExport/pathResolvers';
-import { InventoryItemsCollection } from '/imports/api/items';
+import { activeInventoryItemSelector, InventoryItemsCollection } from '/imports/api/items';
 import { TagsCollection } from '/imports/api/tags';
 import { stringifyCsv, type ExportRow } from '/imports/model/importExport/csv';
 import { serializeJson } from '/imports/model/importExport/json';
 
 const buildCsvRows = async (): Promise<ExportRow[]> => {
-    const items = await InventoryItemsCollection.find({}).fetchAsync();
+    const items = await InventoryItemsCollection.find(activeInventoryItemSelector()).fetchAsync();
     const tags = await TagsCollection.find({}).fetchAsync();
 
     const containerMap = new Map(items.filter((i) => i.isContainer).map((i) => [i._id, i]));
@@ -84,7 +84,7 @@ const buildCsvRows = async (): Promise<ExportRow[]> => {
 };
 
 export const exportJson = async (): Promise<string> => {
-    const items = await InventoryItemsCollection.find({}).fetchAsync();
+    const items = await InventoryItemsCollection.find(activeInventoryItemSelector()).fetchAsync();
     const tags = await TagsCollection.find({}).fetchAsync();
     return serializeJson({ items, tags });
 };

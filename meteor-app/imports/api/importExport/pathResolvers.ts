@@ -1,6 +1,6 @@
 import { Random } from 'meteor/random';
 
-import { InventoryItemsCollection } from '/imports/api/items';
+import { activeInventoryItemSelector, InventoryItemsCollection } from '/imports/api/items';
 import { TagsCollection } from '/imports/api/tags';
 import type InventoryItem from '/imports/model/InventoryItem';
 import type TagRecord from '/imports/model/TagRecord';
@@ -96,11 +96,13 @@ export const createResolverSession = (options: ResolverSessionOptions = {}): Res
             return cached;
         }
 
-        const existing = await InventoryItemsCollection.findOneAsync({
-            name,
-            isContainer: true,
-            containerId: typeof parentContainerId === 'undefined' ? { $in: [undefined, ''] } : parentContainerId,
-        });
+        const existing = await InventoryItemsCollection.findOneAsync(
+            activeInventoryItemSelector({
+                name,
+                isContainer: true,
+                containerId: typeof parentContainerId === 'undefined' ? { $in: [undefined, ''] } : parentContainerId,
+            })
+        );
 
         if (typeof existing !== 'undefined') {
             containerCache.set(key, existing._id);

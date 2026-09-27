@@ -22,14 +22,20 @@ const { createAgentService, version, identityKey, AgentError } = require(join(ou
 const { createAgentHandler } = require(join(output, 'http.js'));
 process.on('exit', () => rmSync(output, { recursive: true, force: true }));
 
-function fixture() {
+function fixture(options = {}) {
     const items = new Map(),
         tags = new Map(),
         events = new Map(),
-        bindings = new Map();
+        bindings = new Map(),
+        authorizations = new Map();
     let lock,
-        failComplete = false;
+        failComplete = false,
+        traceNumber = 0;
     const copy = structuredClone;
+    const serviceOptions = {
+        ...options,
+        traceId: options.traceId ?? (() => `delete-trace-${++traceNumber}`),
+    };
     const backend = {
         getTag: async (id) => copy(tags.get(id)),
         tags: async (parent, name, after, limit) =>
@@ -47,7 +53,12 @@ function fixture() {
         taggedItems: async (tagId, after, limit) =>
             copy(
                 [...items.values()]
-                    .filter((i) => i.tagIds.includes(tagId) && (after === undefined || i._id > after))
+                    .filter(
+                        (i) =>
+                            i.deletedAt === undefined &&
+                            i.tagIds.includes(tagId) &&
+                            (after === undefined || i._id > after)
+                    )
                     .sort((a, b) => (a._id < b._id ? -1 : 1))
                     .slice(0, limit)
             ),
@@ -63,12 +74,22 @@ function fixture() {
             });
             return id;
         },
-        get: async (id) => copy(items.get(id)),
-        search: async (name) => copy([...items.values()].filter((i) => i.name.includes(name))),
+        get: async (id) => {
+            const item = items.get(id);
+            return item?.deletedAt === undefined ? copy(item) : undefined;
+        },
+        getIncludingDeleted: async (id) => copy(items.get(id)),
+        search: async (name) =>
+            copy([...items.values()].filter((i) => i.deletedAt === undefined && i.name.includes(name))),
         children: async (parent, after, limit) =>
             copy(
                 [...items.values()]
-                    .filter((i) => (i.containerId ?? null) === parent && (after === undefined || i._id > after))
+                    .filter(
+                        (i) =>
+                            i.deletedAt === undefined &&
+                            (i.containerId ?? null) === parent &&
+                            (after === undefined || i._id > after)
+                    )
                     .sort((a, b) => (a._id < b._id ? -1 : a._id > b._id ? 1 : 0))
                     .slice(0, limit)
             ),
@@ -91,6 +112,27 @@ function fixture() {
         complete: async (event) => {
             if (failComplete) throw Error('injected post-write crash');
             events.set(event._id, copy(event));
+        },
+        createDeleteAuthorization: async (authorization) => {
+            assert(!authorizations.has(authorization._id));
+            authorizations.set(authorization._id, copy(authorization));
+        },
+        deleteAuthorization: async (authorizationHash) => copy(authorizations.get(authorizationHash)),
+        claimDeleteAuthorization: async (authorizationHash, confirmationRequestId, attemptedAt) => {
+            let authorization = authorizations.get(authorizationHash);
+            if (authorization === undefined) return undefined;
+            if (authorization.consumedAt === undefined) {
+                authorization = { ...authorization, consumedAt: attemptedAt, confirmationRequestId };
+                authorizations.set(authorizationHash, authorization);
+            }
+            return copy(authorization);
+        },
+        finishDeleteAuthorization: async (authorizationHash, confirmationRequestId, terminal) => {
+            const authorization = authorizations.get(authorizationHash);
+            if (authorization?.confirmationRequestId !== confirmationRequestId) return false;
+            if (authorization.completedAt === undefined)
+                authorizations.set(authorizationHash, { ...authorization, ...copy(terminal) });
+            return true;
         },
         validate: async (request) => {
             if (request.op === 'createTag') {
@@ -132,6 +174,25 @@ function fixture() {
             items.set(before._id, { ...before, containerId: parent ?? undefined, modifiedAt: new Date() });
             return true;
         },
+        setLocked: async (before, locked) => {
+            if (version(items.get(before._id)) !== version(before)) return false;
+            items.set(before._id, { ...before, locked, modifiedAt: new Date() });
+            return true;
+        },
+        logicalDelete: async (before, metadata, deletedAt) => {
+            if (version(items.get(before._id)) !== version(before)) return false;
+            items.set(before._id, {
+                ...before,
+                deletedAt,
+                deletedByRequestId: metadata.requestId,
+                deletedBy: metadata.source,
+                ...(metadata.note === undefined ? {} : { deletionNote: metadata.note }),
+                modifiedAt: deletedAt,
+            });
+            return true;
+        },
+        activeChildCount: async (itemId) =>
+            [...items.values()].filter((item) => item.deletedAt === undefined && item.containerId === itemId).length,
         bind: async (identity, itemId) => {
             const old = bindings.get(identityKey(identity));
             assert(!old || old.itemId === itemId);
@@ -139,13 +200,18 @@ function fixture() {
         },
     };
     return {
-        execute: createAgentService(backend),
+        execute: createAgentService(backend, serviceOptions),
         items,
         tags,
         events,
+        authorizations,
         backend,
+        serviceOptions,
         crash: () => {
             failComplete = true;
+        },
+        recover: () => {
+            failComplete = false;
         },
     };
 }
@@ -157,6 +223,30 @@ const create = (requestId, name, extra = {}) => ({
     item: { name, isContainer: false, ...extra },
 });
 const rejects = async (action, code) => await assert.rejects(action, (error) => error.code === code);
+const prepareDelete = async (execute, readback, extra = {}) =>
+    await execute({
+        op: 'prepareDelete',
+        source,
+        itemId: readback.item._id,
+        expectedVersion: readback.version,
+        ...extra,
+    });
+const confirmDelete = async (execute, preparation, overrides = {}) =>
+    await execute({
+        op: 'confirmDelete',
+        deletionAuthorizationId: preparation.deletionAuthorizationId,
+        itemId: preparation.itemId,
+        expectedVersion: preparation.expectedVersion,
+        ...overrides,
+    });
+const getDeleteResult = async (execute, preparation, overrides = {}) =>
+    await execute({
+        op: 'getDeleteResult',
+        deletionAuthorizationId: preparation.deletionAuthorizationId,
+        itemId: preparation.itemId,
+        expectedVersion: preparation.expectedVersion,
+        ...overrides,
+    });
 
 test('nested items, source and visible notes, identity lookup, correction and move history', async () => {
     const f = fixture();
@@ -259,6 +349,168 @@ test('crash after inventory mutation before ledger completion stays indeterminat
     assert.equal(f.items.size, 1);
 });
 
+test('two-step deletion retains the record, identities and history while hiding ordinary reads', async () => {
+    const instant = new Date('2026-09-24T12:00:00.000Z');
+    const f = fixture({ now: () => new Date(instant), random: (size) => Buffer.alloc(size, 7) });
+    const created = (await f.execute(create('delete-create', 'Retained fixture'))).result;
+    const identity = { namespace: 'synthetic-sticker', value: 'retained-identity' };
+    const bound = (
+        await f.execute({
+            op: 'bindIdentity',
+            requestId: 'delete-bind',
+            source,
+            itemId: created.item._id,
+            expectedVersion: created.version,
+            externalIdentity: identity,
+        })
+    ).result;
+    const prepared = await prepareDelete(f.execute, bound, { note: 'Synthetic retirement' });
+    assert.equal(prepared.result.expiresAt.getTime() - instant.getTime(), 5 * 60 * 1000);
+    assert.match(prepared.requestId, /^delete-trace-/);
+    assert.equal(JSON.stringify([...f.events.values()]).includes(prepared.result.deletionAuthorizationId), false);
+
+    const confirmed = await confirmDelete(f.execute, prepared.result);
+    assert.notEqual(confirmed.requestId, prepared.requestId);
+    assert.equal(confirmed.result.item.deletedByRequestId, confirmed.requestId);
+    assert.deepEqual(confirmed.result.item.deletedBy, source);
+    assert.equal(confirmed.result.item.deletionNote, 'Synthetic retirement');
+    assert.equal(f.items.size, 1);
+    await rejects(() => f.execute({ op: 'get', itemId: created.item._id }), 'not_found');
+    assert.deepEqual((await f.execute({ op: 'lookup', name: 'Retained' })).result.items, []);
+    assert.deepEqual((await f.execute({ op: 'lookup', externalIdentity: identity })).result.items, []);
+    const audit = await f.execute({ op: 'auditGet', itemId: created.item._id });
+    assert.deepEqual(audit.result.externalIdentities, [identity]);
+    assert.equal(audit.result.item.deletedAt.toISOString(), instant.toISOString());
+    const initialHistory = (await f.execute({ op: 'history', itemId: created.item._id })).result;
+    const authorizationHash = [...f.authorizations.keys()][0];
+    assert.equal(JSON.stringify(initialHistory).includes(prepared.result.deletionAuthorizationId), false);
+    assert.equal(JSON.stringify(initialHistory).includes(authorizationHash), false);
+    const replay = await confirmDelete(f.execute, prepared.result);
+    assert.equal(replay.replayed, true);
+    assert.notEqual(replay.requestId, confirmed.requestId);
+    const result = await getDeleteResult(f.execute, prepared.result);
+    assert.equal(result.result.status, 'completed');
+    assert.deepEqual(result.result.result, confirmed.result);
+    assert.notEqual(result.requestId, replay.requestId);
+    assert.equal((await f.execute({ op: 'history', itemId: created.item._id })).result.events.length, 6);
+});
+
+test('delete authorization expires at the exact five-minute boundary and a new preparation remains independent', async () => {
+    let instant = new Date('2026-09-24T12:00:00.000Z');
+    let authorizationSeed = 10;
+    const options = { now: () => new Date(instant), random: (size) => Buffer.alloc(size, ++authorizationSeed) };
+    const f = fixture(options);
+    const first = (await f.execute(create('expiry-create', 'Expiry fixture'))).result;
+    const prepared = await prepareDelete(f.execute, first);
+    instant = new Date('2026-09-24T12:05:00.000Z');
+    await rejects(() => confirmDelete(f.execute, prepared.result), 'authorization_expired');
+    assert.equal(f.items.get(first.item._id).deletedAt, undefined);
+    assert.equal((await getDeleteResult(f.execute, prepared.result)).result.status, 'failed');
+
+    const refreshed = await prepareDelete(f.execute, first);
+    assert.notEqual(refreshed.result.deletionAuthorizationId, prepared.result.deletionAuthorizationId);
+    assert.equal(refreshed.result.expiresAt.toISOString(), '2026-09-24T12:10:00.000Z');
+    const refreshedConfirmation = await confirmDelete(f.execute, refreshed.result);
+    assert.equal(f.items.get(first.item._id).deletedByRequestId, refreshedConfirmation.requestId);
+
+    instant = new Date('2026-09-24T13:00:00.000Z');
+    const second = (await f.execute(create('valid-create', 'Valid fixture'))).result;
+    const valid = await prepareDelete(f.execute, second);
+    instant = new Date('2026-09-24T13:04:59.999Z');
+    await confirmDelete(f.execute, valid.result);
+    assert(instant.getTime() === f.items.get(second.item._id).deletedAt.getTime());
+});
+
+test('lost preparation response is recovered by preparing again with independent authorizations', async () => {
+    let authorizationSeed = 20;
+    const f = fixture({ random: (size) => Buffer.alloc(size, ++authorizationSeed) });
+    const created = (await f.execute(create('rotation-create', 'Rotation fixture'))).result;
+    const first = await prepareDelete(f.execute, created, { note: 'Retire fixture' });
+    const second = await prepareDelete(f.execute, created, { note: 'Retire fixture' });
+    assert.notEqual(first.result.deletionAuthorizationId, second.result.deletionAuthorizationId);
+    assert.notEqual(first.requestId, second.requestId);
+    const confirmed = await confirmDelete(f.execute, second.result);
+    assert.equal(confirmed.result.item._id, created.item._id);
+    await rejects(() => confirmDelete(f.execute, first.result), 'conflict');
+});
+
+test('successful confirmation replays before and after authorization expiry but rejects a mismatched token', async () => {
+    let instant = new Date('2026-09-24T12:00:00.000Z');
+    const f = fixture({ now: () => new Date(instant), random: (size) => Buffer.alloc(size, 31) });
+    const created = (await f.execute(create('completed-create', 'Completed fixture'))).result;
+    const prepared = await prepareDelete(f.execute, created);
+    const confirmation = await confirmDelete(f.execute, prepared.result);
+    const firstReplay = await confirmDelete(f.execute, prepared.result);
+    assert.equal(firstReplay.replayed, true);
+    assert.notEqual(firstReplay.requestId, confirmation.requestId);
+    instant = new Date('2026-09-24T12:30:00.000Z');
+    const replay = await confirmDelete(f.execute, prepared.result);
+    assert.equal(replay.replayed, true);
+    assert.deepEqual(replay.result, confirmation.result);
+    await rejects(
+        () => confirmDelete(f.execute, prepared.result, { deletionAuthorizationId: 'mismatched-token' }),
+        'conflict'
+    );
+    assert.equal(f.items.size, 1);
+});
+
+test('wrong binding, stale version, locks and gained children consume authorization without deletion', async () => {
+    let authorizationSeed = 13;
+    const f = fixture({ random: (size) => Buffer.alloc(size, authorizationSeed++) });
+    const wrong = (await f.execute(create('wrong-create', 'Wrong binding fixture'))).result;
+    const wrongPrepared = await prepareDelete(f.execute, wrong);
+    await rejects(() => confirmDelete(f.execute, wrongPrepared.result, { itemId: 'wrong-item' }), 'conflict');
+    await rejects(() => confirmDelete(f.execute, wrongPrepared.result), 'conflict');
+    assert.equal(f.items.get(wrong.item._id).deletedAt, undefined);
+
+    const stale = (await f.execute(create('stale-create', 'Stale fixture'))).result;
+    const stalePrepared = await prepareDelete(f.execute, stale);
+    f.items.set(stale.item._id, { ...f.items.get(stale.item._id), description: 'Concurrent change' });
+    await rejects(() => confirmDelete(f.execute, stalePrepared.result), 'conflict');
+
+    const locked = (await f.execute(create('locked-create', 'Locked fixture'))).result;
+    const lockedPrepared = await prepareDelete(f.execute, locked);
+    f.items.set(locked.item._id, { ...f.items.get(locked.item._id), locked: true });
+    await rejects(() => confirmDelete(f.execute, lockedPrepared.result), 'conflict');
+
+    const container = (await f.execute(create('container-create', 'Container', { isContainer: true }))).result;
+    const childPrepared = await prepareDelete(f.execute, container);
+    await f.execute(create('late-child', 'Late child', { containerId: container.item._id }));
+    await rejects(() => confirmDelete(f.execute, childPrepared.result), 'conflict');
+    assert.equal(f.items.get(container.item._id).deletedAt, undefined);
+});
+
+test('exact delete confirmation recovers an interrupted ledger completion without a second mutation', async () => {
+    const options = { random: (size) => Buffer.alloc(size, 17) };
+    const f = fixture(options);
+    const created = (await f.execute(create('recovery-create', 'Recovery fixture'))).result;
+    const prepared = await prepareDelete(f.execute, created);
+    f.crash();
+    await rejects(() => confirmDelete(f.execute, prepared.result), 'indeterminate');
+    const retained = f.items.get(created.item._id);
+    assert.match(retained.deletedByRequestId, /^delete-trace-/);
+    f.recover();
+    const restarted = createAgentService(f.backend, f.serviceOptions);
+    const recovered = await confirmDelete(restarted, prepared.result);
+    assert.equal(recovered.replayed, true);
+    assert.equal(f.items.size, 1);
+    assert.equal((await getDeleteResult(restarted, prepared.result)).result.status, 'completed');
+});
+
+test('concurrent delete confirmations produce one tombstone and one terminal ledger result', async () => {
+    const f = fixture({ random: (size) => Buffer.alloc(size, 19) });
+    const created = (await f.execute(create('concurrent-delete-create', 'Concurrent delete fixture'))).result;
+    const prepared = await prepareDelete(f.execute, created);
+    const outcomes = await Promise.allSettled([
+        confirmDelete(f.execute, prepared.result),
+        confirmDelete(f.execute, prepared.result),
+    ]);
+    assert(outcomes.some((outcome) => outcome.status === 'fulfilled'));
+    assert.equal(f.items.size, 1);
+    assert.match(f.items.get(created.item._id).deletedByRequestId, /^delete-trace-/);
+    assert.equal((await getDeleteResult(f.execute, prepared.result)).result.status, 'completed');
+});
+
 test('invalid parent, cycles and malformed input do not reserve requests', async () => {
     const f = fixture();
     const root = (await f.execute(create('root', 'Root', { isContainer: true }))).result;
@@ -279,6 +531,21 @@ test('invalid parent, cycles and malformed input do not reserve requests', async
     await rejects(() => f.execute({ op: 'lookup', name: '' }), 'invalid_input');
     await rejects(() => f.execute({ ...create('unknown', 'Bad'), extra: true }), 'invalid_input');
     await rejects(() => f.execute({ ...create('source', 'Bad'), source: { system: 'test' } }), 'invalid_input');
+    await rejects(
+        () => f.execute({ ...create('client-id', 'Bad'), clientRequestId: 'future-contract' }),
+        'invalid_input'
+    );
+    await rejects(
+        () =>
+            f.execute({
+                op: 'prepareDelete',
+                requestId: 'caller-must-not-supply',
+                source,
+                itemId: root.item._id,
+                expectedVersion: root.version,
+            }),
+        'invalid_input'
+    );
     assert.equal(f.events.size, 2);
 });
 
@@ -299,6 +566,7 @@ async function http({
     headers = {},
     body = '{"op":"lookup","name":"Fixture"}',
     method = 'POST',
+    execute = async () => ({ ok: true, result: 'synthetic' }),
 } = {}) {
     const req = Readable.from([Buffer.from(body)]);
     req.socket = { remoteAddress: address };
@@ -307,7 +575,7 @@ async function http({
     let status, response;
     await createAgentHandler(
         token,
-        async () => ({ ok: true, result: 'synthetic' }),
+        execute,
         allowMeteorDevelopmentProxy
     )(req, {
         writeHead: (code) => {
@@ -330,6 +598,20 @@ test('HTTP requires opt-in, bearer auth and loopback with no browser/proxy heade
     assert.equal((await http({ method: 'GET' })).status, 405);
     assert.equal((await http({ body: 'invalid' })).status, 400);
     assert.equal((await http({ body: ' '.repeat(32769) })).status, 413);
+    assert.deepEqual(
+        (
+            await http({
+                execute: async () => {
+                    throw new AgentError('conflict', 'Synthetic deletion failure', 'delete-trace-error');
+                },
+            })
+        ).response,
+        {
+            ok: false,
+            requestId: 'delete-trace-error',
+            error: { code: 'conflict', message: 'Synthetic deletion failure' },
+        }
+    );
 });
 
 test('Meteor dev proxy accepts one verified loopback hop, retaining auth and production isolation', async () => {

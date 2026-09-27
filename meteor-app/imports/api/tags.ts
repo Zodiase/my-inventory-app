@@ -6,7 +6,7 @@ import extend from 'lodash/extend';
 import { Meteor } from 'meteor/meteor';
 import type { Mongo } from 'meteor/mongo';
 
-import { InventoryItemsCollection } from '/imports/api/items';
+import { activeInventoryItemSelector, InventoryItemsCollection } from '/imports/api/items';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import type TagRecord from '/imports/model/TagRecord';
 import createLogger from '/imports/utility/Logger';
@@ -345,7 +345,11 @@ export const watchAndFixMissingPath = async (): Promise<true> => {
  */
 export const deleteTag = async (tagId: string): Promise<boolean> => {
     // First, remove this tag from all items
-    await InventoryItemsCollection.updateAsync({ tagIds: tagId }, { $pull: { tagIds: tagId } }, { multi: true });
+    await InventoryItemsCollection.updateAsync(
+        activeInventoryItemSelector({ tagIds: tagId }),
+        { $pull: { tagIds: tagId } },
+        { multi: true }
+    );
 
     // Then delete the tag
     const removed = await TagsCollection.removeAsync(tagId);
@@ -361,7 +365,7 @@ export const deleteTag = async (tagId: string): Promise<boolean> => {
  */
 export const addToItem = async (itemId: string, tagId: string): Promise<boolean> => {
     // Verify item exists
-    const item = await InventoryItemsCollection.findOneAsync({ _id: itemId });
+    const item = await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: itemId }));
     if (typeof item === 'undefined') {
         throw new RecordNotFoundException('Item not found', { _id: itemId });
     }
@@ -373,7 +377,9 @@ export const addToItem = async (itemId: string, tagId: string): Promise<boolean>
     }
 
     // Add tag to item (idempotent - $addToSet only adds if not present)
-    await InventoryItemsCollection.updateAsync({ _id: itemId }, { $addToSet: { tagIds: tagId } });
+    await InventoryItemsCollection.updateAsync(activeInventoryItemSelector({ _id: itemId }), {
+        $addToSet: { tagIds: tagId },
+    });
 
     return true;
 };
@@ -385,8 +391,12 @@ export const addToItem = async (itemId: string, tagId: string): Promise<boolean>
  * @returns true (operation is idempotent)
  */
 export const removeFromItem = async (itemId: string, tagId: string): Promise<boolean> => {
+    if ((await InventoryItemsCollection.findOneAsync(activeInventoryItemSelector({ _id: itemId }))) === undefined)
+        throw new RecordNotFoundException('Item not found', { _id: itemId });
     // Remove tag from item (idempotent - $pull is safe even if tag not present)
-    await InventoryItemsCollection.updateAsync({ _id: itemId }, { $pull: { tagIds: tagId } });
+    await InventoryItemsCollection.updateAsync(activeInventoryItemSelector({ _id: itemId }), {
+        $pull: { tagIds: tagId },
+    });
 
     return true;
 };
@@ -408,7 +418,7 @@ export const removeFromItem = async (itemId: string, tagId: string): Promise<boo
  * ```
  */
 export const getTagUsageCounts = async (): Promise<Record<string, number>> => {
-    const items = await InventoryItemsCollection.find({}).fetchAsync();
+    const items = await InventoryItemsCollection.find(activeInventoryItemSelector()).fetchAsync();
     const counts: Record<string, number> = {};
 
     // Count how many items have each tag

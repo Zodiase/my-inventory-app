@@ -7,6 +7,7 @@ import { Meteor } from 'meteor/meteor';
 import { Attachments } from '/imports/api/attachments';
 // Import specific exports AND register methods via side-effect imports
 import {
+    activeInventoryItemSelector,
     InventoryItemsCollection,
     createInventoryItem,
     // Side-effect: registers createItem, updateItem, deleteItem, etc.
@@ -60,7 +61,7 @@ Meteor.startup(async () => {
     // Preserve demo defaults; persistent household runtimes explicitly disable fixtures.
     const seedSamples = process.env.INVENTORY_SEED_SAMPLE_DATA !== '0';
     const SAMPLE_ITEMS_COUNT = 100;
-    if (seedSamples && (await InventoryItemsCollection.find().countAsync()) === 0) {
+    if (seedSamples && (await InventoryItemsCollection.find(activeInventoryItemSelector()).countAsync()) === 0) {
         for (let i = 1; i <= SAMPLE_ITEMS_COUNT; i++) {
             await createInventoryItem({ name: `Sample item ${i}` });
         }
@@ -78,7 +79,7 @@ Meteor.startup(async () => {
     if (
         seedSamples &&
         Meteor.isDevelopment &&
-        (await InventoryItemsCollection.find({ isContainer: true }).countAsync()) === 0
+        (await InventoryItemsCollection.find(activeInventoryItemSelector({ isContainer: true })).countAsync()) === 0
     ) {
         let createdRecordsCount = 0;
 

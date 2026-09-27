@@ -5,7 +5,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import { createResolverSession, DEFAULT_CONTAINER_PATH_SEPARATOR } from '/imports/api/importExport/pathResolvers';
-import { InventoryItemsCollection, updateInventoryItem } from '/imports/api/items';
+import { activeInventoryItemSelector, InventoryItemsCollection, updateInventoryItem } from '/imports/api/items';
 import { parseCsv } from '/imports/model/importExport/csv';
 import { classify } from '/imports/model/importExport/dedup';
 import type { NormalizedRow } from '/imports/model/importExport/dedup';
@@ -66,7 +66,9 @@ interface ProcessRowContext {
 
 async function processRow(candidate: NormalizedRow, ctx: ProcessRowContext): Promise<void> {
     const { dryRun, report, rowIndex, baseNow, virtualItems, createdItemIds } = ctx;
-    const dbMatches = await InventoryItemsCollection.find({ name: candidate.name }).fetchAsync();
+    const dbMatches = await InventoryItemsCollection.find(
+        activeInventoryItemSelector({ name: candidate.name })
+    ).fetchAsync();
     const virtualMatches = virtualItems.filter((v) => v.name === candidate.name);
     const existingMatches = [...dbMatches, ...virtualMatches];
 

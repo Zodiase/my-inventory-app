@@ -29,6 +29,21 @@ export interface InventoryItem extends CollectionItem {
     /** Dedicated system flag preventing parent changes and deletion. */
     locked?: boolean;
 
+    /** Time this record was logically removed from ordinary inventory use. */
+    deletedAt?: Date;
+
+    /** Durable request identifier that performed the logical deletion. */
+    deletedByRequestId?: string;
+
+    /** Origin of the logical-deletion request for audit and recovery. */
+    deletedBy?: {
+        system: string;
+        reference: string;
+    };
+
+    /** Optional operator explanation retained with the tombstone. */
+    deletionNote?: string;
+
     /**
      * Array of tag IDs applied to this item (many-to-many relationship)
      */
