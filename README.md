@@ -61,9 +61,19 @@ Set `MONGO_ADMIN_BIND_IP` only when the explorer should listen on a specific tru
 The application-owned design for structured physical storage metadata is in
 [`docs/STRUCTURED_STORAGE_METADATA.md`](docs/STRUCTURED_STORAGE_METADATA.md).
 
+The target deletion design uses same-collection logical tombstones; the current
+implementation still physically removes records until that work lands. Moving
+old tombstones to cold storage remains a future measured performance
+optimization. See
+[`docs/LOGICAL_DELETION.md`](docs/LOGICAL_DELETION.md) for the active design,
+agent confirmation protocol, test expectations, and archival roadmap.
+
 ### Local agent interface
 
-See [the agent interface guide](docs/AGENT_INTERFACE.md) for opt-in JSON invocation, external identity binding, replay/correction behavior, and interrupted-write recovery.
+See [the agent interface guide](docs/AGENT_INTERFACE.md) for opt-in JSON
+invocation, external identity binding, replay/correction behavior, and
+interrupted-write recovery. Agent deletion is not exposed in v1; its planned
+two-step protocol follows the linked logical-deletion design.
 
 ### Local QR decoding
 
