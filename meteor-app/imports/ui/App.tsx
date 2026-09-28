@@ -389,25 +389,22 @@ export const App = (): ReactElement => {
     const searchReturnPath = isSearchResultItemDetail
         ? (getCurrentHistoryState() as ItemDetailNavigationState).searchReturnPath
         : undefined;
-    const searchHref =
-        location === '/search'
-            ? currentRoutePath
-            : isContainerRoute && routeContainerId !== undefined
-            ? getSearchUrl({
-                  query: '',
-                  scope: 'scoped',
-                  containerId: routeContainerId,
-                  fragments: [],
-                  submitted: false,
-              })
-            : searchReturnPath ?? '/search';
-
     return (
         <Grommet theme={theme} full>
             <DesignSystemGlobalStyle />
             <AppShell
                 location={location}
-                searchHref={searchHref}
+                searchHref={
+                    isContainerRoute && routeContainerId !== undefined
+                        ? getSearchUrl({
+                              query: '',
+                              scope: 'scoped',
+                              containerId: routeContainerId,
+                              fragments: [],
+                              submitted: false,
+                          })
+                        : searchReturnPath ?? '/search'
+                }
                 headerContent={
                     location !== '/search' && !isSearchResultItemDetail && currentItemsContainerId !== undefined ? (
                         <BreadcrumbTrail

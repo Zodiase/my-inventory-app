@@ -61,8 +61,7 @@ body {
 }
 
 .app-shell-search-link:hover,
-.app-shell-search-link:focus-visible,
-.app-shell-search-link-active {
+.app-shell-search-link:focus-visible {
     background: rgb(255 255 255 / 20%);
 }
 
@@ -91,8 +90,8 @@ body {
     border-radius: 6px;
 }
 
-.app-shell-menu-link:hover,
-.app-shell-menu-link:focus-visible,
+a.app-shell-menu-link:hover,
+a.app-shell-menu-link:focus-visible,
 .app-shell-menu-link-active {
     color: #007aff;
     background: rgb(0 122 255 / 10%);

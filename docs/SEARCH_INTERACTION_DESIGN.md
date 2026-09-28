@@ -14,6 +14,16 @@ context, especially on mobile, without solving a demonstrated workflow need.
 
 - The `/search` shell header is neutral: it must not retain the originating
   container breadcrumb. The search page itself is the active navigation item.
+- The blue-shell Search shortcut is shown on non-search pages and hidden while
+  the current route is `/search` (including scoped search URLs). Search must
+  not expose an active self-link that resets the current query, scope, or
+  filters.
+- Search remains represented in the opened primary-navigation menu as a
+  non-interactive current-page label while the shortcut is hidden. It must not
+  be a `/search` link that normalizes away scoped query state. The menu is the
+  fallback discovery path and current-location cue; the page heading and
+  `aria-current="page"` provide additional semantics. On non-search routes,
+  Search is an ordinary menu link as well as the shell shortcut.
 - Search scope is explicit in the content, for example “Search in Kitchen” or
   “All items”. Scope is not communicated only by the shell breadcrumb.
 - Search launched from a container may default to that container and its
@@ -72,17 +82,21 @@ their navigation must clearly leave search and open the selected container.
 1. Opening search from `/container/:id` enters `/search` in the same tab,
    removes the stale container breadcrumb, and names the active scope in the
    search content.
-2. Search URL state reproduces query, filters, scope, and equivalent results
+2. While on any `/search` URL, the shell Search shortcut is absent; opening
+   the navigation menu exposes Search as a non-interactive current-page label,
+   so there is no action that can reset search state.
+3. Search URL state reproduces query, filters, scope, and equivalent results
    after refresh; Back and Forward restore those states.
-3. Each result is an accessible anchor to `/items/:itemId`. Ordinary click is
+4. Each result is an accessible anchor to `/items/:itemId`. Ordinary click is
    same-tab, while modifier-click and context-menu new-tab behavior remain
    available.
-4. Item detail provides a search return path, and returning restores the
+5. Item detail provides a search return path, and returning restores the
    prior search state and preferably the prior result scroll position.
-5. Long result sets have one intentional results scroll region at desktop,
+6. Long result sets have one intentional results scroll region at desktop,
    iPhone, and iPad widths, with no header/control overlap or competing body
    scroll.
-6. Storybook covers neutral shell, global/scoped, idle/loading/empty/results,
+7. Storybook covers neutral shell, shortcut-hidden/menu-visible search,
+   global/scoped, idle/loading/empty/results,
    anchor semantics, responsive layout, focus, and scroll states with mock
    data. One narrow real-app acceptance test covers search-to-detail and Back.
 
@@ -95,4 +109,3 @@ their navigation must clearly leave search and open the selected container.
   sufficient.
 - Keep any desktop split/detail experiment separate from the initial route and
   anchor contract.
-

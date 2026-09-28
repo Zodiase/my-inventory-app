@@ -17,14 +17,25 @@ for (const viewport of [
 ]) {
     test(`complete search page states at ${viewport.name} width`, async ({ page }, testInfo) => {
         await page.setViewportSize({ width: viewport.width, height: viewport.height });
+        const pageErrors: string[] = [];
+        page.on('pageerror', (error) => pageErrors.push(error.message));
         for (const state of states) {
             await page.goto(`/iframe.html?id=ui-searchpagelayout--${state.name}&viewMode=story`);
             await expect(page.getByRole('heading', { name: 'Search', exact: true })).toBeVisible();
-            await expect(page.getByRole('link', { name: 'Search inventory' })).toHaveAttribute('aria-current', 'page');
+            await expect(page.getByRole('link', { name: 'Search inventory' })).toHaveCount(0);
             await expect(page.getByText(state.scope, { exact: true })).toBeVisible();
             await expect(page.getByText(state.status)).toBeVisible();
             await expect(page.getByRole('region', { name: 'Search results' })).toBeVisible();
             await page.screenshot({ path: testInfo.outputPath(`${state.name}-${viewport.name}.png`) });
+            if (state.name === 'scoped-results') {
+                await page.getByRole('button', { name: 'Open navigation menu' }).click();
+                const menu = page.getByRole('navigation', { name: 'Primary navigation' });
+                const currentSearch = menu.locator('[aria-current="page"]').filter({ hasText: 'Search' });
+                await expect(currentSearch).toBeVisible();
+                await expect(currentSearch).not.toHaveAttribute('href');
+                await expect(menu.getByRole('link', { name: 'Search' })).toHaveCount(0);
+                await page.screenshot({ path: testInfo.outputPath(`scoped-menu-${viewport.name}.png`) });
+            }
         }
 
         await page.goto('/iframe.html?id=ui-searchpagelayout--long-results&viewMode=story');
@@ -40,5 +51,6 @@ for (const viewport of [
         await page.getByRole('button', { name: 'Filters' }).click();
         await expect(page.getByRole('button', { name: 'Hide Filters' })).toHaveAttribute('aria-expanded', 'true');
         await page.screenshot({ path: testInfo.outputPath(`long-results-${viewport.name}-filters.png`) });
+        expect(pageErrors).toEqual([]);
     });
 }
