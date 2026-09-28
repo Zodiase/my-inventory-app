@@ -201,7 +201,8 @@ test('an older saved filter is visible and Reset removes it while retaining the 
     await waitForMeteorReady(page);
     await page.getByRole('button', { name: 'Scope: All Items; 1 active filter' }).click();
     const controls = page.getByRole('dialog', { name: 'Search controls' });
-    await expect(controls.getByRole('heading', { name: 'Older saved filters · 1' })).toBeVisible();
+    await expect(controls.getByRole('heading', { name: 'Older saved filters · 1' })).toBeInViewport();
+    await expect(controls.getByRole('button', { name: 'Reset filters' })).toBeInViewport();
     await controls.getByRole('button', { name: 'Reset filters' }).click();
     await expect(page).toHaveURL(/q=ninja/u);
     await expect(page).not.toHaveURL(/(?:\?|&)f=/u);

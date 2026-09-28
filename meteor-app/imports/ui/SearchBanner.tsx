@@ -397,6 +397,18 @@ export const SearchBanner = ({
                             )}
                         </section>
                     )}
+                    {legacyFilters.length > 0 && (openMenu === 'filters' || openMenu === 'all') && (
+                        <section aria-label="Older saved filters">
+                            <SectionTitle>Older saved filters · {legacyFilters.length}</SectionTitle>
+                            <p>
+                                This link has additional filters from the older search controls. Reset filters removes
+                                them.
+                            </p>
+                            <Choice type="button" onClick={onResetFilters}>
+                                Reset filters
+                            </Choice>
+                        </section>
+                    )}
                     {showTags && (
                         <section aria-label="Tags">
                             <SectionTitle>Tags · Include all selected</SectionTitle>
@@ -459,15 +471,6 @@ export const SearchBanner = ({
                             ))}
                         </section>
                     )}
-                    {legacyFilters.length > 0 && (openMenu === 'filters' || openMenu === 'all') && (
-                        <section aria-label="Older saved filters">
-                            <SectionTitle>Older saved filters · {legacyFilters.length}</SectionTitle>
-                            <p>
-                                This link has additional filters from the older search controls. Reset filters removes
-                                them.
-                            </p>
-                        </section>
-                    )}
                     {openMenu === 'all' && draft !== '' && (
                         <Choice
                             type="button"
@@ -479,7 +482,7 @@ export const SearchBanner = ({
                             Clear query
                         </Choice>
                     )}
-                    {(openMenu === 'filters' || openMenu === 'all') && (
+                    {(openMenu === 'filters' || openMenu === 'all') && legacyFilters.length === 0 && (
                         <Choice type="button" onClick={onResetFilters}>
                             Reset filters
                         </Choice>

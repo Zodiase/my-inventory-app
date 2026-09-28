@@ -1,6 +1,6 @@
 # Search banner visual review — revised one-row design (2026-09-28)
 
-Self-review against `SearchPageLayout.stories.tsx` story-specific `parameters.review`, after inspecting all 70 screenshots below as ten contact sheets and full-size representative views. Storybook manager rendered without an error overlay. `SearchPageLayout.spec.ts` passed 15/15, including geometry, the actual text-input width, focus, collapsed menus, older saved filters, and results scrolling. This is implementation review, not independent acceptance.
+Self-review against `SearchPageLayout.stories.tsx` story-specific `parameters.review`, after inspecting 70 state screenshots as ten contact sheets and full-size representative views plus two open-menu screenshots. Storybook manager rendered without an error overlay. `SearchPageLayout.spec.ts` passed 15/15, including geometry, the actual text-input width, focus, collapsed menus, older saved filters, and results scrolling. This is implementation review, not independent acceptance.
 
 Across all states and widths, the exit, scope/filter control and query remain on one blue row. At 320px the text input itself retains at least 160px; no controls overlap, no horizontal document overflow, and the full scope remains in the compact control’s accessible name. The narrow mode moves query clearing into the combined menu and supports Escape in the focused input. The 459px and 460px captures are both intentionally narrow because the transition is based on available banner width; 619px and 620px show the tighter two-control mode, and 1280px shows separate Scope, Tags and Type unless an older saved filter calls for a unified Filters control.
 
@@ -119,6 +119,8 @@ Across all states and widths, the exit, scope/filter control and query remain on
 ## legacy-saved-filters
 
 **Expectation and judgment:** An older saved filter remains counted and visible in the Filters menu; Reset removes it without clearing the query. Pass at every required width.
+
+The notice and Reset action are visible without menu scrolling at [320px](visual-review/search-banner-2026-09-28/legacy-menu-320.png) and [1280px](visual-review/search-banner-2026-09-28/legacy-menu-1280.png). The other viewport captures verify the closed banner layout.
 
 | Viewport | Evidence                                                                                                                | Visual judgment                                                      |
 | -------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |

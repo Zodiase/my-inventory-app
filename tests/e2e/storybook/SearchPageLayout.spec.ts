@@ -98,15 +98,25 @@ test('contradictory restored tags warn without silently changing either selectio
     await expect(page.getByRole('button', { name: /Tools/u })).toHaveCount(2);
 });
 
-test('older saved filters are counted and Reset removes them without clearing the query', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 720 });
-    await page.goto('/iframe.html?id=ui-searchpagelayout--legacy-saved-filters&viewMode=story');
-    await page.getByRole('button', { name: 'Filters: 1 active' }).click();
-    const menu = page.getByRole('dialog', { name: 'Search controls' });
-    await expect(menu.getByRole('heading', { name: 'Older saved filters · 1' })).toBeVisible();
-    await menu.getByRole('button', { name: 'Reset filters' }).click();
-    await expect(page.getByRole('button', { name: 'Type: Any' })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('storage');
+test('older saved filters are immediately visible and Reset retains the query', async ({ page }, testInfo) => {
+    for (const width of [320, 1280]) {
+        await page.setViewportSize({ width, height: width === 320 ? 700 : 720 });
+        await page.goto('/iframe.html?id=ui-searchpagelayout--legacy-saved-filters&viewMode=story');
+        await page
+            .getByRole('button', { name: width === 320 ? 'Scope: All Items; 1 active filter' : 'Filters: 1 active' })
+            .click();
+        const menu = page.getByRole('dialog', { name: 'Search controls' });
+        await expect(menu.getByRole('heading', { name: 'Older saved filters · 1' })).toBeInViewport();
+        await expect(menu.getByRole('button', { name: 'Reset filters' })).toBeInViewport();
+        await page.screenshot({ path: testInfo.outputPath(`legacy-menu-${width}.png`) });
+        await menu.getByRole('button', { name: 'Reset filters' }).click();
+        await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('storage');
+        if (width === 320) {
+            await expect(page.getByRole('button', { name: 'Scope: All Items; 0 active filters' })).toBeVisible();
+        } else {
+            await expect(page.getByRole('button', { name: 'Type: Any' })).toBeVisible();
+        }
+    }
 });
 
 test('long results scroll without moving the banner', async ({ page }) => {
