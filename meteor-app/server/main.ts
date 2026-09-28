@@ -19,7 +19,9 @@ import {
 } from '/imports/api/tags';
 import createLogger from '/imports/utility/Logger';
 
+import { agentRequestEvents } from './agent/journal';
 import { initializeGridFS } from './gridfs';
+import { initializeInventorySearch } from './search';
 import '/imports/api/importExport/export';
 import '/imports/api/importExport/import';
 
@@ -54,6 +56,9 @@ Meteor.startup(async () => {
     await Attachments.createIndexAsync({ itemId: 1, order: 1 }); // Ordered list per item
     await Attachments.createIndexAsync({ itemId: 1, type: 1 }); // Filter by type
     await Attachments.createIndexAsync({ fileId: 1 }); // GridFS lookup
+
+    // Sequenced agent requests form a durable, unique search-readiness prefix.
+    await agentRequestEvents.createIndexAsync({ journalSequence: 1 }, { unique: true, sparse: true });
 
     logger.log('Database indexes created successfully');
 
@@ -149,6 +154,8 @@ Meteor.startup(async () => {
 
         logger.log(`Seeded ${createdRecordsCount} rich fixture items for development audit.`);
     }
+
+    await initializeInventorySearch();
 
     watchAndFixMissingPath().catch((reason: unknown) => {
         logger.warn('Error starting watching for tags without path.', reason);

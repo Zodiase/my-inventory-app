@@ -67,6 +67,24 @@ jobs:
     visual-evidence:
         name: Visual before/after evidence
         runs-on: ubuntu-latest
+        env:
+            INVENTORY_SEARCH_URL: http://127.0.0.1:7700
+            INVENTORY_SEARCH_API_KEY: inventory-search-ci-key-at-least-32-characters
+            INVENTORY_SEARCH_INDEX: inventory_visual_evidence
+        services:
+            meilisearch:
+                image: getmeili/meilisearch:v1.37.0
+                env:
+                    MEILI_ENV: production
+                    MEILI_NO_ANALYTICS: 'true'
+                    MEILI_MASTER_KEY: inventory-search-ci-key-at-least-32-characters
+                ports:
+                    - 7700:7700
+                options: >-
+                    --health-cmd "curl --fail --silent http://localhost:7700/health"
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 24
         needs: select-visual-scenarios
         if: github.event.pull_request.head.repo.full_name == github.repository && needs.select-visual-scenarios.outputs.has-scenarios == 'true'
         permissions:
@@ -338,6 +356,24 @@ jobs:
     verify-selected-head-layout-regression:
         name: Verify selected head layout regression
         runs-on: ubuntu-latest
+        env:
+            INVENTORY_SEARCH_URL: http://127.0.0.1:7700
+            INVENTORY_SEARCH_API_KEY: inventory-search-ci-key-at-least-32-characters
+            INVENTORY_SEARCH_INDEX: inventory_layout_regression
+        services:
+            meilisearch:
+                image: getmeili/meilisearch:v1.37.0
+                env:
+                    MEILI_ENV: production
+                    MEILI_NO_ANALYTICS: 'true'
+                    MEILI_MASTER_KEY: inventory-search-ci-key-at-least-32-characters
+                ports:
+                    - 7700:7700
+                options: >-
+                    --health-cmd "curl --fail --silent http://localhost:7700/health"
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 24
         needs: select-visual-scenarios
         if: github.event.pull_request.head.repo.full_name == github.repository && needs.select-visual-scenarios.outputs.has-scenarios == 'true'
         permissions:

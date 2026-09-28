@@ -19,6 +19,7 @@ const HTTP = {
     large: 413,
     content: 415,
     internal: 500,
+    unavailable: 503,
 };
 const MAX_BYTES = 32768;
 const LOOPBACK = ['127.0.0.1', '::1', '::ffff:127.0.0.1'];
@@ -107,12 +108,13 @@ export const createAgentHandler =
             send(HTTP.ok, await execute(input));
         } catch (error) {
             if (error instanceof AgentError) {
-                const status =
-                    error.code === 'not_found'
-                        ? HTTP.disabled
-                        : ['conflict', 'busy', 'indeterminate'].includes(error.code)
-                        ? HTTP.conflict
-                        : HTTP.invalid;
+                const status = ['search_unavailable', 'search_not_caught_up'].includes(error.code)
+                    ? HTTP.unavailable
+                    : error.code === 'not_found'
+                    ? HTTP.disabled
+                    : ['conflict', 'busy', 'indeterminate'].includes(error.code)
+                    ? HTTP.conflict
+                    : HTTP.invalid;
                 reject(status, error.code, error.message);
             } else
                 reject(

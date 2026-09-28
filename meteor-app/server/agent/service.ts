@@ -49,6 +49,7 @@ export interface Request {
         | 'bindIdentity'
         | 'get'
         | 'lookup'
+        | 'search'
         | 'history'
         | 'status'
         | 'children'
@@ -80,17 +81,31 @@ export interface Request {
     containerId?: string | null;
     externalIdentity?: Identity;
     name?: string;
+    query?: string;
+    journalId?: string;
 }
 export interface Readback {
     item: Item;
     version: string;
     externalIdentities: Identity[];
 }
+export interface SearchMatch {
+    item: Readback;
+    /** Root-first containment path, including the matched item as the final entry. */
+    path: Array<{ _id: string; name: string; isContainer: boolean }>;
+    evidence: { score: number; matchedFields: string[] };
+}
+export interface BackendSearchHit {
+    item: Item;
+    score: number;
+    matchedFields: string[];
+}
 export interface Event {
     _id: string;
     fingerprint: string;
     request: Request;
     status: 'pending' | 'completed';
+    journalSequence?: number;
     createdAt: Date;
     completedAt?: Date;
     itemId?: string;
@@ -110,7 +125,13 @@ export interface Backend {
     taggedItems: (tagId: string, after: string | undefined, limit: number) => Promise<Item[]>;
     createTag: (tag: NonNullable<Request['tag']>, id: string) => Promise<string>;
     get: (id: string) => Promise<Item | undefined>;
-    search: (name: string) => Promise<Item[]>;
+    lookupName: (name: string) => Promise<Item[]>;
+    search: (
+        query: string,
+        after: string | undefined,
+        limit: number
+    ) => Promise<{ hits: BackendSearchHit[]; nextCursor: string | null }>;
+    path: (itemId: string) => Promise<Item[] | undefined>;
     children: (containerId: string | null, after: string | undefined, limit: number) => Promise<Item[]>;
     identities: (id: string) => Promise<Identity[]>;
     resolve: (identity: Identity) => Promise<string | undefined>;
@@ -118,7 +139,7 @@ export interface Backend {
     history: (id: string) => Promise<Event[]>;
     lock: (requestId: string) => Promise<boolean>;
     unlock: (requestId: string) => Promise<void>;
-    reserve: (event: Event) => Promise<void>;
+    reserve: (event: Event) => Promise<Event>;
     complete: (event: Event) => Promise<void>;
     validate: (request: Request, before?: Item) => Promise<void>;
     create: (item: NonNullable<Request['item']>, id: string) => Promise<string>;
@@ -126,6 +147,7 @@ export interface Backend {
     move: (item: Item, parent: string | null) => Promise<boolean>;
     setLocked: (item: Item, locked: boolean) => Promise<boolean>;
     bind: (identity: Identity, itemId: string) => Promise<void>;
+    waitForSearchIndex: (journalId: string) => Promise<void>;
 }
 export class AgentError extends Error {
     code: string;
@@ -148,9 +170,11 @@ export interface Response {
         | TagReadback
         | { tags: TagReadback[]; nextCursor: string | null }
         | { items: Readback[]; nextCursor?: string | null; root?: Readback }
+        | { matches: SearchMatch[]; nextCursor: string | null }
         | { events: Event[] }
         | { event: Event | null };
     replayed?: boolean;
+    journalId?: string;
 }
 const required = <T>(value: T | undefined): T => {
     if (value === undefined) throw new AgentError('invalid_input', 'Required field is missing');
@@ -199,6 +223,7 @@ export const parseRequest = (input: unknown): Request => {
         status: ['requestId'],
         get: ['itemId'],
         lookup: ['name', 'externalIdentity'],
+        search: ['query', 'after', 'limit', 'journalId'],
         history: ['itemId'],
         children: ['containerId', 'after', 'limit'],
         hierarchy: ['itemId', 'maxNodes'],
@@ -256,7 +281,7 @@ export const parseRequest = (input: unknown): Request => {
         if (r.name !== undefined) string(r.name, 'name');
     }
     if (r.op === 'move' && r.containerId !== null) string(r.containerId, 'containerId', LIMIT_ID);
-    if (['children', 'tags', 'taggedItems'].includes(String(r.op))) {
+    if (['children', 'tags', 'taggedItems', 'search'].includes(String(r.op))) {
         if (r.op === 'children' && r.containerId !== null) string(r.containerId, 'containerId', LIMIT_ID);
         if (r.after !== undefined) string(r.after, 'after', LIMIT_ID);
         if (
@@ -279,6 +304,10 @@ export const parseRequest = (input: unknown): Request => {
             fail('invalid_input', 'Specify exactly one lookup selector');
         if (r.name !== undefined) string(r.name, 'name');
     }
+    if (r.op === 'search') {
+        string(r.query, 'query');
+        if (r.journalId !== undefined) string(r.journalId, 'journalId', LIMIT_ID);
+    }
     return r as unknown as Request;
 };
 export const canonical = (value: unknown): string => {
@@ -295,6 +324,8 @@ export const canonical = (value: unknown): string => {
 export const version = (item: unknown): string => createHash('sha256').update(canonical(item)).digest('hex');
 export const identityKey = (identity: Identity): string =>
     createHash('sha256').update(canonical(identity)).digest('hex');
+const journalIdFor = (event: Event): string | undefined =>
+    event.journalSequence === undefined ? undefined : `agent-journal:${event.journalSequence}`;
 
 export const createAgentService = (db: Backend): ((input: unknown) => Promise<Response>) => {
     const snapshot = async (item: Item): Promise<Readback> => ({
@@ -320,7 +351,12 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
                 'indeterminate',
                 'Write outcome is indeterminate; inspect get/history and reconcile before retrying. Do not use a new requestId.'
             );
-        return { ok: true as const, result: required(event.afterTag ?? event.after), replayed: true };
+        return {
+            ok: true as const,
+            result: required(event.afterTag ?? event.after),
+            replayed: true,
+            journalId: journalIdFor(event),
+        };
     };
     return async (input: unknown) => {
         const r = parseRequest(input);
@@ -386,12 +422,33 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
             }
             return { ok: true as const, result: { root, items } };
         }
+        if (r.op === 'search') {
+            if (r.journalId !== undefined) await db.waitForSearchIndex(r.journalId);
+            const limit = r.limit ?? LIMIT_CHILDREN;
+            const page = await db.search(required(r.query), r.after, limit);
+            const resolvedMatches = await Promise.all(
+                page.hits.map(async (hit): Promise<SearchMatch | undefined> => {
+                    const path = await db.path(hit.item._id);
+                    if (path === undefined) return undefined;
+                    return {
+                        item: await snapshot(hit.item),
+                        path: path.map(({ _id, name, isContainer }) => ({ _id, name, isContainer })),
+                        evidence: { score: hit.score, matchedFields: hit.matchedFields },
+                    };
+                })
+            );
+            const matches = resolvedMatches.filter((match): match is SearchMatch => match !== undefined);
+            return {
+                ok: true as const,
+                result: { matches, nextCursor: page.nextCursor },
+            };
+        }
         if (r.op === 'lookup') {
             let items: Item[] = [];
             if (r.externalIdentity !== undefined) {
                 const id = await db.resolve(r.externalIdentity);
                 items = id === undefined ? [] : [(await read(id)).item];
-            } else items = await db.search(required(r.name));
+            } else items = await db.lookupName(required(r.name));
             return {
                 ok: true as const,
                 result: { items: await Promise.all(items.map(async (item) => await read(item._id))) },
@@ -419,7 +476,7 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
             for (const id of r.item?.tagIds ?? r.changes?.tagIds ?? []) await readTag(id);
             await db.validate(r, before?.item);
             const candidateId = r.op === 'create' ? `agent-${version(requestId)}` : r.itemId;
-            const event: Event = {
+            let event: Event = {
                 _id: requestId,
                 fingerprint,
                 request: r,
@@ -429,14 +486,14 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
                 ...(r.op === 'createTag' ? { tagId: `agent-tag-${version(requestId)}` } : {}),
                 before,
             };
-            await db.reserve(event);
+            event = await db.reserve(event);
             reserved = true;
             if (r.op === 'createTag') {
                 const tagId = await db.createTag(required(r.tag), required(event.tagId));
                 const afterTag = await readTag(tagId);
                 await db.complete({ ...event, afterTag, status: 'completed', completedAt: new Date() });
                 reserved = false;
-                return { ok: true as const, result: afterTag, replayed: false };
+                return { ok: true as const, result: afterTag, replayed: false, journalId: journalIdFor(event) };
             }
             let itemId = candidateId;
             if (r.op === 'create') itemId = await db.create(required(r.item), required(candidateId));
@@ -452,7 +509,7 @@ export const createAgentService = (db: Backend): ((input: unknown) => Promise<Re
             const after = await read(required(itemId));
             await db.complete({ ...event, itemId, after, status: 'completed', completedAt: new Date() });
             reserved = false;
-            return { ok: true as const, result: after, replayed: false };
+            return { ok: true as const, result: after, replayed: false, journalId: journalIdFor(event) };
         } catch (error) {
             if (reserved)
                 return fail(

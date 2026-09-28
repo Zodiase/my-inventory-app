@@ -6,6 +6,7 @@ import { loadFixture } from '/imports/api/importExport/fixtureLoader';
 import { InventoryItemsCollection } from '/imports/api/items';
 import { TagsCollection } from '/imports/api/tags';
 import { serializeJson } from '/imports/model/importExport/json';
+import { registerInventorySearchSync } from '/imports/search/InventorySearchSync';
 
 import { importCsv, importJson } from './import';
 
@@ -91,6 +92,39 @@ describe('importExport/import', function () {
             const newlyCreated = await InventoryItemsCollection.findOneAsync({ name: 'Test Timestamp' });
             assert.ok(newlyCreated);
             assert.strictEqual(newlyCreated.createdAt.toISOString(), exactDate.toISOString(), 'timestamp preserved');
+        });
+
+        it('rebuilds derived search state after a duplicate-only committed import', async function () {
+            const now = new Date('2024-02-01T10:00:00.000Z');
+            await InventoryItemsCollection.insertAsync({
+                name: 'Already present',
+                createdAt: now,
+                modifiedAt: now,
+                isContainer: false,
+                tagIds: [],
+            });
+            const payload = serializeJson({
+                items: await InventoryItemsCollection.find().fetchAsync(),
+                tags: [],
+            });
+            let rebuilds = 0;
+            const restore = registerInventorySearchSync({
+                upsert: async () => undefined,
+                delete: async () => undefined,
+                rebuild: async () => {
+                    rebuilds++;
+                },
+            });
+
+            try {
+                const report = await importJson(payload, { dryRun: false });
+                assert.strictEqual(report.exactDuplicates, 1);
+                assert.strictEqual(report.toCreate, 0);
+                assert.strictEqual(report.supersetMerges, 0);
+                assert.strictEqual(rebuilds, 1);
+            } finally {
+                restore();
+            }
         });
 
         it('exercises the inventory.export.json method wrapper', async function () {

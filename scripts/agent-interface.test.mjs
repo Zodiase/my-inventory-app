@@ -28,6 +28,7 @@ function fixture() {
         events = new Map(),
         bindings = new Map();
     let lock,
+        indexedThrough = 0,
         failComplete = false;
     const copy = structuredClone;
     const backend = {
@@ -64,7 +65,36 @@ function fixture() {
             return id;
         },
         get: async (id) => copy(items.get(id)),
-        search: async (name) => copy([...items.values()].filter((i) => i.name.includes(name))),
+        lookupName: async (name) =>
+            copy([...items.values()].filter((i) => i.name.toLowerCase().includes(name.toLowerCase())).slice(0, 100)),
+        search: async (query, after, limit) => {
+            const needle = query.toLowerCase();
+            const offset = after === undefined ? 0 : Number(/^offset:(\d+)$/.exec(after)?.[1]);
+            const matches = [...items.values()]
+                .filter((i) =>
+                    [i.name, i.description, ...(i.properties?.searchAliases ?? [])].some((value) =>
+                        value?.toLowerCase().includes(needle)
+                    )
+                )
+                .sort((a, b) => (a._id < b._id ? -1 : a._id > b._id ? 1 : 0));
+            const page = matches.slice(offset, offset + limit);
+            return copy({
+                hits: page.map((item) => ({ item, score: 1, matchedFields: ['description'] })),
+                nextCursor: offset + page.length < matches.length ? `offset:${offset + page.length}` : null,
+            });
+        },
+        path: async (itemId) => {
+            const path = [];
+            const seen = new Set();
+            let current = items.get(itemId);
+            while (current !== undefined) {
+                assert(!seen.has(current._id));
+                seen.add(current._id);
+                path.unshift(current);
+                current = current.containerId === undefined ? undefined : items.get(current.containerId);
+            }
+            return copy(path);
+        },
         children: async (parent, after, limit) =>
             copy(
                 [...items.values()]
@@ -86,11 +116,25 @@ function fixture() {
         },
         reserve: async (event) => {
             assert(!events.has(event._id));
-            events.set(event._id, copy(event));
+            const reserved = { ...event, journalSequence: events.size + 1 };
+            events.set(event._id, copy(reserved));
+            return reserved;
         },
         complete: async (event) => {
             if (failComplete) throw Error('injected post-write crash');
             events.set(event._id, copy(event));
+        },
+        waitForSearchIndex: async (journalId) => {
+            const sequence = Number(/^agent-journal:([1-9]\d*)$/.exec(journalId)?.[1]);
+            if (
+                !Number.isSafeInteger(sequence) ||
+                ![...events.values()].some(
+                    (event) => event.journalSequence === sequence && event.status === 'completed'
+                )
+            )
+                throw new AgentError('invalid_input', 'Unknown or incomplete journalId');
+            if (indexedThrough < sequence)
+                throw new AgentError('search_not_caught_up', 'Search has not indexed the requested journalId');
         },
         validate: async (request) => {
             if (request.op === 'createTag') {
@@ -144,6 +188,9 @@ function fixture() {
         tags,
         events,
         backend,
+        indexThrough: (sequence) => {
+            indexedThrough = sequence;
+        },
         crash: () => {
             failComplete = true;
         },
@@ -212,8 +259,23 @@ test('exact replay survives service restart and changed payload conflicts', asyn
     const repeated = await restarted({ item: request.item, source, requestId: 'once', op: 'create' });
     assert.equal(repeated.replayed, true);
     assert.deepEqual(repeated.result, first.result);
+    assert.equal(repeated.journalId, first.journalId);
     assert.equal(f.items.size, 1);
     await rejects(() => restarted(create('once', 'Different')), 'conflict');
+});
+
+test('search journal barrier rejects lag, then permits retrieval at the completed point', async () => {
+    const f = fixture();
+    const created = await f.execute(create('indexed-record', 'Fictional Indexed Fixture'));
+    assert.equal(created.journalId, 'agent-journal:1');
+    await rejects(
+        () => f.execute({ op: 'search', query: 'indexed', journalId: created.journalId }),
+        'search_not_caught_up'
+    );
+    await rejects(() => f.execute({ op: 'search', query: 'indexed', journalId: 'agent-journal:9' }), 'invalid_input');
+    f.indexThrough(1);
+    const result = await f.execute({ op: 'search', query: 'indexed', journalId: created.journalId });
+    assert.equal(result.result.matches[0].item.item._id, created.result.item._id);
 });
 
 test('stale correction and external identity reuse conflict without mutation', async () => {
@@ -299,6 +361,7 @@ async function http({
     headers = {},
     body = '{"op":"lookup","name":"Fixture"}',
     method = 'POST',
+    execute = async () => ({ ok: true, result: 'synthetic' }),
 } = {}) {
     const req = Readable.from([Buffer.from(body)]);
     req.socket = { remoteAddress: address };
@@ -307,7 +370,7 @@ async function http({
     let status, response;
     await createAgentHandler(
         token,
-        async () => ({ ok: true, result: 'synthetic' }),
+        execute,
         allowMeteorDevelopmentProxy
     )(req, {
         writeHead: (code) => {
@@ -330,6 +393,29 @@ test('HTTP requires opt-in, bearer auth and loopback with no browser/proxy heade
     assert.equal((await http({ method: 'GET' })).status, 405);
     assert.equal((await http({ body: 'invalid' })).status, 400);
     assert.equal((await http({ body: ' '.repeat(32769) })).status, 413);
+});
+
+test('HTTP reports required search dependency failure distinctly', async () => {
+    const response = await http({
+        execute: async () => {
+            throw new AgentError('search_unavailable', 'Inventory search service is unavailable');
+        },
+    });
+    assert.equal(response.status, 503);
+    assert.deepEqual(response.response, {
+        ok: false,
+        error: { code: 'search_unavailable', message: 'Inventory search service is unavailable' },
+    });
+});
+
+test('HTTP reports search journal lag distinctly from an empty result', async () => {
+    const response = await http({
+        execute: async () => {
+            throw new AgentError('search_not_caught_up', 'Search has not indexed the requested journalId');
+        },
+    });
+    assert.equal(response.status, 503);
+    assert.equal(response.response.error.code, 'search_not_caught_up');
 });
 
 test('Meteor dev proxy accepts one verified loopback hop, retaining auth and production isolation', async () => {
@@ -422,6 +508,74 @@ test('children pagination covers large sibling sets and root items without silen
     );
     await rejects(() => f.execute({ op: 'hierarchy', itemId: home._id, maxNodes: 104 }), 'limit_exceeded');
     assert.equal((await f.execute({ op: 'hierarchy', itemId: home._id, maxNodes: 105 })).result.items.length, 105);
+});
+
+test('bounded search finds names, descriptions and aliases with current location context', async () => {
+    const f = fixture();
+    const home = (await f.execute(create('search-home', 'Fictional home', { isContainer: true }))).result.item;
+    const garage = (await f.execute(create('search-garage', 'Garage', { isContainer: true, containerId: home._id })))
+        .result.item;
+    const drinkware = (
+        await f.execute(
+            create('search-drinkware', 'Drinkware box', {
+                isContainer: true,
+                containerId: garage._id,
+                description: 'Insulated metal water bottles and tumblers',
+                properties: { searchAliases: ['barware', 'cocktail equipment'] },
+            })
+        )
+    ).result.item;
+    await f.execute(create('search-other', 'Water filter', { containerId: garage._id }));
+
+    for (const query of ['DRINKWARE', 'water bottles', 'tumblers', 'barware', 'cocktail']) {
+        const result = (await f.execute({ op: 'search', query, limit: 1 })).result;
+        assert.equal(result.matches[0].item.item._id, drinkware._id);
+        assert.deepEqual(
+            result.matches[0].path.map((entry) => entry.name),
+            ['Fictional home', 'Garage', 'Drinkware box']
+        );
+        assert.deepEqual(result.matches[0].evidence, { score: 1, matchedFields: ['description'] });
+    }
+
+    const first = (await f.execute({ op: 'search', query: 'water', limit: 1 })).result;
+    assert.equal(first.matches.length, 1);
+    assert.notEqual(first.nextCursor, null);
+    const second = (await f.execute({ op: 'search', query: 'water', limit: 1, after: first.nextCursor })).result;
+    assert.equal(second.matches.length, 1);
+    assert.equal(second.nextCursor, null);
+    assert.deepEqual((await f.execute({ op: 'search', query: 'missing' })).result, {
+        matches: [],
+        nextCursor: null,
+    });
+
+    for (const request of [
+        { op: 'search', query: '' },
+        { op: 'search', query: 'water', limit: 0 },
+        { op: 'search', query: 'water', limit: 101 },
+        { op: 'search', query: 'water', after: '' },
+    ])
+        await rejects(() => f.execute(request), 'invalid_input');
+
+    assert.equal((await f.execute({ op: 'lookup', name: 'barware' })).result.items.length, 0);
+    assert.equal((await f.execute({ op: 'lookup', name: 'Drinkware' })).result.items[0].item._id, drinkware._id);
+});
+
+test('search omits a hit that disappears before its location path resolves', async () => {
+    const f = fixture();
+    const stale = (await f.execute(create('stale-search-item', 'Stale result'))).result.item;
+    const live = (await f.execute(create('live-search-item', 'Live result'))).result.item;
+    const originalPath = f.backend.path;
+    f.backend.search = async () => ({
+        hits: [stale, live].map((item) => ({ item, score: 1, matchedFields: ['name'] })),
+        nextCursor: null,
+    });
+    f.backend.path = async (itemId) => (itemId === stale._id ? undefined : await originalPath(itemId));
+
+    const result = (await f.execute({ op: 'search', query: 'result' })).result;
+    assert.deepEqual(
+        result.matches.map((match) => match.item.item._id),
+        [live._id]
+    );
 });
 
 test('hierarchy rejects cycles, invalid selectors and missing or noncontainer roots', async () => {

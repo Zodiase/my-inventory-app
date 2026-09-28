@@ -3,6 +3,7 @@ import React, { type ComponentProps } from 'react';
 import styled from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import type InventorySearchResult from '/imports/model/InventorySearchResult';
 import type { TagRecord } from '/imports/model/TagRecord';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
@@ -26,15 +27,19 @@ import { usePageTitle } from '/imports/utility/usePageTitle';
  * Used to display results from the items.search Meteor method.
  */
 
-interface SearchResultsViewProps extends ComponentProps<'div'> {
+interface SearchResultsViewProps extends Omit<ComponentProps<'div'>, 'results'> {
     /** Array of search result items */
     items?: InventoryItem[];
+    /** Ranked results returned by the search service with authoritative paths. */
+    results?: InventorySearchResult[];
     /** Callback when an item is clicked/tapped */
     onItemClick?: (itemId: string) => void;
     /** Whether results are currently loading */
     loading?: boolean;
     /** Whether the user has executed at least one search */
     hasSearched?: boolean;
+    /** Distinct dependency failure shown instead of a misleading no-match state. */
+    errorMessage?: string;
     /** Optional function to get breadcrumb path for an item */
     getItemPath?: (itemId: string) => InventoryItem[];
     /** Available tags for rendering readable tag names */
@@ -191,6 +196,26 @@ const EmptyHint = styled.div`
     color: #bbb;
 `;
 
+const MatchEvidence = styled.div`
+    font-size: 12px;
+    color: #5f6368;
+`;
+
+const PERCENT_MULTIPLIER = 100;
+const MATCH_FIELD_LABELS: Readonly<Record<string, string>> = {
+    id: 'ID',
+    name: 'name',
+    description: 'description',
+    aliases: 'aliases',
+    vocabulary_en: 'English keywords',
+    vocabulary_zh: 'Chinese keywords',
+    vocabulary_ja: 'Japanese keywords',
+    metadata: 'item details',
+};
+
+const describeMatchedFields = (fields: string[]): string =>
+    [...new Set(fields.map((field) => MATCH_FIELD_LABELS[field] ?? 'item details'))].join(', ');
+
 const LoadingState = styled.div`
     display: flex;
     flex-direction: column;
@@ -217,15 +242,24 @@ const LoadingSpinner = styled.div`
 
 export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
     items = [],
+    results,
     onItemClick,
     loading = false,
     hasSearched = true,
+    errorMessage,
     getItemPath,
     availableTags = [],
     className,
     style,
 }) => {
     usePageTitle('Search - My Inventory');
+    const resolvedResults: InventorySearchResult[] =
+        results ??
+        items.map((item) => ({
+            ...item,
+            item,
+            path: getItemPath?.(item._id) ?? [],
+        }));
 
     const handleItemClick = (itemId: string): void => {
         onItemClick?.(itemId);
@@ -260,7 +294,21 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
         );
     }
 
-    if (items.length === 0) {
+    if (errorMessage !== undefined) {
+        return (
+            <Container className={className} style={style} role="alert">
+                <EmptyState>
+                    <EmptyIcon>
+                        <SearchIcon size="48px" />
+                    </EmptyIcon>
+                    <EmptyText>Search unavailable</EmptyText>
+                    <EmptyHint>{errorMessage}</EmptyHint>
+                </EmptyState>
+            </Container>
+        );
+    }
+
+    if (resolvedResults.length === 0) {
         return (
             <Container className={className} style={style}>
                 <EmptyState>
@@ -278,13 +326,12 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
         <Container className={className} style={style}>
             <ResultsHeader>
                 <ResultCount>
-                    {items.length} result{items.length !== 1 ? 's' : ''}
+                    {resolvedResults.length} result{resolvedResults.length !== 1 ? 's' : ''}
                 </ResultCount>
             </ResultsHeader>
 
             <ResultsList>
-                {items.map((item) => {
-                    const path = getItemPath?.(item._id) ?? [];
+                {resolvedResults.map(({ item, path, evidence }) => {
                     const breadcrumbPath = path.length > 0 ? path.slice(0, -1) : [];
 
                     return (
@@ -314,6 +361,13 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                                         <BreadcrumbItem key={pathItem._id}>{pathItem.name}</BreadcrumbItem>
                                     ))}
                                 </Breadcrumb>
+                            )}
+
+                            {evidence !== undefined && evidence.matchedFields.length > 0 && (
+                                <MatchEvidence>
+                                    Matched {describeMatchedFields(evidence.matchedFields)} · relevance{' '}
+                                    {Math.round(evidence.score * PERCENT_MULTIPLIER)}%
+                                </MatchEvidence>
                             )}
 
                             {item.tagIds.length > 0 && (

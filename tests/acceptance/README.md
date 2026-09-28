@@ -13,7 +13,7 @@ npx playwright install chromium
 npx playwright test --config tests/acceptance/playwright.config.ts
 ```
 
-The dedicated configuration starts Meteor on `127.0.0.1:3287` with a newly allocated temporary `METEOR_LOCAL_DIR` for each invocation. It removes inherited Mongo connection variables, never reuses an existing server, supplies a fictional test token, and does not enable the database reset endpoint. An occupied port causes failure. Do not substitute the general E2E config or an existing personal server. Temporary directories use the `inventory-agent-acceptance-` prefix and may be removed after the spawned server exits if no longer needed for diagnosis.
+The dedicated configuration starts Meteor on `127.0.0.1:3287` with a newly allocated temporary `METEOR_LOCAL_DIR` for each invocation. It also starts a disposable, loopback-only Meilisearch container on port `7787`; Docker must be available. To use another disposable search service instead, set `INVENTORY_SEARCH_URL`, `INVENTORY_SEARCH_API_KEY`, and `INVENTORY_SEARCH_INDEX` together. It removes inherited Mongo connection variables, never reuses an existing server, supplies a fictional test token, and does not enable the database reset endpoint. An occupied port causes failure. Do not substitute the general E2E config or an existing personal server. Temporary directories use the `inventory-agent-acceptance-` prefix and may be removed after the spawned server exits if no longer needed for diagnosis.
 
 Discovery-only check (no server or database):
 
@@ -21,7 +21,7 @@ Discovery-only check (no server or database):
 npx playwright test --config tests/acceptance/playwright.config.ts --list
 ```
 
-The suite uses the authenticated `POST /api/agent/v1` contract. It verifies create/get, hierarchy and unresolved notes, duplicate-free replay, changed-payload conflict, external identity uniqueness, optimistic concurrency, correction/move audit history, replay after later mutation, and identity lookup after movement. It compares every agent item with the app's `items.search` results and checks rendered item name, description and location. No private data, global reset, or deployment is involved.
+The suite uses the authenticated `POST /api/agent/v1` contract. It verifies create/get, hierarchy and unresolved notes, duplicate-free replay, changed-payload conflict, external identity uniqueness, optimistic concurrency, correction/move audit history, replay after later mutation, and identity lookup after movement. Ranked-search assertions after agent writes pass the returned journal ID, including a correction that removes an old term and a move that changes the location path; the UI-delete check still polls because UI writes have no agent journal ID. It compares every agent item with the app's `items.search` results and checks rendered item name, description and location. No private data, global reset, or deployment is involved.
 
 Verified 2026-09-08: the revised implementation passes the unchanged live scenario (1 passed in 17.8 seconds) in the independent acceptance checkout. The earlier HTTP 403 blocker was caused by Meteor development proxy forwarding headers, not an observed browser Origin header. The development-only single-loopback-hop handling resolves it; production still rejects proxy headers. Rerun this suite after integration or transport changes.
 
