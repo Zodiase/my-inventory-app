@@ -10,6 +10,7 @@ const visualStories = [
     'excluding-fragile',
     'match-all',
     'search-by-path',
+    'many-selected',
 ];
 
 for (const viewport of [
@@ -27,6 +28,57 @@ for (const viewport of [
             expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
             await page.screenshot({ path: testInfo.outputPath(`${name}-${viewport.name}.png`) });
         }
+    });
+}
+
+for (const viewport of [
+    { name: 'desktop', width: 1280, height: 800 },
+    { name: 'ipad', width: 820, height: 1100 },
+]) {
+    test(`16 selections keep the Tags title and catalog usable at ${viewport.name} width`, async ({
+        page,
+    }, testInfo) => {
+        await page.setViewportSize(viewport);
+        await page.goto(story('search-by-path'));
+        const panel = page.getByRole('dialog', { name: 'Tag filters' });
+        for (let index = 1; index <= 16; index += 1) {
+            await panel.getByRole('checkbox', { name: `Include Fastener ${String(index).padStart(2, '0')}` }).check();
+        }
+        await expect(panel).toBeVisible();
+        await expect(panel.getByRole('button', { name: 'Show all selected tags (16)' })).toBeVisible();
+        await expect(panel.getByRole('heading', { name: 'Tags' })).toBeVisible();
+        await expect(panel.getByRole('textbox', { name: 'Find a tag' })).toBeVisible();
+        const catalog = panel.getByLabel('Tag catalog');
+        const panelBox = await panel.boundingBox();
+        const titleBox = await panel.getByRole('heading', { name: 'Tags' }).boundingBox();
+        const catalogBox = await catalog.boundingBox();
+        expect(panelBox).not.toBeNull();
+        expect(titleBox).not.toBeNull();
+        expect(catalogBox).not.toBeNull();
+        expect(titleBox!.y).toBeGreaterThanOrEqual(panelBox!.y);
+        expect(catalogBox!.height).toBeGreaterThanOrEqual(160);
+        expect(catalogBox!.y + catalogBox!.height).toBeLessThanOrEqual(panelBox!.y + panelBox!.height + 1);
+        await page.screenshot({ path: testInfo.outputPath(`selected-16-collapsed-${viewport.name}.png`) });
+        await panel.getByRole('button', { name: 'Show all selected tags (16)' }).click();
+        const selected = panel.getByLabel('Current rule');
+        const ruleSize = await selected.evaluate((element) => ({
+            height: element.clientHeight,
+            full: element.scrollHeight,
+        }));
+        expect(ruleSize.height).toBeLessThanOrEqual(88);
+        expect(ruleSize.full).toBeGreaterThan(ruleSize.height);
+        await selected.evaluate((element) => {
+            element.scrollTop = element.scrollHeight;
+        });
+        expect(await selected.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+        expect((await catalog.boundingBox())!.height).toBeGreaterThanOrEqual(160);
+        await expect(panel.getByRole('heading', { name: 'Tags' })).toBeVisible();
+        await selected.evaluate((element) => {
+            element.scrollTop = 0;
+        });
+        await page.screenshot({ path: testInfo.outputPath(`selected-16-expanded-${viewport.name}.png`) });
+        await panel.getByRole('button', { name: 'Show fewer selected tags' }).click();
+        await expect(panel.getByRole('button', { name: 'Show all selected tags (16)' })).toBeVisible();
     });
 }
 

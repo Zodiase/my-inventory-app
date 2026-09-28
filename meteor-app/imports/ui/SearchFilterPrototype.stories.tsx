@@ -152,7 +152,8 @@ const SearchBox = styled.div`
     button { min-width: 44px; border: 0; background: transparent; cursor: pointer; }
 `;
 const Catalog = styled.div`
-    min-height: 0;
+    min-height: 160px;
+    flex: 1;
     overflow-y: auto;
     padding: 8px 12px 12px;
     overscroll-behavior: contain;
@@ -186,11 +187,31 @@ const Path = styled.small`
     color: #66768a;
     line-height: 1.3;
 `;
-const Selected = styled.div`
+const CurrentRule = styled.div`
+    margin: 6px 0;
+`;
+const CurrentRuleToggle = styled.button`
+    min-height: 32px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #174c8e;
+    font-weight: 600;
+    cursor: pointer;
+`;
+const Selected = styled.div<{ $expanded: boolean }>`
+    box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
     align-items: center;
+    max-height: ${(p) => (p.$expanded ? '88px' : 'none')};
+    overflow-y: ${(p) => (p.$expanded ? 'auto' : 'visible')};
+    overscroll-behavior: contain;
+    padding: ${(p) => (p.$expanded ? '5px' : '0')};
+    border: ${(p) => (p.$expanded ? '1px solid #d4dce8' : '0')};
+    border-radius: 6px;
+    background: ${(p) => (p.$expanded ? '#f8fbff' : 'transparent')};
 `;
 const SelectedChip = styled.button`
     min-height: 31px;
@@ -250,6 +271,7 @@ const SearchFilterPrototype = ({
     const [expandedGroups, setExpandedGroups] = useState(['workflow', 'handling', 'equipment', 'camera']);
     const [itemType, setItemType] = useState(initialType);
     const [expandedSummary, setExpandedSummary] = useState(false);
+    const [expandedCurrentRule, setExpandedCurrentRule] = useState(false);
     const tagsTrigger = useRef<HTMLButtonElement>(null);
     const typeTrigger = useRef<HTMLButtonElement>(null);
     const nameFor = (id: string): string => tags.find((tag) => tag.id === id)?.name ?? id;
@@ -311,6 +333,16 @@ const SearchFilterPrototype = ({
                   },
               ]),
     ];
+    const selectedRules = [
+        ...included.map((id) => ({
+            id,
+            kind: 'included' as const,
+            label: `${match === 'any' ? 'Has any' : 'Has all'}: ${nameFor(id)}`,
+        })),
+        ...excluded.map((id) => ({ id, kind: 'excluded' as const, label: `Does not have: ${nameFor(id)}` })),
+    ];
+    const compactCurrentRule = selectedRules.length > 3 && !expandedCurrentRule;
+    const visibleCurrentRules = compactCurrentRule ? selectedRules.slice(0, 2) : selectedRules;
     const visibleSummary = expandedSummary ? summary : summary.slice(0, 2);
     const toggleGroup = (id: string): void => {
         setExpandedGroups((groups) => (groups.includes(id) ? groups.filter((group) => group !== id) : [...groups, id]));
@@ -429,33 +461,36 @@ const SearchFilterPrototype = ({
                                     {match === 'any' ? 'Match at least one included tag.' : 'Match every included tag.'}{' '}
                                     Excluded tags must be absent.
                                 </Help>
-                                {(included.length > 0 || excluded.length > 0) && (
-                                    <Selected aria-label="Current rule">
-                                        {included.map((id) => (
-                                            <SelectedChip
-                                                key={`in-${id}`}
+                                {selectedRules.length > 0 && (
+                                    <CurrentRule>
+                                        {selectedRules.length > 3 && (
+                                            <CurrentRuleToggle
                                                 type="button"
+                                                aria-expanded={expandedCurrentRule}
                                                 onClick={() => {
-                                                    removeTag(id);
+                                                    setExpandedCurrentRule(!expandedCurrentRule);
                                                 }}
-                                                aria-label={`Remove ${nameFor(id)} from included tags`}
                                             >
-                                                {match === 'any' ? 'Has any' : 'Has all'}: {nameFor(id)} ×
-                                            </SelectedChip>
-                                        ))}
-                                        {excluded.map((id) => (
-                                            <SelectedChip
-                                                key={`out-${id}`}
-                                                type="button"
-                                                onClick={() => {
-                                                    removeTag(id);
-                                                }}
-                                                aria-label={`Remove ${nameFor(id)} from excluded tags`}
-                                            >
-                                                Does not have: {nameFor(id)} ×
-                                            </SelectedChip>
-                                        ))}
-                                    </Selected>
+                                                {expandedCurrentRule
+                                                    ? 'Show fewer selected tags'
+                                                    : `Show all selected tags (${selectedRules.length})`}
+                                            </CurrentRuleToggle>
+                                        )}
+                                        <Selected aria-label="Current rule" $expanded={expandedCurrentRule}>
+                                            {visibleCurrentRules.map((rule) => (
+                                                <SelectedChip
+                                                    key={`${rule.kind}-${rule.id}`}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        removeTag(rule.id);
+                                                    }}
+                                                    aria-label={`Remove ${nameFor(rule.id)} from ${rule.kind} tags`}
+                                                >
+                                                    {rule.label} ×
+                                                </SelectedChip>
+                                            ))}
+                                        </Selected>
+                                    </CurrentRule>
                                 )}
                                 <Controls role="group" aria-label="Choose tag mode">
                                     <ModeButton
@@ -618,3 +653,10 @@ export const MatchAll: Story = {
     args: { initialOpen: 'tags', initialIncluded: ['sorting', 'location'], initialMatch: 'all' },
 };
 export const SearchByPath: Story = { args: { initialOpen: 'tags', initialSearch: 'hardware' } };
+export const ManySelected: Story = {
+    args: {
+        initialOpen: 'tags',
+        initialIncluded: Array.from({ length: 16 }, (_, index) => `fastener-${index + 1}`),
+        initialSearch: 'hardware',
+    },
+};

@@ -1,20 +1,20 @@
 # Task-based Search filter Storybook proof — visual contract and self-review
 
-This is a mock-only design proof. The six stories use local example tags and items; they do not read or change inventory data. The required review widths for this proof are desktop **1280 × 800** and iPad landscape-width **820 × 1100**. Phone and wide-desktop refinement, URL persistence, backend filtering, and integration with the running app are outside this proof.
+This is a mock-only design proof. The seven stories use local example tags and items; they do not read or change inventory data. The required review widths for this proof are desktop **1280 × 800** and iPad landscape-width **820 × 1100**. Phone and wide-desktop refinement, URL persistence, backend filtering, and integration with the running app are outside this proof.
 
 ## Contract shared by every story
 
 - The blue Search banner stays in one row at both required widths. The query field absorbs the width change; Tags and Type remain visible and usable.
-- An open menu is attached below its trigger, stays inside the viewport, and overlays results rather than pushing the page. Tags has a bounded height and only its catalog scrolls; Type remains compact.
+- An open menu is attached below its trigger, stays inside the viewport, and overlays results rather than pushing the page. Tags has a bounded height and at least 160px of catalog space; Type remains compact. With more than three selected tags, the current-rule area initially shows two named chips and a count; expanding it reveals a separately scrollable, bounded list without displacing the catalog.
 - Tags are shown once in a hierarchy. Group headers expand or collapse; selecting a group never selects its children. A path search shows leaf tags with their parent path.
 - Included tags use either **Has any** or **Has all**. Excluded tags use **Does not have** within the same catalog. Selected rules have names and individual removal controls, including a compact applied summary below the banner.
 - Controls, labels, and results remain readable. Escape dismisses a menu and returns focus to its trigger. Mock result counts respond to selections.
 
-The intended responsive change is horizontal: the query field shrinks and the Tags panel shifts left to remain in the viewport. Menu content, hierarchy, and the single-row banner do not change mode between these two widths. Interaction checks cover selection, matching semantics, search, scrolling, summary expansion/removal, and Escape; see `tests/e2e/storybook/SearchFilterPrototype.spec.ts`.
+The intended responsive change is horizontal: the query field shrinks and the Tags panel shifts left to remain in the viewport. Menu content, hierarchy, and the single-row banner do not change mode between these two widths. Interaction checks cover selection, matching semantics, search, catalog and expanded-rule scrolling, summary expansion/removal, 16 selections in one opening, and Escape; see `tests/e2e/storybook/SearchFilterPrototype.spec.ts`.
 
 ## Story-specific contracts and review
 
-Each artifact below is a full-viewport capture of the Storybook iframe. I opened each at readable scale and inspected page frame, containment, proportions, internal composition, text, controls, hierarchy, and continuity across the two sizes. This is a **self-review**, not independent acceptance.
+Each artifact below is a full-viewport capture of the Storybook iframe. I opened each at readable scale after the revision and inspected page frame, containment, proportions, internal composition, text, controls, hierarchy, and continuity across the two sizes. This is a **self-review**, not independent acceptance.
 
 | Story / purpose and expected composition | Desktop 1280 × 800 | iPad 820 × 1100 | Cross-width judgment |
 | --- | --- | --- | --- |
@@ -24,5 +24,8 @@ Each artifact below is a full-viewport capture of the Storybook iframe. I opened
 | `excluding-fragile`: two included workflow tags plus excluded Fragile; Exclude mode and checked leaf visible. | **Pass** — [capture](excluding-fragile-desktop.png). One catalog, checked Fragile, explicit “Does not have” chip, three results. | **Pass** — [capture](excluding-fragile-ipad.png). Rule chips wrap; searched Fragile leaf and exclusion stay visible. | Pass: no duplicated include/exclude lists. |
 | `match-all`: both workflow tags required; Has all selection and one matching mock result. | **Pass** — [capture](match-all-desktop.png). Match control, named chips, checked leaves and one result agree. | **Pass** — [capture](match-all-ipad.png). Chips wrap but remain readable; no page overflow. | Pass: narrower width does not hide matching semantics. |
 | `search-by-path`: “hardware” finds fastener leaves through their parent path; long results scroll within Tags. | **Pass** — [capture](search-by-path-desktop.png). Path labels are readable, clear control visible, catalog clipped at panel bottom. | **Pass** — [capture](search-by-path-ipad.png). Same structure and scroll ownership. | Pass: interaction test scrolled the catalog to its end while search remained visible. |
+| `many-selected`: 16 included fastener tags, a collapsed named current rule, and a usable searchable catalog. | **Pass** — [capture](many-selected-desktop.png). Title, first two named chips, “Show all selected tags (16),” search, and four visible catalog leaves fit. | **Pass** — [capture](many-selected-ipad.png). Same content fits after the panel shifts left; catalog remains usable. | Pass: selecting 16 tags in one opening preserves the panel and catalog at both widths. |
 
-The Storybook manager also loaded without an error overlay at the LAN URL. All nine Storybook browser tests passed at that URL, as did the TypeScript and lint checks. Remaining design question for integration: many selected tags could consume too much of the fixed panel header; the app implementation should cap or summarize that area without making the catalog unusable. This proof does not claim that the existing app route or PR has been changed.
+The expanded 16-tag state was also visually checked at [desktop](selected-16-expanded-desktop.png) and [iPad](selected-16-expanded-ipad.png): selected chips scroll inside a visibly bounded 88px region, while the title, search, and at least 160px of catalog remain visible. The [desktop](selected-16-collapsed-desktop.png) and [iPad](selected-16-collapsed-ipad.png) captures from the selection flow show the automatic compact state. The interaction test scrolled the selected-chip region independently, then collapsed it again without losing any selections.
+
+The Storybook manager also loaded without an error overlay at the LAN URL. All 11 Storybook browser tests passed at that URL, as did the TypeScript and lint checks. This proof does not claim that the existing app route or PR has been changed.
