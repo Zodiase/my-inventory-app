@@ -11,6 +11,7 @@ import type { SearchFragment } from '/imports/model/SearchFragment';
 import {
     getActiveFilterCount,
     getContradictoryTags,
+    getLegacyFilters,
     getSelectedItemType,
     getSelectedTags,
     type SearchItemType,
@@ -77,6 +78,7 @@ const QueryForm = styled.form`
     min-width: 160px;
     height: 44px;
     padding-left: 10px;
+    &.compact { padding-left: 4px; }
     background: white;
     border: 2px solid transparent;
     border-radius: 8px;
@@ -195,6 +197,8 @@ export const SearchBanner = ({
     const included = getSelectedTags(fragments, 'tagInclude');
     const excluded = getSelectedTags(fragments, 'tagExclude');
     const itemType = getSelectedItemType(fragments);
+    const legacyFilters = getLegacyFilters(fragments);
+    const combineFilters = mode === 'medium' || (mode === 'roomy' && legacyFilters.length > 0);
     const currentScope = scope === 'scoped' ? scopeLabel : 'All Items';
     const visibleTags = [
         ...availableTags,
@@ -282,12 +286,13 @@ export const SearchBanner = ({
                 </CompactControl>
             )}
             <QueryForm
+                className={mode === 'narrow' ? 'compact' : undefined}
                 onSubmit={(event) => {
                     event.preventDefault();
                     if (!composing.current) onSearch(draft);
                 }}
             >
-                <SearchIcon size="18px" aria-hidden="true" />
+                {mode !== 'narrow' && <SearchIcon size="18px" aria-hidden="true" />}
                 <QueryInput
                     type="text"
                     inputMode="search"
@@ -306,8 +311,14 @@ export const SearchBanner = ({
                         composing.current = false;
                         onQueryChange(event.currentTarget.value);
                     }}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Escape' && openMenu === null && draft !== '') {
+                            setDraft('');
+                            onQueryChange('');
+                        }
+                    }}
                 />
-                {draft !== '' && (
+                {mode !== 'narrow' && draft !== '' && (
                     <ClearButton
                         type="button"
                         aria-label="Clear search"
@@ -320,7 +331,7 @@ export const SearchBanner = ({
                     </ClearButton>
                 )}
             </QueryForm>
-            {mode === 'roomy' && (
+            {mode === 'roomy' && !combineFilters && (
                 <>
                     <Control
                         type="button"
@@ -346,7 +357,7 @@ export const SearchBanner = ({
                     </Control>
                 </>
             )}
-            {mode === 'medium' && (
+            {combineFilters && (
                 <Control
                     type="button"
                     aria-label={`Filters: ${activeCount} active`}
@@ -447,6 +458,26 @@ export const SearchBanner = ({
                                 </Choice>
                             ))}
                         </section>
+                    )}
+                    {legacyFilters.length > 0 && (openMenu === 'filters' || openMenu === 'all') && (
+                        <section aria-label="Older saved filters">
+                            <SectionTitle>Older saved filters · {legacyFilters.length}</SectionTitle>
+                            <p>
+                                This link has additional filters from the older search controls. Reset filters removes
+                                them.
+                            </p>
+                        </section>
+                    )}
+                    {openMenu === 'all' && draft !== '' && (
+                        <Choice
+                            type="button"
+                            onClick={() => {
+                                setDraft('');
+                                onQueryChange('');
+                            }}
+                        >
+                            Clear query
+                        </Choice>
                     )}
                     {(openMenu === 'filters' || openMenu === 'all') && (
                         <Choice type="button" onClick={onResetFilters}>

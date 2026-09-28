@@ -31,9 +31,9 @@ import { ItemsByTagView } from './ItemsByTagView';
 import { NotFoundView } from './NotFoundView';
 import { SearchBanner } from './SearchBanner';
 import {
-    clearVisibleFilters,
     hasRunnableFilter,
     normalizeIncludedTags,
+    resetSearchFilters,
     setItemTypeFilter,
     toggleTagFilter,
 } from './searchFilterState';
@@ -497,7 +497,7 @@ export const App = (): ReactElement => {
                                 });
                             }}
                             onResetFilters={() => {
-                                const fragments = clearVisibleFilters(searchUrlState.fragments);
+                                const fragments = resetSearchFilters();
                                 updateSearchUrl({
                                     scope: 'global',
                                     fragments,

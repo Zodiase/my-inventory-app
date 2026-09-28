@@ -1,8 +1,8 @@
 # Search banner visual review — revised one-row design (2026-09-28)
 
-Self-review against `SearchPageLayout.stories.tsx` story-specific `parameters.review`, after inspecting all 63 screenshots below as nine contact sheets and full-size representative views. Storybook manager rendered without an error overlay. `SearchPageLayout.spec.ts` passed 13/13, including geometry, focus, collapsed menus, and results scrolling. This is implementation review, not independent acceptance.
+Self-review against `SearchPageLayout.stories.tsx` story-specific `parameters.review`, after inspecting all 70 screenshots below as ten contact sheets and full-size representative views. Storybook manager rendered without an error overlay. `SearchPageLayout.spec.ts` passed 15/15, including geometry, the actual text-input width, focus, collapsed menus, older saved filters, and results scrolling. This is implementation review, not independent acceptance.
 
-Across all states and widths, the exit, scope/filter control and query remain on one blue row. At 320px the query retains at least 160px; no controls overlap, no horizontal document overflow, and the full scope remains in the compact control’s accessible name. The 459px and 460px captures are both intentionally narrow because the transition is based on available banner width; 619px and 620px show the tighter two-control mode, and 1280px shows separate Scope, Tags and Type.
+Across all states and widths, the exit, scope/filter control and query remain on one blue row. At 320px the text input itself retains at least 160px; no controls overlap, no horizontal document overflow, and the full scope remains in the compact control’s accessible name. The narrow mode moves query clearing into the combined menu and supports Escape in the focused input. The 459px and 460px captures are both intentionally narrow because the transition is based on available banner width; 619px and 620px show the tighter two-control mode, and 1280px shows separate Scope, Tags and Type unless an older saved filter calls for a unified Filters control.
 
 ## global-idle
 
@@ -115,6 +115,20 @@ Across all states and widths, the exit, scope/filter control and query remain on
 | 619×900  | [contradictory-restored-filters-below-roomy.png](visual-review/search-banner-2026-09-28/contradictory-restored-filters-below-roomy.png)     | Pass: no wrap, overlap, clipping or misplaced control |
 | 620×900  | [contradictory-restored-filters-roomy.png](visual-review/search-banner-2026-09-28/contradictory-restored-filters-roomy.png)                 | Pass: no wrap, overlap, clipping or misplaced control |
 | 1280×720 | [contradictory-restored-filters-desktop.png](visual-review/search-banner-2026-09-28/contradictory-restored-filters-desktop.png)             | Pass: no wrap, overlap, clipping or misplaced control |
+
+## legacy-saved-filters
+
+**Expectation and judgment:** An older saved filter remains counted and visible in the Filters menu; Reset removes it without clearing the query. Pass at every required width.
+
+| Viewport | Evidence                                                                                                                | Visual judgment                                                      |
+| -------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| 320×700  | [legacy-saved-filters-minimum-phone.png](visual-review/search-banner-2026-09-28/legacy-saved-filters-minimum-phone.png) | Pass: count visible; no wrap, overlap, clipping or misplaced control |
+| 390×844  | [legacy-saved-filters-phone.png](visual-review/search-banner-2026-09-28/legacy-saved-filters-phone.png)                 | Pass: count visible; no wrap, overlap, clipping or misplaced control |
+| 459×900  | [legacy-saved-filters-below-medium.png](visual-review/search-banner-2026-09-28/legacy-saved-filters-below-medium.png)   | Pass: count visible; no wrap, overlap, clipping or misplaced control |
+| 460×900  | [legacy-saved-filters-medium.png](visual-review/search-banner-2026-09-28/legacy-saved-filters-medium.png)               | Pass: count visible; no wrap, overlap, clipping or misplaced control |
+| 619×900  | [legacy-saved-filters-below-roomy.png](visual-review/search-banner-2026-09-28/legacy-saved-filters-below-roomy.png)     | Pass: count visible; no wrap, overlap, clipping or misplaced control |
+| 620×900  | [legacy-saved-filters-roomy.png](visual-review/search-banner-2026-09-28/legacy-saved-filters-roomy.png)                 | Pass: count visible; no wrap, overlap, clipping or misplaced control |
+| 1280×720 | [legacy-saved-filters-desktop.png](visual-review/search-banner-2026-09-28/legacy-saved-filters-desktop.png)             | Pass: count visible; no wrap, overlap, clipping or misplaced control |
 
 ## long-results
 

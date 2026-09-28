@@ -12,7 +12,7 @@ import type { TracedInventorySearch } from '/imports/model/TracedInventorySearch
 
 import { AppShell } from './AppShell';
 import { SearchBanner } from './SearchBanner';
-import { clearVisibleFilters, hasRunnableFilter, setItemTypeFilter, toggleTagFilter } from './searchFilterState';
+import { hasRunnableFilter, resetSearchFilters, setItemTypeFilter, toggleTagFilter } from './searchFilterState';
 import { SearchPageLayout } from './SearchPageLayout';
 import { SearchResultsView } from './SearchResultsView';
 
@@ -24,6 +24,7 @@ interface SearchPageStoryProps {
     activeFilters?: boolean;
     scopeAvailable?: boolean;
     contradictoryFilters?: boolean;
+    legacyFilters?: boolean;
 }
 
 const makeItem = (index: number): InventoryItem => ({
@@ -51,11 +52,14 @@ const SearchPageStory = ({
     activeFilters = false,
     scopeAvailable = true,
     contradictoryFilters = false,
+    legacyFilters = false,
 }: SearchPageStoryProps): React.ReactElement => {
     const [scope, setScope] = useState(initialScope);
     const [query, setQuery] = useState(reviewState === 'idle' ? '' : 'storage');
     const [fragments, setFragments] = useState<SearchFragment[]>(
-        contradictoryFilters
+        legacyFilters
+            ? [{ type: 'name', value: 'bathroom' }]
+            : contradictoryFilters
             ? [
                   { type: 'tagInclude', tagIds: ['tag-tools'] },
                   { type: 'tagExclude', tagIds: ['tag-tools'] },
@@ -123,7 +127,7 @@ const SearchPageStory = ({
                         }}
                         onResetFilters={() => {
                             setScope('global');
-                            setFragments(clearVisibleFilters(fragments));
+                            setFragments(resetSearchFilters());
                             setSubmitted(query.trim() !== '');
                         }}
                     />
@@ -243,6 +247,16 @@ export const ContradictoryRestoredFilters: Story = {
             'Contradictory legacy URL',
             'The open tag controls warn that Tools is included and excluded; both selections remain visible for repair.',
             ['Open Tags or the combined menu and inspect the warning.', 'Remove either conflicting selection.']
+        ),
+    },
+};
+export const LegacySavedFilters: Story = {
+    args: { scope: 'global', reviewState: 'results', legacyFilters: true },
+    parameters: {
+        review: review(
+            'Older shared search link',
+            'The active older filter is counted and explained in Filters; Reset removes it while preserving the query.',
+            ['Open Filters at desktop and phone widths.', 'Reset and verify the active count clears.']
         ),
     },
 };

@@ -20,6 +20,7 @@ const stories = [
     'scoped-results',
     'scoped-active-filters',
     'contradictory-restored-filters',
+    'legacy-saved-filters',
     'long-results',
 ];
 
@@ -45,14 +46,17 @@ for (const story of stories) {
                 const controls = [...element.querySelectorAll('button, a, form')]
                     .filter((control) => control.parentElement === element)
                     .map((control) => control.getBoundingClientRect());
+                const input = element.querySelector('input')?.getBoundingClientRect();
                 return {
                     width: box.width,
                     queryWidth: query?.width ?? 0,
+                    inputWidth: input?.width ?? 0,
                     rows: controls.every((control) => Math.abs(control.y - controls[0].y) <= 1),
                 };
             });
             expect(geometry.rows, `${story} ${viewport.name} wrapped`).toBe(true);
             expect(geometry.queryWidth, `${story} ${viewport.name} query too narrow`).toBeGreaterThanOrEqual(160);
+            expect(geometry.inputWidth, `${story} ${viewport.name} text entry too narrow`).toBeGreaterThanOrEqual(160);
             expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
             await page.screenshot({ path: testInfo.outputPath(`${story}-${viewport.name}.png`), fullPage: true });
         }
@@ -92,6 +96,17 @@ test('contradictory restored tags warn without silently changing either selectio
     await page.getByRole('button', { name: 'Tags: 2 selected' }).click();
     await expect(page.getByRole('alert')).toContainText('both includes and excludes');
     await expect(page.getByRole('button', { name: /Tools/u })).toHaveCount(2);
+});
+
+test('older saved filters are counted and Reset removes them without clearing the query', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto('/iframe.html?id=ui-searchpagelayout--legacy-saved-filters&viewMode=story');
+    await page.getByRole('button', { name: 'Filters: 1 active' }).click();
+    const menu = page.getByRole('dialog', { name: 'Search controls' });
+    await expect(menu.getByRole('heading', { name: 'Older saved filters · 1' })).toBeVisible();
+    await menu.getByRole('button', { name: 'Reset filters' }).click();
+    await expect(page.getByRole('button', { name: 'Type: Any' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('storage');
 });
 
 test('long results scroll without moving the banner', async ({ page }) => {

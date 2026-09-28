@@ -1,4 +1,7 @@
-/** Pure URL-fragment operations for the compact search controls. */
+/**
+ * Pure URL-fragment operations for the compact search controls.
+ * Keeps older shared-link filters visible until the user explicitly resets them.
+ */
 import type { SearchFragment } from '/imports/model/SearchFragment';
 
 export type SearchItemType = 'all' | 'items' | 'containers';
@@ -15,10 +18,17 @@ export const getContradictoryTags = (fragments: SearchFragment[]): string[] => {
     return getSelectedTags(fragments, 'tagInclude').filter((id) => excluded.has(id));
 };
 
+export const getLegacyFilters = (fragments: SearchFragment[]): SearchFragment[] =>
+    fragments.filter(
+        (fragment) =>
+            fragment.type !== 'tagInclude' && fragment.type !== 'tagExclude' && fragment.type !== 'containerType'
+    );
+
 export const getActiveFilterCount = (fragments: SearchFragment[]): number =>
     getSelectedTags(fragments, 'tagInclude').length +
     getSelectedTags(fragments, 'tagExclude').length +
-    (getSelectedItemType(fragments) === 'all' ? 0 : 1);
+    (getSelectedItemType(fragments) === 'all' ? 0 : 1) +
+    getLegacyFilters(fragments).length;
 
 export const hasRunnableFilter = (fragments: SearchFragment[]): boolean =>
     fragments.some(
@@ -49,11 +59,7 @@ export const setItemTypeFilter = (fragments: SearchFragment[], value: SearchItem
     return value === 'all' ? retained : [...retained, { type: 'containerType', value }];
 };
 
-export const clearVisibleFilters = (fragments: SearchFragment[]): SearchFragment[] =>
-    fragments.filter(
-        (fragment) =>
-            fragment.type !== 'tagInclude' && fragment.type !== 'tagExclude' && fragment.type !== 'containerType'
-    );
+export const resetSearchFilters = (): SearchFragment[] => [];
 
 /** Older shared URLs may store several included tags in one OR fragment. */
 export const normalizeIncludedTags = (fragments: SearchFragment[]): SearchFragment[] =>

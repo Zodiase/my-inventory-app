@@ -193,3 +193,18 @@ test('typing waits before search while Enter runs immediately', async ({ page })
     await expect(page).toHaveURL(/q=immediate\+phrase.*run=1/u);
     await expect(page.getByTestId('search-run-reference')).toBeVisible();
 });
+
+test('an older saved filter is visible and Reset removes it while retaining the query', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 700 });
+    const oldFilter = encodeURIComponent(JSON.stringify({ type: 'name', value: 'bathroom' }));
+    await page.goto(`/search?q=ninja&f=${oldFilter}&run=1`);
+    await waitForMeteorReady(page);
+    await page.getByRole('button', { name: 'Scope: All Items; 1 active filter' }).click();
+    const controls = page.getByRole('dialog', { name: 'Search controls' });
+    await expect(controls.getByRole('heading', { name: 'Older saved filters · 1' })).toBeVisible();
+    await controls.getByRole('button', { name: 'Reset filters' }).click();
+    await expect(page).toHaveURL(/q=ninja/u);
+    await expect(page).not.toHaveURL(/(?:\?|&)f=/u);
+    await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('ninja');
+    await expect(page.getByRole('button', { name: 'Scope: All Items; 0 active filters' })).toBeVisible();
+});
