@@ -61,7 +61,11 @@ export const AppShell = ({
 
     return (
         <Box fill className="app-shell">
-            <Header background="brand" pad={{ horizontal: 'medium', vertical: 'small' }} className="app-shell-header">
+            <Header
+                background="brand"
+                pad={{ horizontal: 'medium', vertical: 'small' }}
+                className={`app-shell-header${isSearchRoute ? ' app-shell-header-search' : ''}`}
+            >
                 <Box direction="row" align="center" gap="small" fill>
                     <Button
                         plain

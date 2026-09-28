@@ -1,63 +1,100 @@
-/** Browser review fixtures for the complete, mock-data search page. */
+/** Mock search-page checks; live Meteor routing is covered by the narrow app spec. */
 import { expect, test } from '@playwright/test';
 
-const states = [
-    { name: 'global-idle', scope: 'Search all items', status: 'Search your inventory' },
-    { name: 'global-loading', scope: 'Search all items', status: 'Loading results...' },
-    { name: 'global-empty', scope: 'Search all items', status: 'No results found' },
-    { name: 'global-error', scope: 'Search all items', status: 'Search unavailable' },
-    { name: 'global-results', scope: 'Search all items', status: '3 results' },
-    { name: 'scoped-results', scope: 'Search in Rack A', status: '3 results' },
-] as const;
-
-for (const viewport of [
+const viewports = [
     { name: 'phone', width: 390, height: 844 },
+    { name: 'compact-boundary', width: 640, height: 900 },
+    { name: 'expanded-boundary', width: 641, height: 900 },
     { name: 'tablet', width: 768, height: 1024 },
     { name: 'desktop', width: 1280, height: 720 },
     { name: 'wide', width: 1600, height: 1000 },
-]) {
-    test(`complete search page states at ${viewport.name} width`, async ({ page }, testInfo) => {
-        await page.setViewportSize({ width: viewport.width, height: viewport.height });
-        const pageErrors: string[] = [];
-        page.on('pageerror', (error) => pageErrors.push(error.message));
-        for (const state of states) {
-            await page.goto(`/iframe.html?id=ui-searchpagelayout--${state.name}&viewMode=story`);
-            await expect(page.getByRole('heading', { name: 'Search', exact: true })).toBeVisible();
-            await expect(page.getByRole('link', { name: 'Search inventory' })).toHaveCount(0);
-            await expect(page.getByText(state.scope, { exact: true })).toBeVisible();
-            await expect(page.getByText(state.status, { exact: true })).toBeVisible();
-            await expect(page.getByRole('region', { name: 'Search results' })).toBeVisible();
+];
+
+const stories = [
+    'global-idle',
+    'global-loading',
+    'global-empty',
+    'global-error',
+    'global-results',
+    'scoped-results',
+    'scoped-active-filters',
+    'long-results',
+];
+
+for (const story of stories) {
+    test(`${story} keeps search controls in the blue banner at every review width`, async ({ page }, testInfo) => {
+        const errors: string[] = [];
+        page.on('pageerror', (error) => errors.push(error.message));
+        for (const viewport of viewports) {
+            await page.setViewportSize(viewport);
+            await page.goto(`/iframe.html?id=ui-searchpagelayout--${story}&viewMode=story`);
+            const banner = page.getByRole('search', { name: 'Inventory search' });
+            await expect(banner).toBeVisible();
             await expect(
-                page.getByRole('link', { name: state.name === 'scoped-results' ? 'Back to Rack A' : 'Exit search' })
-            ).toHaveAttribute('href', state.name === 'scoped-results' ? '/container/storybook-rack' : '/items');
-            if (state.name !== 'global-idle' && state.name !== 'global-loading') {
-                await expect(page.getByTestId('search-run-reference')).toContainText('ref srch-StorybookRun123');
-            }
-            await page.screenshot({ path: testInfo.outputPath(`${state.name}-${viewport.name}.png`) });
-            if (state.name === 'scoped-results') {
-                await page.getByRole('button', { name: 'Open navigation menu' }).click();
-                const menu = page.getByRole('navigation', { name: 'Primary navigation' });
-                const currentSearch = menu.locator('[aria-current="page"]').filter({ hasText: 'Search' });
-                await expect(currentSearch).toBeVisible();
-                await expect(currentSearch).not.toHaveAttribute('href');
-                await expect(menu.getByRole('link', { name: 'Search' })).toHaveCount(0);
-                await page.screenshot({ path: testInfo.outputPath(`scoped-menu-${viewport.name}.png`) });
-            }
+                page.locator('.app-shell-header').getByRole('link', { name: /Return to|Exit search/u })
+            ).toBeVisible();
+            await expect(banner.getByRole('textbox', { name: 'Search query' })).toBeVisible();
+            await expect(banner.getByRole('button', { name: 'Submit search' })).toBeVisible();
+            await expect(banner.getByRole('button', { name: 'Global search' })).toBeVisible();
+            await expect(banner.getByRole('button', { name: /Scoped search/u })).toBeVisible();
+            await expect(banner.getByRole('button', { name: /Filters/u })).toBeVisible();
+            await expect(page.locator('.app-shell-main').getByRole('heading', { name: 'Search' })).toHaveCount(0);
+            const horizontalOverflow = await page.evaluate(
+                () => document.documentElement.scrollWidth - window.innerWidth
+            );
+            expect(horizontalOverflow, `${story} at ${viewport.name} overflows horizontally`).toBeLessThanOrEqual(1);
+            await page.screenshot({ path: testInfo.outputPath(`${story}-${viewport.name}.png`), fullPage: true });
         }
-
-        await page.goto('/iframe.html?id=ui-searchpagelayout--long-results&viewMode=story');
-        const region = page.getByRole('region', { name: 'Search results' });
-        await expect(page.getByText('31 results', { exact: true })).toBeVisible();
-        await expect(region.getByRole('link', { name: /Storage item 31/ })).toHaveCount(1);
-        await region.evaluate((element) => {
-            element.scrollTop = element.scrollHeight;
-        });
-        await expect.poll(() => region.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-        await page.screenshot({ path: testInfo.outputPath(`long-results-${viewport.name}-scrolled.png`) });
-
-        await page.getByRole('button', { name: 'Filters' }).click();
-        await expect(page.getByRole('button', { name: 'Hide Filters' })).toHaveAttribute('aria-expanded', 'true');
-        await page.screenshot({ path: testInfo.outputPath(`long-results-${viewport.name}-filters.png`) });
-        expect(pageErrors).toEqual([]);
+        expect(errors).toEqual([]);
     });
 }
+
+test('menu, filter disclosure, focus and long-results scrolling retain their semantics', async ({ page }) => {
+    await page.goto('/iframe.html?id=ui-searchpagelayout--scoped-active-filters&viewMode=story');
+    await expect(page.getByRole('button', { name: 'Scoped search' })).toHaveAttribute('aria-pressed', 'true');
+    const exit = page.getByRole('link', { name: 'Return to Rack A' });
+    await expect(exit).toHaveAttribute('href', '/container/storybook-rack');
+    await exit.focus();
+    await expect(exit).toBeFocused();
+    await expect.poll(async () => exit.evaluate((element) => getComputedStyle(element).outlineStyle)).not.toBe('none');
+    await page.getByRole('button', { name: 'Open navigation menu' }).click();
+    const menu = page.getByRole('navigation', { name: 'Primary navigation' });
+    await expect(menu.locator('[aria-current="page"]').filter({ hasText: 'Search' })).toBeVisible();
+    await expect(menu.getByRole('link', { name: 'Search' })).toHaveCount(0);
+    const filters = page.getByRole('button', { name: 'Filters (1)' });
+    await expect(filters).toHaveAttribute('aria-expanded', 'false');
+    await filters.click();
+    await expect(filters).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('.app-shell-main').getByText('"storage"').first()).toBeVisible();
+    await page.getByRole('button', { name: 'Remove Name filter' }).click();
+    await expect(page.getByRole('button', { name: 'Filters', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Filters', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Filters', exact: true })).toHaveAttribute('aria-expanded', 'false');
+
+    await page.goto('/iframe.html?id=ui-searchpagelayout--global-results&viewMode=story');
+    const firstResult = page.getByRole('region', { name: 'Search results', exact: true }).getByRole('link').first();
+    await firstResult.focus();
+    await expect(firstResult).toBeFocused();
+
+    await page.goto('/iframe.html?id=ui-searchpagelayout--long-results&viewMode=story');
+    const region = page.getByRole('region', { name: 'Search results', exact: true });
+    const before = await page.locator('.app-shell-header').boundingBox();
+    await region.evaluate((element) => {
+        element.scrollTop = element.scrollHeight;
+    });
+    await expect.poll(async () => region.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+    const after = await page.locator('.app-shell-header').boundingBox();
+    expect(after?.y).toBe(before?.y);
+    expect(await page.evaluate(() => document.scrollingElement?.scrollTop ?? 0)).toBe(0);
+});
+
+test('Storybook manager renders the complete search story without an error overlay', async ({ page }, testInfo) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.goto('/?path=/story/ui-searchpagelayout--scoped-results');
+    const preview = page.frameLocator('#storybook-preview-iframe');
+    await expect(preview.getByRole('search', { name: 'Inventory search' })).toBeVisible();
+    await expect(page.getByText(/Unable to render|Storybook error/u)).toHaveCount(0);
+    await page.screenshot({ path: testInfo.outputPath('storybook-manager-desktop.png'), fullPage: true });
+    expect(errors).toEqual([]);
+});

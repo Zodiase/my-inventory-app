@@ -29,6 +29,7 @@ import { ItemDialog } from './ItemDialog';
 import { ItemForm } from './ItemForm';
 import { ItemsByTagView } from './ItemsByTagView';
 import { NotFoundView } from './NotFoundView';
+import { SearchBanner } from './SearchBanner';
 import { SearchBar } from './SearchBar';
 import { SearchFragmentBuilder } from './SearchFragmentBuilder';
 import { SearchPageLayout } from './SearchPageLayout';
@@ -405,6 +406,14 @@ export const App = (): ReactElement => {
     const headerContainerPath = currentItemsContainerId === undefined ? [] : getItemPath(currentItemsContainerId);
     const headerParentPath = headerContainerPath.slice(0, -1);
     const searchScopeLabel = currentSearchScopeItem?.name ?? 'Current Location';
+    const searchExitHref =
+        searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined
+            ? `/container/${encodeURIComponent(searchUrlState.containerId)}`
+            : '/items';
+    const searchExitLabel =
+        searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined
+            ? `Return to ${searchScopeLabel}`
+            : 'Exit search to All Items';
     const searchReturnPath = isSearchResultItemDetail
         ? (getCurrentHistoryState() as ItemDetailNavigationState).searchReturnPath
         : undefined;
@@ -425,7 +434,51 @@ export const App = (): ReactElement => {
                         : searchReturnPath ?? '/search'
                 }
                 headerContent={
-                    location !== '/search' && !isSearchResultItemDetail && currentItemsContainerId !== undefined ? (
+                    location === '/search' ? (
+                        <SearchBanner
+                            exitHref={searchExitHref}
+                            exitLabel={searchExitLabel}
+                            activeFilterCount={searchUrlState.fragments.length}
+                            filtersExpanded={showSearchFilters}
+                            onToggleFilters={() => {
+                                setShowSearchFilters(!showSearchFilters);
+                            }}
+                            queryControls={
+                                <SearchBar
+                                    className="search-banner-query"
+                                    value={searchUrlState.query}
+                                    onChange={(query) => {
+                                        updateSearchUrl({ query, submitted: false });
+                                    }}
+                                    onSearch={() => {
+                                        if (searchUrlState.submitted) setSearchSubmitCount((count) => count + 1);
+                                        else updateSearchUrl({ submitted: true }, false);
+                                    }}
+                                    onClear={() => {
+                                        updateSearchUrl({ query: '', submitted: false });
+                                    }}
+                                    submitDisabled={
+                                        searchUrlState.query.trim() === '' && searchUrlState.fragments.length === 0
+                                    }
+                                />
+                            }
+                            scopeControls={
+                                <SearchScopeSelector
+                                    className="search-banner-scope"
+                                    value={searchUrlState.scope}
+                                    onChange={(scope) => {
+                                        updateSearchUrl({
+                                            scope,
+                                            containerId: searchContainerId,
+                                            submitted: false,
+                                        });
+                                    }}
+                                    scopeLabel={searchScopeLabel}
+                                    scopedDisabled={searchContainerId === undefined}
+                                />
+                            }
+                        />
+                    ) : !isSearchResultItemDetail && currentItemsContainerId !== undefined ? (
                         <BreadcrumbTrail
                             path={headerParentPath}
                             showHomeIcon
@@ -460,61 +513,13 @@ export const App = (): ReactElement => {
                     <Route path="/search">
                         {() => (
                             <SearchPageLayout
-                                scopeDescription={
-                                    searchUrlState.scope === 'scoped'
-                                        ? `Search in ${searchScopeLabel}`
-                                        : 'Search all items'
-                                }
-                                exitHref={
-                                    searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined
-                                        ? `/container/${encodeURIComponent(searchUrlState.containerId)}`
-                                        : '/items'
-                                }
-                                exitLabel={
-                                    searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined
-                                        ? `Back to ${searchScopeLabel}`
-                                        : 'Exit search'
-                                }
-                                filtersExpanded={showSearchFilters}
-                                onToggleFilters={() => {
-                                    setShowSearchFilters(!showSearchFilters);
-                                }}
                                 resultsRef={searchResultsRegion}
-                                controls={
-                                    tagsLoading || allItemsLoading ? null : (
-                                        <>
-                                            <SearchBar
-                                                value={searchUrlState.query}
-                                                onChange={(query) => {
-                                                    updateSearchUrl({ query, submitted: false });
-                                                }}
-                                                onSearch={() => {
-                                                    if (searchUrlState.submitted)
-                                                        setSearchSubmitCount((count) => count + 1);
-                                                    else updateSearchUrl({ submitted: true }, false);
-                                                }}
-                                                onClear={() => {
-                                                    updateSearchUrl({ query: '', submitted: false });
-                                                }}
-                                                searchMode={searchUrlState.scope}
-                                                scopeLabel={searchScopeLabel}
-                                                submitDisabled={
-                                                    searchUrlState.query.trim() === '' &&
-                                                    searchUrlState.fragments.length === 0
-                                                }
-                                            />
-                                            <SearchScopeSelector
-                                                value={searchUrlState.scope}
-                                                onChange={(scope) => {
-                                                    updateSearchUrl({
-                                                        scope,
-                                                        containerId: searchContainerId,
-                                                        submitted: false,
-                                                    });
-                                                }}
-                                                scopeLabel={searchScopeLabel}
-                                                scopedDisabled={searchContainerId === undefined}
-                                            />
+                                filterEditor={
+                                    !tagsLoading && !allItemsLoading && showSearchFilters ? (
+                                        <Box pad="medium" background="light-2" round="small">
+                                            <Heading level="4" margin={{ top: 'none', bottom: 'small' }}>
+                                                Filters
+                                            </Heading>
                                             <FilterBar
                                                 filters={searchUrlState.fragments}
                                                 onChange={(fragments) => {
@@ -525,22 +530,15 @@ export const App = (): ReactElement => {
                                                 }}
                                                 availableTags={allTags}
                                             />
-                                            {showSearchFilters && (
-                                                <Box pad="medium" background="light-2" round="small">
-                                                    <Heading level="4" margin={{ top: 'none', bottom: 'small' }}>
-                                                        Filters
-                                                    </Heading>
-                                                    <SearchFragmentBuilder
-                                                        fragments={searchUrlState.fragments}
-                                                        onChange={(fragments) => {
-                                                            updateSearchUrl({ fragments, submitted: false });
-                                                        }}
-                                                        availableTags={allTags}
-                                                    />
-                                                </Box>
-                                            )}
-                                        </>
-                                    )
+                                            <SearchFragmentBuilder
+                                                fragments={searchUrlState.fragments}
+                                                onChange={(fragments) => {
+                                                    updateSearchUrl({ fragments, submitted: false });
+                                                }}
+                                                availableTags={allTags}
+                                            />
+                                        </Box>
+                                    ) : undefined
                                 }
                                 results={
                                     tagsLoading || allItemsLoading ? (

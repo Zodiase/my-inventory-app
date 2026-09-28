@@ -1,3 +1,7 @@
+/**
+ * Controlled search input with explicit clear and submit actions.
+ * Its compact label adapts inside the shell banner without changing URL ownership.
+ */
 import { Close, Search as SearchIcon } from 'grommet-icons';
 import React, { type ComponentProps, useCallback, useState } from 'react';
 import styled from 'styled-components';
@@ -195,7 +199,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                     type="button"
                 >
                     <SearchIcon size="18px" />
-                    Search
+                    <span className="search-bar-submit-label">Search</span>
                 </SubmitButton>
             </SearchInputWrapper>
         </Container>

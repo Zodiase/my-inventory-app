@@ -30,9 +30,11 @@ test('scoped direct and refreshed search exits to its container and traces the r
 
     await page.goto(searchPath);
     await waitForMeteorReady(page);
-    const exit = page.getByRole('link', { name: 'Back to Kitchen' });
+    const exit = page.getByRole('link', { name: 'Return to Kitchen' });
     await expect(exit).toHaveAttribute('href', `/container/${kitchenId}`);
-    await expect(page.getByText('Search in Kitchen')).toBeVisible();
+    await expect(page.locator('.app-shell-header').getByRole('search', { name: 'Inventory search' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Scoped search' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('.app-shell-main').getByRole('heading', { name: 'Search' })).toHaveCount(0);
     const runReference = page.getByTestId('search-run-reference');
     await expect(runReference).toContainText('2 results');
     const firstRunId = await runReference.getAttribute('data-run-id');
@@ -59,6 +61,14 @@ test('scoped direct and refreshed search exits to its container and traces the r
     await expect(runReference).toContainText('2 results');
     const refreshedRunId = await runReference.getAttribute('data-run-id');
     expect(refreshedRunId).not.toBe(firstRunId);
+
+    await page.getByRole('region', { name: 'Search results' }).locator(`a[href="/items/${plateId}"]`).click();
+    await expect(page).toHaveURL(new RegExp(`/items/${plateId}$`));
+    await expect(page.getByRole('link', { name: /Back to search/u })).toBeVisible();
+    await page.goBack();
+    await expect(page).toHaveURL(new RegExp('/search\\?'));
+    await expect(runReference).toContainText('2 results');
+
     await exit.click();
     await expect(page).toHaveURL(new RegExp(`/container/${kitchenId}$`));
     await expect(page.getByRole('heading', { name: 'Kitchen' })).toBeVisible();
@@ -72,7 +82,7 @@ test('global search exits to all items and empty results retain a server run ref
         '/search?f=' + encodeURIComponent(JSON.stringify({ type: 'name', value: 'Never Found' })) + '&run=1'
     );
     await waitForMeteorReady(page);
-    const exit = page.getByRole('link', { name: 'Exit search' });
+    const exit = page.getByRole('link', { name: 'Exit search to All Items' });
     await expect(exit).toHaveAttribute('href', '/items');
     await expect(page.getByText('No results found')).toBeVisible();
     const runReference = page.getByTestId('search-run-reference');
