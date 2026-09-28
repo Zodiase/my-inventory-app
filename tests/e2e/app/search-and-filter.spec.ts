@@ -362,13 +362,13 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
         await page.getByRole('textbox', { name: 'Search query' }).fill('plate');
         await page.getByRole('button', { name: 'Submit search' }).click();
 
-        const result = page.locator('button').filter({ hasText: 'Plate' }).first();
+        const result = page.locator('a[href^="/items/"]').filter({ hasText: 'Plate' }).first();
         await expect(result).toBeVisible();
         await expect(result).toContainText('Kitchen');
         await expect(result).toContainText('Cabinet');
     });
 
-    test('keeps search controls usable when results exceed the viewport', async ({ page }) => {
+    test('keeps search controls usable when results exceed the viewport', async ({ page }, testInfo) => {
         test.setTimeout(120_000);
         const pageErrors: string[] = [];
         page.on('pageerror', (error) => pageErrors.push(error.message));
@@ -394,15 +394,52 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
                         return false;
                     }
                 },
-                { timeout: 60_000 },
+                { timeout: 60_000 }
             )
             .toBe(true);
         await expect(page.getByText('31 results')).toBeVisible();
 
-        // The results must scroll without collapsing or covering the controls above them.
-        await query.click();
-        await page.getByText('Rack Result 31', { exact: true }).scrollIntoViewIfNeeded();
-        await expect(page.getByText('Rack Result 31', { exact: true })).toBeInViewport();
+        // The results are the only page-length scroll surface across representative widths.
+        for (const viewport of [
+            { name: 'desktop', width: 1280, height: 720 },
+            { name: 'phone', width: 390, height: 844 },
+            { name: 'tablet', width: 768, height: 1024 },
+            { name: 'wide', width: 1600, height: 1000 },
+        ]) {
+            await page.setViewportSize(viewport);
+            const region = page.getByRole('region', { name: 'Search results' });
+            await region.evaluate((element) => {
+                element.scrollTop = 0;
+            });
+            await page.screenshot({ path: testInfo.outputPath(`search-${viewport.name}.png`), fullPage: true });
+            await region.screenshot({ path: testInfo.outputPath(`results-${viewport.name}.png`) });
+            const geometry = await region.evaluate((element) => {
+                element.scrollTop = element.scrollHeight;
+                return {
+                    scrollTop: element.scrollTop,
+                    height: element.clientHeight,
+                    contentHeight: element.scrollHeight,
+                    documentHeight: document.documentElement.scrollHeight,
+                    viewportHeight: window.innerHeight,
+                };
+            });
+            expect(geometry.scrollTop).toBeGreaterThan(0);
+            expect(geometry.contentHeight).toBeGreaterThan(geometry.height);
+            expect(geometry.documentHeight).toBeLessThanOrEqual(geometry.viewportHeight + 1);
+            await page.screenshot({
+                path: testInfo.outputPath(`search-${viewport.name}-scrolled.png`),
+                fullPage: true,
+            });
+            const searchUrl = page.url();
+            await page.getByRole('link', { name: /Rack Result 31/ }).click();
+            await expect(page.getByRole('heading', { name: 'Rack Result 31' })).toBeVisible();
+            await page.goBack();
+            await expect(page).toHaveURL(searchUrl);
+            await expect(page.getByText('31 results')).toBeVisible();
+            await expect.poll(async () => region.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+            await query.click();
+            await expect(query).toBeInViewport();
+        }
         await query.fill('Rack Result 31');
         await submit.click();
         await expect(page.getByText('1 result', { exact: true })).toBeVisible();
@@ -434,7 +471,7 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
         for (const query of ['water bottles', 'tumblers', 'barware', 'cocktail']) {
             await page.getByRole('textbox', { name: 'Search query' }).fill(query);
             await page.getByRole('button', { name: 'Submit search' }).click();
-            const result = page.locator('button').filter({ hasText: 'Drinkware box' }).first();
+            const result = page.locator('a[href^="/items/"]').filter({ hasText: 'Drinkware box' }).first();
             await expect(result).toBeVisible();
             await expect(result).toContainText('Garage');
         }

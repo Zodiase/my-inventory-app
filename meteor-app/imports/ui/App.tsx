@@ -5,9 +5,8 @@
 import { Box, Button, Grommet, Heading, Text } from 'grommet';
 import { Add, Filter } from 'grommet-icons';
 import { Meteor } from 'meteor/meteor';
-import React, { type ReactElement, useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { Route, Switch, useLocation } from 'wouter';
+import React, { type ReactElement, useState, useEffect, useRef } from 'react';
+import { Route, Switch, useLocation, useSearch } from 'wouter';
 
 import { getInventoryIdLabel, InventoryIdentitiesCollection } from '/imports/api/identities';
 import Items, { InventoryItemsCollection } from '/imports/api/items';
@@ -31,25 +30,18 @@ import { ItemsByTagView } from './ItemsByTagView';
 import { NotFoundView } from './NotFoundView';
 import { SearchBar } from './SearchBar';
 import { SearchFragmentBuilder } from './SearchFragmentBuilder';
+import { SearchPageLayout } from './SearchPageLayout';
 import { SearchResultsView } from './SearchResultsView';
 import { SearchScopeSelector } from './SearchScopeSelector';
+import { getSearchUrl, readSearchUrlState, type SearchUrlState } from './searchUrlState';
 import { SettingsDataView } from './SettingsDataView';
 import { DesignSystemGlobalStyle, theme } from './theme';
 
 const SEARCH_RESULT_ITEM_DETAIL_SOURCE = 'search-results';
 
-const SearchRoute = styled(Box)`
-    height: 100%;
-    min-height: 0;
-    overflow-y: auto;
-
-    > * {
-        flex-shrink: 0;
-    }
-`;
-
 interface ItemDetailNavigationState {
     inventoryItemDetailSource?: typeof SEARCH_RESULT_ITEM_DETAIL_SOURCE;
+    searchReturnPath?: string;
 }
 
 const findInventoryItemById = (itemId: string): InventoryItem | undefined => {
@@ -60,7 +52,9 @@ const isSearchResultItemDetailState = (state: unknown): state is ItemDetailNavig
     return (
         typeof state === 'object' &&
         state !== null &&
-        (state as ItemDetailNavigationState).inventoryItemDetailSource === SEARCH_RESULT_ITEM_DETAIL_SOURCE
+        (state as ItemDetailNavigationState).inventoryItemDetailSource === SEARCH_RESULT_ITEM_DETAIL_SOURCE &&
+        typeof (state as ItemDetailNavigationState).searchReturnPath === 'string' &&
+        /^\/search(?:\?|$)/u.test((state as ItemDetailNavigationState).searchReturnPath ?? '')
     );
 };
 
@@ -80,22 +74,26 @@ const decodeRouteParam = (routeParam: string): string | undefined => {
 
 export const App = (): ReactElement => {
     const [location, setLocation] = useLocation();
+    const search = useSearch();
+    const searchUrlState = readSearchUrlState(search);
     const isSearchResultItemDetail = isSearchResultItemDetailState(getCurrentHistoryState());
     const [showCreateItem, setShowCreateItem] = useState(false);
     const [currentItemsContainerId, setCurrentItemsContainerId] = useState<string | undefined>();
+    const [lastSearchContainerId, setLastSearchContainerId] = useState<string | undefined>();
+    const searchContainerId = searchUrlState.containerId ?? lastSearchContainerId;
     const containerRouteMatch = /^\/container\/([^/]+)$/.exec(location);
     const isContainerRoute = containerRouteMatch !== null;
     const routeContainerId = containerRouteMatch !== null ? decodeRouteParam(containerRouteMatch[1]) : undefined;
 
     // Search state
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchScope, setSearchScope] = useState<'global' | 'scoped'>('global');
-    const [searchFragments, setSearchFragments] = useState<SearchFragment[]>([]);
     const [searchResults, setSearchResults] = useState<InventorySearchResult[]>([]);
     const [searchError, setSearchError] = useState<string | undefined>();
     const [searchLoading, setSearchLoading] = useState(false);
-    const [hasSearched, setHasSearched] = useState(false);
     const [showSearchFilters, setShowSearchFilters] = useState(false);
+    const [searchSubmitCount, setSearchSubmitCount] = useState(0);
+    const searchRequestId = useRef(0);
+    const searchResultsRegion = useRef<HTMLDivElement>(null);
+    const searchScrollPositions = useRef(new Map<string, number>());
 
     // Filter state for items view
     const [itemsViewFilters, setItemsViewFilters] = useState<SearchFragment[]>([]);
@@ -118,9 +116,9 @@ export const App = (): ReactElement => {
     }, [routeContainerId]);
 
     const currentSearchScopeItem = useTracker(() => {
-        if (currentItemsContainerId === undefined) return undefined;
-        return findInventoryItemById(currentItemsContainerId);
-    }, [currentItemsContainerId]);
+        if (searchContainerId === undefined) return undefined;
+        return findInventoryItemById(searchContainerId);
+    }, [searchContainerId]);
 
     const currentItemsContainerIdentity = useTracker(() => {
         if (currentItemsContainerId === undefined) return undefined;
@@ -136,6 +134,7 @@ export const App = (): ReactElement => {
 
         if (isContainerRoute) {
             setCurrentItemsContainerId(routeContainerId);
+            setLastSearchContainerId(routeContainerId);
         } else if (location === '/' || location === '/items') {
             setCurrentItemsContainerId(undefined);
         } else if (itemDetailRouteMatch !== null) {
@@ -157,12 +156,6 @@ export const App = (): ReactElement => {
         }
     }, [allItemsLoading, isContainerRoute, routeContainer?._id, routeContainer?.isContainer, routeContainerId]);
 
-    useEffect(() => {
-        if (currentItemsContainerId === undefined && searchScope === 'scoped') {
-            setSearchScope('global');
-        }
-    }, [currentItemsContainerId, searchScope]);
-
     const handleCreateItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
         try {
             const itemDataWithCurrentContainer: RecordInput<InventoryItem> =
@@ -177,55 +170,70 @@ export const App = (): ReactElement => {
         }
     };
 
-    const handleSearch = async (): Promise<void> => {
-        setHasSearched(true);
+    const updateSearchUrl = (changes: Partial<SearchUrlState>, replace = true): void => {
+        setLocation(getSearchUrl({ ...searchUrlState, ...changes }), { replace });
+    };
+
+    useEffect(() => {
+        if (location !== '/search') return;
+        const requestId = ++searchRequestId.current;
+        if (!searchUrlState.submitted) {
+            setSearchResults([]);
+            setSearchError(undefined);
+            setSearchLoading(false);
+            return;
+        }
+
+        const fragments: SearchFragment[] = [...searchUrlState.fragments];
+        if (searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined) {
+            fragments.unshift({ type: 'containerScope', containerRootId: searchUrlState.containerId });
+        }
+        if (searchUrlState.query.trim() !== '') {
+            fragments.push({ type: 'text', value: searchUrlState.query.trim() });
+        }
+
         setSearchLoading(true);
         setSearchError(undefined);
-        try {
-            // Build fragments from current state
-            const fragments: SearchFragment[] = [...searchFragments];
-
-            if (searchScope === 'scoped' && currentItemsContainerId !== undefined) {
-                fragments.unshift({ type: 'containerScope', containerRootId: currentItemsContainerId });
-            }
-
-            // Send the primary query to ranked natural-language retrieval.
-            if (searchQuery.trim() !== '') {
-                fragments.push({ type: 'text', value: searchQuery.trim() });
-            }
-
-            // Call search method
-            const results = (await Meteor.callAsync('items.search', fragments)) as unknown as InventorySearchResult[];
-            setSearchResults(results);
-        } catch (error) {
-            console.error('Search failed:', error);
-            setSearchResults([]);
-            const errorCode =
-                typeof error === 'object' && error !== null && 'error' in error
-                    ? Reflect.get(error, 'error')
-                    : undefined;
-            setSearchError(
-                errorCode === 'search-unavailable'
-                    ? 'Search is temporarily unavailable. Try again after the local search service recovers.'
-                    : 'Search failed. Please try again.'
-            );
-        } finally {
-            setSearchLoading(false);
-        }
-    };
-
-    const handleClearSearch = (): void => {
-        setSearchQuery('');
-    };
-
-    const handleSearchFragmentsChange = (fragments: SearchFragment[]): void => {
-        setSearchFragments(fragments);
-    };
+        void Meteor.callAsync('items.search', fragments)
+            .then((results: unknown) => {
+                if (requestId !== searchRequestId.current) return;
+                setSearchResults(results as InventorySearchResult[]);
+                requestAnimationFrame(() => {
+                    if (searchResultsRegion.current !== null) {
+                        searchResultsRegion.current.scrollTop =
+                            searchScrollPositions.current.get(window.location.href) ?? 0;
+                    }
+                });
+            })
+            .catch((error: unknown) => {
+                if (requestId !== searchRequestId.current) return;
+                console.error('Search failed:', error);
+                setSearchResults([]);
+                const errorCode =
+                    typeof error === 'object' && error !== null && 'error' in error
+                        ? Reflect.get(error, 'error')
+                        : undefined;
+                setSearchError(
+                    errorCode === 'search-unavailable'
+                        ? 'Search is temporarily unavailable. Try again after the local search service recovers.'
+                        : 'Search failed. Please try again.'
+                );
+            })
+            .finally(() => {
+                if (requestId === searchRequestId.current) setSearchLoading(false);
+            });
+        return () => {
+            searchRequestId.current += 1;
+        };
+    }, [location, search, searchSubmitCount]);
 
     const handleSearchItemClick = (itemId: string): void => {
-        setLocation(`/items/${itemId}`, {
+        const returnPath = `${location}${search === '' ? '' : `?${search}`}`;
+        searchScrollPositions.current.set(window.location.href, searchResultsRegion.current?.scrollTop ?? 0);
+        setLocation(`/items/${encodeURIComponent(itemId)}`, {
             state: {
                 inventoryItemDetailSource: SEARCH_RESULT_ITEM_DETAIL_SOURCE,
+                searchReturnPath: returnPath,
             },
         });
     };
@@ -375,14 +383,29 @@ export const App = (): ReactElement => {
 
     const headerContainerPath = currentItemsContainerId === undefined ? [] : getItemPath(currentItemsContainerId);
     const headerParentPath = headerContainerPath.slice(0, -1);
+    const searchScopeLabel = currentSearchScopeItem?.name ?? 'Current Location';
+    const searchReturnPath = isSearchResultItemDetail
+        ? (getCurrentHistoryState() as ItemDetailNavigationState).searchReturnPath
+        : undefined;
 
     return (
         <Grommet theme={theme} full>
             <DesignSystemGlobalStyle />
             <AppShell
                 location={location}
+                searchHref={
+                    isContainerRoute && routeContainerId !== undefined
+                        ? getSearchUrl({
+                              query: '',
+                              scope: 'scoped',
+                              containerId: routeContainerId,
+                              fragments: [],
+                              submitted: false,
+                          })
+                        : searchReturnPath ?? '/search'
+                }
                 headerContent={
-                    currentItemsContainerId !== undefined ? (
+                    location !== '/search' && !isSearchResultItemDetail && currentItemsContainerId !== undefined ? (
                         <BreadcrumbTrail
                             path={headerParentPath}
                             showHomeIcon
@@ -416,90 +439,102 @@ export const App = (): ReactElement => {
                     {/* Search route */}
                     <Route path="/search">
                         {() => (
-                            <SearchRoute gap="medium">
-                                <Box direction="row" justify="between" align="center" gap="medium" wrap>
-                                    <Heading level="2" margin="none">
-                                        Search
-                                    </Heading>
-                                    <Button
-                                        icon={<Filter />}
-                                        label={showSearchFilters ? 'Hide Filters' : 'Filters'}
-                                        onClick={() => {
-                                            setShowSearchFilters(!showSearchFilters);
-                                        }}
-                                        secondary={!showSearchFilters}
-                                        primary={showSearchFilters}
-                                    />
-                                </Box>
-
-                                {tagsLoading || allItemsLoading ? (
-                                    <LoadingState />
-                                ) : (
-                                    <>
-                                        {/* Search bar with scope selector */}
-                                        <Box gap="small">
+                            <SearchPageLayout
+                                scopeDescription={
+                                    searchUrlState.scope === 'scoped'
+                                        ? `Search in ${searchScopeLabel}`
+                                        : 'Search all items'
+                                }
+                                filtersExpanded={showSearchFilters}
+                                onToggleFilters={() => {
+                                    setShowSearchFilters(!showSearchFilters);
+                                }}
+                                resultsRef={searchResultsRegion}
+                                controls={
+                                    tagsLoading || allItemsLoading ? null : (
+                                        <>
                                             <SearchBar
-                                                value={searchQuery}
-                                                onChange={setSearchQuery}
-                                                onSearch={() => {
-                                                    void handleSearch();
-                                                    return undefined;
+                                                value={searchUrlState.query}
+                                                onChange={(query) => {
+                                                    updateSearchUrl({ query, submitted: false });
                                                 }}
-                                                onClear={handleClearSearch}
-                                                searchMode={searchScope}
-                                                scopeLabel={currentSearchScopeItem?.name ?? 'Current Location'}
+                                                onSearch={() => {
+                                                    if (searchUrlState.submitted)
+                                                        setSearchSubmitCount((count) => count + 1);
+                                                    else updateSearchUrl({ submitted: true }, false);
+                                                }}
+                                                onClear={() => {
+                                                    updateSearchUrl({ query: '', submitted: false });
+                                                }}
+                                                searchMode={searchUrlState.scope}
+                                                scopeLabel={searchScopeLabel}
                                                 submitDisabled={
-                                                    searchQuery.trim() === '' && searchFragments.length === 0
+                                                    searchUrlState.query.trim() === '' &&
+                                                    searchUrlState.fragments.length === 0
                                                 }
                                             />
                                             <SearchScopeSelector
-                                                value={searchScope}
-                                                onChange={setSearchScope}
-                                                scopeLabel={currentSearchScopeItem?.name ?? 'Current Location'}
-                                                scopedDisabled={currentItemsContainerId === undefined}
+                                                value={searchUrlState.scope}
+                                                onChange={(scope) => {
+                                                    updateSearchUrl({
+                                                        scope,
+                                                        containerId: searchContainerId,
+                                                        submitted: false,
+                                                    });
+                                                }}
+                                                scopeLabel={searchScopeLabel}
+                                                scopedDisabled={searchContainerId === undefined}
                                             />
-                                        </Box>
-
-                                        <FilterBar
-                                            filters={searchFragments}
-                                            onChange={setSearchFragments}
-                                            onClearAll={() => {
-                                                setSearchFragments([]);
-                                            }}
-                                            availableTags={allTags}
-                                        />
-
-                                        {showSearchFilters && (
-                                            <Box pad="medium" background="light-2" round="small">
-                                                <Heading level="4" margin={{ top: 'none', bottom: 'small' }}>
-                                                    Filters
-                                                </Heading>
-                                                <SearchFragmentBuilder
-                                                    fragments={searchFragments}
-                                                    onChange={handleSearchFragmentsChange}
-                                                    availableTags={allTags}
-                                                />
-                                            </Box>
-                                        )}
-
-                                        {/* Search results */}
+                                            <FilterBar
+                                                filters={searchUrlState.fragments}
+                                                onChange={(fragments) => {
+                                                    updateSearchUrl({ fragments, submitted: false });
+                                                }}
+                                                onClearAll={() => {
+                                                    updateSearchUrl({ fragments: [], submitted: false });
+                                                }}
+                                                availableTags={allTags}
+                                            />
+                                            {showSearchFilters && (
+                                                <Box pad="medium" background="light-2" round="small">
+                                                    <Heading level="4" margin={{ top: 'none', bottom: 'small' }}>
+                                                        Filters
+                                                    </Heading>
+                                                    <SearchFragmentBuilder
+                                                        fragments={searchUrlState.fragments}
+                                                        onChange={(fragments) => {
+                                                            updateSearchUrl({ fragments, submitted: false });
+                                                        }}
+                                                        availableTags={allTags}
+                                                    />
+                                                </Box>
+                                            )}
+                                        </>
+                                    )
+                                }
+                                results={
+                                    tagsLoading || allItemsLoading ? (
+                                        <LoadingState />
+                                    ) : (
                                         <SearchResultsView
                                             results={searchResults}
                                             onItemClick={handleSearchItemClick}
                                             loading={searchLoading}
-                                            hasSearched={hasSearched}
+                                            hasSearched={searchUrlState.submitted}
                                             errorMessage={searchError}
                                             availableTags={allTags}
                                         />
-                                    </>
-                                )}
-                            </SearchRoute>
+                                    )
+                                }
+                            />
                         )}
                     </Route>
 
                     {/* Item detail route */}
                     <Route path="/items/:itemId">
-                        {() => <ItemDetailView deleteReturnPath={isSearchResultItemDetail ? '/search' : undefined} />}
+                        {() => (
+                            <ItemDetailView deleteReturnPath={searchReturnPath} searchReturnPath={searchReturnPath} />
+                        )}
                     </Route>
 
                     {/* Items by tag route */}

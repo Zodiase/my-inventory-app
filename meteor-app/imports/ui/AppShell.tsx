@@ -11,6 +11,7 @@ interface AppShellProps {
     children: ReactNode;
     location: string;
     headerContent?: ReactNode;
+    searchHref?: string;
 }
 
 interface NavItem {
@@ -51,7 +52,12 @@ const menuItems = navItems.filter((item) => item.href !== '/search');
 
 const getAriaCurrent = (active: boolean): 'page' | undefined => (active ? 'page' : undefined);
 
-export const AppShell = ({ children, location, headerContent }: AppShellProps): ReactElement => {
+export const AppShell = ({
+    children,
+    location,
+    headerContent,
+    searchHref = '/search',
+}: AppShellProps): ReactElement => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
@@ -75,7 +81,7 @@ export const AppShell = ({ children, location, headerContent }: AppShellProps): 
                         {headerContent}
                     </Box>
                     <Link
-                        href="/search"
+                        href={searchHref}
                         aria-label="Search inventory"
                         aria-current={location.startsWith('/search') ? 'page' : undefined}
                         className={`app-shell-search-link${

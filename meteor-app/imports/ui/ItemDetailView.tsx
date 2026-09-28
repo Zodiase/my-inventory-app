@@ -39,6 +39,7 @@ const findInventoryItemById = (itemId: string): InventoryItem | undefined => {
 
 interface RouteItemDetailViewProps {
     deleteReturnPath?: string;
+    searchReturnPath?: string;
 }
 
 /**
@@ -62,7 +63,7 @@ interface RouteItemDetailViewProps {
  * </Route>
  * ```
  */
-export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteReturnPath }) => {
+export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteReturnPath, searchReturnPath }) => {
     const { itemId } = useParams<{ itemId: string }>();
     const [, setLocation] = useLocation();
     const [isEditing, setIsEditing] = useState(false);
@@ -243,6 +244,11 @@ export const ItemDetailView: React.FC<RouteItemDetailViewProps> = ({ deleteRetur
     // Render the presentation component with fetched data
     return (
         <>
+            {searchReturnPath !== undefined && (
+                <Box flex={false} margin={{ bottom: 'small' }}>
+                    <Link href={searchReturnPath}>← Back to search</Link>
+                </Box>
+            )}
             <ItemDetailViewPresentation
                 item={item}
                 identities={identities}

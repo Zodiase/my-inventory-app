@@ -1,5 +1,5 @@
 import { Folder, Package, Search as SearchIcon } from 'grommet-icons';
-import React, { type ComponentProps } from 'react';
+import React, { type ComponentProps, type MouseEvent } from 'react';
 import styled from 'styled-components';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
@@ -32,7 +32,7 @@ interface SearchResultsViewProps extends Omit<ComponentProps<'div'>, 'results'> 
     items?: InventoryItem[];
     /** Ranked results returned by the search service with authoritative paths. */
     results?: InventorySearchResult[];
-    /** Callback when an item is clicked/tapped */
+    /** Optional same-tab client navigation; native link actions remain native. */
     onItemClick?: (itemId: string) => void;
     /** Whether results are currently loading */
     loading?: boolean;
@@ -73,7 +73,7 @@ const ResultsList = styled.div`
     gap: 8px;
 `;
 
-const ResultCard = styled.button`
+const ResultCard = styled.a`
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -82,6 +82,8 @@ const ResultCard = styled.button`
     border: 1px solid #ddd;
     border-radius: 8px;
     text-align: left;
+    text-decoration: none;
+    color: inherit;
     cursor: pointer;
     transition: all 0.15s;
     min-height: 44px;
@@ -94,6 +96,11 @@ const ResultCard = styled.button`
     &:active {
         background: #f0f0f0;
         transform: scale(0.99);
+    }
+
+    &:focus-visible {
+        outline: 2px solid #007aff;
+        outline-offset: 2px;
     }
 `;
 
@@ -261,8 +268,19 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
             path: getItemPath?.(item._id) ?? [],
         }));
 
-    const handleItemClick = (itemId: string): void => {
-        onItemClick?.(itemId);
+    const handleItemClick = (event: MouseEvent<HTMLAnchorElement>, itemId: string): void => {
+        if (
+            onItemClick === undefined ||
+            event.defaultPrevented ||
+            event.button !== 0 ||
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.altKey
+        )
+            return;
+        event.preventDefault();
+        onItemClick(itemId);
     };
 
     const getTagName = (tagId: string): string => {
@@ -271,7 +289,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
 
     if (loading) {
         return (
-            <Container className={className} style={style}>
+            <Container className={className} style={style} role="status" aria-live="polite">
                 <LoadingState>
                     <LoadingSpinner />
                     <div style={{ marginTop: '16px' }}>Loading results...</div>
@@ -282,7 +300,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
 
     if (!hasSearched) {
         return (
-            <Container className={className} style={style}>
+            <Container className={className} style={style} role="status" aria-live="polite">
                 <EmptyState>
                     <EmptyIcon>
                         <SearchIcon size="48px" />
@@ -310,7 +328,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
 
     if (resolvedResults.length === 0) {
         return (
-            <Container className={className} style={style}>
+            <Container className={className} style={style} role="status" aria-live="polite">
                 <EmptyState>
                     <EmptyIcon>
                         <SearchIcon size="48px" />
@@ -325,7 +343,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
     return (
         <Container className={className} style={style}>
             <ResultsHeader>
-                <ResultCount>
+                <ResultCount role="status" aria-live="polite">
                     {resolvedResults.length} result{resolvedResults.length !== 1 ? 's' : ''}
                 </ResultCount>
             </ResultsHeader>
@@ -337,10 +355,10 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                     return (
                         <ResultCard
                             key={item._id}
-                            onClick={() => {
-                                handleItemClick(item._id);
+                            href={`/items/${encodeURIComponent(item._id)}`}
+                            onClick={(event) => {
+                                handleItemClick(event, item._id);
                             }}
-                            type="button"
                         >
                             <ItemHeader>
                                 <ItemInfo>

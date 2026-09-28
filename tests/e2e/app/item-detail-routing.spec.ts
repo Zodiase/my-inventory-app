@@ -13,6 +13,36 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Item detail routing', () => {
+    test('recreates query, filters, and results from a direct search URL after refresh', async ({ page }) => {
+        const containerId = await createItem(page, { name: 'Encoded Fixture Box', isContainer: true });
+        await createItem(page, { name: 'Encoded Fixture Item' });
+        await expect
+            .poll(
+                async () => {
+                    const indexed = await callMeteorMethod<unknown[]>(page, 'items.search', [
+                        { type: 'text', value: 'Encoded Fixture' },
+                        { type: 'containerType', value: 'containers' },
+                    ]);
+                    return indexed.length;
+                },
+                { timeout: 30_000 }
+            )
+            .toBe(1);
+        const filter = encodeURIComponent(JSON.stringify({ type: 'containerType', value: 'containers' }));
+        const searchPath = `/search?q=Encoded+Fixture&f=${filter}&run=1`;
+        await page.goto(searchPath);
+        await waitForMeteorReady(page);
+        const result = page.locator('a[href^="/items/"]').filter({ hasText: 'Encoded Fixture Box' });
+        await expect(result).toBeVisible();
+        await expect(result).toHaveAttribute('href', `/items/${containerId}`);
+        await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Encoded Fixture Item' })).toHaveCount(0);
+        await page.reload({ waitUntil: 'networkidle' });
+        await waitForMeteorReady(page);
+        await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('Encoded Fixture');
+        await expect(result).toBeVisible();
+        await expect(page).toHaveURL(new RegExp('/search\\?q=Encoded\\+Fixture&f='));
+    });
+
     test('updates the URL when opening an item from the list', async ({ page }) => {
         const itemId = await createItem(page, {
             name: 'Route Backed Lamp',
@@ -121,6 +151,7 @@ test.describe('Item detail routing', () => {
     });
 
     test('preserves scoped search context after opening a result and going back', async ({ page }) => {
+        test.setTimeout(90_000);
         const containerId = await createItem(page, {
             name: 'Scoped Search Cabinet',
             isContainer: true,
@@ -143,6 +174,10 @@ test.describe('Item detail routing', () => {
         await page.goto(`/container/${containerId}`);
         await waitForMeteorReady(page);
         await page.getByRole('link', { name: 'Search inventory' }).click();
+        await expect(page).toHaveURL(new RegExp(`/search\\?container=${containerId}&scope=within`));
+        await expect(page.getByText('Search in Scoped Search Cabinet')).toBeVisible();
+        await expect(page.locator('.app-shell-breadcrumb')).toHaveCount(0);
+        await expect(page.getByRole('link', { name: 'Search inventory' })).toHaveAttribute('aria-current', 'page');
 
         const scopedSearchButton = page.getByRole('button', { name: 'Scoped search', exact: true });
 
@@ -153,25 +188,41 @@ test.describe('Item detail routing', () => {
         await page.getByRole('textbox', { name: 'Search query' }).fill('Wrench');
         await page.getByRole('button', { name: 'Submit search' }).click();
 
-        const scopedWrenchResult = page.locator('button').filter({ hasText: 'Scoped Wrench' }).first();
+        const scopedWrenchResult = page.locator('a[href^="/items/"]').filter({ hasText: 'Scoped Wrench' }).first();
         await expect(scopedWrenchResult).toBeVisible();
-        await expect(page.locator('button').filter({ hasText: 'Global Wrench' })).toHaveCount(0);
+        await expect(scopedWrenchResult).toHaveAttribute('href', `/items/${firstScopedItemId}`);
+        await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Global Wrench' })).toHaveCount(0);
+
+        const searchUrl = page.url();
+        await page.reload({ waitUntil: 'networkidle' });
+        await waitForMeteorReady(page);
+        await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('Wrench');
+        await expect(scopedWrenchResult).toBeVisible();
+        expect(page.url()).toBe(searchUrl);
 
         await scopedWrenchResult.click();
         await expect(page).toHaveURL(new RegExp(`/items/${firstScopedItemId}$`));
         await expect(page.getByRole('heading', { name: 'Scoped Wrench' })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Back to search' })).toHaveAttribute(
+            'href',
+            new URL(searchUrl).pathname + new URL(searchUrl).search
+        );
 
         await page.goBack();
-        await expect(page).toHaveURL(/\/search$/);
+        await expect(page).toHaveURL(searchUrl);
         await expect(scopedSearchButton).toHaveAttribute('aria-pressed', 'true');
         await expect(scopedSearchButton).toContainText('Scoped Search Cabinet');
+        await page.goForward();
+        await expect(page).toHaveURL(new RegExp(`/items/${firstScopedItemId}$`));
+        await page.getByRole('link', { name: 'Back to search' }).click();
+        await expect(page).toHaveURL(searchUrl);
 
         await page.getByRole('button', { name: 'Clear search' }).click();
         await page.getByRole('textbox', { name: 'Search query' }).fill('Spare Filter');
         await page.getByRole('button', { name: 'Submit search' }).click();
 
-        await expect(page.locator('button').filter({ hasText: 'Scoped Spare Filter' })).toBeVisible();
-        await expect(page.locator('button').filter({ hasText: 'Global Spare Filter' })).toHaveCount(0);
+        await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Scoped Spare Filter' })).toBeVisible();
+        await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Global Spare Filter' })).toHaveCount(0);
     });
 
     test('returns to scoped search after deleting a search result detail', async ({ page }) => {
@@ -200,9 +251,12 @@ test.describe('Item detail routing', () => {
         await page.getByRole('textbox', { name: 'Search query' }).fill('Delete Target');
         await page.getByRole('button', { name: 'Submit search' }).click();
 
-        const scopedDeleteResult = page.locator('button').filter({ hasText: 'Scoped Delete Target' }).first();
+        const scopedDeleteResult = page
+            .locator('a[href^="/items/"]')
+            .filter({ hasText: 'Scoped Delete Target' })
+            .first();
         await expect(scopedDeleteResult).toBeVisible();
-        await expect(page.locator('button').filter({ hasText: 'Global Delete Target' })).toHaveCount(0);
+        await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Global Delete Target' })).toHaveCount(0);
 
         await scopedDeleteResult.click();
         await expect(page).toHaveURL(new RegExp(`/items/${itemId}$`));
@@ -212,7 +266,7 @@ test.describe('Item detail routing', () => {
         await expect(page.getByRole('heading', { name: 'Delete Item' })).toBeVisible();
         await page.getByRole('button', { name: 'Delete Item', exact: true }).click();
 
-        await expect(page).toHaveURL(/\/search$/);
+        await expect(page).toHaveURL(/\/search\?/);
         await expect(page.getByRole('heading', { name: 'Search' })).toBeVisible();
         await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('Delete Target');
         await expect(scopedSearchButton).toHaveAttribute('aria-pressed', 'true');
@@ -248,8 +302,8 @@ test.describe('Item detail routing', () => {
         await page.getByRole('textbox', { name: 'Search query' }).fill('Socket Set');
         await page.getByRole('button', { name: 'Submit search' }).click();
 
-        await expect(page.locator('button').filter({ hasText: 'Scoped Socket Set' })).toBeVisible();
-        await expect(page.locator('button').filter({ hasText: 'Global Socket Set' })).toHaveCount(0);
+        await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Scoped Socket Set' })).toBeVisible();
+        await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Global Socket Set' })).toHaveCount(0);
 
         await page.goto(`/items/${directItemId}`);
         await waitForMeteorReady(page);
@@ -267,8 +321,8 @@ test.describe('Item detail routing', () => {
         await page.getByRole('textbox', { name: 'Search query' }).fill('Socket Set');
         await page.getByRole('button', { name: 'Submit search' }).click();
 
-        await expect(page.locator('button').filter({ hasText: 'Scoped Socket Set' }).first()).toBeVisible();
-        await expect(page.locator('button').filter({ hasText: 'Global Socket Set' }).first()).toBeVisible();
+        await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Scoped Socket Set' }).first()).toBeVisible();
+        await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Global Socket Set' }).first()).toBeVisible();
     });
 
     test('removes a tag from route-backed item details', async ({ page }) => {
