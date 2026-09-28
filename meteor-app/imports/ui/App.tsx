@@ -6,6 +6,7 @@ import { Box, Button, Grommet, Heading, Text } from 'grommet';
 import { Add, Filter } from 'grommet-icons';
 import { Meteor } from 'meteor/meteor';
 import React, { type ReactElement, useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { Route, Switch, useLocation } from 'wouter';
 
 import { getInventoryIdLabel, InventoryIdentitiesCollection } from '/imports/api/identities';
@@ -36,6 +37,16 @@ import { SettingsDataView } from './SettingsDataView';
 import { DesignSystemGlobalStyle, theme } from './theme';
 
 const SEARCH_RESULT_ITEM_DETAIL_SOURCE = 'search-results';
+
+const SearchRoute = styled(Box)`
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+
+    > * {
+        flex-shrink: 0;
+    }
+`;
 
 interface ItemDetailNavigationState {
     inventoryItemDetailSource?: typeof SEARCH_RESULT_ITEM_DETAIL_SOURCE;
@@ -405,7 +416,7 @@ export const App = (): ReactElement => {
                     {/* Search route */}
                     <Route path="/search">
                         {() => (
-                            <Box gap="medium">
+                            <SearchRoute gap="medium">
                                 <Box direction="row" justify="between" align="center" gap="medium" wrap>
                                     <Heading level="2" margin="none">
                                         Search
@@ -482,7 +493,7 @@ export const App = (): ReactElement => {
                                         />
                                     </>
                                 )}
-                            </Box>
+                            </SearchRoute>
                         )}
                     </Route>
 

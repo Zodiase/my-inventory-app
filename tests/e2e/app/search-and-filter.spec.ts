@@ -368,6 +368,47 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
         await expect(result).toContainText('Cabinet');
     });
 
+    test('keeps search controls usable when results exceed the viewport', async ({ page }) => {
+        test.setTimeout(120_000);
+        const pageErrors: string[] = [];
+        page.on('pageerror', (error) => pageErrors.push(error.message));
+        await page.setViewportSize({ width: 1280, height: 800 });
+        for (let index = 1; index <= 31; index += 1) {
+            await createItem(page, { name: `Rack Result ${index}` });
+        }
+
+        await page.goto('/search');
+        await waitForMeteorReady(page);
+        const query = page.getByRole('textbox', { name: 'Search query' });
+        const submit = page.getByRole('button', { name: 'Submit search' });
+        await query.fill('Rack');
+        // Search indexing is asynchronous; retry until the entire fixture is searchable.
+        await expect
+            .poll(
+                async () => {
+                    await submit.click();
+                    try {
+                        await page.getByText('31 results').waitFor({ state: 'visible', timeout: 2_000 });
+                        return true;
+                    } catch {
+                        return false;
+                    }
+                },
+                { timeout: 60_000 },
+            )
+            .toBe(true);
+        await expect(page.getByText('31 results')).toBeVisible();
+
+        // The results must scroll without collapsing or covering the controls above them.
+        await query.click();
+        await page.getByText('Rack Result 31', { exact: true }).scrollIntoViewIfNeeded();
+        await expect(page.getByText('Rack Result 31', { exact: true })).toBeInViewport();
+        await query.fill('Rack Result 31');
+        await submit.click();
+        await expect(page.getByText('1 result', { exact: true })).toBeVisible();
+        expect(pageErrors).toEqual([]);
+    });
+
     test('primary search recalls a container from described contents and aliases', async ({ page }, testInfo) => {
         const browserErrors: string[] = [];
         page.on('console', (message) => {
