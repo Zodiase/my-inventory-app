@@ -11,6 +11,7 @@ interface AppShellProps {
     children: ReactNode;
     location: string;
     headerContent?: ReactNode;
+    searchHref?: string;
 }
 
 interface NavItem {
@@ -47,12 +48,16 @@ const navItems: NavItem[] = [
     },
 ];
 
-const menuItems = navItems.filter((item) => item.href !== '/search');
-
 const getAriaCurrent = (active: boolean): 'page' | undefined => (active ? 'page' : undefined);
 
-export const AppShell = ({ children, location, headerContent }: AppShellProps): ReactElement => {
+export const AppShell = ({
+    children,
+    location,
+    headerContent,
+    searchHref = '/search',
+}: AppShellProps): ReactElement => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const isSearchRoute = location === '/search';
 
     return (
         <Box fill className="app-shell">
@@ -74,23 +79,34 @@ export const AppShell = ({ children, location, headerContent }: AppShellProps): 
                     <Box flex="grow" style={{ minWidth: 0 }} className="app-shell-header-content">
                         {headerContent}
                     </Box>
-                    <Link
-                        href="/search"
-                        aria-label="Search inventory"
-                        aria-current={location.startsWith('/search') ? 'page' : undefined}
-                        className={`app-shell-search-link${
-                            location.startsWith('/search') ? ' app-shell-search-link-active' : ''
-                        }`}
-                    >
-                        <SearchIcon aria-hidden="true" />
-                    </Link>
+                    {!isSearchRoute && (
+                        <Link href={searchHref} aria-label="Search inventory" className="app-shell-search-link">
+                            <SearchIcon aria-hidden="true" />
+                        </Link>
+                    )}
                 </Box>
             </Header>
 
             {menuOpen && (
                 <Nav aria-label="Primary navigation" className="app-shell-menu">
-                    {menuItems.map((item) => {
+                    {navItems.map((item) => {
                         const active = item.isActive(location);
+                        if (item.href === '/search' && isSearchRoute) {
+                            return (
+                                <span
+                                    key={item.href}
+                                    aria-current="page"
+                                    className="app-shell-menu-link app-shell-menu-link-active"
+                                >
+                                    <Box aria-hidden="true" className="app-shell-nav-link-icon">
+                                        {item.icon}
+                                    </Box>
+                                    <Text as="span" weight="bold">
+                                        {item.label}
+                                    </Text>
+                                </span>
+                            );
+                        }
                         return (
                             <Link
                                 key={item.href}
