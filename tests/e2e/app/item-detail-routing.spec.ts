@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Item detail routing', () => {
-    test('shows current Search in the menu without resetting a scoped search', async ({ page }, testInfo) => {
+    test('keeps scoped Search mode while hiding the normal menu', async ({ page }, testInfo) => {
         test.setTimeout(90_000);
         const pageErrors: string[] = [];
         page.on('pageerror', (error) => pageErrors.push(error.message));
@@ -27,17 +27,11 @@ test.describe('Item detail routing', () => {
         const scopedUrl = page.url();
         expect(new URL(scopedUrl).searchParams.get('container')).toBe(kitchenId);
         expect(new URL(scopedUrl).searchParams.get('scope')).toBe('within');
-        await expect(page.getByText('Search in Kitchen')).toBeVisible();
-        await expect(page.getByRole('button', { name: 'Scoped search' })).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.getByRole('button', { name: 'Scope: Kitchen' })).toBeVisible();
         await expect(searchLink).toHaveCount(0);
-        await page.getByRole('button', { name: 'Open navigation menu' }).click();
-        const primaryNav = page.getByRole('navigation', { name: 'Primary navigation' });
-        const currentSearch = primaryNav.locator('[aria-current="page"]').filter({ hasText: 'Search' });
-        await expect(currentSearch).toBeVisible();
-        await expect(currentSearch).not.toHaveAttribute('href');
-        await expect(primaryNav.getByRole('link', { name: 'Search' })).toHaveCount(0);
+        await expect(page.getByRole('button', { name: 'Open navigation menu' })).toHaveCount(0);
+        await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toHaveCount(0);
         await expect(page).toHaveURL(scopedUrl);
-        await expect(page.getByText('Search in Kitchen')).toBeVisible();
 
         await expect
             .poll(
@@ -59,22 +53,16 @@ test.describe('Item detail routing', () => {
         await waitForMeteorReady(page);
         await expect(page.locator(`a[href="/items/${spatulaId}"]`)).toBeVisible();
         await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('Spatula');
-        await expect(page.getByText('1 active filter')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Type: Items' })).toBeVisible();
         await expect(searchLink).toHaveCount(0);
-        await page.getByRole('button', { name: 'Open navigation menu' }).click();
-        await expect(currentSearch).toBeVisible();
-        await expect(currentSearch).not.toHaveAttribute('href');
-        await currentSearch.click();
         await expect(page).toHaveURL(submittedUrl);
-        await expect(page.getByText('Search in Kitchen')).toBeVisible();
-        await expect(page.getByRole('button', { name: 'Scoped search' })).toHaveAttribute('aria-pressed', 'true');
-        await page.screenshot({ path: testInfo.outputPath('submitted-kitchen-search-menu.png') });
-        await page.getByRole('button', { name: 'Open navigation menu' }).click();
+        await expect(page.getByRole('button', { name: 'Scope: Kitchen' })).toBeVisible();
+        await page.screenshot({ path: testInfo.outputPath('submitted-kitchen-search-banner.png') });
         await page.locator(`a[href="/items/${spatulaId}"]`).click();
         await expect(page.getByRole('link', { name: 'Back to search' })).toHaveAttribute('href', submittedPath);
         await page.getByRole('link', { name: 'Back to search' }).click();
         await expect(page).toHaveURL(submittedUrl);
-        await expect(page.getByText('Search in Kitchen')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Scope: Kitchen' })).toBeVisible();
 
         await page.goto('/items');
         await waitForMeteorReady(page);
@@ -85,7 +73,7 @@ test.describe('Item detail routing', () => {
         ).toHaveAttribute('href', '/search');
         await searchLink.click();
         await expect(page).toHaveURL(/\/search$/);
-        await expect(page.getByText('Search all items')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Scope: All Items' })).toBeVisible();
         expect(pageErrors).toEqual([]);
     });
 
@@ -251,18 +239,15 @@ test.describe('Item detail routing', () => {
         await waitForMeteorReady(page);
         await page.getByRole('link', { name: 'Search inventory' }).click();
         await expect(page).toHaveURL(new RegExp(`/search\\?container=${containerId}&scope=within`));
-        await expect(page.getByText('Search in Scoped Search Cabinet')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Scope: Scoped Search Cabinet' })).toBeVisible();
         await expect(page.locator('.app-shell-breadcrumb')).toHaveCount(0);
         await expect(page.getByRole('link', { name: 'Search inventory' })).toHaveCount(0);
 
-        const scopedSearchButton = page.getByRole('button', { name: 'Scoped search', exact: true });
-
-        await scopedSearchButton.click();
-        await expect(scopedSearchButton).toHaveAttribute('aria-pressed', 'true');
-        await expect(scopedSearchButton).toContainText('Scoped Search Cabinet');
+        const scopedSearchButton = page.getByRole('button', { name: 'Scope: Scoped Search Cabinet' });
+        await expect(scopedSearchButton).toBeVisible();
 
         await page.getByRole('textbox', { name: 'Search query' }).fill('Wrench');
-        await page.getByRole('button', { name: 'Submit search' }).click();
+        await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
 
         const scopedWrenchResult = page.locator('a[href^="/items/"]').filter({ hasText: 'Scoped Wrench' }).first();
         await expect(scopedWrenchResult).toBeVisible();
@@ -286,8 +271,7 @@ test.describe('Item detail routing', () => {
 
         await page.goBack();
         await expect(page).toHaveURL(searchUrl);
-        await expect(scopedSearchButton).toHaveAttribute('aria-pressed', 'true');
-        await expect(scopedSearchButton).toContainText('Scoped Search Cabinet');
+        await expect(scopedSearchButton).toBeVisible();
         await page.goForward();
         await expect(page).toHaveURL(new RegExp(`/items/${firstScopedItemId}$`));
         await page.getByRole('link', { name: 'Back to search' }).click();
@@ -295,7 +279,7 @@ test.describe('Item detail routing', () => {
 
         await page.getByRole('button', { name: 'Clear search' }).click();
         await page.getByRole('textbox', { name: 'Search query' }).fill('Spare Filter');
-        await page.getByRole('button', { name: 'Submit search' }).click();
+        await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
 
         await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Scoped Spare Filter' })).toBeVisible();
         await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Global Spare Filter' })).toHaveCount(0);
@@ -318,14 +302,11 @@ test.describe('Item detail routing', () => {
         await waitForMeteorReady(page);
         await page.getByRole('link', { name: 'Search inventory' }).click();
 
-        const scopedSearchButton = page.getByRole('button', { name: 'Scoped search', exact: true });
-
-        await scopedSearchButton.click();
-        await expect(scopedSearchButton).toHaveAttribute('aria-pressed', 'true');
-        await expect(scopedSearchButton).toContainText('Search Delete Cabinet');
+        const scopedSearchButton = page.getByRole('button', { name: 'Scope: Search Delete Cabinet' });
+        await expect(scopedSearchButton).toBeVisible();
 
         await page.getByRole('textbox', { name: 'Search query' }).fill('Delete Target');
-        await page.getByRole('button', { name: 'Submit search' }).click();
+        await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
 
         const scopedDeleteResult = page
             .locator('a[href^="/items/"]')
@@ -345,8 +326,7 @@ test.describe('Item detail routing', () => {
         await expect(page).toHaveURL(/\/search\?/);
         await expect(page.getByRole('heading', { name: 'Search' })).toBeVisible();
         await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('Delete Target');
-        await expect(scopedSearchButton).toHaveAttribute('aria-pressed', 'true');
-        await expect(scopedSearchButton).toContainText('Search Delete Cabinet');
+        await expect(scopedSearchButton).toBeVisible();
     });
 
     test('does not reuse stale scoped context after direct item-detail navigation', async ({ page }) => {
@@ -369,14 +349,11 @@ test.describe('Item detail routing', () => {
         await waitForMeteorReady(page);
         await page.getByRole('link', { name: 'Search inventory' }).click();
 
-        const scopedSearchButton = page.getByRole('button', { name: 'Scoped search', exact: true });
-
-        await scopedSearchButton.click();
-        await expect(scopedSearchButton).toHaveAttribute('aria-pressed', 'true');
-        await expect(scopedSearchButton).toContainText('Prior Scope Cabinet');
+        const scopedSearchButton = page.getByRole('button', { name: 'Scope: Prior Scope Cabinet' });
+        await expect(scopedSearchButton).toBeVisible();
 
         await page.getByRole('textbox', { name: 'Search query' }).fill('Socket Set');
-        await page.getByRole('button', { name: 'Submit search' }).click();
+        await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
 
         await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Scoped Socket Set' })).toBeVisible();
         await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Global Socket Set' })).toHaveCount(0);
@@ -388,14 +365,10 @@ test.describe('Item detail routing', () => {
         await page.goto('/search');
         await waitForMeteorReady(page);
 
-        await expect(page.getByRole('button', { name: 'Global search', exact: true })).toHaveAttribute(
-            'aria-pressed',
-            'true'
-        );
-        await expect(page.getByRole('button', { name: 'Scoped search unavailable' })).toBeDisabled();
+        await expect(page.getByRole('button', { name: 'Scope: All Items' })).toBeVisible();
 
         await page.getByRole('textbox', { name: 'Search query' }).fill('Socket Set');
-        await page.getByRole('button', { name: 'Submit search' }).click();
+        await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
 
         await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Scoped Socket Set' }).first()).toBeVisible();
         await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Global Socket Set' }).first()).toBeVisible();

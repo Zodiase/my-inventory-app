@@ -51,24 +51,7 @@ body {
 }
 
 .app-shell-header.app-shell-header-search > div {
-    align-items: flex-start !important;
-}
-
-.app-shell-header-search .app-shell-title {
-    margin-top: 8px;
-}
-
-.app-shell-header-search .app-shell-menu-button {
-    flex: 0 0 44px;
-}
-
-.search-banner-query {
-    min-width: 0;
-}
-
-.search-banner-scope {
-    min-width: 0;
-    max-width: calc(100% - 110px);
+    align-items: center !important;
 }
 
 .app-shell-header > div,
@@ -334,14 +317,6 @@ a.app-shell-menu-link:focus-visible,
 }
 
 @media (max-width: 640px) {
-    .app-shell-header-search .app-shell-title {
-        display: none;
-    }
-
-    .search-banner-query .search-bar-submit-label {
-        display: none;
-    }
-
     .app-shell-header {
         --app-shell-header-height: 56px;
 

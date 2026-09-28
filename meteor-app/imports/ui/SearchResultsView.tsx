@@ -323,11 +323,8 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
         return (
             <Container className={className} style={style} role="status" aria-live="polite">
                 <EmptyState>
-                    <EmptyIcon>
-                        <SearchIcon size="48px" />
-                    </EmptyIcon>
-                    <EmptyText>Search your inventory</EmptyText>
-                    <EmptyHint>Enter a query or add filters to begin</EmptyHint>
+                    <EmptyText>Ready to search</EmptyText>
+                    <EmptyHint>Enter a query or choose Tags or Type.</EmptyHint>
                 </EmptyState>
             </Container>
         );

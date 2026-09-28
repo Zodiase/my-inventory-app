@@ -3,7 +3,7 @@
  * Reuses the live page layout so responsive and scroll review targets production structure.
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Box, Heading } from 'grommet';
+import { Box } from 'grommet';
 import React, { useState } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
@@ -11,13 +11,10 @@ import type { SearchFragment } from '/imports/model/SearchFragment';
 import type { TracedInventorySearch } from '/imports/model/TracedInventorySearch';
 
 import { AppShell } from './AppShell';
-import { FilterBar } from './FilterBar';
 import { SearchBanner } from './SearchBanner';
-import { SearchBar } from './SearchBar';
-import { SearchFragmentBuilder } from './SearchFragmentBuilder';
+import { clearVisibleFilters, hasRunnableFilter, setItemTypeFilter, toggleTagFilter } from './searchFilterState';
 import { SearchPageLayout } from './SearchPageLayout';
 import { SearchResultsView } from './SearchResultsView';
-import { SearchScopeSelector } from './SearchScopeSelector';
 
 type ReviewState = 'idle' | 'loading' | 'empty' | 'error' | 'results' | 'long';
 
@@ -26,6 +23,7 @@ interface SearchPageStoryProps {
     reviewState: ReviewState;
     activeFilters?: boolean;
     scopeAvailable?: boolean;
+    contradictoryFilters?: boolean;
 }
 
 const makeItem = (index: number): InventoryItem => ({
@@ -52,12 +50,22 @@ const SearchPageStory = ({
     reviewState,
     activeFilters = false,
     scopeAvailable = true,
+    contradictoryFilters = false,
 }: SearchPageStoryProps): React.ReactElement => {
     const [scope, setScope] = useState(initialScope);
     const [query, setQuery] = useState(reviewState === 'idle' ? '' : 'storage');
-    const [filtersExpanded, setFiltersExpanded] = useState(false);
     const [fragments, setFragments] = useState<SearchFragment[]>(
-        activeFilters ? [{ type: 'name', value: 'storage' }] : []
+        contradictoryFilters
+            ? [
+                  { type: 'tagInclude', tagIds: ['tag-tools'] },
+                  { type: 'tagExclude', tagIds: ['tag-tools'] },
+              ]
+            : activeFilters
+            ? [
+                  { type: 'tagInclude', tagIds: ['tag-tools'] },
+                  { type: 'containerType', value: 'items' },
+              ]
+            : []
     );
     const [submitted, setSubmitted] = useState(reviewState !== 'idle');
     const items =
@@ -86,60 +94,42 @@ const SearchPageStory = ({
                     <SearchBanner
                         exitHref={scope === 'scoped' ? '/container/storybook-rack' : '/items'}
                         exitLabel={scope === 'scoped' ? 'Return to Rack A' : 'Exit search to All Items'}
-                        activeFilterCount={fragments.length}
-                        filtersExpanded={filtersExpanded}
-                        onToggleFilters={() => {
-                            setFiltersExpanded((expanded) => !expanded);
+                        query={query}
+                        onQueryChange={(value) => {
+                            setQuery(value);
+                            setSubmitted(false);
                         }}
-                        queryControls={
-                            <SearchBar
-                                className="search-banner-query"
-                                value={query}
-                                onChange={setQuery}
-                                onSearch={() => {
-                                    setSubmitted(true);
-                                }}
-                                onClear={() => {
-                                    setQuery('');
-                                    setSubmitted(false);
-                                }}
-                                submitDisabled={query.trim() === '' && fragments.length === 0}
-                            />
-                        }
-                        scopeControls={
-                            <SearchScopeSelector
-                                className="search-banner-scope"
-                                value={scope}
-                                onChange={setScope}
-                                scopeLabel={scopeAvailable ? 'Rack A' : 'Current'}
-                                scopedDisabled={!scopeAvailable}
-                            />
-                        }
+                        onSearch={() => {
+                            setSubmitted(true);
+                        }}
+                        scope={scope}
+                        scopeLabel="Rack A"
+                        scopeAvailable={scopeAvailable}
+                        onScopeChange={setScope}
+                        fragments={fragments}
+                        availableTags={[
+                            { _id: 'tag-tools', name: 'Tools' },
+                            { _id: 'tag-spare', name: 'Spare' },
+                        ]}
+                        onToggleTag={(type, tagId) => {
+                            const next = toggleTagFilter(fragments, type, tagId);
+                            setFragments(next);
+                            setSubmitted(query.trim() !== '' || hasRunnableFilter(next));
+                        }}
+                        onTypeChange={(type) => {
+                            const next = setItemTypeFilter(fragments, type);
+                            setFragments(next);
+                            setSubmitted(query.trim() !== '' || hasRunnableFilter(next));
+                        }}
+                        onResetFilters={() => {
+                            setScope('global');
+                            setFragments(clearVisibleFilters(fragments));
+                            setSubmitted(query.trim() !== '');
+                        }}
                     />
                 }
             >
                 <SearchPageLayout
-                    filterEditor={
-                        filtersExpanded ? (
-                            <Box pad="medium" background="light-2" round="small">
-                                <Heading level="4" margin={{ top: 'none', bottom: 'small' }}>
-                                    Filters
-                                </Heading>
-                                <FilterBar
-                                    filters={fragments}
-                                    onChange={setFragments}
-                                    onClearAll={() => {
-                                        setFragments([]);
-                                    }}
-                                />
-                                <SearchFragmentBuilder
-                                    fragments={fragments}
-                                    onChange={setFragments}
-                                    availableTags={[]}
-                                />
-                            </Box>
-                        ) : undefined
-                    }
                     results={
                         <SearchResultsView
                             items={items}
@@ -173,9 +163,9 @@ type Story = StoryObj<typeof meta>;
 const review = (purpose: string, expectedComposition: string, interactionChecks: string[]) => ({
     purpose,
     expectedComposition,
-    requiredViewports: ['390x844', '640x900', '641x900', '768x1024', '1280x720', '1600x1000'],
+    requiredViewports: ['320x700', '390x844', '459x900', '460x900', '619x900', '620x900', '1280x720'],
     expectedResponsiveChanges:
-        'At phone width the Inventory wordmark hides, the submit label becomes icon-only, and the banner retains a query row and scope/filter row without horizontal scrolling. The banner and results remain separately reachable at all sizes.',
+        'The blue banner stays one row without menu or brand. At narrow widths one scope/filter button reserves 160px for query. At medium width Scope and Filters separate; at roomy width Scope, Tags, and Type separate. The banner stays fixed as results scroll.',
     interactionChecks,
     knownExclusions: 'Uses mock results and does not exercise Meteor search, persistence, or route navigation.',
 });
@@ -185,8 +175,8 @@ export const GlobalIdle: Story = {
     parameters: {
         review: review(
             'Idle global search',
-            'Blue banner contains exit, empty query, readable All Items scope, disabled Current option and Filters; white body starts with idle status.',
-            ['Open menu; Search is a noninteractive current item.', 'Focus query and exit.']
+            'Blue banner contains exit, one empty query, and progressive scope/filter controls; white body starts with quiet idle status.',
+            ['Open the compact menu and check Scope, Tags, Type order.', 'Focus query and exit.']
         ),
     },
 };
@@ -222,7 +212,7 @@ export const GlobalResults: Story = {
         review: review(
             'Global results',
             'Result count and run reference precede linked cards; no duplicate heading, scope subtitle or detached Back link appears in white.',
-            ['Focus a result link.', 'Open and close Filters.']
+            ['Focus a result link.', 'Open and close a filter menu.']
         ),
     },
 };
@@ -232,7 +222,7 @@ export const ScopedResults: Story = {
         review: review(
             'Scoped results',
             'The banner selects Rack A and has a labelled Return to Rack A chevron; cards remain in the white results region.',
-            ['Open menu; active Search is noninteractive.', 'Focus exit and scope controls.']
+            ['Open the scope menu.', 'Focus exit and scope controls.']
         ),
     },
 };
@@ -241,8 +231,18 @@ export const ScopedActiveFilters: Story = {
     parameters: {
         review: review(
             'Active scoped filter',
-            'The blue banner visibly summarizes Filters (1); opening Filters reveals the editable chip and builder in white without moving the trigger.',
-            ['Expand Filters and remove the active chip.', 'Check results remain reachable.']
+            'The banner summarizes Tools and Items type; the compact menu exposes Scope, Tags and Type without body chips.',
+            ['Remove Tools, then choose Containers.', 'Check results remain reachable.']
+        ),
+    },
+};
+export const ContradictoryRestoredFilters: Story = {
+    args: { scope: 'global', reviewState: 'results', contradictoryFilters: true },
+    parameters: {
+        review: review(
+            'Contradictory legacy URL',
+            'The open tag controls warn that Tools is included and excluded; both selections remain visible for repair.',
+            ['Open Tags or the combined menu and inspect the warning.', 'Remove either conflicting selection.']
         ),
     },
 };

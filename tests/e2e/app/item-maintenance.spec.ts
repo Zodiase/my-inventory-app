@@ -149,8 +149,8 @@ test.describe('Item maintenance happy paths', () => {
         await page.goto('/search');
         await waitForMeteorReady(page);
         await page.getByRole('textbox', { name: 'Search query' }).fill('Parent Container');
-        await page.getByRole('button', { name: 'Submit search' }).click();
-        await page.locator('button').filter({ hasText: 'Parent Container' }).first().click();
+        await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
+        await page.getByRole('region', { name: 'Search results' }).locator(`a[href="/items/${parentId}"]`).click();
 
         await expect(page).toHaveURL(new RegExp(`/items/${parentId}$`));
         await page.getByRole('button', { name: /Move$/ }).click();

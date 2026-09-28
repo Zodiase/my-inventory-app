@@ -287,7 +287,8 @@ test.describe('App Smoke Tests', () => {
 
         await searchLink.click();
         await expect(page.getByRole('heading', { name: 'Search' })).toBeVisible();
-
+        await expect(menuButton).toHaveCount(0);
+        await page.getByRole('link', { name: 'Exit search to All Items' }).click();
         await menuButton.click();
         await page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Data' }).click();
         await expect(page.getByRole('heading', { name: 'Please use a computer' })).toBeVisible();
@@ -327,8 +328,7 @@ test.describe('App Smoke Tests', () => {
         await waitForMeteorReady(page);
         await expect(page.getByRole('heading', { name: 'Search' })).toBeVisible();
 
-        await page.getByRole('button', { name: 'Open navigation menu' }).click();
-        await page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Items' }).click();
+        await page.getByRole('link', { name: 'Exit search to All Items' }).click();
         await expect(page).toHaveURL(/\/items$/);
         await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
 
