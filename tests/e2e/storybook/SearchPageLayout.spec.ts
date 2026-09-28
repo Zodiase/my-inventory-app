@@ -5,6 +5,7 @@ const states = [
     { name: 'global-idle', scope: 'Search all items', status: 'Search your inventory' },
     { name: 'global-loading', scope: 'Search all items', status: 'Loading results...' },
     { name: 'global-empty', scope: 'Search all items', status: 'No results found' },
+    { name: 'global-error', scope: 'Search all items', status: 'Search unavailable' },
     { name: 'global-results', scope: 'Search all items', status: '3 results' },
     { name: 'scoped-results', scope: 'Search in Rack A', status: '3 results' },
 ] as const;
@@ -24,8 +25,14 @@ for (const viewport of [
             await expect(page.getByRole('heading', { name: 'Search', exact: true })).toBeVisible();
             await expect(page.getByRole('link', { name: 'Search inventory' })).toHaveCount(0);
             await expect(page.getByText(state.scope, { exact: true })).toBeVisible();
-            await expect(page.getByText(state.status)).toBeVisible();
+            await expect(page.getByText(state.status, { exact: true })).toBeVisible();
             await expect(page.getByRole('region', { name: 'Search results' })).toBeVisible();
+            await expect(
+                page.getByRole('link', { name: state.name === 'scoped-results' ? 'Back to Rack A' : 'Exit search' })
+            ).toHaveAttribute('href', state.name === 'scoped-results' ? '/container/storybook-rack' : '/items');
+            if (state.name !== 'global-idle' && state.name !== 'global-loading') {
+                await expect(page.getByTestId('search-run-reference')).toContainText('ref srch-StorybookRun123');
+            }
             await page.screenshot({ path: testInfo.outputPath(`${state.name}-${viewport.name}.png`) });
             if (state.name === 'scoped-results') {
                 await page.getByRole('button', { name: 'Open navigation menu' }).click();
@@ -40,7 +47,7 @@ for (const viewport of [
 
         await page.goto('/iframe.html?id=ui-searchpagelayout--long-results&viewMode=story');
         const region = page.getByRole('region', { name: 'Search results' });
-        await expect(page.getByText('31 results')).toBeVisible();
+        await expect(page.getByText('31 results', { exact: true })).toBeVisible();
         await expect(region.getByRole('link', { name: /Storage item 31/ })).toHaveCount(1);
         await region.evaluate((element) => {
             element.scrollTop = element.scrollHeight;

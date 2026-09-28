@@ -14,6 +14,7 @@ import { TagsCollection } from '/imports/api/tags';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type InventorySearchResult from '/imports/model/InventorySearchResult';
 import type { SearchFragment } from '/imports/model/SearchFragment';
+import type { TracedInventorySearch } from '/imports/model/TracedInventorySearch';
 import { LoadingState } from '/imports/ui/common/LoadingState';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
@@ -91,9 +92,12 @@ export const App = (): ReactElement => {
     // Search state
     const [searchResults, setSearchResults] = useState<InventorySearchResult[]>([]);
     const [searchError, setSearchError] = useState<string | undefined>();
+    const [searchRun, setSearchRun] = useState<TracedInventorySearch | undefined>();
+    const [completedSearchKey, setCompletedSearchKey] = useState<string | undefined>();
     const [searchLoading, setSearchLoading] = useState(false);
     const [showSearchFilters, setShowSearchFilters] = useState(false);
     const [searchSubmitCount, setSearchSubmitCount] = useState(0);
+    const searchRequestKey = `${currentRoutePath}#${searchSubmitCount}`;
     const searchRequestId = useRef(0);
     const searchResultsRegion = useRef<HTMLDivElement>(null);
     const searchScrollPositions = useRef(new Map<string, number>());
@@ -183,6 +187,8 @@ export const App = (): ReactElement => {
         if (!searchUrlState.submitted) {
             setSearchResults([]);
             setSearchError(undefined);
+            setSearchRun(undefined);
+            setCompletedSearchKey(undefined);
             setSearchLoading(false);
             return;
         }
@@ -197,10 +203,21 @@ export const App = (): ReactElement => {
 
         setSearchLoading(true);
         setSearchError(undefined);
-        void Meteor.callAsync('items.search', fragments)
-            .then((results: unknown) => {
+        setSearchRun(undefined);
+        setCompletedSearchKey(undefined);
+        void Meteor.callAsync<TracedInventorySearch>('items.searchTraced', fragments)
+            .then((run) => {
                 if (requestId !== searchRequestId.current) return;
-                setSearchResults(results as InventorySearchResult[]);
+                setSearchRun(run);
+                setSearchResults(run.results);
+                setCompletedSearchKey(searchRequestKey);
+                if (run.status === 'error') {
+                    setSearchError(
+                        run.errorCode === 'search-unavailable'
+                            ? 'Search is temporarily unavailable. Try again after the local search service recovers.'
+                            : 'Search failed. Please try again.'
+                    );
+                }
                 requestAnimationFrame(() => {
                     if (searchResultsRegion.current !== null) {
                         searchResultsRegion.current.scrollTop =
@@ -212,6 +229,8 @@ export const App = (): ReactElement => {
                 if (requestId !== searchRequestId.current) return;
                 console.error('Search failed:', error);
                 setSearchResults([]);
+                setSearchRun(undefined);
+                setCompletedSearchKey(searchRequestKey);
                 const errorCode =
                     typeof error === 'object' && error !== null && 'error' in error
                         ? Reflect.get(error, 'error')
@@ -446,6 +465,16 @@ export const App = (): ReactElement => {
                                         ? `Search in ${searchScopeLabel}`
                                         : 'Search all items'
                                 }
+                                exitHref={
+                                    searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined
+                                        ? `/container/${encodeURIComponent(searchUrlState.containerId)}`
+                                        : '/items'
+                                }
+                                exitLabel={
+                                    searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined
+                                        ? `Back to ${searchScopeLabel}`
+                                        : 'Exit search'
+                                }
                                 filtersExpanded={showSearchFilters}
                                 onToggleFilters={() => {
                                     setShowSearchFilters(!showSearchFilters);
@@ -518,11 +547,17 @@ export const App = (): ReactElement => {
                                         <LoadingState />
                                     ) : (
                                         <SearchResultsView
-                                            results={searchResults}
+                                            results={completedSearchKey === searchRequestKey ? searchResults : []}
                                             onItemClick={handleSearchItemClick}
-                                            loading={searchLoading}
+                                            loading={
+                                                searchLoading ||
+                                                (searchUrlState.submitted && completedSearchKey !== searchRequestKey)
+                                            }
                                             hasSearched={searchUrlState.submitted}
-                                            errorMessage={searchError}
+                                            errorMessage={
+                                                completedSearchKey === searchRequestKey ? searchError : undefined
+                                            }
+                                            searchRun={completedSearchKey === searchRequestKey ? searchRun : undefined}
                                             availableTags={allTags}
                                         />
                                     )

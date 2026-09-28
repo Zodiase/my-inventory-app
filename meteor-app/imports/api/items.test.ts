@@ -21,6 +21,8 @@ import {
     searchItems,
     searchInventory,
     searchInventoryMethod,
+    searchInventoryTracedMethod,
+    getSearchTrace,
 } from './items';
 
 describe('items', function () {
@@ -348,6 +350,46 @@ describe('items', function () {
                     async () => await searchInventoryMethod([{ type: 'text', value: 'moving pads' }]),
                     (error: unknown) => error instanceof Meteor.Error && error.error === 'search-unavailable'
                 );
+            } finally {
+                restore();
+            }
+        });
+
+        it('returns a correlated server trace for ordered results and empty searches', async function () {
+            const firstId = await createTestItemDirect('Trace Alpha', false);
+            const secondId = await createTestItemDirect('Trace Beta', false);
+            const matched = await searchInventoryTracedMethod([{ type: 'name', value: 'Trace' }]);
+            assert.match(matched.runId, /^srch-[A-Za-z0-9]{16}$/u);
+            assert.strictEqual(matched.status, 'success');
+            assert.deepStrictEqual(
+                matched.resultIds,
+                matched.results.map((result) => result.item._id)
+            );
+            assert.deepStrictEqual(new Set(matched.resultIds), new Set([firstId, secondId]));
+            assert.strictEqual(matched.count, 2);
+            assert.deepStrictEqual(getSearchTrace(matched.runId), {
+                runId: matched.runId,
+                count: matched.count,
+                resultIds: matched.resultIds,
+                status: matched.status,
+            });
+
+            const empty = await searchInventoryTracedMethod([{ type: 'name', value: 'No such trace item' }]);
+            assert.strictEqual(empty.status, 'empty');
+            assert.strictEqual(empty.count, 0);
+            assert.deepStrictEqual(empty.resultIds, []);
+            assert.notStrictEqual(empty.runId, matched.runId);
+            assert.strictEqual(getSearchTrace('bad-run-id'), undefined);
+        });
+
+        it('keeps a server trace on a search dependency failure', async function () {
+            const restore = registerInventorySearchProvider(undefined);
+            try {
+                const failed = await searchInventoryTracedMethod([{ type: 'text', value: 'moving pads' }]);
+                assert.strictEqual(failed.status, 'error');
+                assert.strictEqual(failed.errorCode, 'search-unavailable');
+                assert.deepStrictEqual(failed.results, []);
+                assert.deepStrictEqual(getSearchTrace(failed.runId)?.resultIds, []);
             } finally {
                 restore();
             }

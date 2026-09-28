@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type InventorySearchResult from '/imports/model/InventorySearchResult';
 import type { TagRecord } from '/imports/model/TagRecord';
+import type { TracedInventorySearch } from '/imports/model/TracedInventorySearch';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 /**
@@ -40,6 +41,8 @@ interface SearchResultsViewProps extends Omit<ComponentProps<'div'>, 'results'> 
     hasSearched?: boolean;
     /** Distinct dependency failure shown instead of a misleading no-match state. */
     errorMessage?: string;
+    /** Server outcome for the currently rendered result set. */
+    searchRun?: TracedInventorySearch;
     /** Optional function to get breadcrumb path for an item */
     getItemPath?: (itemId: string) => InventoryItem[];
     /** Available tags for rendering readable tag names */
@@ -54,8 +57,9 @@ const Container = styled.div`
 
 const ResultsHeader = styled.div`
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
     padding: 8px 12px;
     background: #f5f5f5;
     border-radius: 8px;
@@ -65,6 +69,12 @@ const ResultCount = styled.span`
     font-size: 14px;
     font-weight: 600;
     color: #666;
+`;
+
+const RunReference = styled.span`
+    font-size: 12px;
+    color: #666;
+    overflow-wrap: anywhere;
 `;
 
 const ResultsList = styled.div`
@@ -184,7 +194,7 @@ const EmptyState = styled.div`
     justify-content: center;
     padding: 40px 20px;
     text-align: center;
-    color: #999;
+    color: #555;
 `;
 
 const EmptyIcon = styled.div`
@@ -200,7 +210,7 @@ const EmptyText = styled.div`
 
 const EmptyHint = styled.div`
     font-size: 14px;
-    color: #bbb;
+    color: #666;
 `;
 
 const MatchEvidence = styled.div`
@@ -254,6 +264,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
     loading = false,
     hasSearched = true,
     errorMessage,
+    searchRun,
     getItemPath,
     availableTags = [],
     className,
@@ -267,6 +278,16 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
             item,
             path: getItemPath?.(item._id) ?? [],
         }));
+    const runReference =
+        searchRun === undefined ? null : (
+            <RunReference data-testid="search-run-reference" data-run-id={searchRun.runId}>
+                Search run ·{' '}
+                {searchRun.status === 'error'
+                    ? 'error'
+                    : `${searchRun.count} result${searchRun.count === 1 ? '' : 's'}`}{' '}
+                · ref {searchRun.runId}
+            </RunReference>
+        );
 
     const handleItemClick = (event: MouseEvent<HTMLAnchorElement>, itemId: string): void => {
         if (
@@ -315,6 +336,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
     if (errorMessage !== undefined) {
         return (
             <Container className={className} style={style} role="alert">
+                {runReference}
                 <EmptyState>
                     <EmptyIcon>
                         <SearchIcon size="48px" />
@@ -329,6 +351,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
     if (resolvedResults.length === 0) {
         return (
             <Container className={className} style={style} role="status" aria-live="polite">
+                {runReference}
                 <EmptyState>
                     <EmptyIcon>
                         <SearchIcon size="48px" />
@@ -346,6 +369,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                 <ResultCount role="status" aria-live="polite">
                     {resolvedResults.length} result{resolvedResults.length !== 1 ? 's' : ''}
                 </ResultCount>
+                {runReference}
             </ResultsHeader>
 
             <ResultsList>

@@ -7,6 +7,7 @@ import { Box, Heading } from 'grommet';
 import React, { useState } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import type { TracedInventorySearch } from '/imports/model/TracedInventorySearch';
 
 import { AppShell } from './AppShell';
 import { FilterBar } from './FilterBar';
@@ -16,7 +17,7 @@ import { SearchPageLayout } from './SearchPageLayout';
 import { SearchResultsView } from './SearchResultsView';
 import { SearchScopeSelector } from './SearchScopeSelector';
 
-type ReviewState = 'idle' | 'loading' | 'empty' | 'results' | 'long';
+type ReviewState = 'idle' | 'loading' | 'empty' | 'error' | 'results' | 'long';
 
 interface SearchPageStoryProps {
     scope: 'global' | 'scoped';
@@ -53,12 +54,25 @@ const SearchPageStory = ({ scope: initialScope, reviewState }: SearchPageStoryPr
             : reviewState === 'long'
             ? Array.from({ length: 31 }, (_, index) => makeItem(index + 1))
             : [];
+    const run: TracedInventorySearch | undefined =
+        reviewState === 'idle' || reviewState === 'loading'
+            ? undefined
+            : {
+                  results: [],
+                  runId: 'srch-StorybookRun123',
+                  count: items.length,
+                  resultIds: items.map((item) => item._id),
+                  status: reviewState === 'error' ? 'error' : items.length === 0 ? 'empty' : 'success',
+                  ...(reviewState === 'error' ? { errorCode: 'search-unavailable' as const } : {}),
+              };
 
     return (
         <Box height="100vh" width="100%">
             <AppShell location="/search">
                 <SearchPageLayout
                     scopeDescription={scope === 'scoped' ? 'Search in Rack A' : 'Search all items'}
+                    exitHref={scope === 'scoped' ? '/container/storybook-rack' : '/items'}
+                    exitLabel={scope === 'scoped' ? 'Back to Rack A' : 'Exit search'}
                     filtersExpanded={filtersExpanded}
                     onToggleFilters={() => {
                         setFiltersExpanded((expanded) => !expanded);
@@ -98,6 +112,12 @@ const SearchPageStory = ({ scope: initialScope, reviewState }: SearchPageStoryPr
                             items={items}
                             loading={reviewState === 'loading'}
                             hasSearched={submitted}
+                            errorMessage={
+                                reviewState === 'error'
+                                    ? 'Search is temporarily unavailable. Please try again.'
+                                    : undefined
+                            }
+                            searchRun={run}
                             getItemPath={(itemId) => [rack, items.find((item) => item._id === itemId) ?? rack]}
                         />
                     }
@@ -120,6 +140,7 @@ type Story = StoryObj<typeof meta>;
 export const GlobalIdle: Story = { args: { scope: 'global', reviewState: 'idle' } };
 export const GlobalLoading: Story = { args: { scope: 'global', reviewState: 'loading' } };
 export const GlobalEmpty: Story = { args: { scope: 'global', reviewState: 'empty' } };
+export const GlobalError: Story = { args: { scope: 'global', reviewState: 'error' } };
 export const GlobalResults: Story = { args: { scope: 'global', reviewState: 'results' } };
 export const ScopedResults: Story = { args: { scope: 'scoped', reviewState: 'results' } };
 export const LongResults: Story = { args: { scope: 'global', reviewState: 'long' } };
