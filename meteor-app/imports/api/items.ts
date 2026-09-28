@@ -4,12 +4,14 @@
  */
 import { Meteor } from 'meteor/meteor';
 import type { Mongo } from 'meteor/mongo';
+import { Random } from 'meteor/random';
 
 import type InventoryItem from '/imports/model/InventoryItem';
 import type InventorySearchResult from '/imports/model/InventorySearchResult';
 import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from '/imports/model/ItemConstants';
 import RecordNotFoundException from '/imports/model/RecordNotFoundException';
 import type { SearchFragment } from '/imports/model/SearchFragment';
+import type { TracedInventorySearch } from '/imports/model/TracedInventorySearch';
 import { InventorySearchUnavailableError, searchInventoryIndex } from '/imports/search/InventorySearchProvider';
 import { syncInventorySearchDelete, syncInventorySearchUpsert } from '/imports/search/InventorySearchSync';
 import detectCircularReference, { getAncestorChain } from '/imports/utility/circularReference';
@@ -26,6 +28,36 @@ export type { InventoryItem } from '/imports/model/InventoryItem';
 const logger = createLogger(module);
 const MAX_CONTAINER_SUBSCRIPTION_IDS = 100;
 const SEARCH_CANDIDATE_PAGE_SIZE = 1000;
+const SEARCH_TRACE_TTL_MS = 1_800_000;
+const MAX_SEARCH_TRACES = 200;
+const SEARCH_RUN_ID_LENGTH = 16;
+type SearchTraceSummary = Pick<TracedInventorySearch, 'runId' | 'count' | 'resultIds' | 'status'>;
+const searchTraces = new Map<string, { recordedAt: number; summary: SearchTraceSummary }>();
+
+const recordSearchTrace = (summary: SearchTraceSummary): void => {
+    const now = Date.now();
+    for (const [runId, trace] of searchTraces) {
+        if (now - trace.recordedAt > SEARCH_TRACE_TTL_MS) searchTraces.delete(runId);
+    }
+    searchTraces.set(summary.runId, { recordedAt: now, summary });
+    while (searchTraces.size > MAX_SEARCH_TRACES) {
+        const oldest = searchTraces.keys().next();
+        if (oldest.done === true) break;
+        searchTraces.delete(oldest.value);
+    }
+};
+
+/** Retrieve a recent server-owned run summary without retaining query or inventory content. */
+export const getSearchTrace = (runId: string): SearchTraceSummary | undefined => {
+    if (!/^srch-[A-Za-z0-9]{16}$/u.test(runId)) return undefined;
+    const trace = searchTraces.get(runId);
+    if (trace === undefined) return undefined;
+    if (Date.now() - trace.recordedAt > SEARCH_TRACE_TTL_MS) {
+        searchTraces.delete(runId);
+        return undefined;
+    }
+    return trace.summary;
+};
 const PROPERTY_SEARCH_FIELDS = new Set([
     'serialNumber',
     'make',
@@ -670,6 +702,27 @@ export const searchInventoryMethod = async (fragments: SearchFragment[]): Promis
     }
 };
 
+/** Return a server-originated, opaque run reference with the exact ordered result IDs. */
+export const searchInventoryTracedMethod = async (fragments: SearchFragment[]): Promise<TracedInventorySearch> => {
+    const runId = `srch-${Random.id(SEARCH_RUN_ID_LENGTH)}`;
+    try {
+        const results = await searchInventoryMethod(fragments);
+        const resultIds = results.map((result) => result.item._id);
+        const status = results.length === 0 ? 'empty' : 'success';
+        recordSearchTrace({ runId, status, count: results.length, resultIds });
+        logger.log('Inventory search run completed', { runId, status, count: results.length, resultIds });
+        return { results, runId, count: results.length, resultIds, status };
+    } catch (error) {
+        const errorCode =
+            error instanceof Meteor.Error && error.error === 'search-unavailable'
+                ? 'search-unavailable'
+                : 'search-failed';
+        recordSearchTrace({ runId, status: 'error', count: 0, resultIds: [] });
+        logger.warn('Inventory search run failed', { runId, status: 'error', count: 0, resultIds: [], errorCode });
+        return { results: [], runId, count: 0, resultIds: [], status: 'error', errorCode };
+    }
+};
+
 const getContainerScopeIds = async (containerRootId: string): Promise<string[]> => {
     const scopedContainerIds = new Set<string>([containerRootId]);
     let pendingContainerIds = [containerRootId];
@@ -799,4 +852,6 @@ export default asMeteorMethods(InventoryItemsCollection, {
     unlockItem: unlockInventoryItem,
     getPath: getItemPath,
     search: searchInventoryMethod,
+    searchTraced: searchInventoryTracedMethod,
+    getSearchTrace,
 });

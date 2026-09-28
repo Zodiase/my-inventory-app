@@ -8,6 +8,20 @@ import { Filter } from 'grommet-icons';
 import React, { type ReactElement, type ReactNode, type Ref } from 'react';
 import styled from 'styled-components';
 
+const SearchExitLink = styled.a`
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: #064f91;
+    font-weight: 600;
+    text-decoration: underline;
+
+    &:focus-visible {
+        outline: 2px solid #007aff;
+        outline-offset: 2px;
+    }
+`;
+
 const SearchRoute = styled.section`
     display: flex;
     flex-direction: column;
@@ -41,6 +55,8 @@ const SearchResultsRegion = styled(Box)`
 
 interface SearchPageLayoutProps {
     scopeDescription: string;
+    exitHref: string;
+    exitLabel: string;
     filtersExpanded: boolean;
     onToggleFilters: () => void;
     controls: ReactNode;
@@ -50,6 +66,8 @@ interface SearchPageLayoutProps {
 
 export const SearchPageLayout = ({
     scopeDescription,
+    exitHref,
+    exitLabel,
     filtersExpanded,
     onToggleFilters,
     controls,
@@ -71,9 +89,12 @@ export const SearchPageLayout = ({
                     primary={filtersExpanded}
                 />
             </Box>
-            <Text size="small" color="dark-2">
-                {scopeDescription}
-            </Text>
+            <Box direction="row" justify="between" align="center" gap="small" wrap>
+                <Text size="small" color="dark-2">
+                    {scopeDescription}
+                </Text>
+                <SearchExitLink href={exitHref}>{exitLabel}</SearchExitLink>
+            </Box>
             {controls}
         </SearchControls>
         <SearchResultsRegion ref={resultsRef} role="region" aria-label="Search results" tabIndex={0}>

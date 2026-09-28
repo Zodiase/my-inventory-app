@@ -40,6 +40,22 @@ and expandable advanced filters in a compact top control region. Keep the
 controls visually distinct from result cards and expose loading, result count,
 and empty states.
 
+Provide an explicit exit action in that top region:
+
+- For scoped search with a known container ID, use `Back to Kitchen` (with the
+  actual container name) and navigate to that container route. This action is
+  available after refresh or direct-link entry; it must not depend on browser
+  history having originated in Kitchen.
+- For global search, use `Exit search` and navigate to `/items`.
+- Browser Back remains a normal history action and should return to the actual
+  preceding page when one exists. The explicit exit action is a semantic scope
+  exit, not a replacement for browser Back.
+
+The exit action must be a normal same-tab anchor or equivalent semantic
+navigation control, be keyboard and touch accessible, and make its destination
+clear in its accessible name. A result’s location path may remain contextual
+text; users should not have to infer that it is the way to leave Search.
+
 When results are long, the results region is the deliberate vertical scroll
 owner. The document, shell header, and an accidental nested page region must
 not compete with it. On small screens, controls may scroll away if a sticky
@@ -74,8 +90,43 @@ their navigation must clearly leave search and open the selected container.
   appropriate live region.
 - Preserve visible keyboard focus and provide at least 44px touch targets.
 - Do not communicate scope, item type, or state through color alone.
+- Give the scoped exit action an accessible name such as `Back to Kitchen` and
+  keep it visible at desktop and mobile widths without competing with the
+  query field.
 - On desktop and mobile, selecting a result replaces search with item detail in
   the same tab; there is no required split view or new window.
+
+## Search diagnostics
+
+Traceability is useful for verification and support but is not a primary user
+control. Every completed search must show an inconspicuous marker, for example
+a muted `Search run · 1 result · ref srch-…` line beneath the result count.
+Additional request/provider/timing details may be behind a “Search details”
+disclosure. Do not include the query, descriptions, identities, or container
+names in the trace value. Use an opaque, non-secret run ID with bounded
+retention and avoid making it a stable user or inventory identifier.
+
+The diagnostic contract should make it possible to cross-check the backend
+response against rendered cards, and the visible marker must prove that a
+server search actually ran rather than being a client-only cosmetic ID:
+
+- the server returns a run ID, result count, and ordered result IDs for each
+  completed search; the client renders the returned run ID with that result
+  set;
+- the client records the run as `loading`, `success`, `empty`, `error`, or
+  `stale` and only renders the latest run;
+- a stale response is never presented as the current result set or diagnostic
+  line;
+- errors show a user-safe message and retain the opaque run ID for support,
+  without exposing backend stack traces or request data.
+
+To preserve compatibility with the existing `items.search` array response,
+keep that method unchanged and add a versioned or parallel traced search
+contract that returns `{ results, runId, count, resultIds, status }`. The
+visible run reference is required for success, empty, and error outcomes where
+the server executed the request; diagnostics must never block search completion
+or reveal private inventory data. A client-side request sequence number may
+discard stale responses but is not a valid displayed run reference.
 
 ## Acceptance criteria
 
@@ -99,6 +150,13 @@ their navigation must clearly leave search and open the selected container.
    global/scoped, idle/loading/empty/results,
    anchor semantics, responsive layout, focus, and scroll states with mock
    data. One narrow real-app acceptance test covers search-to-detail and Back.
+8. Scoped search always exposes `Back to <container>` and direct/refreshed
+   scoped URLs navigate to that container; global search exposes `Exit search`
+   to `/items`.
+9. Every completed search displays a server-correlated opaque run reference;
+   its count and ordered result IDs match the rendered backend response, and
+   empty, error, and stale runs are distinguishable without exposing query or
+   inventory content.
 
 ## Open implementation details
 
