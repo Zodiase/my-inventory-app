@@ -405,7 +405,7 @@ export const App = (): ReactElement => {
 
     const headerContainerPath = currentItemsContainerId === undefined ? [] : getItemPath(currentItemsContainerId);
     const headerParentPath = headerContainerPath.slice(0, -1);
-    const searchScopeLabel = currentSearchScopeItem?.name ?? 'Current Location';
+    const searchScopeLabel = currentSearchScopeItem?.name ?? 'Current';
     const searchExitHref =
         searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined
             ? `/container/${encodeURIComponent(searchUrlState.containerId)}`

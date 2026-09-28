@@ -6,7 +6,7 @@ Each image was opened at a readable scale. At every viewport I checked the compl
 
 ## global-idle
 
-**Contract:** Empty query, global scope, Filters in blue; white idle status. **Story conclusion:** pass at all six declared viewports. The empty-state icon and copy are centered, no duplicate white heading or exit, and blue controls remain legible.
+**Contract:** Empty query, readable All Items scope, disabled Current option and Filters in blue; white idle status. **Story conclusion:** pass at all six declared viewports. The empty-state icon and copy are centered, no duplicate white heading or exit, and blue controls remain legible. All Items stays fully readable at 390px.
 
 | Viewport  | Evidence                                                                                                                                                               | Judgment | Visual finding                                                                                                                                                                        |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

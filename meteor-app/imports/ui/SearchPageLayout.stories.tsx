@@ -25,6 +25,7 @@ interface SearchPageStoryProps {
     scope: 'global' | 'scoped';
     reviewState: ReviewState;
     activeFilters?: boolean;
+    scopeAvailable?: boolean;
 }
 
 const makeItem = (index: number): InventoryItem => ({
@@ -50,6 +51,7 @@ const SearchPageStory = ({
     scope: initialScope,
     reviewState,
     activeFilters = false,
+    scopeAvailable = true,
 }: SearchPageStoryProps): React.ReactElement => {
     const [scope, setScope] = useState(initialScope);
     const [query, setQuery] = useState(reviewState === 'idle' ? '' : 'storage');
@@ -109,7 +111,8 @@ const SearchPageStory = ({
                                 className="search-banner-scope"
                                 value={scope}
                                 onChange={setScope}
-                                scopeLabel="Rack A"
+                                scopeLabel={scopeAvailable ? 'Rack A' : 'Current'}
+                                scopedDisabled={!scopeAvailable}
                             />
                         }
                     />
@@ -178,11 +181,11 @@ const review = (purpose: string, expectedComposition: string, interactionChecks:
 });
 
 export const GlobalIdle: Story = {
-    args: { scope: 'global', reviewState: 'idle' },
+    args: { scope: 'global', reviewState: 'idle', scopeAvailable: false },
     parameters: {
         review: review(
             'Idle global search',
-            'Blue banner contains exit, empty query, All Items scope and Filters; white body starts with idle status.',
+            'Blue banner contains exit, empty query, readable All Items scope, disabled Current option and Filters; white body starts with idle status.',
             ['Open menu; Search is a noninteractive current item.', 'Focus query and exit.']
         ),
     },
