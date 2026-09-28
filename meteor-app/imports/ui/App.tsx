@@ -75,6 +75,9 @@ const decodeRouteParam = (routeParam: string): string | undefined => {
 export const App = (): ReactElement => {
     const [location, setLocation] = useLocation();
     const search = useSearch();
+    const currentRoutePath = `${location}${
+        typeof window === 'undefined' ? (search === '' ? '' : `?${search}`) : window.location.search
+    }`;
     const searchUrlState = readSearchUrlState(search);
     const isSearchResultItemDetail = isSearchResultItemDetailState(getCurrentHistoryState());
     const [showCreateItem, setShowCreateItem] = useState(false);
@@ -228,12 +231,11 @@ export const App = (): ReactElement => {
     }, [location, search, searchSubmitCount]);
 
     const handleSearchItemClick = (itemId: string): void => {
-        const returnPath = `${location}${search === '' ? '' : `?${search}`}`;
         searchScrollPositions.current.set(window.location.href, searchResultsRegion.current?.scrollTop ?? 0);
         setLocation(`/items/${encodeURIComponent(itemId)}`, {
             state: {
                 inventoryItemDetailSource: SEARCH_RESULT_ITEM_DETAIL_SOURCE,
-                searchReturnPath: returnPath,
+                searchReturnPath: currentRoutePath,
             },
         });
     };
@@ -387,23 +389,25 @@ export const App = (): ReactElement => {
     const searchReturnPath = isSearchResultItemDetail
         ? (getCurrentHistoryState() as ItemDetailNavigationState).searchReturnPath
         : undefined;
+    const searchHref =
+        location === '/search'
+            ? currentRoutePath
+            : isContainerRoute && routeContainerId !== undefined
+            ? getSearchUrl({
+                  query: '',
+                  scope: 'scoped',
+                  containerId: routeContainerId,
+                  fragments: [],
+                  submitted: false,
+              })
+            : searchReturnPath ?? '/search';
 
     return (
         <Grommet theme={theme} full>
             <DesignSystemGlobalStyle />
             <AppShell
                 location={location}
-                searchHref={
-                    isContainerRoute && routeContainerId !== undefined
-                        ? getSearchUrl({
-                              query: '',
-                              scope: 'scoped',
-                              containerId: routeContainerId,
-                              fragments: [],
-                              submitted: false,
-                          })
-                        : searchReturnPath ?? '/search'
-                }
+                searchHref={searchHref}
                 headerContent={
                     location !== '/search' && !isSearchResultItemDetail && currentItemsContainerId !== undefined ? (
                         <BreadcrumbTrail

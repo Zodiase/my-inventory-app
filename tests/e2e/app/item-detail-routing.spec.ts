@@ -13,6 +13,63 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Item detail routing', () => {
+    test('keeps the current search URL when the shell Search link is clicked again', async ({ page }, testInfo) => {
+        test.setTimeout(90_000);
+        const pageErrors: string[] = [];
+        page.on('pageerror', (error) => pageErrors.push(error.message));
+        const kitchenId = await createItem(page, { name: 'Kitchen', isContainer: true });
+        const spatulaId = await createItem(page, { name: 'Kitchen Spatula', containerId: kitchenId });
+        const searchLink = page.getByRole('link', { name: 'Search inventory' });
+
+        await page.goto(`/container/${kitchenId}`);
+        await waitForMeteorReady(page);
+        await searchLink.click();
+        const scopedUrl = page.url();
+        expect(new URL(scopedUrl).searchParams.get('container')).toBe(kitchenId);
+        expect(new URL(scopedUrl).searchParams.get('scope')).toBe('within');
+        await expect(page.getByText('Search in Kitchen')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Scoped search' })).toHaveAttribute('aria-pressed', 'true');
+        await searchLink.click();
+        await expect(page).toHaveURL(scopedUrl);
+        await expect(page.getByText('Search in Kitchen')).toBeVisible();
+
+        await expect
+            .poll(
+                async () => {
+                    const indexed = await callMeteorMethod<unknown[]>(page, 'items.search', [
+                        { type: 'containerScope', containerRootId: kitchenId },
+                        { type: 'containerType', value: 'items' },
+                        { type: 'text', value: 'Spatula' },
+                    ]);
+                    return indexed.length;
+                },
+                { timeout: 30_000 }
+            )
+            .toBe(1);
+        const filter = encodeURIComponent(JSON.stringify({ type: 'containerType', value: 'items' }));
+        const submittedPath = `${new URL(scopedUrl).pathname}${new URL(scopedUrl).search}&q=Spatula&f=${filter}&run=1`;
+        const submittedUrl = new URL(submittedPath, page.url()).href;
+        await page.goto(submittedPath);
+        await waitForMeteorReady(page);
+        await expect(page.locator(`a[href="/items/${spatulaId}"]`)).toBeVisible();
+        await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('Spatula');
+        await expect(page.getByText('1 active filter')).toBeVisible();
+        await expect(searchLink).toHaveAttribute('href', submittedPath);
+        await searchLink.click();
+        await expect(page).toHaveURL(submittedUrl);
+        await expect(page.getByText('Search in Kitchen')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Scoped search' })).toHaveAttribute('aria-pressed', 'true');
+        await page.screenshot({ path: testInfo.outputPath('submitted-kitchen-search.png') });
+
+        await page.goto('/items');
+        await waitForMeteorReady(page);
+        await expect(searchLink).toHaveAttribute('href', '/search');
+        await searchLink.click();
+        await expect(page).toHaveURL(/\/search$/);
+        await expect(page.getByText('Search all items')).toBeVisible();
+        expect(pageErrors).toEqual([]);
+    });
+
     test('recreates query, filters, and results from a direct search URL after refresh', async ({ page }) => {
         const containerId = await createItem(page, { name: 'Encoded Fixture Box', isContainer: true });
         await createItem(page, { name: 'Encoded Fixture Item' });
