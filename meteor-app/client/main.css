@@ -37,6 +37,23 @@ body {
     z-index: 30;
 }
 
+.app-shell-header-search {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    padding-block: 8px !important;
+}
+
+.app-shell-header.app-shell-header-search > div,
+.app-shell-header-search .app-shell-header-content {
+    height: auto;
+    min-height: 0;
+}
+
+.app-shell-header.app-shell-header-search > div {
+    align-items: center !important;
+}
+
 .app-shell-header > div,
 .app-shell-header-content,
 .app-shell-breadcrumb {
@@ -67,7 +84,7 @@ body {
 
 .app-shell-menu {
     position: absolute;
-    top: 60px;
+    top: 100%;
     left: 16px;
     z-index: 40;
     display: flex;

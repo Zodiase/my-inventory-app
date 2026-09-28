@@ -161,7 +161,7 @@ export default defineConfig({
             name: 'storybook-chromium',
             use: {
                 ...devices['Desktop Chrome'],
-                baseURL: 'http://localhost:6006',
+                baseURL: process.env.STORYBOOK_BASE_URL ?? 'http://localhost:6006',
             },
             testMatch: /tests\/e2e\/storybook\/.*\.spec\.ts/,
             testIgnore: /.*\.webkit\.spec\.ts/,
@@ -170,7 +170,7 @@ export default defineConfig({
             name: 'storybook-webkit',
             use: {
                 ...devices['Desktop Safari'],
-                baseURL: 'http://localhost:6006',
+                baseURL: process.env.STORYBOOK_BASE_URL ?? 'http://localhost:6006',
             },
             testMatch: /tests\/e2e\/storybook\/HoistedContainerGroup\.webkit\.spec\.ts/,
         },

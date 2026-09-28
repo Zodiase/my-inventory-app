@@ -360,7 +360,7 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
         await page.goto('/search');
         await waitForMeteorReady(page);
         await page.getByRole('textbox', { name: 'Search query' }).fill('plate');
-        await page.getByRole('button', { name: 'Submit search' }).click();
+        await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
 
         const result = page.locator('a[href^="/items/"]').filter({ hasText: 'Plate' }).first();
         await expect(result).toBeVisible();
@@ -380,15 +380,17 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
         await page.goto('/search');
         await waitForMeteorReady(page);
         const query = page.getByRole('textbox', { name: 'Search query' });
-        const submit = page.getByRole('button', { name: 'Submit search' });
+        const submit = page.getByRole('textbox', { name: 'Search query' });
         await query.fill('Rack');
         // Search indexing is asynchronous; retry until the entire fixture is searchable.
         await expect
             .poll(
                 async () => {
-                    await submit.click();
+                    await submit.press('Enter');
                     try {
-                        await page.getByText('31 results').waitFor({ state: 'visible', timeout: 2_000 });
+                        await page
+                            .getByText('31 results', { exact: true })
+                            .waitFor({ state: 'visible', timeout: 2_000 });
                         return true;
                     } catch {
                         return false;
@@ -397,7 +399,7 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
                 { timeout: 60_000 }
             )
             .toBe(true);
-        await expect(page.getByText('31 results')).toBeVisible();
+        await expect(page.getByText('31 results', { exact: true })).toBeVisible();
 
         // The results are the only page-length scroll surface across representative widths.
         for (const viewport of [
@@ -407,7 +409,7 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
             { name: 'wide', width: 1600, height: 1000 },
         ]) {
             await page.setViewportSize(viewport);
-            const region = page.getByRole('region', { name: 'Search results' });
+            const region = page.getByRole('region', { name: 'Search results', exact: true });
             await region.evaluate((element) => {
                 element.scrollTop = 0;
             });
@@ -435,13 +437,13 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
             await expect(page.getByRole('heading', { name: 'Rack Result 31' })).toBeVisible();
             await page.goBack();
             await expect(page).toHaveURL(searchUrl);
-            await expect(page.getByText('31 results')).toBeVisible();
+            await expect(page.getByText('31 results', { exact: true })).toBeVisible();
             await expect.poll(async () => region.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
             await query.click();
             await expect(query).toBeInViewport();
         }
         await query.fill('Rack Result 31');
-        await submit.click();
+        await submit.press('Enter');
         await expect(page.getByText('1 result', { exact: true })).toBeVisible();
         expect(pageErrors).toEqual([]);
     });
@@ -470,7 +472,7 @@ test.describe('User Story 3: Global Search and Context Filtering', () => {
 
         for (const query of ['water bottles', 'tumblers', 'barware', 'cocktail']) {
             await page.getByRole('textbox', { name: 'Search query' }).fill(query);
-            await page.getByRole('button', { name: 'Submit search' }).click();
+            await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
             const result = page.locator('a[href^="/items/"]').filter({ hasText: 'Drinkware box' }).first();
             await expect(result).toBeVisible();
             await expect(result).toContainText('Garage');

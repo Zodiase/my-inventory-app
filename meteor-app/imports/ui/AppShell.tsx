@@ -4,7 +4,7 @@
  */
 import { Box, Button, Header, Main, Nav, Text } from 'grommet';
 import { Apps, Configure, Menu, Search as SearchIcon, Tag as TagIcon } from 'grommet-icons';
-import React, { type ReactElement, type ReactNode, useState } from 'react';
+import React, { type ReactElement, type ReactNode, useEffect, useState } from 'react';
 import { Link } from 'wouter';
 
 interface AppShellProps {
@@ -58,24 +58,35 @@ export const AppShell = ({
 }: AppShellProps): ReactElement => {
     const [menuOpen, setMenuOpen] = useState(false);
     const isSearchRoute = location === '/search';
+    useEffect(() => {
+        if (isSearchRoute) setMenuOpen(false);
+    }, [isSearchRoute]);
 
     return (
         <Box fill className="app-shell">
-            <Header background="brand" pad={{ horizontal: 'medium', vertical: 'small' }} className="app-shell-header">
+            <Header
+                background="brand"
+                pad={{ horizontal: 'medium', vertical: 'small' }}
+                className={`app-shell-header${isSearchRoute ? ' app-shell-header-search' : ''}`}
+            >
                 <Box direction="row" align="center" gap="small" fill>
-                    <Button
-                        plain
-                        icon={<Menu color="white" />}
-                        aria-label="Open navigation menu"
-                        aria-expanded={menuOpen}
-                        onClick={() => {
-                            setMenuOpen((open) => !open);
-                        }}
-                        className="app-shell-menu-button"
-                    />
-                    <Text as="span" color="white" weight="bold" className="app-shell-title">
-                        Inventory
-                    </Text>
+                    {!isSearchRoute && (
+                        <>
+                            <Button
+                                plain
+                                icon={<Menu color="white" />}
+                                aria-label="Open navigation menu"
+                                aria-expanded={menuOpen}
+                                onClick={() => {
+                                    setMenuOpen((open) => !open);
+                                }}
+                                className="app-shell-menu-button"
+                            />
+                            <Text as="span" color="white" weight="bold" className="app-shell-title">
+                                Inventory
+                            </Text>
+                        </>
+                    )}
                     <Box flex="grow" style={{ minWidth: 0 }} className="app-shell-header-content">
                         {headerContent}
                     </Box>
@@ -87,26 +98,10 @@ export const AppShell = ({
                 </Box>
             </Header>
 
-            {menuOpen && (
+            {menuOpen && !isSearchRoute && (
                 <Nav aria-label="Primary navigation" className="app-shell-menu">
                     {navItems.map((item) => {
                         const active = item.isActive(location);
-                        if (item.href === '/search' && isSearchRoute) {
-                            return (
-                                <span
-                                    key={item.href}
-                                    aria-current="page"
-                                    className="app-shell-menu-link app-shell-menu-link-active"
-                                >
-                                    <Box aria-hidden="true" className="app-shell-nav-link-icon">
-                                        {item.icon}
-                                    </Box>
-                                    <Text as="span" weight="bold">
-                                        {item.label}
-                                    </Text>
-                                </span>
-                            );
-                        }
                         return (
                             <Link
                                 key={item.href}
