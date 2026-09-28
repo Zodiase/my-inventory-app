@@ -8,6 +8,33 @@ The user authorized home LAN/WLAN access to the deployed browser UI, superseding
 
 Verified: hostname web response HTTP 200, network agent request rejected for non-loopback connection, and local read-only agent operation succeeded. Other-device browser access has not been independently observed. If the LAN IP changes, update the binding and recreate only the app container. Rollback restores APP_BIND_IP=127.0.0.1 and recreates only meteorapp; do not remove database volumes.
 
+## Runtime secrets and headless recovery
+
+The deployed stack uses a Git-ignored, mode-`0600` local `.env` as its runtime
+copy of secrets. The existing `env.tpl` uses 1Password references with
+`op inject` to generate that file. Keep its contents out of Git, command
+output, and deployment logs.
+
+Putting `op://` references directly in `.env` would avoid plaintext secrets
+in that file only if every Compose launch were wrapped in `op run`: Compose
+does not resolve 1Password references itself and could otherwise pass a
+literal reference to a container. That approach also makes stack creation or
+recreation depend on 1Password authentication. On this normally headless Mac,
+retain the protected local runtime copy for now so recovery does not depend
+on an interactive sign-in. This is an availability-versus-plaintext-at-rest
+tradeoff; resolved secrets still enter container runtime environments.
+
+The template is a regeneration source only for credentials it actually
+covers. Back up any manually added secret, including the search key, in an
+approved secret store before treating `.env` as safely regenerable. Revisit
+runtime resolution only with tested unattended, least-privilege 1Password
+access, a launch path that prevents plain Compose invocation, and a verified
+host-restart recovery test. Do not remove the local runtime copy merely
+because a reference-based launch works once interactively.
+
+References: [1Password secret references and `op run`](https://www.1password.dev/cli/secrets-scripts),
+[Docker Compose variable interpolation and precedence](https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/).
+
 ## Decision
 
 - Run development natively on the Apple-silicon `mini-m4` with Node 22 and
