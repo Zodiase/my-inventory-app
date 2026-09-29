@@ -73,6 +73,7 @@ const StandaloneFilterView = ({
     const anchor = useRef<HTMLDivElement>(null);
     const trigger = useRef<HTMLButtonElement>(null);
     const selectedSwitch = useRef<HTMLInputElement>(null);
+    const findInput = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (!open) return;
@@ -170,12 +171,13 @@ const StandaloneFilterView = ({
                             <div className="standalone-filter-tag-head">
                                 <h3>Tags</h3>
                                 <label className="standalone-filter-selected">
-                                    <span>Selected only</span>
+                                    <span>Selected tags only ({activeTags.length})</span>
                                     <input
                                         ref={selectedSwitch}
                                         type="checkbox"
                                         role="switch"
                                         checked={selectedOnly}
+                                        disabled={activeTags.length === 0}
                                         onChange={(event) => {
                                             setSelectedOnly(event.target.checked);
                                         }}
@@ -184,6 +186,7 @@ const StandaloneFilterView = ({
                                 </label>
                             </div>
                             <input
+                                ref={findInput}
                                 className="standalone-filter-find"
                                 aria-label="Find a tag"
                                 placeholder="Find a tag"
@@ -211,9 +214,12 @@ const StandaloneFilterView = ({
                                                         onChange={(value) => {
                                                             setTagStates((states) => ({ ...states, [tag.id]: value }));
                                                             if (selectedOnly && value === 'neutral') {
-                                                                requestAnimationFrame(() =>
-                                                                    selectedSwitch.current?.focus()
-                                                                );
+                                                                const lastSelectedTag = activeTags.length === 1;
+                                                                if (lastSelectedTag) setSelectedOnly(false);
+                                                                requestAnimationFrame(() => {
+                                                                    if (lastSelectedTag) findInput.current?.focus();
+                                                                    else selectedSwitch.current?.focus();
+                                                                });
                                                             }
                                                         }}
                                                     />
@@ -271,7 +277,7 @@ const meta = {
         docs: {
             description: {
                 component:
-                    'A Filter button and a results list are the whole scene. This isolates the filter-view workflow from the Search banner: Type and per-tag Include / Off / Exclude choices apply immediately to mock results. Included tags match any; excluded tags must be absent. Finding tags and Selected only narrow the catalog, not the results. The non-modal panel sits beside results when space allows, so filter effects stay visible; it stacks above results on narrow screens. Compact pills remain at real list density. Prototype only; no app route, saved search, or inventory data is changed.',
+                    'A Filter button and a results list are the whole scene. This isolates the filter-view workflow from the Search banner: Type and per-tag Include / Off / Exclude choices apply immediately to mock results. Included tags match any; excluded tags must be absent. Finding tags and Selected tags only narrow the catalog, not the results. The selected-only switch names its target and count, stays quiet and unavailable at zero, and returns to the full catalog if the last selected tag is cleared. The non-modal panel sits beside results when space allows, so filter effects stay visible; it stacks above results on narrow screens. Compact pills remain at real list density. Prototype only; no app route, saved search, or inventory data is changed.',
             },
         },
     },

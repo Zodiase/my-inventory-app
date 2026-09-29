@@ -145,9 +145,10 @@
 .standalone-filter-switch {
     width: 31px;
     height: 18px;
-    padding: 2px;
+    padding: 1px;
+    border: 1px solid #c7d2de;
     border-radius: 999px;
-    background: #becbd9;
+    background: #f3f6f9;
     transition: background 140ms ease;
 }
 .standalone-filter-switch::before {
@@ -156,15 +157,24 @@
     height: 14px;
     border-radius: 50%;
     background: #fff;
-    box-shadow: 0 1px 2px #1c365044;
+    box-shadow: 0 0 0 1px #b7c4d1;
     content: '';
     transition: transform 140ms ease;
 }
 .standalone-filter-selected input:checked + .standalone-filter-switch {
+    border-color: #1475d4;
     background: #1475d4;
 }
 .standalone-filter-selected input:checked + .standalone-filter-switch::before {
     transform: translateX(13px);
+    box-shadow: none;
+}
+.standalone-filter-selected:has(input:disabled) {
+    color: #7d8d9d;
+    cursor: default;
+}
+.standalone-filter-selected input:disabled + .standalone-filter-switch {
+    opacity: 0.6;
 }
 .standalone-filter-selected input:focus-visible + .standalone-filter-switch {
     outline: 3px solid #f5aa2a;
