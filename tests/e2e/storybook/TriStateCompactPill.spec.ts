@@ -134,6 +134,22 @@ test('indicator moves horizontally only, including direct end-to-end travel', as
     await expect(page.locator(`${mainRail} .tri-state-position > span`)).toHaveText(['Include', 'Off', 'Exclude']);
 });
 
+test('featured example and repeated rows change independently', async ({ page }) => {
+    await page.goto(story('include'));
+    const example = page.getByRole('radiogroup', { name: 'Filter Example tag' });
+    const firstRow = page.getByRole('radiogroup', { name: 'Filter Needs sorting' });
+    await expect(example).toHaveAttribute('data-state', 'include');
+    await expect(firstRow).toHaveAttribute('data-state', 'include');
+
+    await example.getByRole('radio', { name: 'Exclude Example tag' }).click();
+    await expect(example).toHaveAttribute('data-state', 'exclude');
+    await expect(firstRow).toHaveAttribute('data-state', 'include');
+
+    await firstRow.getByRole('radio', { name: 'No filter for Needs sorting' }).click();
+    await expect(firstRow).toHaveAttribute('data-state', 'neutral');
+    await expect(example).toHaveAttribute('data-state', 'exclude');
+});
+
 test('neutral compact indicators are quieter than selected while retaining direct input', async ({ page }) => {
     await page.goto(story('include'));
     const rows = page.getByLabel('Compact tag rows');
@@ -212,4 +228,11 @@ test('manager opens the comparison story without an error overlay', async ({ pag
         page.frameLocator('#storybook-preview-iframe').getByRole('radiogroup', { name: 'Filter Example tag' })
     ).toBeVisible();
     await expect(page.getByText(/Unable to render|Storybook error/u)).toHaveCount(0);
+});
+
+test('Storybook Docs keeps the design rationale with the stories', async ({ page }) => {
+    await page.goto('/?path=/docs/prototypes-tri-state-compact-pill--docs');
+    const docs = page.frameLocator('#storybook-preview-iframe');
+    await expect(docs.getByText(/Each tag has its own Include \/ Off \/ Exclude choice/u)).toBeVisible();
+    await expect(docs.getByText(/featured tag and first list row start in the same state/u)).toBeVisible();
 });

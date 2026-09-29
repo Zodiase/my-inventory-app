@@ -4,6 +4,8 @@ This mock tests the revised [Search interaction design at `54f155b`](https://git
 
 Purpose: show a directly selectable Include / Off / Exclude control at its actual list size, once in an ordinary example tag row and again in six repeated rows. Capture settled Off, Include, and Exclude states at desktop 1280 × 800 and iPad 820 × 900, then check a narrow 390 × 844 view.
 
+The featured tag and the first repeated row start in the same state so the two presentations can be compared, but they represent different tags and must change independently. A shared selection makes the prototype imply a nonexistent cross-tag relationship.
+
 Expected composition: one light recessed pill, 156–168 px wide and 28–30 px high, centered in a 48–52 px tag row. All three fixed words remain comfortably legible and vertically centered within 2 px of the pill midpoint. A translucent, unlabeled 22–26 px tall thumb overlaps the selected word and moves inside the pill. Each stop retains an invisible touch area of at least 44 × 44 px. Neutral repeated rows remain quiet; Include and Exclude receive modest emphasis. The example row uses the same size as the repeated rows; no enlarged demo or separate movement-button cluster appears.
 
 Responsive expectation: the pill retains its size at desktop and iPad width. At narrow width, text and pill remain reachable without horizontal page overflow. The six-row density, spacing, and hierarchy remain legible.
