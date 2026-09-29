@@ -1,0 +1,40 @@
+/* The comparison story shows the alternative at both enlarged and list scales. */
+.tri-lane-demo .tri-demo-card {
+    width: min(100%, 700px);
+}
+.tri-lane-stage {
+    padding: 24px 18px;
+}
+.tri-lane-heading {
+    margin: 28px 0 9px;
+    font-size: 16px;
+}
+.tri-lane-list {
+    border: 1px solid #e1e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.tri-lane-compact-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 62px;
+    padding: 4px 12px;
+    border-bottom: 1px solid #edf1f5;
+    font-size: 13px;
+}
+.tri-lane-compact-row:last-child {
+    border-bottom: 0;
+}
+.tri-lane-compact-row > span:first-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+@media (max-width: 560px) {
+    .tri-lane-compact-row {
+        padding-inline: 8px;
+    }
+}

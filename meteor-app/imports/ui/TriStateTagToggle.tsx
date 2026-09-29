@@ -9,14 +9,25 @@ interface Props {
     state: TagFilterState;
     onChange: (state: TagFilterState) => void;
     large?: boolean;
+    variant?: 'overlay' | 'lane';
 }
 
 const positions: TagFilterState[] = ['include', 'neutral', 'exclude'];
 const labels: Record<TagFilterState, string> = { include: 'Include', neutral: 'Off', exclude: 'Exclude' };
 
-export const TriStateTagToggle = ({ name, state, onChange, large = false }: Props): React.ReactElement => (
+export const TriStateTagToggle = ({
+    name,
+    state,
+    onChange,
+    large = false,
+    variant = 'overlay',
+}: Props): React.ReactElement => (
     <span
-        className={'direct-tag-control tri-state-rail' + (large ? ' tri-state-rail-large' : '')}
+        className={
+            'direct-tag-control tri-state-rail' +
+            (large ? ' tri-state-rail-large' : '') +
+            (variant === 'lane' ? ' tri-state-rail-lane' : '')
+        }
         role="radiogroup"
         aria-label={'Filter ' + name}
         data-state={state}

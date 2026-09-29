@@ -77,6 +77,46 @@
     outline: 3px solid #f5aa2a;
     outline-offset: 3px;
 }
+.tri-state-rail-lane {
+    --rail-height: 52px;
+    --handle-width: 44px;
+    --handle-height: 11px;
+    --label-size: 10px;
+    background: #eaf0f7;
+    border-color: #cbd7e3;
+    box-shadow: inset 0 2px 4px #59718b25;
+}
+.tri-state-rail-large.tri-state-rail-lane {
+    --rail-height: 86px;
+    --handle-width: 78px;
+    --handle-height: 18px;
+    --label-size: 16px;
+}
+.tri-state-rail-lane .tri-state-handle {
+    top: auto;
+    bottom: 6px;
+    transform: none;
+    border-color: #a7bdd2;
+    background: #ffffff80;
+    box-shadow: 0 1px 2px #45607b25;
+    opacity: 0.46;
+}
+.tri-state-rail-large.tri-state-rail-lane .tri-state-handle {
+    bottom: 9px;
+}
+.tri-state-rail-lane[data-state='include'] .tri-state-handle,
+.tri-state-rail-lane[data-state='exclude'] .tri-state-handle {
+    border-color: #8faeca;
+    background: #c7dcee;
+    opacity: 0.85;
+}
+.tri-state-rail-lane .tri-state-position {
+    align-items: start;
+    padding-top: 9px;
+}
+.tri-state-rail-large.tri-state-rail-lane .tri-state-position {
+    padding-top: 17px;
+}
 @media (prefers-reduced-motion: reduce) {
     .tri-state-handle {
         transition: none;
