@@ -106,3 +106,17 @@ for (const width of [1280, 820, 390]) {
         expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
     });
 }
+
+test('Storybook manager preview stays mounted while changing a filter', async ({ page }) => {
+    await page.goto('/?path=/story/prototypes-standalone-filter-view--closed');
+    const preview = page.frameLocator('#storybook-preview-iframe');
+    await expect(preview.getByRole('region', { name: 'Results' }).getByRole('listitem')).toHaveCount(8);
+    await preview.getByRole('button', { name: 'Filters' }).click();
+    await preview
+        .getByRole('dialog', { name: 'Filter results' })
+        .getByRole('radiogroup', { name: 'Filter Needs sorting' })
+        .getByRole('radio', { name: 'Include Needs sorting' })
+        .click();
+    await expect(preview.getByRole('region', { name: 'Results' }).getByRole('listitem')).toHaveCount(2);
+    await expect(preview.getByRole('button', { name: 'Filters · 1' })).toHaveAttribute('aria-expanded', 'true');
+});
