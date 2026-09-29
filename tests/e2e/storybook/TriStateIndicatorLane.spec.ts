@@ -21,6 +21,13 @@ for (const viewport of [
             await expect(rail).toHaveAttribute('data-state', state === 'off' ? 'neutral' : state);
             await expect(rail.locator('.tri-state-handle')).toHaveText('');
             await expect(rail.locator('.tri-state-position > span')).toHaveText(['Include', 'Off', 'Exclude']);
+            const compactRail = page.getByLabel('Compact tag rows').locator('.tri-state-rail').first();
+            const compactDimensions = await compactRail.evaluate((element) => ({
+                hitHeight: element.getBoundingClientRect().height,
+                visualHeight: Number.parseFloat(getComputedStyle(element, '::before').height),
+            }));
+            expect(compactDimensions.hitHeight).toBe(44);
+            expect(compactDimensions.visualHeight).toBeLessThanOrEqual(36);
             const geometry = await rail.evaluate((element) => {
                 const handle = element.querySelector('.tri-state-handle')?.getBoundingClientRect();
                 const label = element.querySelector('.tri-state-position > span')?.getBoundingClientRect();

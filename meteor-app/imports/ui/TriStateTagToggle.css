@@ -78,44 +78,54 @@
     outline-offset: 3px;
 }
 .tri-state-rail-lane {
-    --rail-height: 52px;
-    --handle-width: 44px;
-    --handle-height: 11px;
+    --rail-height: 44px;
+    --handle-width: 32px;
+    --handle-height: 6px;
     --label-size: 10px;
-    background: #eaf0f7;
-    border-color: #cbd7e3;
-    box-shadow: inset 0 2px 4px #59718b25;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+.tri-state-rail-lane::before {
+    position: absolute;
+    inset: 5px 0;
+    z-index: 0;
+    border: 1px solid #dde6ef;
+    border-radius: 999px;
+    background: #f5f8fb;
+    box-shadow: inset 0 1px 2px #58718f12;
+    content: '';
 }
 .tri-state-rail-large.tri-state-rail-lane {
-    --rail-height: 86px;
-    --handle-width: 78px;
-    --handle-height: 18px;
-    --label-size: 16px;
+    --rail-height: 64px;
+    --handle-width: 60px;
+    --handle-height: 10px;
+    --label-size: 14px;
 }
 .tri-state-rail-lane .tri-state-handle {
     top: auto;
-    bottom: 6px;
+    bottom: 10px;
     transform: none;
-    border-color: #a7bdd2;
-    background: #ffffff80;
-    box-shadow: 0 1px 2px #45607b25;
-    opacity: 0.46;
+    border-color: #d0dce8;
+    background: #dce7f1;
+    box-shadow: none;
+    opacity: 0.55;
 }
 .tri-state-rail-large.tri-state-rail-lane .tri-state-handle {
-    bottom: 9px;
+    bottom: 12px;
 }
 .tri-state-rail-lane[data-state='include'] .tri-state-handle,
 .tri-state-rail-lane[data-state='exclude'] .tri-state-handle {
-    border-color: #8faeca;
-    background: #c7dcee;
-    opacity: 0.85;
+    border-color: #b9cfe3;
+    background: #c8ddef;
+    opacity: 0.8;
 }
 .tri-state-rail-lane .tri-state-position {
     align-items: start;
-    padding-top: 9px;
+    padding-top: 8px;
 }
 .tri-state-rail-large.tri-state-rail-lane .tri-state-position {
-    padding-top: 17px;
+    padding-top: 13px;
 }
 @media (prefers-reduced-motion: reduce) {
     .tri-state-handle {
