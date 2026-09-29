@@ -1,15 +1,17 @@
 # Separate indicator lane visual review
 
+> **Superseded after user review (2026-09-29).** The user rejected this upper-label/underline composition and its oversized controls. The pass judgments below were an implementation self-review of the earlier contract, not visual acceptance. See the [measured rejection and replacement proof](../tri-state-density-2026-09-29/REVIEW.md).
+
 **Reviewer:** implementation agent, self-review; user/design review pending.  
 **Contract:** [CONTRACT.md](CONTRACT.md).  
 **LAN Storybook:** `http://mini-m4.local:48377/?path=/story/prototypes-tri-state-indicator-lane--off`.  
 **Comparison:** [existing overlaid handle story](http://mini-m4.local:48377/?path=/story/prototypes-tri-state-tag-toggle--undecided).
 
-| State | Desktop 1280 × 800 | iPad 820 × 900 | Judgment |
-| --- | --- | --- | --- |
-| Off | [screenshot](screenshots/off-desktop.png) — pass | [screenshot](screenshots/off-ipad.png) — pass | Indicator stays below all words; six Off rows read quietly. |
+| State   | Desktop 1280 × 800                                   | iPad 820 × 900                                    | Judgment                                                     |
+| ------- | ---------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |
+| Off     | [screenshot](screenshots/off-desktop.png) — pass     | [screenshot](screenshots/off-ipad.png) — pass     | Indicator stays below all words; six Off rows read quietly.  |
 | Include | [screenshot](screenshots/include-desktop.png) — pass | [screenshot](screenshots/include-ipad.png) — pass | Indicator moves under Include; first compact row mirrors it. |
-| Exclude | [screenshot](screenshots/exclude-desktop.png) — pass | [screenshot](screenshots/exclude-ipad.png) — pass | Indicator moves under Exclude; other rows stay Off. |
+| Exclude | [screenshot](screenshots/exclude-desktop.png) — pass | [screenshot](screenshots/exclude-ipad.png) — pass | Indicator moves under Exclude; other rows stay Off.          |
 
 I inspected the six screenshots at readable scale and operated the live preview from Off to Include to Exclude. The fixed words remained stationary, and the indicator travelled below them rather than behind the active word. The enlarged example makes the motion visible; the six compact rows show that repeated neutral controls are much less prominent than the prior white overlaid capsules. There is no horizontal overflow or Storybook error overlay. The desktop story is taller than 800px, so its lower rows require vertical scrolling; the full-page screenshots include them.
 

@@ -9,7 +9,7 @@ interface Props {
     state: TagFilterState;
     onChange: (state: TagFilterState) => void;
     large?: boolean;
-    variant?: 'overlay' | 'lane';
+    variant?: 'overlay' | 'compact';
 }
 
 const positions: TagFilterState[] = ['include', 'neutral', 'exclude'];
@@ -26,7 +26,7 @@ export const TriStateTagToggle = ({
         className={
             'direct-tag-control tri-state-rail' +
             (large ? ' tri-state-rail-large' : '') +
-            (variant === 'lane' ? ' tri-state-rail-lane' : '')
+            (variant === 'compact' ? ' tri-state-rail-compact' : '')
         }
         role="radiogroup"
         aria-label={'Filter ' + name}

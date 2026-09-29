@@ -1,0 +1,28 @@
+{
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "row": {
+    "width": 624,
+    "height": 48
+  },
+  "compactRail": {
+    "width": 162,
+    "height": 29
+  },
+  "featuredPill": {
+    "width": 162,
+    "height": 29
+  },
+  "thumb": {
+    "width": 52,
+    "height": 24
+  },
+  "railToRowWidth": 0.25961538461538464,
+  "railToRowHeight": 0.6041666666666666,
+  "labelCenterY": 388.390625,
+  "railCenterY": 387.390625,
+  "handleOverlapsLabel": true,
+  "horizontalOverflow": 0
+}

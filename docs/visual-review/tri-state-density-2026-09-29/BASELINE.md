@@ -1,6 +1,6 @@
 # Tri-state density regression baseline
 
-The current `Prototypes / Tri-state Indicator Lane / Off` story is **visually rejected** by the user. The earlier pass in [the story review](../tri-state-indicator-lane-2026-09-28/REVIEW.md) covered mechanics and must not be treated as design approval. This baseline records the defect before the replacement size contract is applied; it sets no acceptance thresholds.
+The former `Prototypes / Tri-state Indicator Lane / Off` story is **visually rejected** by the user. The earlier pass in [the story review](../tri-state-indicator-lane-2026-09-28/REVIEW.md) covered mechanics and must not be treated as design approval. This baseline records the defect before the replacement size contract is applied; it sets no acceptance thresholds.
 
 | Viewport           | Full story                                     | Six-row crop                                | Focus                                        | Geometry                                      |
 | ------------------ | ---------------------------------------------- | ------------------------------------------- | -------------------------------------------- | --------------------------------------------- |

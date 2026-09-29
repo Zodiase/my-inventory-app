@@ -1,10 +1,10 @@
-/** Mock-only comparison proof with the tri-state indicator below fixed rail labels. */
+/** Mock-only proof of a compact tri-state pill with fixed labels and an overlaid thumb. */
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 
 import { TriStateTagToggle, type TagFilterState } from './TriStateTagToggle';
 import './TriStateTagToggle.stories.css';
-import './TriStateIndicatorLane.stories.css';
+import './TriStateCompactPill.stories.css';
 
 interface Props {
     initialState: TagFilterState;
@@ -12,48 +12,22 @@ interface Props {
 
 const compactTags = ['Needs sorting', 'Needs repair', 'Fragile', 'Heavy', 'Camera', 'Hardware'];
 
-const TriStateIndicatorLaneDemo = ({ initialState }: Props): React.ReactElement => {
+const TriStateCompactPillDemo = ({ initialState }: Props): React.ReactElement => {
     const [state, setState] = useState<TagFilterState>(initialState);
     const [otherStates, setOtherStates] = useState<Record<string, TagFilterState>>({});
     return (
         <main className="tri-demo tri-lane-demo" data-testid="tri-state-lane-proof">
             <section className="tri-demo-card" aria-label="Separate indicator lane demonstration">
-                <p className="tri-demo-eyebrow">ALTERNATIVE · INDICATOR LANE</p>
-                <h1>Words stay put. Indicator moves.</h1>
+                <p className="tri-demo-eyebrow">THREE-POSITION TAG FILTER</p>
+                <h1>One control per tag</h1>
                 <p className="tri-demo-intro">
-                    Tap any rail position or use arrow keys. The small indicator travels below the fixed words.
+                    Choose Include, Off, or Exclude directly. The thumb moves over fixed words.
                 </p>
-                <div className="tri-demo-stage tri-lane-stage">
-                    <div className="tri-demo-tag">Example tag</div>
-                    <TriStateTagToggle name="Example tag" state={state} onChange={setState} variant="lane" large />
+                <div className="tri-lane-stage" aria-label="Interactive tag row">
+                    <span>Example tag</span>
+                    <TriStateTagToggle name="Example tag" state={state} onChange={setState} variant="compact" />
                 </div>
-                <div className="tri-demo-actions" aria-label="Move the indicator">
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setState('include');
-                        }}
-                    >
-                        Move to Include
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setState('neutral');
-                        }}
-                    >
-                        Move to Off
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setState('exclude');
-                        }}
-                    >
-                        Move to Exclude
-                    </button>
-                </div>
-                <h2 className="tri-lane-heading">At list size</h2>
+                <h2 className="tri-lane-heading">Repeated rows</h2>
                 <div className="tri-lane-list" aria-label="Compact tag rows">
                     {compactTags.map((tag, index) => (
                         <div className="tri-lane-compact-row" key={tag}>
@@ -65,7 +39,7 @@ const TriStateIndicatorLaneDemo = ({ initialState }: Props): React.ReactElement 
                                     if (index === 0) setState(value);
                                     else setOtherStates((values) => ({ ...values, [tag]: value }));
                                 }}
-                                variant="lane"
+                                variant="compact"
                             />
                         </div>
                     ))}
@@ -77,11 +51,11 @@ const TriStateIndicatorLaneDemo = ({ initialState }: Props): React.ReactElement 
 };
 
 const meta = {
-    title: 'Prototypes/Tri-state Indicator Lane',
-    component: TriStateIndicatorLaneDemo,
+    title: 'Prototypes/Tri-state Compact Pill',
+    component: TriStateCompactPillDemo,
     parameters: { layout: 'fullscreen' },
     tags: ['autodocs'],
-} satisfies Meta<typeof TriStateIndicatorLaneDemo>;
+} satisfies Meta<typeof TriStateCompactPillDemo>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
