@@ -4,6 +4,8 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useEffect, useRef, useState } from 'react';
+
+import { TriStateTagToggle, type TagFilterState } from './TriStateTagToggle';
 import './DirectSelectionTagPicker.css';
 
 interface Tag {
@@ -15,7 +17,7 @@ interface Tag {
 }
 type OpenMenu = 'tags' | 'type' | null;
 type ItemType = 'Any' | 'Items' | 'Containers';
-type TagState = 'include' | 'neutral' | 'exclude';
+type TagState = TagFilterState;
 interface Props {
     initialOpen?: OpenMenu;
     initialIncluded?: string[];
@@ -167,42 +169,13 @@ const DirectSelectionTagPicker = ({
                         {status && <em className={'direct-tag-status ' + status.toLowerCase()}> · {status}</em>}
                     </small>
                 </span>
-                <span
-                    className="direct-tag-control"
-                    role="radiogroup"
-                    aria-label={'Filter ' + tag.name}
-                    data-state={state}
-                >
-                    {(['include', 'neutral', 'exclude'] as const).map((position) => (
-                        <label
-                            key={position}
-                            title={
-                                position === 'include' ? 'Include' : position === 'exclude' ? 'Exclude' : 'No filter'
-                            }
-                            className={'direct-state-option ' + (state === position ? 'is-active ' : '') + position}
-                        >
-                            <input
-                                type="radio"
-                                name={'filter-' + tag.id}
-                                value={position}
-                                checked={state === position}
-                                aria-label={
-                                    (position === 'include'
-                                        ? 'Include '
-                                        : position === 'exclude'
-                                        ? 'Exclude '
-                                        : 'No filter for ') + tag.name
-                                }
-                                onChange={() => {
-                                    setTagState(tag.id, position);
-                                }}
-                            />
-                            <span aria-hidden="true">
-                                {position === 'include' ? '+' : position === 'exclude' ? '−' : '○'}
-                            </span>
-                        </label>
-                    ))}
-                </span>
+                <TriStateTagToggle
+                    name={tag.name}
+                    state={state}
+                    onChange={(position) => {
+                        setTagState(tag.id, position);
+                    }}
+                />
             </div>
         );
     };
