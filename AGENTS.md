@@ -9,13 +9,18 @@ surface as working:
 1. Open the exact URL and shell the user will open, including Storybook's manager when the
    deliverable is a Storybook story.
 2. Wait for the intended content to render after the latest build or deployment.
-3. Check the rendered surface for visible error overlays and inspect relevant browser errors.
-4. Capture and inspect at least one screenshot at the user's representative viewport; check
+3. Have at least one owner or independent verifier manually exercise a representative user
+   workflow in that exact shell. Observe the resulting UI state and a recovery action such as
+   clearing, closing, or going back; a click without checking its outcome does not count.
+4. Check the rendered surface for visible error overlays and inspect relevant browser errors.
+5. Capture and inspect at least one screenshot at the user's representative viewport; check
    every explicitly supported responsive breakpoint when layout behavior is part of the work.
-5. State precisely which surface and viewport were checked. Treat isolated iframe checks as
-   component diagnostics, never as proof that the full user-facing surface works.
+6. State precisely who checked which surface, viewport, actions, and visible outcomes. Treat
+   isolated iframe checks as component diagnostics, never as proof that the full user-facing
+   surface works.
 
-Prefer an automated smoke test for the full shell so regressions fail deterministically.
+Prefer an automated smoke test for the full shell so regressions fail deterministically, but
+never substitute that test for the hands-on review above.
 
 ## Frontend regression boundaries
 
