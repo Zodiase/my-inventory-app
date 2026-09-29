@@ -149,7 +149,6 @@ const DirectSelectionTagPicker = ({
             : excluded.includes(tag.id)
             ? 'exclude'
             : 'neutral';
-        const status = state === 'include' ? 'Included' : state === 'exclude' ? 'Excluded' : '';
         return (
             <div
                 className="direct-tag-row"
@@ -164,10 +163,7 @@ const DirectSelectionTagPicker = ({
                     <span className="direct-tag-name" title={tag.name}>
                         {tag.name}
                     </span>
-                    <small title={tag.path.join(' / ')}>
-                        {tag.path.slice(0, -1).join(' / ')}
-                        {status && <em className={'direct-tag-status ' + status.toLowerCase()}> · {status}</em>}
-                    </small>
+                    <small title={tag.path.join(' / ')}>{tag.path.slice(0, -1).join(' / ')}</small>
                 </span>
                 <TriStateTagToggle
                     name={tag.name}

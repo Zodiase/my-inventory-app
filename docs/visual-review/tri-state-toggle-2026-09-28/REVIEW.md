@@ -7,10 +7,10 @@
 
 | State | Desktop 1280 × 800 | iPad 820 × 900 | Judgment |
 | --- | --- | --- | --- |
-| Undecided | [screenshot](screenshots/undecided-desktop.png) — pass | [screenshot](screenshots/undecided-ipad.png) — pass | One dark round handle occupies the center detent. |
-| Include | [screenshot](screenshots/include-desktop.png) — pass | [screenshot](screenshots/include-ipad.png) — pass | The same handle occupies logical start. |
-| Exclude | [screenshot](screenshots/exclude-desktop.png) — pass | [screenshot](screenshots/exclude-ipad.png) — pass | The same handle occupies logical end. |
+| Off | [screenshot](screenshots/undecided-desktop.png) — pass | [screenshot](screenshots/undecided-ipad.png) — pass | Quiet translucent handle sits over fixed Off text. |
+| Include | [screenshot](screenshots/include-desktop.png) — pass | [screenshot](screenshots/include-ipad.png) — pass | Same unlabeled handle moves to fixed Include text. |
+| Exclude | [screenshot](screenshots/exclude-desktop.png) — pass | [screenshot](screenshots/exclude-ipad.png) — pass | Same unlabeled handle moves to fixed Exclude text. |
 
-I opened and operated the live story, including repeat clicks between positions, and inspected the settled appearances at readable scale. The handle is one physical-looking element over a recessed blue rail; separate buttons do not gain raised active styling. The automated motion check measured the handle at early, intermediate, and final positions for a direct Include-to-Exclude change, and confirmed direction and ordering. Direct rail clicks, keyboard arrows, and reduced-motion behavior were checked. The three settled screenshots and the ordinary-size Search-panel screenshots were inspected for containment and legibility. There was no document overflow or Storybook error overlay.
+I opened and operated the live story, including repeated direct changes between ends, and inspected the settled appearances at readable scale. The same translucent capsule moves in one recessed rail; the three printed labels stay in place and no per-stop border or active button highlight appears. The automated motion check measured early, intermediate, and final handle positions for direct Include-to-Exclude travel. Direct rail clicks, keyboard arrows, RTL geometry, and reduced-motion behavior were checked. The ordinary-size Search-panel screenshot was inspected for quiet repeated controls and row legibility. No document overflow or Storybook error overlay appeared.
 
-The focused test suite passed **9/9**, and the combined focused plus Search mock regression run passed **22/22**. TypeScript, Prettier, and Storybook-source ESLint passed. This validates implementation behavior, not the user's aesthetic preference. The explanatory words around the enlarged control are provisional; their eventual placement needs design review.
+The focused test suite passed **10/10**, and the combined focused plus Search mock regression run passed **23/23**. TypeScript, Prettier, and Storybook-source ESLint passed. These checks validate implementation behavior and layout, not the user's design approval. This remains a visual hypothesis for user review.

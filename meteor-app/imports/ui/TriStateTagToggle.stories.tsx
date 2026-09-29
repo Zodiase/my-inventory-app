@@ -9,36 +9,20 @@ interface Props {
     initialState: TagFilterState;
 }
 
-const meaning: Record<TagFilterState, string> = {
-    include: 'Include matching items',
-    neutral: 'Do not filter by this tag',
-    exclude: 'Exclude matching items',
-};
-
 const TriStateToggleDemo = ({ initialState }: Props): React.ReactElement => {
     const [state, setState] = useState<TagFilterState>(initialState);
     return (
         <main className="tri-demo" data-testid="tri-state-toggle-proof">
             <section className="tri-demo-card" aria-label="Three-position tag toggle demonstration">
                 <p className="tri-demo-eyebrow">TAG FILTER CONTROL · INTERACTION PROOF</p>
-                <h1>One handle, three positions</h1>
+                <h1>One handle, three fixed choices</h1>
                 <p className="tri-demo-intro">
                     Tap a position on the rail, use the buttons below, or focus the control and use arrow keys.
                 </p>
                 <div className="tri-demo-stage">
                     <div className="tri-demo-tag">Needs sorting</div>
                     <TriStateTagToggle name="Needs sorting" state={state} onChange={setState} large />
-                    <div className="tri-demo-legends" aria-hidden="true">
-                        <span>Include</span>
-                        <span>Undecided</span>
-                        <span>Exclude</span>
-                    </div>
                 </div>
-                <p className="tri-demo-state" aria-live="polite">
-                    Current position:{' '}
-                    <strong>{state === 'neutral' ? 'Undecided' : state === 'include' ? 'Include' : 'Exclude'}</strong>
-                    <span>{meaning[state]}</span>
-                </p>
                 <div className="tri-demo-actions" aria-label="Move the handle">
                     <button
                         type="button"
@@ -54,7 +38,7 @@ const TriStateToggleDemo = ({ initialState }: Props): React.ReactElement => {
                             setState('neutral');
                         }}
                     >
-                        Move to Undecided
+                        Move to Off
                     </button>
                     <button
                         type="button"
@@ -65,7 +49,9 @@ const TriStateToggleDemo = ({ initialState }: Props): React.ReactElement => {
                         Move to Exclude
                     </button>
                 </div>
-                <p className="tri-demo-note">Mock control only. The handle's motion and shape are for visual review.</p>
+                <p className="tri-demo-note">
+                    Mock control only. Review the handle's motion and label legibility here.
+                </p>
             </section>
         </main>
     );

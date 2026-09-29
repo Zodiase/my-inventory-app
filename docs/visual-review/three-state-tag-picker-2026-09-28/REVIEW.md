@@ -6,7 +6,7 @@
 **LAN Storybook:** `http://mini-m4.local:48377/?path=/story/prototypes-direct-selection-tag-picker--browse`.  
 **Status:** implementation proof passes this visual contract; production integration awaits design-owner and user review.
 
-The tag controls now use the shared recessed-rail handle reviewed in the [isolated toggle proof](../tri-state-toggle-2026-09-28/REVIEW.md). These screenshots reflect that revision. The placement of explanatory Included/Excluded words remains a design question, not an accepted visual decision.
+The tag controls now use the shared recessed rail and translucent unlabeled handle reviewed in the [isolated toggle proof](../tri-state-toggle-2026-09-28/REVIEW.md). The three labels remain fixed inside the rail, and external Included/Excluded row words have been removed. These screenshots reflect that revision; user visual approval remains pending.
 
 Screenshots were inspected at readable scale, including the final slider/switch treatment, panel containment, hierarchy, legibility, control affordances, and desktop/tablet continuity. The panel deliberately overlays mock results while the compact applied summary remains accessible. It does not claim phone support.
 

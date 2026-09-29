@@ -16,6 +16,8 @@ for (const viewport of [
             const rail = page.getByRole('radiogroup', { name: 'Filter Needs sorting' });
             await expect(rail).toHaveAttribute('data-state', state === 'undecided' ? 'neutral' : state);
             await expect(page.getByRole('radio', { checked: true })).toHaveCount(1);
+            await expect(rail.locator('.tri-state-handle')).toHaveText('');
+            await expect(rail.locator('.tri-state-position > span')).toHaveText(['Include', 'Off', 'Exclude']);
             expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
             await page.screenshot({ path: testInfo.outputPath(`${state}-${viewport.name}.png`), fullPage: true });
         });
@@ -41,6 +43,7 @@ test('one handle travels through the rail for direct end-to-end changes', async 
     expect(early).toBeLessThan(midway);
     expect(midway).toBeLessThan(right);
     expect(right).toBeGreaterThan(center + 35);
+    await expect(page.locator('.tri-state-position > span')).toHaveText(['Include', 'Off', 'Exclude']);
 
     await page.getByRole('radio', { name: 'No filter for Needs sorting' }).click();
     await page.waitForTimeout(300);
@@ -63,6 +66,18 @@ test('arrow keys change the same handle and reduced motion removes transition', 
     expect(duration).toBe('0s');
     await page.keyboard.press('ArrowRight');
     await expect(page.getByRole('radio', { name: 'Exclude Needs sorting' })).toBeChecked();
+});
+
+test('logical rail positions and the handle mirror in right-to-left layout', async ({ page }) => {
+    await page.goto(story('undecided'));
+    await page.getByTestId('tri-state-toggle-proof').evaluate((element) => element.setAttribute('dir', 'rtl'));
+    await page.getByRole('button', { name: 'Move to Include' }).click();
+    await page.waitForTimeout(300);
+    const includeX = await handleX(page);
+    await page.getByRole('button', { name: 'Move to Exclude' }).click();
+    await page.waitForTimeout(300);
+    const excludeX = await handleX(page);
+    expect(includeX).toBeGreaterThan(excludeX + 100);
 });
 
 test('manager opens the dedicated interaction story', async ({ page }) => {

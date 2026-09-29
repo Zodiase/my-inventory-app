@@ -12,7 +12,7 @@ interface Props {
 }
 
 const positions: TagFilterState[] = ['include', 'neutral', 'exclude'];
-const symbol: Record<TagFilterState, string> = { include: '+', neutral: '○', exclude: '−' };
+const labels: Record<TagFilterState, string> = { include: 'Include', neutral: 'Off', exclude: 'Exclude' };
 
 export const TriStateTagToggle = ({ name, state, onChange, large = false }: Props): React.ReactElement => (
     <span
@@ -21,9 +21,7 @@ export const TriStateTagToggle = ({ name, state, onChange, large = false }: Prop
         aria-label={'Filter ' + name}
         data-state={state}
     >
-        <span className="tri-state-handle" aria-hidden="true">
-            {symbol[state]}
-        </span>
+        <span className="tri-state-handle" aria-hidden="true" />
         {positions.map((position) => (
             <label key={position} className={'tri-state-position ' + position}>
                 <input
@@ -39,7 +37,7 @@ export const TriStateTagToggle = ({ name, state, onChange, large = false }: Prop
                         onChange(position);
                     }}
                 />
-                <span aria-hidden="true">{symbol[position]}</span>
+                <span aria-hidden="true">{labels[position]}</span>
             </label>
         ))}
     </span>
