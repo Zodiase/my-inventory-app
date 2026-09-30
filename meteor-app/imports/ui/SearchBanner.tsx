@@ -232,9 +232,17 @@ export const SearchBanner = ({
         const onPointerDown = (event: PointerEvent): void => {
             if (root.current !== null && !root.current.contains(event.target as Node)) setOpenMenu(null);
         };
+        const onKeyDown = (event: KeyboardEvent): void => {
+            if (event.key === 'Escape') {
+                setOpenMenu(null);
+                trigger.current?.focus();
+            }
+        };
         document.addEventListener('pointerdown', onPointerDown);
+        document.addEventListener('keydown', onKeyDown, true);
         return () => {
             document.removeEventListener('pointerdown', onPointerDown);
+            document.removeEventListener('keydown', onKeyDown, true);
         };
     }, [openMenu]);
     useEffect(() => {
@@ -245,24 +253,12 @@ export const SearchBanner = ({
         trigger.current = event.currentTarget;
         setOpenMenu(openMenu === menu ? null : menu);
     };
-    const closeMenu = (): void => {
-        setOpenMenu(null);
-        trigger.current?.focus();
-    };
     const showScope = openMenu === 'scope' || openMenu === 'all';
     const showTags = openMenu === 'tags' || openMenu === 'filters' || openMenu === 'all';
     const showType = openMenu === 'type' || openMenu === 'filters' || openMenu === 'all';
 
     return (
-        <Landmark
-            ref={root}
-            role="search"
-            aria-label="Inventory search"
-            className="search-banner"
-            onKeyDown={(event) => {
-                if (event.key === 'Escape' && openMenu !== null) closeMenu();
-            }}
-        >
+        <Landmark ref={root} role="search" aria-label="Inventory search" className="search-banner">
             <HiddenHeading>Search</HiddenHeading>
             <ExitLink href={exitHref} aria-label={exitLabel} title={exitLabel}>
                 <FormPrevious aria-hidden="true" />

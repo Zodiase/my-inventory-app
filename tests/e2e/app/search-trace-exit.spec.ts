@@ -241,6 +241,11 @@ test('iPad tag catalog filters the same hierarchy while Search uses any included
     await catalog.getByRole('radio', { name: 'Exclude Needs repair' }).click();
     await expect(page.getByText('1 result', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Remove exclude filter for Needs repair' })).toBeVisible();
+    await expect(catalog.getByRole('radiogroup', { name: 'Filter Needs repair' })).toHaveAttribute(
+        'data-state',
+        'exclude'
+    );
+    await page.waitForTimeout(300); // Capture the settled slider after its 260 ms transition.
     await page.screenshot({ path: testInfo.outputPath('ipad-search-filter.png') });
     await page.keyboard.press('Escape');
     await expect(menu).toHaveCount(0);
