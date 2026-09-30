@@ -1,0 +1,28 @@
+{
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "row": {
+    "width": 624,
+    "height": 49
+  },
+  "compactRail": {
+    "width": 168,
+    "height": 44
+  },
+  "visiblePill": {
+    "width": "166px",
+    "height": "32px"
+  },
+  "enlargedRail": {
+    "width": 300,
+    "height": 64
+  },
+  "railToRowWidth": 0.2692307692307692,
+  "railToRowHeight": 0.8979591836734694,
+  "labelCenterY": 510.796875,
+  "railCenterY": 519.796875,
+  "handleOverlapsLabel": false,
+  "horizontalOverflow": 0
+}

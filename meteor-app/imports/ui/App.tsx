@@ -29,14 +29,9 @@ import { ItemDialog } from './ItemDialog';
 import { ItemForm } from './ItemForm';
 import { ItemsByTagView } from './ItemsByTagView';
 import { NotFoundView } from './NotFoundView';
+import { SearchAppliedFilters } from './SearchAppliedFilters';
 import { SearchBanner } from './SearchBanner';
-import {
-    hasRunnableFilter,
-    normalizeIncludedTags,
-    resetSearchFilters,
-    setItemTypeFilter,
-    toggleTagFilter,
-} from './searchFilterState';
+import { hasRunnableFilter, resetSearchFilters, setItemTypeFilter, setTagFilterState } from './searchFilterState';
 import { SearchFragmentBuilder } from './SearchFragmentBuilder';
 import { SearchPageLayout } from './SearchPageLayout';
 import { SearchResultsView } from './SearchResultsView';
@@ -214,7 +209,7 @@ export const App = (): ReactElement => {
             return;
         }
 
-        const fragments: SearchFragment[] = normalizeIncludedTags(searchUrlState.fragments);
+        const fragments: SearchFragment[] = [...searchUrlState.fragments];
         if (searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined) {
             fragments.unshift({ type: 'containerScope', containerRootId: searchUrlState.containerId });
         }
@@ -482,8 +477,8 @@ export const App = (): ReactElement => {
                             }}
                             fragments={searchUrlState.fragments}
                             availableTags={allTags}
-                            onToggleTag={(type, tagId) => {
-                                const fragments = toggleTagFilter(searchUrlState.fragments, type, tagId);
+                            onSetTagState={(tagId, state) => {
+                                const fragments = setTagFilterState(searchUrlState.fragments, tagId, state);
                                 updateSearchUrl({
                                     fragments,
                                     submitted: searchUrlState.query.trim() !== '' || hasRunnableFilter(fragments),
@@ -541,6 +536,41 @@ export const App = (): ReactElement => {
                         {() => (
                             <SearchPageLayout
                                 resultsRef={searchResultsRegion}
+                                filterEditor={
+                                    searchUrlState.fragments.some(
+                                        (fragment) =>
+                                            fragment.type === 'tagInclude' ||
+                                            fragment.type === 'tagExclude' ||
+                                            (fragment.type === 'containerType' && fragment.value !== 'all')
+                                    ) ? (
+                                        <SearchAppliedFilters
+                                            fragments={searchUrlState.fragments}
+                                            tags={allTags}
+                                            onRemoveTag={(tagId) => {
+                                                const fragments = setTagFilterState(
+                                                    searchUrlState.fragments,
+                                                    tagId,
+                                                    'neutral'
+                                                );
+                                                updateSearchUrl({
+                                                    fragments,
+                                                    submitted:
+                                                        searchUrlState.query.trim() !== '' ||
+                                                        hasRunnableFilter(fragments),
+                                                });
+                                            }}
+                                            onClearType={() => {
+                                                const fragments = setItemTypeFilter(searchUrlState.fragments, 'all');
+                                                updateSearchUrl({
+                                                    fragments,
+                                                    submitted:
+                                                        searchUrlState.query.trim() !== '' ||
+                                                        hasRunnableFilter(fragments),
+                                                });
+                                            }}
+                                        />
+                                    ) : undefined
+                                }
                                 results={
                                     tagsLoading || allItemsLoading ? (
                                         <LoadingState />

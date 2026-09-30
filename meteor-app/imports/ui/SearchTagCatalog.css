@@ -1,0 +1,105 @@
+.search-tag-catalog {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 180px;
+}
+.search-tag-catalog-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 12px;
+}
+.search-tag-catalog-head strong {
+    white-space: nowrap;
+    font-size: 14px;
+}
+.search-tag-find {
+    flex: none;
+    height: 38px;
+    margin: 0 12px 8px;
+    padding: 0 10px;
+    border: 1px solid #bdcede;
+    border-radius: 7px;
+    font: inherit;
+}
+.search-tag-find:focus-visible {
+    outline: 3px solid #f5aa2a;
+    outline-offset: 1px;
+}
+.search-tag-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    border-top: 1px solid #e7edf3;
+}
+.search-tag-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    min-height: 40px;
+    border: 0;
+    background: #f3f6f9;
+    color: #52677e;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 650;
+    text-align: start;
+    cursor: pointer;
+}
+.search-tag-group:hover,
+.search-tag-group:focus-visible {
+    background: #e8f2fe;
+}
+.search-tag-row {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 50px;
+    padding: 2px 12px;
+    border-bottom: 1px solid #edf1f5;
+}
+.search-tag-identity {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.search-tag-identity span,
+.search-tag-identity small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.search-tag-identity > span {
+    line-height: 20px;
+}
+.search-tag-identity small {
+    line-height: 14px;
+    color: #62758a;
+    font-size: 11px;
+}
+.search-tag-empty {
+    padding: 12px;
+    color: #66798b;
+}
+.search-tag-empty button {
+    margin-inline-start: 8px;
+    border: 0;
+    background: transparent;
+    color: #156abf;
+    cursor: pointer;
+}
+@media (max-width: 390px) {
+    .search-tag-catalog-head {
+        flex-wrap: wrap;
+        padding-block: 5px;
+    }
+    .search-tag-row {
+        padding-inline: 8px;
+    }
+}

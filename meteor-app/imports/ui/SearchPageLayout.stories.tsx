@@ -11,8 +11,9 @@ import type { SearchFragment } from '/imports/model/SearchFragment';
 import type { TracedInventorySearch } from '/imports/model/TracedInventorySearch';
 
 import { AppShell } from './AppShell';
+import { SearchAppliedFilters } from './SearchAppliedFilters';
 import { SearchBanner } from './SearchBanner';
-import { hasRunnableFilter, resetSearchFilters, setItemTypeFilter, toggleTagFilter } from './searchFilterState';
+import { hasRunnableFilter, resetSearchFilters, setItemTypeFilter, setTagFilterState } from './searchFilterState';
 import { SearchPageLayout } from './SearchPageLayout';
 import { SearchResultsView } from './SearchResultsView';
 
@@ -112,11 +113,21 @@ const SearchPageStory = ({
                         onScopeChange={setScope}
                         fragments={fragments}
                         availableTags={[
-                            { _id: 'tag-tools', name: 'Tools' },
-                            { _id: 'tag-spare', name: 'Spare' },
+                            {
+                                _id: 'tag-tools',
+                                name: 'Tools',
+                                parentTagId: '',
+                                path: [{ _id: 'tag-tools', name: 'Tools' }],
+                            },
+                            {
+                                _id: 'tag-spare',
+                                name: 'Spare',
+                                parentTagId: '',
+                                path: [{ _id: 'tag-spare', name: 'Spare' }],
+                            },
                         ]}
-                        onToggleTag={(type, tagId) => {
-                            const next = toggleTagFilter(fragments, type, tagId);
+                        onSetTagState={(tagId, state) => {
+                            const next = setTagFilterState(fragments, tagId, state);
                             setFragments(next);
                             setSubmitted(query.trim() !== '' || hasRunnableFilter(next));
                         }}
@@ -134,6 +145,28 @@ const SearchPageStory = ({
                 }
             >
                 <SearchPageLayout
+                    filterEditor={
+                        fragments.some(
+                            (fragment) =>
+                                fragment.type === 'tagInclude' ||
+                                fragment.type === 'tagExclude' ||
+                                (fragment.type === 'containerType' && fragment.value !== 'all')
+                        ) ? (
+                            <SearchAppliedFilters
+                                fragments={fragments}
+                                tags={[
+                                    { _id: 'tag-tools', name: 'Tools' },
+                                    { _id: 'tag-spare', name: 'Spare' },
+                                ]}
+                                onRemoveTag={(tagId) => {
+                                    setFragments((current) => setTagFilterState(current, tagId, 'neutral'));
+                                }}
+                                onClearType={() => {
+                                    setFragments((current) => setItemTypeFilter(current, 'all'));
+                                }}
+                            />
+                        ) : undefined
+                    }
                     results={
                         <SearchResultsView
                             items={items}

@@ -7,6 +7,7 @@ import React, { type ReactElement, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import type { SearchFragment } from '/imports/model/SearchFragment';
+import type TagRecord from '/imports/model/TagRecord';
 
 import {
     getActiveFilterCount,
@@ -14,8 +15,11 @@ import {
     getLegacyFilters,
     getSelectedItemType,
     getSelectedTags,
+    hasAllRequiredTagRule,
     type SearchItemType,
 } from './searchFilterState';
+import { SearchTagCatalog } from './SearchTagCatalog';
+import type { TagFilterState } from './TriStateTagToggle';
 
 type Menu = 'scope' | 'tags' | 'type' | 'filters' | 'all';
 type Mode = 'roomy' | 'medium' | 'narrow';
@@ -110,16 +114,18 @@ const ClearButton = styled.button`
 const MenuPanel = styled.div`
     position: absolute;
     top: calc(100% + 8px);
-    left: 0;
     z-index: 50;
-    width: min(360px, 100%);
-    max-height: min(70vh, 520px);
+    display: flex;
+    flex-direction: column;
+    width: min(390px, 100%);
+    max-height: min(70vh, 560px);
     overflow-y: auto;
-    padding: 12px;
+    padding: 10px 0;
     border-radius: 10px;
     background: white;
     color: #222;
     box-shadow: 0 6px 24px rgb(0 0 0 / 28%);
+    > section:not(.search-tag-catalog) { padding: 0 12px; }
 `;
 const SectionTitle = styled.h2`
     margin: 10px 0 6px;
@@ -164,8 +170,8 @@ interface SearchBannerProps {
     scopeAvailable: boolean;
     onScopeChange: (scope: 'global' | 'scoped') => void;
     fragments: SearchFragment[];
-    availableTags: Array<{ _id: string; name: string }>;
-    onToggleTag: (type: 'tagInclude' | 'tagExclude', tagId: string) => void;
+    availableTags: Array<Pick<TagRecord, '_id' | 'name' | 'parentTagId' | 'path'>>;
+    onSetTagState: (tagId: string, state: TagFilterState) => void;
     onTypeChange: (type: SearchItemType) => void;
     onResetFilters: () => void;
 }
@@ -182,7 +188,7 @@ export const SearchBanner = ({
     onScopeChange,
     fragments,
     availableTags,
-    onToggleTag,
+    onSetTagState,
     onTypeChange,
     onResetFilters,
 }: SearchBannerProps): ReactElement => {
@@ -200,12 +206,13 @@ export const SearchBanner = ({
     const legacyFilters = getLegacyFilters(fragments);
     const combineFilters = mode === 'medium' || (mode === 'roomy' && legacyFilters.length > 0);
     const currentScope = scope === 'scoped' ? scopeLabel : 'All Items';
-    const visibleTags = [
-        ...availableTags,
-        ...[...new Set([...included, ...excluded])]
-            .filter((id) => !availableTags.some((tag) => tag._id === id))
-            .map((id) => ({ _id: id, name: `Unavailable tag (${id})` })),
-    ];
+    const selectedTags: Record<string, TagFilterState> = {};
+    included.forEach((id) => {
+        selectedTags[id] = 'include';
+    });
+    excluded.forEach((id) => {
+        selectedTags[id] = 'exclude';
+    });
 
     useEffect(() => {
         setDraft(query);
@@ -225,9 +232,17 @@ export const SearchBanner = ({
         const onPointerDown = (event: PointerEvent): void => {
             if (root.current !== null && !root.current.contains(event.target as Node)) setOpenMenu(null);
         };
+        const onKeyDown = (event: KeyboardEvent): void => {
+            if (event.key === 'Escape') {
+                setOpenMenu(null);
+                trigger.current?.focus();
+            }
+        };
         document.addEventListener('pointerdown', onPointerDown);
+        document.addEventListener('keydown', onKeyDown, true);
         return () => {
             document.removeEventListener('pointerdown', onPointerDown);
+            document.removeEventListener('keydown', onKeyDown, true);
         };
     }, [openMenu]);
     useEffect(() => {
@@ -238,24 +253,12 @@ export const SearchBanner = ({
         trigger.current = event.currentTarget;
         setOpenMenu(openMenu === menu ? null : menu);
     };
-    const closeMenu = (): void => {
-        setOpenMenu(null);
-        trigger.current?.focus();
-    };
     const showScope = openMenu === 'scope' || openMenu === 'all';
     const showTags = openMenu === 'tags' || openMenu === 'filters' || openMenu === 'all';
     const showType = openMenu === 'type' || openMenu === 'filters' || openMenu === 'all';
 
     return (
-        <Landmark
-            ref={root}
-            role="search"
-            aria-label="Inventory search"
-            className="search-banner"
-            onKeyDown={(event) => {
-                if (event.key === 'Escape' && openMenu !== null) closeMenu();
-            }}
-        >
+        <Landmark ref={root} role="search" aria-label="Inventory search" className="search-banner">
             <HiddenHeading>Search</HiddenHeading>
             <ExitLink href={exitHref} aria-label={exitLabel} title={exitLabel}>
                 <FormPrevious aria-hidden="true" />
@@ -370,7 +373,15 @@ export const SearchBanner = ({
                 </Control>
             )}
             {openMenu !== null && (
-                <MenuPanel role="dialog" aria-label="Search controls">
+                <MenuPanel
+                    role="dialog"
+                    aria-label="Search controls"
+                    style={{
+                        left: openMenu === 'scope' || openMenu === 'all' ? 0 : 'auto',
+                        right: openMenu === 'scope' || openMenu === 'all' ? 'auto' : 0,
+                        height: showTags ? 'min(70vh, 560px)' : undefined,
+                    }}
+                >
                     {showScope && (
                         <section aria-label="Scope">
                             <SectionTitle>Scope</SectionTitle>
@@ -409,49 +420,24 @@ export const SearchBanner = ({
                             </Choice>
                         </section>
                     )}
+                    {showTags && (hasAllRequiredTagRule(fragments) || getContradictoryTags(fragments).length > 0) && (
+                        <p role="alert" style={{ margin: '4px 12px' }}>
+                            {hasAllRequiredTagRule(fragments)
+                                ? 'This saved search requires all included tags. New Include choices are disabled. Clear filters to use the quick picker’s any-tag rule.'
+                                : 'This saved search both includes and excludes a tag. Remove one choice to resolve it.'}
+                        </p>
+                    )}
                     {showTags && (
-                        <section aria-label="Tags">
-                            <SectionTitle>Tags · Include all selected</SectionTitle>
-                            {visibleTags.map((tag) => (
-                                <Choice
-                                    key={`include-${tag._id}`}
-                                    type="button"
-                                    aria-pressed={included.includes(tag._id)}
-                                    disabled={!included.includes(tag._id) && excluded.includes(tag._id)}
-                                    title={excluded.includes(tag._id) ? 'Remove from Exclude first' : undefined}
-                                    onClick={() => {
-                                        onToggleTag('tagInclude', tag._id);
-                                    }}
-                                >
-                                    {included.includes(tag._id) ? '✓ ' : ''}
-                                    {tag.name}
-                                    {excluded.includes(tag._id) ? ' — excluded; remove there first' : ''}
-                                </Choice>
-                            ))}
-                            <SectionTitle>Exclude</SectionTitle>
-                            {visibleTags.map((tag) => (
-                                <Choice
-                                    key={`exclude-${tag._id}`}
-                                    type="button"
-                                    aria-pressed={excluded.includes(tag._id)}
-                                    disabled={!excluded.includes(tag._id) && included.includes(tag._id)}
-                                    title={included.includes(tag._id) ? 'Remove from Include first' : undefined}
-                                    onClick={() => {
-                                        onToggleTag('tagExclude', tag._id);
-                                    }}
-                                >
-                                    {excluded.includes(tag._id) ? '✓ ' : ''}
-                                    {tag.name}
-                                    {included.includes(tag._id) ? ' — included; remove there first' : ''}
-                                </Choice>
-                            ))}
-                            {visibleTags.length === 0 && <p>No tags available.</p>}
-                            {getContradictoryTags(fragments).length > 0 && (
-                                <p role="alert">
-                                    This saved search both includes and excludes a tag. Remove one choice to resolve it.
-                                </p>
-                            )}
-                        </section>
+                        <SearchTagCatalog
+                            tags={availableTags}
+                            selected={selectedTags}
+                            onChange={onSetTagState}
+                            includeDisabledReason={
+                                hasAllRequiredTagRule(fragments)
+                                    ? 'Clear filters to add included tags using any-tag matching.'
+                                    : undefined
+                            }
+                        />
                     )}
                     {showType && (
                         <section aria-label="Type">
