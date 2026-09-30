@@ -46,7 +46,76 @@ for (const viewport of [
         });
         expect(geometry.pill).toEqual({ width: 162, height: 29 });
         expect(geometry.rowHeight).toBeGreaterThanOrEqual(48);
+        expect(geometry.rowHeight).toBeLessThanOrEqual(52);
         expect(geometry.track).toEqual({ width: 35, height: 22 });
+        const toggle = preview.getByRole('switch', { name: 'Show selected only (2)' });
+        const readThumb = () =>
+            toggle.evaluate((input) => {
+                const track = input.nextElementSibling!;
+                const style = getComputedStyle(track);
+                const thumb = getComputedStyle(track, '::before');
+                return {
+                    width: parseFloat(thumb.width),
+                    height: parseFloat(thumb.height),
+                    travel: new DOMMatrix(thumb.transform === 'none' ? undefined : thumb.transform).m41,
+                    inset: parseFloat(style.paddingLeft) + parseFloat(style.borderLeftWidth),
+                    focus: style.outlineStyle,
+                };
+            });
+        await page.waitForTimeout(160);
+        const off = await readThumb();
+        expect(off).toMatchObject({ width: 14, height: 14, travel: 0, inset: 2 });
+        await toggle.check();
+        await page.waitForTimeout(160);
+        await expect.poll(async () => (await readThumb()).travel).toBe(17);
+        const on = await readThumb();
+        expect(35 - on.inset - on.travel - on.width).toBe(2);
+        await preview.getByRole('searchbox', { name: 'Find a tag' }).focus();
+        await page.keyboard.press('Shift+Tab');
+        await expect(toggle).toBeFocused();
+        await expect.poll(async () => (await readThumb()).focus).toBe('solid');
+        await toggle.uncheck();
+        const find = preview.getByRole('searchbox', { name: 'Find a tag' });
+        const before = await find.boundingBox();
+        const scrolling = await catalog.evaluate((element) => {
+            const geometry = { height: element.clientHeight, content: element.scrollHeight };
+            element.scrollTop = element.scrollHeight;
+            return geometry;
+        });
+        expect(scrolling.height).toBeLessThan(scrolling.content);
+        expect(await find.boundingBox()).toEqual(before);
+        await catalog.evaluate((element) => {
+            element.scrollTop = 0;
+        });
+        for (const state of ['Include', 'No filter for', 'Exclude']) {
+            await catalog.getByRole('radio', { name: `${state} Camera equipment`, exact: true }).click();
+            await page.waitForTimeout(300);
+            const alignment = await catalog
+                .getByRole('radiogroup', { name: 'Filter Camera equipment' })
+                .evaluate((rail) => {
+                    const center = (rect: DOMRect) => ({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
+                    const label = rail.querySelector('input:checked')?.parentElement;
+                    const text = label?.querySelector('span')?.getBoundingClientRect();
+                    const hit = label?.getBoundingClientRect();
+                    const handle = rail.querySelector('.tri-state-handle')?.getBoundingClientRect();
+                    if (!text || !hit || !handle) throw new Error('Missing control geometry');
+                    return {
+                        text: center(text),
+                        hit: center(hit),
+                        handle: center(handle),
+                        overlaps:
+                            handle.left <= text.left &&
+                            handle.right >= text.right &&
+                            handle.top <= text.top &&
+                            handle.bottom >= text.bottom,
+                    };
+                });
+            expect(Math.abs(alignment.text.x - alignment.hit.x)).toBeLessThanOrEqual(1);
+            expect(Math.abs(alignment.text.y - alignment.hit.y)).toBeLessThanOrEqual(1);
+            expect(Math.abs(alignment.text.x - alignment.handle.x)).toBeLessThanOrEqual(1);
+            expect(Math.abs(alignment.text.y - alignment.handle.y)).toBeLessThanOrEqual(1);
+            expect(alignment.overlaps).toBe(true);
+        }
         await page.screenshot({ path: testInfo.outputPath(`catalog-${viewport.width}.png`) });
     });
 }

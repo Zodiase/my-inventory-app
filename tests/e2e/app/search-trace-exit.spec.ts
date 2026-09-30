@@ -245,6 +245,12 @@ test('iPad tag catalog filters the same hierarchy while Search uses any included
         'data-state',
         'exclude'
     );
+    const rowHeight = await catalog
+        .locator('.search-tag-row')
+        .first()
+        .evaluate((element) => element.getBoundingClientRect().height);
+    expect(rowHeight).toBeGreaterThanOrEqual(48);
+    expect(rowHeight).toBeLessThanOrEqual(52);
     await page.waitForTimeout(300); // Capture the settled slider after its 260 ms transition.
     await page.screenshot({ path: testInfo.outputPath('ipad-search-filter.png') });
     await page.keyboard.press('Escape');
@@ -271,21 +277,45 @@ test('an older saved filter is visible and Reset removes it while retaining the 
 test('older all-required tag links retain their AND meaning and explain it', async ({ page }) => {
     const firstTag = await createTag(page, { name: 'First' });
     const secondTag = await createTag(page, { name: 'Second' });
+    const thirdTag = await createTag(page, { name: 'Third' });
+    await createItem(page, { name: 'Both plus excluded', tagIds: [firstTag, secondTag, thirdTag] });
     const bothId = await createItem(page, { name: 'Both tags', tagIds: [firstTag, secondTag] });
     await createItem(page, { name: 'Only first', tagIds: [firstTag] });
     await createItem(page, { name: 'Only second', tagIds: [secondTag] });
     const first = encodeURIComponent(JSON.stringify({ type: 'tagInclude', tagIds: [firstTag] }));
     const second = encodeURIComponent(JSON.stringify({ type: 'tagInclude', tagIds: [secondTag] }));
 
-    await page.goto(`/search?f=${first}&f=${second}&run=1`);
+    const excluded = encodeURIComponent(JSON.stringify({ type: 'tagExclude', tagIds: [thirdTag] }));
+    await page.goto(`/search?f=${first}&f=${second}&f=${excluded}&run=1`);
     await waitForMeteorReady(page);
     await expect(
         page.getByRole('region', { name: 'Search results' }).locator(`a[href="/items/${bothId}"]`)
     ).toBeVisible();
     await expect(page.getByText('1 result', { exact: true })).toBeVisible();
     await expect(page.getByLabel('Applied filters')).toContainText('Include all of:');
-    await page.getByRole('button', { name: 'Tags: 2 selected' }).click();
+    await page.getByRole('button', { name: 'Tags: 3 selected' }).click();
     await expect(page.getByRole('alert')).toContainText('requires all included tags');
     await expect(page.getByRole('radio', { name: 'Include First' })).toBeChecked();
     await expect(page.getByRole('radio', { name: 'Include Second' })).toBeChecked();
+    await expect(page.getByRole('radio', { name: 'Include Third' })).toBeDisabled();
+    await expect(page.getByRole('radio', { name: 'Include Third' })).toHaveAttribute(
+        'aria-description',
+        /Clear filters/u
+    );
+    const assertIncludes = () => {
+        const fragments = new URL(page.url()).searchParams.getAll('f').map((value) => JSON.parse(value));
+        expect(fragments.filter((fragment) => fragment.type === 'tagInclude')).toEqual([
+            { type: 'tagInclude', tagIds: [firstTag] },
+            { type: 'tagInclude', tagIds: [secondTag] },
+        ]);
+    };
+    await page.getByRole('radio', { name: 'No filter for Third' }).click();
+    await expect(page.getByText('2 results', { exact: true })).toBeVisible();
+    assertIncludes();
+    await page.getByRole('radio', { name: 'Exclude Third' }).click();
+    await expect(page.getByText('1 result', { exact: true })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Remove exclude filter for Third' }).click();
+    await expect(page.getByText('2 results', { exact: true })).toBeVisible();
+    assertIncludes();
 });

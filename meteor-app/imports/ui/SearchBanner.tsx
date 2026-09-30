@@ -420,15 +420,24 @@ export const SearchBanner = ({
                             </Choice>
                         </section>
                     )}
-                    {showTags && (
-                        <SearchTagCatalog tags={availableTags} selected={selectedTags} onChange={onSetTagState} />
-                    )}
                     {showTags && (hasAllRequiredTagRule(fragments) || getContradictoryTags(fragments).length > 0) && (
                         <p role="alert" style={{ margin: '4px 12px' }}>
                             {hasAllRequiredTagRule(fragments)
-                                ? 'This saved search requires all included tags. Clear filters to use the quick picker’s any-tag rule.'
+                                ? 'This saved search requires all included tags. New Include choices are disabled. Clear filters to use the quick picker’s any-tag rule.'
                                 : 'This saved search both includes and excludes a tag. Remove one choice to resolve it.'}
                         </p>
+                    )}
+                    {showTags && (
+                        <SearchTagCatalog
+                            tags={availableTags}
+                            selected={selectedTags}
+                            onChange={onSetTagState}
+                            includeDisabledReason={
+                                hasAllRequiredTagRule(fragments)
+                                    ? 'Clear filters to add included tags using any-tag matching.'
+                                    : undefined
+                            }
+                        />
                     )}
                     {showType && (
                         <section aria-label="Type">

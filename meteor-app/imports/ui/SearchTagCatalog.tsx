@@ -15,6 +15,7 @@ interface SearchTagCatalogProps {
     selected: Record<string, TagFilterState>;
     onChange: (tagId: string, state: TagFilterState) => void;
     initialSelectedOnly?: boolean;
+    includeDisabledReason?: string;
 }
 
 export const SearchTagCatalog = ({
@@ -22,6 +23,7 @@ export const SearchTagCatalog = ({
     selected,
     onChange,
     initialSelectedOnly = false,
+    includeDisabledReason,
 }: SearchTagCatalogProps): ReactElement => {
     const [find, setFind] = useState('');
     const [selectedOnly, setSelectedOnly] = useState(initialSelectedOnly);
@@ -105,6 +107,9 @@ export const SearchTagCatalog = ({
                                 name={tag.name}
                                 state={selected[tag._id] ?? 'neutral'}
                                 variant="compact"
+                                includeDisabledReason={
+                                    selected[tag._id] === 'include' ? undefined : includeDisabledReason
+                                }
                                 onChange={(state) => {
                                     if (selectedOnly && state === 'neutral') {
                                         requestAnimationFrame(() => {

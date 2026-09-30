@@ -36,6 +36,8 @@ const Example = ({ selectedOnly = false }: { selectedOnly?: boolean }): React.Re
     return (
         <div
             style={{
+                display: 'flex',
+                flexDirection: 'column',
                 width: 390,
                 maxWidth: '100%',
                 height: 560,

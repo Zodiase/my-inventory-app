@@ -27,6 +27,7 @@
     --label-size: 16px;
 }
 .tri-state-handle {
+    box-sizing: border-box;
     position: absolute;
     z-index: 1;
     top: 50%;
@@ -73,6 +74,13 @@
     font-weight: 600;
     line-height: 1;
     pointer-events: none;
+}
+.tri-state-position:has(input:disabled),
+.tri-state-position input:disabled {
+    cursor: not-allowed;
+}
+.tri-state-position:has(input:disabled) > span {
+    opacity: 0.5;
 }
 .tri-state-rail:has(input:focus-visible) {
     outline: 3px solid #f5aa2a;

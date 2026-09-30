@@ -10,6 +10,7 @@ interface Props {
     onChange: (state: TagFilterState) => void;
     large?: boolean;
     variant?: 'overlay' | 'compact';
+    includeDisabledReason?: string;
 }
 
 const positions: TagFilterState[] = ['include', 'neutral', 'exclude'];
@@ -21,6 +22,7 @@ export const TriStateTagToggle = ({
     onChange,
     large = false,
     variant = 'overlay',
+    includeDisabledReason,
 }: Props): React.ReactElement => (
     <span
         className={
@@ -34,12 +36,18 @@ export const TriStateTagToggle = ({
     >
         <span className="tri-state-handle" aria-hidden="true" />
         {positions.map((position) => (
-            <label key={position} className={'tri-state-position ' + position}>
+            <label
+                key={position}
+                className={'tri-state-position ' + position}
+                title={position === 'include' ? includeDisabledReason : undefined}
+            >
                 <input
                     type="radio"
                     name={'filter-' + name}
                     value={position}
                     checked={state === position}
+                    disabled={position === 'include' && includeDisabledReason !== undefined}
+                    aria-description={position === 'include' ? includeDisabledReason : undefined}
                     aria-label={
                         (position === 'include' ? 'Include ' : position === 'exclude' ? 'Exclude ' : 'No filter for ') +
                         name

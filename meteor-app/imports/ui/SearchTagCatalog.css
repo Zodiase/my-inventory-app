@@ -55,6 +55,7 @@
     background: #e8f2fe;
 }
 .search-tag-row {
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -74,7 +75,11 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.search-tag-identity > span {
+    line-height: 20px;
+}
 .search-tag-identity small {
+    line-height: 14px;
     color: #62758a;
     font-size: 11px;
 }

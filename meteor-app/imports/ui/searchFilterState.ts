@@ -67,7 +67,7 @@ export const setTagFilterState = (
         // adding a quick-picker OR term would silently change their meaning.
         if (state === 'include') return fragments;
         const withoutTag = fragments.flatMap((fragment): SearchFragment[] => {
-            if (fragment.type !== 'tagInclude') return [fragment];
+            if (fragment.type !== 'tagInclude' && fragment.type !== 'tagExclude') return [fragment];
             const tagIds = fragment.tagIds.filter((id) => id !== tagId);
             return tagIds.length > 0 ? [{ ...fragment, tagIds }] : [];
         });
