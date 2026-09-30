@@ -73,7 +73,7 @@ test('scope, tags, type, combined menu and keyboard focus work', async ({ page }
     await expect(exit).toBeFocused();
     await page.getByRole('button', { name: 'Tags: 1 selected' }).click();
     await expect(page.getByRole('dialog', { name: 'Search controls' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Tools/u }).first()).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByRole('radiogroup', { name: 'Filter Tools' })).toHaveAttribute('data-state', 'include');
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog', { name: 'Search controls' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Tags: 1 selected' })).toBeFocused();
@@ -95,7 +95,7 @@ test('contradictory restored tags warn without silently changing either selectio
     await page.goto('/iframe.html?id=ui-searchpagelayout--contradictory-restored-filters&viewMode=story');
     await page.getByRole('button', { name: 'Tags: 2 selected' }).click();
     await expect(page.getByRole('alert')).toContainText('both includes and excludes');
-    await expect(page.getByRole('button', { name: /Tools/u })).toHaveCount(2);
+    await expect(page.getByRole('radiogroup', { name: 'Filter Tools' })).toHaveCount(1);
 });
 
 test('older saved filters are immediately visible and Reset retains the query', async ({ page }, testInfo) => {

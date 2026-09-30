@@ -18,6 +18,10 @@ export const getContradictoryTags = (fragments: SearchFragment[]): string[] => {
     return getSelectedTags(fragments, 'tagInclude').filter((id) => excluded.has(id));
 };
 
+/** Separate include fragments in older URLs mean AND; the quick picker uses one OR fragment. */
+export const hasAllRequiredTagRule = (fragments: SearchFragment[]): boolean =>
+    fragments.filter((fragment) => fragment.type === 'tagInclude' && fragment.tagIds.length > 0).length > 1;
+
 export const getLegacyFilters = (fragments: SearchFragment[]): SearchFragment[] =>
     fragments.filter(
         (fragment) =>
@@ -50,8 +54,32 @@ export const toggleTagFilter = (
     const next = selected.includes(tagId) ? selected.filter((id) => id !== tagId) : [...selected, tagId];
     const retained = fragments.filter((fragment) => fragment.type !== type);
     if (type === 'tagExclude') return next.length === 0 ? retained : [...retained, { type, tagIds: next }];
-    // A backend include fragment means OR, so separate fragments enforce AND.
-    return [...retained, ...next.map((id): SearchFragment => ({ type, tagIds: [id] }))];
+    return next.length === 0 ? retained : [...retained, { type, tagIds: next }];
+};
+
+export const setTagFilterState = (
+    fragments: SearchFragment[],
+    tagId: string,
+    state: 'include' | 'neutral' | 'exclude'
+): SearchFragment[] => {
+    if (hasAllRequiredTagRule(fragments)) {
+        // Keep all-required legacy URLs intact. Removing a requirement is explicit;
+        // adding a quick-picker OR term would silently change their meaning.
+        if (state === 'include') return fragments;
+        const withoutTag = fragments.flatMap((fragment): SearchFragment[] => {
+            if (fragment.type !== 'tagInclude') return [fragment];
+            const tagIds = fragment.tagIds.filter((id) => id !== tagId);
+            return tagIds.length > 0 ? [{ ...fragment, tagIds }] : [];
+        });
+        return state === 'exclude' ? toggleTagFilter(withoutTag, 'tagExclude', tagId) : withoutTag;
+    }
+    const withoutTag = fragments.flatMap((fragment): SearchFragment[] => {
+        if (fragment.type !== 'tagInclude' && fragment.type !== 'tagExclude') return [fragment];
+        const tagIds = fragment.tagIds.filter((id) => id !== tagId);
+        return tagIds.length > 0 ? [{ ...fragment, tagIds }] : [];
+    });
+    if (state === 'neutral') return withoutTag;
+    return toggleTagFilter(withoutTag, state === 'include' ? 'tagInclude' : 'tagExclude', tagId);
 };
 
 export const setItemTypeFilter = (fragments: SearchFragment[], value: SearchItemType): SearchFragment[] => {

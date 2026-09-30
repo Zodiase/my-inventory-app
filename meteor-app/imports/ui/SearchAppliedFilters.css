@@ -1,0 +1,28 @@
+.search-applied-filters {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 30px;
+    overflow-x: auto;
+    white-space: nowrap;
+    color: #52677e;
+    font-size: 12px;
+}
+.search-applied-rule {
+    flex: none;
+}
+.search-applied-chip {
+    flex: none;
+    min-height: 28px;
+    padding: 2px 8px;
+    border: 1px solid #d4e0ec;
+    border-radius: 999px;
+    background: #f5f8fb;
+    color: #2c5377;
+    font: inherit;
+    cursor: pointer;
+}
+.search-applied-chip:hover,
+.search-applied-chip:focus-visible {
+    background: #e8f2fe;
+}

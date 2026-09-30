@@ -1,5 +1,6 @@
 /* A quiet translucent capsule moves over fixed labels in one recessed rail. */
 .tri-state-rail {
+    box-sizing: border-box;
     --rail-width: 168px;
     --rail-height: 44px;
     --handle-width: 52px;

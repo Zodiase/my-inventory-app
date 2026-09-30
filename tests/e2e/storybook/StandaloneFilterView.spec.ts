@@ -12,7 +12,7 @@ test('filter button opens an independent panel and choices update results', asyn
     const panel = page.getByRole('dialog', { name: 'Filter results' });
     await expect(panel).toBeVisible();
     await expect(results.locator('.standalone-filter-panel')).toHaveCount(0);
-    await expect(panel.getByRole('switch', { name: 'Selected tags only (0)' })).toBeDisabled();
+    await expect(panel.getByRole('switch', { name: 'Show selected only (0)' })).toBeDisabled();
     await page.screenshot({ path: testInfo.outputPath('standalone-filter-desktop.png'), fullPage: true });
 
     await panel
@@ -48,14 +48,14 @@ test('finding tags composes with selected-only without changing results', async 
     const catalog = panel.getByLabel('Tag catalog');
     await expect(page.getByRole('region', { name: 'Results' }).getByRole('listitem')).toHaveCount(1);
     const resultCount = await page.getByRole('region', { name: 'Results' }).getByRole('listitem').count();
-    await panel.getByRole('switch', { name: 'Selected tags only (2)' }).check();
+    await panel.getByRole('switch', { name: 'Show selected only (2)' }).check();
     await expect(catalog.getByRole('radiogroup')).toHaveCount(2);
     await panel.getByRole('textbox', { name: 'Find a tag' }).fill('fragile');
     await expect(catalog.getByRole('radiogroup')).toHaveCount(1);
     expect(await page.getByRole('region', { name: 'Results' }).getByRole('listitem').count()).toBe(resultCount);
     await panel.getByRole('textbox', { name: 'Find a tag' }).fill('battery');
     await expect(catalog.getByText('No matching tags.')).toBeVisible();
-    await panel.getByRole('switch', { name: 'Selected tags only (2)' }).uncheck();
+    await panel.getByRole('switch', { name: 'Show selected only (2)' }).uncheck();
     await expect(catalog.getByRole('radiogroup', { name: 'Filter Battery' })).toBeVisible();
 });
 
@@ -72,14 +72,14 @@ test('included tags use simple OR and the selected-only view retains focus when 
         .getByRole('radio', { name: 'Include Fragile' })
         .click();
     await expect(results.getByRole('listitem')).toHaveCount(4);
-    await panel.getByRole('switch', { name: 'Selected tags only (2)' }).check();
+    await panel.getByRole('switch', { name: 'Show selected only (2)' }).check();
     await expect(panel.getByLabel('Tag catalog').getByRole('radiogroup')).toHaveCount(2);
     await panel
         .getByRole('radiogroup', { name: 'Filter Fragile' })
         .getByRole('radio', { name: 'No filter for Fragile' })
         .click();
     await expect(panel.getByRole('radiogroup', { name: 'Filter Fragile' })).toHaveCount(0);
-    await expect(panel.getByRole('switch', { name: 'Selected tags only (1)' })).toBeFocused();
+    await expect(panel.getByRole('switch', { name: 'Show selected only (1)' })).toBeFocused();
     await expect(results.getByRole('listitem')).toHaveCount(2);
 });
 
@@ -90,14 +90,14 @@ test('clearing the last selected tag restores the catalog and a useful focus tar
         .getByRole('radiogroup', { name: 'Filter Needs sorting' })
         .getByRole('radio', { name: 'Include Needs sorting' })
         .click();
-    await panel.getByRole('switch', { name: 'Selected tags only (1)' }).check();
+    await panel.getByRole('switch', { name: 'Show selected only (1)' }).check();
     await expect(panel.getByLabel('Tag catalog').getByRole('radiogroup')).toHaveCount(1);
     await panel
         .getByRole('radiogroup', { name: 'Filter Needs sorting' })
         .getByRole('radio', { name: 'No filter for Needs sorting' })
         .click();
-    await expect(panel.getByRole('switch', { name: 'Selected tags only (0)' })).toBeDisabled();
-    await expect(panel.getByRole('switch', { name: 'Selected tags only (0)' })).not.toBeChecked();
+    await expect(panel.getByRole('switch', { name: 'Show selected only (0)' })).toBeDisabled();
+    await expect(panel.getByRole('switch', { name: 'Show selected only (0)' })).not.toBeChecked();
     await expect(panel.getByLabel('Tag catalog').getByRole('radiogroup')).toHaveCount(9);
     await expect(panel.getByRole('textbox', { name: 'Find a tag' })).toBeFocused();
 });

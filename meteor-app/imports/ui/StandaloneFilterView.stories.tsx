@@ -5,6 +5,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { SelectedTagsSwitch } from './SelectedTagsSwitch';
 import { TriStateTagToggle, type TagFilterState } from './TriStateTagToggle';
 import './StandaloneFilterView.stories.css';
 
@@ -170,20 +171,12 @@ const StandaloneFilterView = ({
                             </fieldset>
                             <div className="standalone-filter-tag-head">
                                 <h3>Tags</h3>
-                                <label className="standalone-filter-selected">
-                                    <span>Selected tags only ({activeTags.length})</span>
-                                    <input
-                                        ref={selectedSwitch}
-                                        type="checkbox"
-                                        role="switch"
-                                        checked={selectedOnly}
-                                        disabled={activeTags.length === 0}
-                                        onChange={(event) => {
-                                            setSelectedOnly(event.target.checked);
-                                        }}
-                                    />
-                                    <span className="standalone-filter-switch" aria-hidden="true" />
-                                </label>
+                                <SelectedTagsSwitch
+                                    inputRef={selectedSwitch}
+                                    checked={selectedOnly}
+                                    count={activeTags.length}
+                                    onChange={setSelectedOnly}
+                                />
                             </div>
                             <input
                                 ref={findInput}
