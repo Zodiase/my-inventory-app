@@ -11,6 +11,7 @@ import { getInventoryIdLabel, type InventoryIdentity } from '/imports/model/Inve
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
 import { BreadcrumbTrail } from '/imports/ui/BreadcrumbTrail';
+import { ItemProperties } from '/imports/ui/ItemProperties';
 import { TagChip } from '/imports/ui/TagChip';
 
 /**
@@ -91,10 +92,10 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
     disabled = false,
 }) => {
     return (
-        <Box fill pad="medium" gap="medium">
+        <Box fill pad="medium" gap="medium" overflow="auto">
             {/* Header with item name and type indicator */}
-            <Box direction="row" align="center" justify="between" gap="small">
-                <Heading level={2} margin="none">
+            <Box direction="row" align="center" justify="between" gap="small" flex={false}>
+                <Heading level={2} margin="none" style={{ overflowWrap: 'anywhere' }}>
                     {item.isContainer ? '📦 ' : ''}
                     {item.name}
                 </Heading>
@@ -102,7 +103,7 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
 
             {/* Container location breadcrumb */}
             {containerPath.length > 0 && (
-                <Box>
+                <Box flex={false}>
                     <Text size="small" color="dark-3" margin={{ bottom: 'xsmall' }}>
                         Location:
                     </Text>
@@ -123,7 +124,7 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
 
             {/* Description */}
             {identities.length > 0 && (
-                <Box>
+                <Box flex={false}>
                     <Text size="small" color="dark-3" margin={{ bottom: 'xsmall' }}>
                         Inventory ID:
                     </Text>
@@ -146,18 +147,20 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
             )}
 
             {/* Description */}
-            {item.description !== '' && (
-                <Box>
+            {item.description !== undefined && item.description !== '' && (
+                <Box flex={false}>
                     <Text size="small" color="dark-3" margin={{ bottom: 'xsmall' }}>
                         Description:
                     </Text>
-                    <Text>{item.description}</Text>
+                    <Text style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{item.description}</Text>
                 </Box>
             )}
 
+            <ItemProperties properties={item.properties} />
+
             {/* Tags */}
             {tags.length > 0 && (
-                <Box>
+                <Box flex={false}>
                     <Text size="small" color="dark-3" margin={{ bottom: 'xsmall' }}>
                         Tags:
                     </Text>
@@ -181,7 +184,7 @@ export const ItemDetailViewPresentation: React.FC<ItemDetailViewProps> = ({
             )}
 
             {/* Action buttons */}
-            <Box direction="row" gap="small" margin={{ top: 'medium' }}>
+            <Box direction="row" wrap gap="small" margin={{ top: 'medium' }} flex={false}>
                 {item.locked === true && <Text color="status-warning">🔒 Locked: move and delete are disabled.</Text>}
                 {onEdit !== undefined && (
                     <Button icon={<Edit />} label="Edit" onClick={onEdit} disabled={disabled} primary />

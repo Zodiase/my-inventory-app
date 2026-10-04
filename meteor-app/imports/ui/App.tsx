@@ -2,11 +2,10 @@
  * Top-level application shell and route composition.
  * Coordinates URL-backed inventory views, creation modal state, and cross-view search state.
  */
-import { Box, Button, Grommet, Heading, Text } from 'grommet';
-import { Add, Filter } from 'grommet-icons';
+import { Box, Grommet, Heading, Text } from 'grommet';
 import { Meteor } from 'meteor/meteor';
 import React, { type ReactElement, useState, useEffect, useRef } from 'react';
-import { Route, Switch, useLocation, useSearch } from 'wouter';
+import { Link, Route, Switch, useLocation, useSearch } from 'wouter';
 
 import { getInventoryIdLabel, InventoryIdentitiesCollection } from '/imports/api/identities';
 import Items, { InventoryItemsCollection } from '/imports/api/items';
@@ -24,6 +23,7 @@ import { AllTagsView } from './AllTagsView';
 import { AppShell } from './AppShell';
 import { BreadcrumbTrail } from './BreadcrumbTrail';
 import { FilterBar } from './FilterBar';
+import { InventoryContentsHeader } from './InventoryContentsHeader';
 import { ItemDetailView } from './ItemDetailView';
 import { ItemDialog } from './ItemDialog';
 import { ItemForm } from './ItemForm';
@@ -108,6 +108,18 @@ export const App = (): ReactElement => {
     // Filter state for items view
     const [itemsViewFilters, setItemsViewFilters] = useState<SearchFragment[]>([]);
     const [showFilterBuilder, setShowFilterBuilder] = useState(false);
+    // The App stays mounted across the own-details detour. Keep list state and
+    // scroll only for that exact pair of routes; other navigation resets it.
+    const contentsDetailsContext = useRef<{ contentsPath: string; detailPath: string; scrollTop: number }>();
+    const contentsDetailsButton = useRef<HTMLButtonElement | null>(null);
+    useEffect(() => {
+        if (location !== contentsDetailsContext.current?.contentsPath) return;
+        const frame = requestAnimationFrame(() => contentsDetailsButton.current?.focus({ preventScroll: true }));
+        return () => {
+            cancelAnimationFrame(frame);
+        };
+    }, [location]);
+    const contentsRegion = useRef<HTMLDivElement>(null);
 
     // Fetch all tags for search components
     const isLoadingTags = useSubscribe('tags.all');
@@ -139,8 +151,14 @@ export const App = (): ReactElement => {
     useEffect(() => {
         const itemDetailRouteMatch = /^\/items\/[^/]+$/.exec(location);
         setShowCreateItem(false);
-        setItemsViewFilters([]);
-        setShowFilterBuilder(false);
+        const context = contentsDetailsContext.current;
+        const ownDetailsDetour =
+            context !== undefined && (location === context.contentsPath || location === context.detailPath);
+        if (!ownDetailsDetour) {
+            contentsDetailsContext.current = undefined;
+            setItemsViewFilters([]);
+            setShowFilterBuilder(false);
+        }
 
         if (isContainerRoute) {
             setCurrentItemsContainerId(routeContainerId);
@@ -148,7 +166,7 @@ export const App = (): ReactElement => {
         } else if (location === '/' || location === '/items') {
             setCurrentItemsContainerId(undefined);
         } else if (itemDetailRouteMatch !== null) {
-            if (!isSearchResultItemDetail) {
+            if (!isSearchResultItemDetail && !ownDetailsDetour) {
                 setCurrentItemsContainerId(undefined);
             }
         } else if (location !== '/search') {
@@ -324,43 +342,39 @@ export const App = (): ReactElement => {
     const renderItemsView = (initialContainerId?: string): ReactElement => {
         return (
             <Box fill style={{ minHeight: 0 }}>
-                <Box direction="row" justify="between" align="center" margin={{ bottom: 'medium' }} flex={false}>
-                    <Box style={{ minWidth: 0 }}>
-                        <Heading level="2" margin="none">
-                            {getItemsViewHeading(initialContainerId)}
-                        </Heading>
-                        {currentItemsContainerIdentity !== undefined && initialContainerId !== undefined && (
-                            <Text
-                                size="small"
-                                color="brand"
-                                weight="bold"
-                                style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-                                title={currentItemsContainerIdentity.identity.value}
-                            >
-                                ID: {getInventoryIdLabel(currentItemsContainerIdentity.identity, true)}
-                            </Text>
-                        )}
-                    </Box>
-                    <Box direction="row" gap="small">
-                        <Button
-                            icon={<Filter />}
-                            label={showFilterBuilder ? 'Hide Filters' : 'Add Filters'}
-                            onClick={() => {
-                                setShowFilterBuilder(!showFilterBuilder);
-                            }}
-                            secondary={!showFilterBuilder}
-                            primary={showFilterBuilder}
-                        />
-                        <Button
-                            icon={<Add />}
-                            label="Create Item"
-                            primary
-                            onClick={() => {
-                                setShowCreateItem(true);
-                            }}
-                        />
-                    </Box>
-                </Box>
+                <InventoryContentsHeader
+                    detailsRef={(node) => {
+                        contentsDetailsButton.current = node instanceof HTMLButtonElement ? node : null;
+                    }}
+                    title={getItemsViewHeading(initialContainerId)}
+                    identityLabel={
+                        currentItemsContainerIdentity !== undefined && initialContainerId !== undefined
+                            ? getInventoryIdLabel(currentItemsContainerIdentity.identity, true)
+                            : undefined
+                    }
+                    onDetails={
+                        initialContainerId === undefined
+                            ? undefined
+                            : () => {
+                                  const detailPath = `/items/${encodeURIComponent(initialContainerId)}`;
+                                  contentsDetailsContext.current = {
+                                      contentsPath: location,
+                                      detailPath,
+                                      scrollTop:
+                                          contentsRegion.current?.querySelector('[data-testid="items-list"]')
+                                              ?.scrollTop ?? 0,
+                                  };
+                                  setLocation(detailPath);
+                              }
+                    }
+                    showFilters={showFilterBuilder}
+                    onToggleFilters={() => {
+                        setShowFilterBuilder(!showFilterBuilder);
+                    }}
+                    onCreate={() => {
+                        setShowCreateItem(true);
+                    }}
+                />
 
                 {/* Filter status and clear */}
                 {itemsViewFilters.length > 0 && (
@@ -387,9 +401,14 @@ export const App = (): ReactElement => {
                     </Box>
                 )}
 
-                <Box flex="grow" style={{ minHeight: 0 }}>
+                <Box style={{ minHeight: 0, flex: '1 1 0%' }} ref={contentsRegion}>
                     <AllItemsView
                         initialContainerId={initialContainerId}
+                        initialScrollTop={
+                            contentsDetailsContext.current?.contentsPath === location
+                                ? contentsDetailsContext.current.scrollTop
+                                : undefined
+                        }
                         filters={itemsViewFilters}
                         onNavigate={handleItemsViewNavigate}
                     />
@@ -610,7 +629,22 @@ export const App = (): ReactElement => {
                     {/* Item detail route */}
                     <Route path="/items/:itemId">
                         {() => (
-                            <ItemDetailView deleteReturnPath={searchReturnPath} searchReturnPath={searchReturnPath} />
+                            <Box fill style={{ minHeight: 0 }}>
+                                {contentsDetailsContext.current?.detailPath === location && (
+                                    <Box flex={false} margin={{ bottom: 'small' }}>
+                                        <Link
+                                            href={contentsDetailsContext.current.contentsPath}
+                                            className="app-primary-link-button"
+                                        >
+                                            Back to contents
+                                        </Link>
+                                    </Box>
+                                )}
+                                <ItemDetailView
+                                    deleteReturnPath={searchReturnPath}
+                                    searchReturnPath={searchReturnPath}
+                                />
+                            </Box>
                         )}
                     </Route>
 
