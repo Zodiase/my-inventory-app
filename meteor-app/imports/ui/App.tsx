@@ -100,6 +100,8 @@ export const App = (): ReactElement => {
     const [searchSubmitCount, setSearchSubmitCount] = useState(0);
     const searchRequestKey = `${currentRoutePath}#${searchSubmitCount}`;
     const searchRequestId = useRef(0);
+    // A completed result is a checkpoint; consume it once when editing starts.
+    const searchHistoryCheckpoint = useRef<string | undefined>();
     const searchResultsRegion = useRef<HTMLDivElement>(null);
     const searchScrollPositions = useRef(new Map<string, number>());
 
@@ -178,8 +180,12 @@ export const App = (): ReactElement => {
         }
     };
 
-    const updateSearchUrl = (changes: Partial<SearchUrlState>, replace = true): void => {
-        setLocation(getSearchUrl({ ...searchUrlState, ...changes }), { replace });
+    const updateSearchUrl = (changes: Partial<SearchUrlState>): void => {
+        const nextPath = getSearchUrl({ ...searchUrlState, ...changes });
+        if (nextPath === currentRoutePath) return;
+        const preserveCompletedSearch = searchHistoryCheckpoint.current === currentRoutePath;
+        searchHistoryCheckpoint.current = undefined;
+        setLocation(nextPath, { replace: !preserveCompletedSearch });
     };
 
     // Typing updates the shareable URL immediately; execution waits for the user to pause.
@@ -198,6 +204,7 @@ export const App = (): ReactElement => {
     }, [location, search]);
 
     useEffect(() => {
+        searchHistoryCheckpoint.current = undefined;
         if (location !== '/search') return;
         const requestId = ++searchRequestId.current;
         if (!searchUrlState.submitted) {
@@ -227,6 +234,7 @@ export const App = (): ReactElement => {
                 setSearchRun(run);
                 setSearchResults(run.results);
                 setCompletedSearchKey(searchRequestKey);
+                searchHistoryCheckpoint.current = currentRoutePath;
                 if (run.status === 'error') {
                     setSearchError(
                         run.errorCode === 'search-unavailable'
@@ -247,6 +255,7 @@ export const App = (): ReactElement => {
                 setSearchResults([]);
                 setSearchRun(undefined);
                 setCompletedSearchKey(searchRequestKey);
+                searchHistoryCheckpoint.current = currentRoutePath;
                 const errorCode =
                     typeof error === 'object' && error !== null && 'error' in error
                         ? Reflect.get(error, 'error')
@@ -461,7 +470,7 @@ export const App = (): ReactElement => {
                                 if (query.trim() === '' && !hasRunnableFilter(searchUrlState.fragments)) return;
                                 if (searchUrlState.submitted && query === searchUrlState.query)
                                     setSearchSubmitCount((count) => count + 1);
-                                else updateSearchUrl({ query, submitted: true }, false);
+                                else updateSearchUrl({ query, submitted: true });
                             }}
                             scope={searchUrlState.scope}
                             scopeLabel={searchScopeLabel}
