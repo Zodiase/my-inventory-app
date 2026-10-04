@@ -145,6 +145,7 @@ const Slot = styled.div<{ $occupied: boolean }>`
 `;
 
 const SlotLink = styled(Link)`
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     gap: 0.5rem;

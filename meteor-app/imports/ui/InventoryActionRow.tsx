@@ -19,6 +19,8 @@ const Row = styled(Box)<{ $physicalSlot: boolean }>`
             `
             flex-direction: column;
             align-items: stretch;
+            height: auto !important;
+            > div { height: auto !important; flex: 0 0 auto; }
             > button { align-self: flex-end; }
         `}
     }
@@ -48,8 +50,13 @@ export const InventoryActionRow = ({
         },
     ];
     return (
-        <Row $physicalSlot={physicalSlot} direction="row" align="center" style={{ minWidth: 0, height: '100%' }}>
-            <Box flex style={{ minWidth: 0, height: '100%' }}>
+        <Row
+            $physicalSlot={physicalSlot}
+            direction="row"
+            align="center"
+            style={{ minWidth: 0, height: physicalSlot ? '100%' : 'auto', flexShrink: 0 }}
+        >
+            <Box flex style={{ minWidth: 0, height: physicalSlot ? '100%' : 'auto' }}>
                 <LongPressContextMenu actions={availableActions}>{children}</LongPressContextMenu>
             </Box>
             <ItemRowActions name={item.name} actions={availableActions} />

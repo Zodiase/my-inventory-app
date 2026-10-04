@@ -19,6 +19,18 @@ const item = (id: string, name: string, isContainer = true): InventoryItem => ({
 });
 const room = item('room', 'Garage');
 const hammer = item('hammer', 'Claw hammer', false);
+const mixedItems = [
+    room,
+    {
+        ...hammer,
+        description: 'A long description that wraps across several lines on small screens. '.repeat(5),
+        tagIds: ['tools'],
+    },
+    ...Array.from({ length: 5 }, (_, index) => ({
+        ...item(`extra-${index}`, `Extra entry ${index}`, false),
+        description: '',
+    })),
+];
 const view = (items: InventoryItem[], extra = {}): React.ReactElement => (
     <AllItemsViewPresentation
         items={items}
@@ -36,7 +48,7 @@ const meta = {
         docs: {
             description: {
                 component:
-                    'Actual consumers: ordinary rows, hoisted header/children, physical slots and fallback, search and tag results. Review 1280×720, 768×1024, 390×844. Each occupied entry has a separate 44px ellipsis beside its primary link; hierarchy and text stay readable without horizontal overflow. Open/Escape returns focus; View Details is the only real command. Physical empty slots have no actions. Search return context and backend routing are app-test concerns. No mock Edit/Delete or mutation backend.',
+                    'Actual consumers: ordinary rows, hoisted header/children, physical slots and fallback, search and tag results. Review 1280×720, 768×1024, 390×844. Each occupied entry has a separate 44px ellipsis beside its primary link (below it in narrow physical slots); hierarchy and text stay readable without horizontal overflow. Open/Escape returns focus; View Details is the only real command. Physical empty slots have no actions. Search return context and backend routing are app-test concerns. No mock Edit/Delete or mutation backend.',
             },
         },
     },
@@ -63,7 +75,7 @@ export const Physical: Story = {
     },
 };
 export const Search: Story = {
-    render: () => <SearchResultsView items={[room, hammer]} hasSearched onItemClick={() => undefined} />,
+    render: () => <SearchResultsView items={mixedItems} hasSearched onItemClick={() => undefined} />,
 };
 export const TagResults: Story = {
     render: () => (
@@ -76,7 +88,7 @@ export const TagResults: Story = {
                 createdAt: date,
                 modifiedAt: date,
             }}
-            items={[room, hammer]}
+            items={mixedItems}
         />
     ),
 };

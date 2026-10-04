@@ -44,6 +44,7 @@ const GroupHeader = styled.div`
 `;
 
 const LegendLink = styled(Link)`
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
