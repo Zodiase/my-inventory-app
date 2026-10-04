@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { Link } from 'wouter';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
+import { InventoryActionRow } from '/imports/ui/InventoryActionRow';
 
 const Group = styled.div`
     min-width: 0;
@@ -97,51 +98,62 @@ const ChildLink = styled(Link)`
 export interface HoistedContainerGroupProps {
     container: InventoryItem;
     items: InventoryItem[];
+    onViewItemDetails?: (id: string) => void;
 }
 
-export const HoistedContainerGroup = ({ container, items }: HoistedContainerGroupProps): ReactElement => (
+export const HoistedContainerGroup = ({
+    container,
+    items,
+    onViewItemDetails,
+}: HoistedContainerGroupProps): ReactElement => (
     <Group role="group" aria-label={`${container.name} contents`}>
         <GroupHeader data-testid="hoisted-container-heading">
-            <LegendLink href={`/container/${container._id}`} aria-label={`Open container ${container.name}`}>
-                <Folder size="small" color="brand" aria-hidden="true" />
-                <Text weight="bold" truncate>
-                    {container.name}
-                </Text>
-                <Text size="small" color="text-weak">
-                    {items.length} {items.length === 1 ? 'location' : 'locations'}
-                </Text>
-                <Next size="small" color="text-weak" aria-hidden="true" />
-            </LegendLink>
+            <InventoryActionRow item={container} onViewDetails={onViewItemDetails}>
+                <LegendLink href={`/container/${container._id}`} aria-label={`Open container ${container.name}`}>
+                    <Folder size="small" color="brand" aria-hidden="true" />
+                    <Text weight="bold" truncate>
+                        {container.name}
+                    </Text>
+                    <Text size="small" color="text-weak">
+                        {items.length} {items.length === 1 ? 'location' : 'locations'}
+                    </Text>
+                    <Next size="small" color="text-weak" aria-hidden="true" />
+                </LegendLink>
+            </InventoryActionRow>
         </GroupHeader>
         <GroupBody>
             <ChildGrid role="list">
                 {items.map((child) => (
                     <div key={child._id} role="listitem">
-                        <ChildLink
-                            href={child.isContainer ? `/container/${child._id}` : `/items/${child._id}`}
-                            aria-label={child.isContainer ? `Open container ${child.name}` : `View item ${child.name}`}
-                        >
-                            <Box
-                                direction="row"
-                                align="center"
-                                gap="small"
-                                pad={{ horizontal: 'small', vertical: 'xsmall' }}
-                                style={{ height: '100%', minHeight: '44px' }}
+                        <InventoryActionRow item={child} onViewDetails={onViewItemDetails}>
+                            <ChildLink
+                                href={child.isContainer ? `/container/${child._id}` : `/items/${child._id}`}
+                                aria-label={
+                                    child.isContainer ? `Open container ${child.name}` : `View item ${child.name}`
+                                }
                             >
-                                {child.isContainer && <Folder size="medium" color="brand" aria-hidden="true" />}
-                                <Box flex style={{ minWidth: 0 }}>
-                                    <Text weight={child.isContainer ? 'bold' : 'normal'} truncate>
-                                        {child.name}
-                                    </Text>
-                                    {child.description !== undefined && child.description !== '' && (
-                                        <Text size="small" color="text-weak" truncate>
-                                            {child.description}
+                                <Box
+                                    direction="row"
+                                    align="center"
+                                    gap="small"
+                                    pad={{ horizontal: 'small', vertical: 'xsmall' }}
+                                    style={{ height: '100%', minHeight: '44px' }}
+                                >
+                                    {child.isContainer && <Folder size="medium" color="brand" aria-hidden="true" />}
+                                    <Box flex style={{ minWidth: 0 }}>
+                                        <Text weight={child.isContainer ? 'bold' : 'normal'} truncate>
+                                            {child.name}
                                         </Text>
-                                    )}
+                                        {child.description !== undefined && child.description !== '' && (
+                                            <Text size="small" color="text-weak" truncate>
+                                                {child.description}
+                                            </Text>
+                                        )}
+                                    </Box>
+                                    {child.isContainer && <Next size="medium" color="text-weak" aria-hidden="true" />}
                                 </Box>
-                                {child.isContainer && <Next size="medium" color="text-weak" aria-hidden="true" />}
-                            </Box>
-                        </ChildLink>
+                            </ChildLink>
+                        </InventoryActionRow>
                     </div>
                 ))}
             </ChildGrid>

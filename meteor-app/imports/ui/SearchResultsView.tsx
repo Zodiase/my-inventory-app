@@ -1,3 +1,4 @@
+/** Ranked search results retain their return context while exposing detail actions beside each link. */
 import { Folder, Package, Search as SearchIcon } from 'grommet-icons';
 import React, { type ComponentProps, type MouseEvent } from 'react';
 import styled from 'styled-components';
@@ -6,6 +7,7 @@ import type { InventoryItem } from '/imports/model/InventoryItem';
 import type InventorySearchResult from '/imports/model/InventorySearchResult';
 import type { TagRecord } from '/imports/model/TagRecord';
 import type { TracedInventorySearch } from '/imports/model/TracedInventorySearch';
+import { InventoryActionRow } from '/imports/ui/InventoryActionRow';
 import { usePageTitle } from '/imports/utility/usePageTitle';
 
 /**
@@ -374,49 +376,51 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                     const breadcrumbPath = path.length > 0 ? path.slice(0, -1) : [];
 
                     return (
-                        <ResultCard
-                            key={item._id}
-                            href={`/items/${encodeURIComponent(item._id)}`}
-                            onClick={(event) => {
-                                handleItemClick(event, item._id);
-                            }}
-                        >
-                            <ItemHeader>
-                                <ItemInfo>
-                                    <ItemName>{item.name}</ItemName>
-                                    {item.description !== undefined && item.description !== '' && (
-                                        <ItemDescription>{item.description}</ItemDescription>
-                                    )}
-                                </ItemInfo>
-                                <ContainerBadge isContainer={item.isContainer}>
-                                    {item.isContainer ? <Folder size="14px" /> : <Package size="14px" />}
-                                    {item.isContainer ? ' Container' : ' Item'}
-                                </ContainerBadge>
-                            </ItemHeader>
+                        <InventoryActionRow key={item._id} item={item} onViewDetails={onItemClick}>
+                            <ResultCard
+                                key={item._id}
+                                href={`/items/${encodeURIComponent(item._id)}`}
+                                onClick={(event) => {
+                                    handleItemClick(event, item._id);
+                                }}
+                            >
+                                <ItemHeader>
+                                    <ItemInfo>
+                                        <ItemName>{item.name}</ItemName>
+                                        {item.description !== undefined && item.description !== '' && (
+                                            <ItemDescription>{item.description}</ItemDescription>
+                                        )}
+                                    </ItemInfo>
+                                    <ContainerBadge isContainer={item.isContainer}>
+                                        {item.isContainer ? <Folder size="14px" /> : <Package size="14px" />}
+                                        {item.isContainer ? ' Container' : ' Item'}
+                                    </ContainerBadge>
+                                </ItemHeader>
 
-                            {breadcrumbPath.length > 0 && (
-                                <Breadcrumb>
-                                    {breadcrumbPath.map((pathItem) => (
-                                        <BreadcrumbItem key={pathItem._id}>{pathItem.name}</BreadcrumbItem>
-                                    ))}
-                                </Breadcrumb>
-                            )}
+                                {breadcrumbPath.length > 0 && (
+                                    <Breadcrumb>
+                                        {breadcrumbPath.map((pathItem) => (
+                                            <BreadcrumbItem key={pathItem._id}>{pathItem.name}</BreadcrumbItem>
+                                        ))}
+                                    </Breadcrumb>
+                                )}
 
-                            {evidence !== undefined && evidence.matchedFields.length > 0 && (
-                                <MatchEvidence>
-                                    Matched {describeMatchedFields(evidence.matchedFields)} · relevance{' '}
-                                    {Math.round(evidence.score * PERCENT_MULTIPLIER)}%
-                                </MatchEvidence>
-                            )}
+                                {evidence !== undefined && evidence.matchedFields.length > 0 && (
+                                    <MatchEvidence>
+                                        Matched {describeMatchedFields(evidence.matchedFields)} · relevance{' '}
+                                        {Math.round(evidence.score * PERCENT_MULTIPLIER)}%
+                                    </MatchEvidence>
+                                )}
 
-                            {item.tagIds.length > 0 && (
-                                <TagList>
-                                    {item.tagIds.map((tagId) => (
-                                        <TagChip key={tagId}>{getTagName(tagId)}</TagChip>
-                                    ))}
-                                </TagList>
-                            )}
-                        </ResultCard>
+                                {item.tagIds.length > 0 && (
+                                    <TagList>
+                                        {item.tagIds.map((tagId) => (
+                                            <TagChip key={tagId}>{getTagName(tagId)}</TagChip>
+                                        ))}
+                                    </TagList>
+                                )}
+                            </ResultCard>
+                        </InventoryActionRow>
                     );
                 })}
             </ResultsList>

@@ -13,8 +13,8 @@ import { getInventoryIdLabel, type InventoryIdentity } from '/imports/model/Inve
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import { getStructuredStorageLayoutKind } from '/imports/model/StructuredStorageLayout';
 import { HoistedContainerGroup } from '/imports/ui/HoistedContainerGroup';
+import { InventoryActionRow } from '/imports/ui/InventoryActionRow';
 import { LoadingSpinner } from '/imports/ui/LoadingSpinner';
-import { LongPressContextMenu } from '/imports/ui/LongPressContextMenu';
 import { StructuredStorageStack } from '/imports/ui/StructuredStorageStack';
 import { usePullToRefresh } from '/imports/utility/pullToRefresh';
 import { useSwipeNavigation } from '/imports/utility/swipeNavigation';
@@ -232,7 +232,14 @@ export const AllItemsViewPresentation = ({
                 {(item: InventoryItem) => {
                     const hoistedItems = hoistedItemsByContainerId[item._id];
                     if (hoistedItems !== undefined) {
-                        return <HoistedContainerGroup key={item._id} container={item} items={hoistedItems} />;
+                        return (
+                            <HoistedContainerGroup
+                                key={item._id}
+                                container={item}
+                                items={hoistedItems}
+                                onViewItemDetails={onViewItemDetails}
+                            />
+                        );
                     }
 
                     const menuActions = [];
@@ -267,7 +274,7 @@ export const AllItemsViewPresentation = ({
                     }
 
                     return (
-                        <LongPressContextMenu key={item._id} actions={menuActions}>
+                        <InventoryActionRow key={item._id} item={item} actions={menuActions}>
                             <ItemRowLink
                                 href={item.isContainer ? `/container/${item._id}` : `/items/${item._id}`}
                                 aria-label={item.isContainer ? `Open container ${item.name}` : `View item ${item.name}`}
@@ -312,7 +319,7 @@ export const AllItemsViewPresentation = ({
                                     {item.isContainer && <Next size="medium" color="text-weak" />}
                                 </Box>
                             </ItemRowLink>
-                        </LongPressContextMenu>
+                        </InventoryActionRow>
                     );
                 }}
             </List>
@@ -356,6 +363,7 @@ export const AllItemsViewPresentation = ({
                         items={items}
                         identities={identities}
                         listFallback={flatItemsList}
+                        onViewItemDetails={onViewItemDetails}
                     />
                 ) : (
                     flatItemsList

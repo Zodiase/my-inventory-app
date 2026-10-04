@@ -9,6 +9,7 @@ import { Link } from 'wouter';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
 import type { TagRecord } from '/imports/model/TagRecord';
+import { InventoryActionRow } from '/imports/ui/InventoryActionRow';
 import { uiTokens } from '/imports/ui/theme';
 import { DESCRIPTION_PREVIEW_LENGTH } from '/imports/utility/constants';
 
@@ -167,28 +168,30 @@ export const ItemsByTagViewPresentation = styled(
                             const containerPathString = getContainerPathString(containerPaths[item._id]);
 
                             return (
-                                <ItemCard
-                                    key={item._id}
-                                    href={`/items/${item._id}`}
-                                    aria-label={`View item ${item.name}`}
-                                    data-item-id={item._id}
-                                >
-                                    <div className="item-card-header">
-                                        <h3 className="item-name">{item.name}</h3>
-                                        {item.isContainer && (
-                                            <Apps aria-hidden="true" className="container-badge" size="18px" />
+                                <InventoryActionRow key={item._id} item={item}>
+                                    <ItemCard
+                                        key={item._id}
+                                        href={`/items/${item._id}`}
+                                        aria-label={`View item ${item.name}`}
+                                        data-item-id={item._id}
+                                    >
+                                        <div className="item-card-header">
+                                            <h3 className="item-name">{item.name}</h3>
+                                            {item.isContainer && (
+                                                <Apps aria-hidden="true" className="container-badge" size="18px" />
+                                            )}
+                                        </div>
+                                        {typeof item.description === 'string' && item.description !== '' && (
+                                            <p className="item-description">
+                                                {item.description.substring(0, DESCRIPTION_PREVIEW_LENGTH)}
+                                                {item.description.length > DESCRIPTION_PREVIEW_LENGTH ? '...' : ''}
+                                            </p>
                                         )}
-                                    </div>
-                                    {typeof item.description === 'string' && item.description !== '' && (
-                                        <p className="item-description">
-                                            {item.description.substring(0, DESCRIPTION_PREVIEW_LENGTH)}
-                                            {item.description.length > DESCRIPTION_PREVIEW_LENGTH ? '...' : ''}
-                                        </p>
-                                    )}
-                                    <div className="item-location">
-                                        <span className="location-label">Location:</span> {containerPathString}
-                                    </div>
-                                </ItemCard>
+                                        <div className="item-location">
+                                            <span className="location-label">Location:</span> {containerPathString}
+                                        </div>
+                                    </ItemCard>
+                                </InventoryActionRow>
                             );
                         })}
                     </div>
