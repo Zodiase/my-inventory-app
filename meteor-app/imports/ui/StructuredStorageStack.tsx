@@ -19,6 +19,7 @@ import {
     projectVanityItems,
     type StructuredStorageLayoutKind,
 } from '/imports/model/StructuredStorageLayout';
+import { InventoryActionRow } from '/imports/ui/InventoryActionRow';
 
 const StackGrid = styled.div`
     display: grid;
@@ -144,6 +145,7 @@ const Slot = styled.div<{ $occupied: boolean }>`
 `;
 
 const SlotLink = styled(Link)`
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -164,6 +166,10 @@ const SlotLink = styled(Link)`
     &:focus-visible {
         outline: 3px solid #007aff;
         outline-offset: 2px;
+    }
+
+    @media (max-width: 600px) {
+        svg { display: none; }
     }
 `;
 
@@ -215,6 +221,7 @@ export interface StructuredStorageStackProps {
     items: InventoryItem[];
     identities: InventoryIdentity[];
     listFallback: ReactNode;
+    onViewItemDetails?: (id: string) => void;
 }
 
 export const StructuredStorageStack = ({
@@ -224,6 +231,7 @@ export const StructuredStorageStack = ({
     items,
     identities,
     listFallback,
+    onViewItemDetails,
 }: StructuredStorageStackProps): ReactElement => {
     const stackProjection = layoutKind === 'stack-tower' ? projectStackTowerItems(items) : undefined;
     const vanityProjection = layoutKind === 'vanity' ? projectVanityItems(items) : undefined;
@@ -249,21 +257,23 @@ export const StructuredStorageStack = ({
         const action = item.isContainer ? 'Open container' : 'View item';
         return (
             <Slot role="cell" key={position} $occupied>
-                <SlotLink
-                    href={item.isContainer ? `/container/${item._id}` : `/items/${item._id}`}
-                    aria-label={`${action} ${item.name}, tier ${tier} ${position}`}
-                >
-                    {item.isContainer && <Folder size="small" color="brand" aria-hidden="true" />}
-                    <Box flex style={{ minWidth: 0 }}>
-                        <ItemName>{item.name}</ItemName>
-                        {identity !== undefined && (
-                            <CompactId data-testid={`stack-id-${item._id}`} title={identity.value}>
-                                ID: {getInventoryIdLabel(identity, item.isContainer)}
-                            </CompactId>
-                        )}
-                    </Box>
-                    {item.isContainer && <Next size="small" color="text-weak" aria-hidden="true" />}
-                </SlotLink>
+                <InventoryActionRow item={item} onViewDetails={onViewItemDetails} physicalSlot>
+                    <SlotLink
+                        href={item.isContainer ? `/container/${item._id}` : `/items/${item._id}`}
+                        aria-label={`${action} ${item.name}, tier ${tier} ${position}`}
+                    >
+                        {item.isContainer && <Folder size="small" color="brand" aria-hidden="true" />}
+                        <Box flex style={{ minWidth: 0 }}>
+                            <ItemName>{item.name}</ItemName>
+                            {identity !== undefined && (
+                                <CompactId data-testid={`stack-id-${item._id}`} title={identity.value}>
+                                    ID: {getInventoryIdLabel(identity, item.isContainer)}
+                                </CompactId>
+                            )}
+                        </Box>
+                        {item.isContainer && <Next size="small" color="text-weak" aria-hidden="true" />}
+                    </SlotLink>
+                </InventoryActionRow>
             </Slot>
         );
     };
@@ -284,21 +294,25 @@ export const StructuredStorageStack = ({
         const identity = identitiesByItemId.get(item._id);
         return (
             <Slot role="cell" $occupied>
-                <SlotLink
-                    href={item.isContainer ? `/container/${item._id}` : `/items/${item._id}`}
-                    aria-label={`${item.isContainer ? 'Open container' : 'View item'} ${item.name}, ${locationLabel}`}
-                >
-                    {item.isContainer && <Folder size="small" color="brand" aria-hidden="true" />}
-                    <Box flex style={{ minWidth: 0 }}>
-                        <ItemName>{item.name}</ItemName>
-                        {identity !== undefined && (
-                            <CompactId title={identity.value}>
-                                ID: {getInventoryIdLabel(identity, item.isContainer)}
-                            </CompactId>
-                        )}
-                    </Box>
-                    {item.isContainer && <Next size="small" color="text-weak" aria-hidden="true" />}
-                </SlotLink>
+                <InventoryActionRow item={item} onViewDetails={onViewItemDetails} physicalSlot>
+                    <SlotLink
+                        href={item.isContainer ? `/container/${item._id}` : `/items/${item._id}`}
+                        aria-label={`${item.isContainer ? 'Open container' : 'View item'} ${
+                            item.name
+                        }, ${locationLabel}`}
+                    >
+                        {item.isContainer && <Folder size="small" color="brand" aria-hidden="true" />}
+                        <Box flex style={{ minWidth: 0 }}>
+                            <ItemName>{item.name}</ItemName>
+                            {identity !== undefined && (
+                                <CompactId title={identity.value}>
+                                    ID: {getInventoryIdLabel(identity, item.isContainer)}
+                                </CompactId>
+                            )}
+                        </Box>
+                        {item.isContainer && <Next size="small" color="text-weak" aria-hidden="true" />}
+                    </SlotLink>
+                </InventoryActionRow>
             </Slot>
         );
     };
@@ -416,20 +430,22 @@ export const StructuredStorageStack = ({
                         Placement needs attention
                     </Text>
                     {fallbackItems.map((item) => (
-                        <SlotLink
-                            key={item._id}
-                            href={item.isContainer ? `/container/${item._id}` : `/items/${item._id}`}
-                            aria-label={`${item.isContainer ? 'Open container' : 'View item'} ${
-                                item.name
-                            }, placement needs attention`}
-                        >
-                            <Box flex style={{ minWidth: 0 }}>
-                                <ItemName>{item.name}</ItemName>
-                                <Text size="xsmall" color="text-weak">
-                                    Unplaced, invalid, or duplicate slot
-                                </Text>
-                            </Box>
-                        </SlotLink>
+                        <InventoryActionRow key={item._id} item={item} onViewDetails={onViewItemDetails}>
+                            <SlotLink
+                                key={item._id}
+                                href={item.isContainer ? `/container/${item._id}` : `/items/${item._id}`}
+                                aria-label={`${item.isContainer ? 'Open container' : 'View item'} ${
+                                    item.name
+                                }, placement needs attention`}
+                            >
+                                <Box flex style={{ minWidth: 0 }}>
+                                    <ItemName>{item.name}</ItemName>
+                                    <Text size="xsmall" color="text-weak">
+                                        Unplaced, invalid, or duplicate slot
+                                    </Text>
+                                </Box>
+                            </SlotLink>
+                        </InventoryActionRow>
                     ))}
                 </Box>
             )}

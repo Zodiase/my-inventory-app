@@ -32,25 +32,29 @@ test.describe('HoistedContainerGroup (Storybook)', () => {
         await expect(group).toContainText('3 locations');
 
         const heading = page.getByRole('heading', { name: 'Headen Way home' });
-        const spacing = await group.evaluate(
-            (element, headingElement) => {
-                const groupRect = element.getBoundingClientRect();
-                const headingRect = headingElement.getBoundingClientRect();
-                const childRects = [...element.querySelectorAll('[role="listitem"]')].map((child) =>
-                    child.getBoundingClientRect()
-                );
+        const spacing = await group.evaluate((element, headingElement) => {
+            const groupRect = element.getBoundingClientRect();
+            const headingRect = headingElement.getBoundingClientRect();
+            const childRects = [...element.querySelectorAll('[role="listitem"]')].map((child) =>
+                child.getBoundingClientRect()
+            );
 
-                return {
-                    headingGap: groupRect.top - headingRect.bottom,
-                    groupHeight: groupRect.height,
-                    bottomInset: groupRect.bottom - Math.max(...childRects.map((rect) => rect.bottom)),
-                };
-            },
-            await heading.elementHandle()
-        );
+            return {
+                headingGap: groupRect.top - headingRect.bottom,
+                groupHeight: groupRect.height,
+                headingHeight: element
+                    .querySelector('[data-testid="hoisted-container-heading"]')!
+                    .getBoundingClientRect().height,
+                bottomInset: groupRect.bottom - Math.max(...childRects.map((rect) => rect.bottom)),
+            };
+        }, await heading.elementHandle());
 
         expect(spacing.headingGap).toBeLessThanOrEqual(24);
-        expect(spacing.groupHeight).toBeLessThanOrEqual(100);
+        // The visible heading action and primary link both have 44px touch targets.
+        // Keep the original compact child/body budget instead of the pre-action
+        // total-height cap, which assumed a 24px heading.
+        expect(spacing.headingHeight).toBe(44);
+        expect(spacing.groupHeight - spacing.headingHeight).toBeLessThanOrEqual(68);
         expect(spacing.bottomInset).toBeLessThanOrEqual(12);
 
         const childGeometry = await group.locator('[role="listitem"]').evaluateAll((children) =>
