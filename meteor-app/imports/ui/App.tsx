@@ -2,7 +2,7 @@
  * Top-level application shell and route composition.
  * Coordinates URL-backed inventory views, creation modal state, and cross-view search state.
  */
-import { Box, Grommet, Heading, Text } from 'grommet';
+import { Box, Button, Grommet, Heading, Text } from 'grommet';
 import { Meteor } from 'meteor/meteor';
 import React, { type ReactElement, useState, useEffect, useRef } from 'react';
 import { Link, Route, Switch, useLocation, useSearch } from 'wouter';
@@ -631,13 +631,12 @@ export const App = (): ReactElement => {
                         {() => (
                             <Box fill style={{ minHeight: 0 }}>
                                 {contentsDetailsContext.current?.detailPath === location && (
-                                    <Box flex={false} margin={{ bottom: 'small' }}>
-                                        <Link
+                                    <Box flex={false} align="start" margin={{ bottom: 'small' }}>
+                                        <Button
+                                            as={Link}
                                             href={contentsDetailsContext.current.contentsPath}
-                                            className="app-primary-link-button"
-                                        >
-                                            Back to contents
-                                        </Link>
+                                            label="Back to contents"
+                                        />
                                     </Box>
                                 )}
                                 <ItemDetailView
