@@ -183,7 +183,10 @@ export const App = (): ReactElement => {
     const updateSearchUrl = (changes: Partial<SearchUrlState>): void => {
         const nextPath = getSearchUrl({ ...searchUrlState, ...changes });
         if (nextPath === currentRoutePath) return;
-        const preserveCompletedSearch = searchHistoryCheckpoint.current === currentRoutePath;
+        const preserveCompletedSearch =
+            changes.query !== undefined &&
+            changes.query !== searchUrlState.query &&
+            searchHistoryCheckpoint.current === currentRoutePath;
         searchHistoryCheckpoint.current = undefined;
         setLocation(nextPath, { replace: !preserveCompletedSearch });
     };

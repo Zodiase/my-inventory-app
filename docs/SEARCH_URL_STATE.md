@@ -7,12 +7,14 @@ fragment types, malformed JSON, and invalid known shapes are ignored by
 `readSearchUrlState`. A scope without a container falls back to global search.
 The merged JSON fragment encoding remains the supported contract.
 
-Browser history preserves completed searches. The first edit after a completed
+Browser history preserves completed searches. The first query edit after a completed
 run pushes a draft entry, retaining the prior result URL. Subsequent edits and
 debounced execution replace that draft. Enter also completes that entry rather
 than leaving an extra unsubmitted entry. In-flight or stale results do not create
 checkpoints. Repeating Enter on the same submitted query reruns it without adding
-an identical history entry. Navigation invalidates the pending checkpoint; a
+an identical history entry. Tag, type, scope, reset, and filter removal replace
+the current entry even after a run completes; filter clicks do not create
+history checkpoints. Navigation invalidates the pending checkpoint; a
 restored search becomes a checkpoint when its run completes.
 
 ## 2026-10-04 candidate verification
