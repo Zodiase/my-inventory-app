@@ -103,6 +103,10 @@ The app uses client-side URL routing (via [Wouter](https://github.com/molefrog/w
 - **`/tags/:tagId`** - Items filtered by specific tag
 - **`/search`** - Search results view
 
+See [`docs/SEARCH_INTERACTION_DESIGN.md`](docs/SEARCH_INTERACTION_DESIGN.md)
+for the dedicated search-page, scope, same-tab detail, anchor, accessibility,
+and scroll-containment contract.
+
 Features:
 
 - ✅ Browser back/forward buttons work

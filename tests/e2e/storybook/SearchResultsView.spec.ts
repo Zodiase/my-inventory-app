@@ -1,6 +1,22 @@
 /** Browser coverage for isolated inventory search-result presentation states. */
 import { test, expect } from '@playwright/test';
 
+test('result cards are real links with native modified-click behavior and visible focus', async ({ page }) => {
+    await page.goto('/?path=/story/ui-searchresultsview--single-result');
+    const result = page.frameLocator('#storybook-preview-iframe').getByRole('link', { name: /Gaming Laptop/ });
+    await expect(result).toHaveAttribute('href', '/items/item1');
+    await result.focus();
+    await expect(result).toBeFocused();
+    const focusStyle = await result.evaluate((element) => getComputedStyle(element).outlineStyle);
+    expect(focusStyle).not.toBe('none');
+    const modifiedClickWasNative = await result.evaluate((element) => {
+        const click = new MouseEvent('click', { bubbles: true, cancelable: true, metaKey: true });
+        element.dispatchEvent(click);
+        return !click.defaultPrevented;
+    });
+    expect(modifiedClickWasNative).toBe(true);
+});
+
 test('metadata search result shows the matched record and current location context', async ({ page }, testInfo) => {
     const browserErrors: string[] = [];
     page.on('console', (message) => {

@@ -1,0 +1,90 @@
+/* The isolated Storybook stage enlarges the same control used in Search. */
+.tri-demo {
+    box-sizing: border-box;
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 24px;
+    background: #edf3f9;
+    color: #21364e;
+    font: 16px system-ui, -apple-system, sans-serif;
+}
+.tri-demo * {
+    box-sizing: border-box;
+}
+.tri-demo-card {
+    width: min(100%, 640px);
+    padding: 36px;
+    border: 1px solid #ccd9e8;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 16px 45px #1e3b5d1c;
+}
+.tri-demo-eyebrow {
+    margin: 0 0 12px;
+    color: #3c6a98;
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+}
+.tri-demo h1 {
+    margin: 0;
+    font-size: 29px;
+    line-height: 1.2;
+}
+.tri-demo-intro {
+    max-width: 470px;
+    margin: 12px 0 32px;
+    color: #506378;
+    line-height: 1.5;
+}
+.tri-demo-stage {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 28px 18px 20px;
+    border: 1px solid #d7e1ed;
+    border-radius: 12px;
+    background: #f8fbff;
+}
+.tri-demo-tag {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 650;
+}
+.tri-demo-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+.tri-demo-actions button {
+    min-height: 44px;
+    padding: 7px 11px;
+    border: 1px solid #a9c1dc;
+    border-radius: 8px;
+    background: #eef5fd;
+    color: #204e7b;
+    cursor: pointer;
+    font: inherit;
+}
+.tri-demo-actions button:hover {
+    background: #dcecff;
+}
+.tri-demo-actions button:focus-visible {
+    outline: 3px solid #f5aa2a;
+    outline-offset: 2px;
+}
+.tri-demo-note {
+    margin: 24px 0 0;
+    color: #718196;
+    font-size: 12px;
+}
+@media (max-width: 560px) {
+    .tri-demo-card {
+        padding: 24px 18px;
+    }
+    .tri-demo h1 {
+        font-size: 24px;
+    }
+}

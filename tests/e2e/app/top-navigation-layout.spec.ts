@@ -80,7 +80,7 @@ test.describe('top navigation layout', () => {
         await page.getByRole('button', { name: 'Open navigation menu' }).click();
         const menu = page.getByRole('navigation', { name: 'Primary navigation' });
         await expect(menu.getByRole('link', { name: 'Tags' })).toBeVisible();
-        await expect(menu.getByRole('link', { name: 'Search' })).toHaveCount(0);
+        await expect(menu.getByRole('link', { name: 'Search' })).toHaveAttribute('href', '/search');
         await expect(menu.getByRole('link', { name: 'Data' })).toBeVisible();
     });
 });

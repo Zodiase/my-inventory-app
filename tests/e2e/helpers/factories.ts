@@ -70,7 +70,10 @@ export interface CreateTagOptions {
  * @returns Promise resolving to the created tag ID
  */
 export async function createTag(page: Page, options: CreateTagOptions): Promise<string> {
-    return await callMeteorMethod<string>(page, 'createTag', options);
+    return await callMeteorMethod<string>(page, 'createTag', {
+        name: options.name,
+        ...(options.parentId === undefined ? {} : { parentTagId: options.parentId }),
+    });
 }
 
 /**

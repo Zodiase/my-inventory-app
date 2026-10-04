@@ -4,13 +4,14 @@
  */
 import { Box, Button, Header, Main, Nav, Text } from 'grommet';
 import { Apps, Configure, Menu, Search as SearchIcon, Tag as TagIcon } from 'grommet-icons';
-import React, { type ReactElement, type ReactNode, useState } from 'react';
+import React, { type ReactElement, type ReactNode, useEffect, useState } from 'react';
 import { Link } from 'wouter';
 
 interface AppShellProps {
     children: ReactNode;
     location: string;
     headerContent?: ReactNode;
+    searchHref?: string;
 }
 
 interface NavItem {
@@ -47,49 +48,59 @@ const navItems: NavItem[] = [
     },
 ];
 
-const menuItems = navItems.filter((item) => item.href !== '/search');
-
 const getAriaCurrent = (active: boolean): 'page' | undefined => (active ? 'page' : undefined);
 
-export const AppShell = ({ children, location, headerContent }: AppShellProps): ReactElement => {
+export const AppShell = ({
+    children,
+    location,
+    headerContent,
+    searchHref = '/search',
+}: AppShellProps): ReactElement => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const isSearchRoute = location === '/search';
+    useEffect(() => {
+        if (isSearchRoute) setMenuOpen(false);
+    }, [isSearchRoute]);
 
     return (
         <Box fill className="app-shell">
-            <Header background="brand" pad={{ horizontal: 'medium', vertical: 'small' }} className="app-shell-header">
+            <Header
+                background="brand"
+                pad={{ horizontal: 'medium', vertical: 'small' }}
+                className={`app-shell-header${isSearchRoute ? ' app-shell-header-search' : ''}`}
+            >
                 <Box direction="row" align="center" gap="small" fill>
-                    <Button
-                        plain
-                        icon={<Menu color="white" />}
-                        aria-label="Open navigation menu"
-                        aria-expanded={menuOpen}
-                        onClick={() => {
-                            setMenuOpen((open) => !open);
-                        }}
-                        className="app-shell-menu-button"
-                    />
-                    <Text as="span" color="white" weight="bold" className="app-shell-title">
-                        Inventory
-                    </Text>
+                    {!isSearchRoute && (
+                        <>
+                            <Button
+                                plain
+                                icon={<Menu color="white" />}
+                                aria-label="Open navigation menu"
+                                aria-expanded={menuOpen}
+                                onClick={() => {
+                                    setMenuOpen((open) => !open);
+                                }}
+                                className="app-shell-menu-button"
+                            />
+                            <Text as="span" color="white" weight="bold" className="app-shell-title">
+                                Inventory
+                            </Text>
+                        </>
+                    )}
                     <Box flex="grow" style={{ minWidth: 0 }} className="app-shell-header-content">
                         {headerContent}
                     </Box>
-                    <Link
-                        href="/search"
-                        aria-label="Search inventory"
-                        aria-current={location.startsWith('/search') ? 'page' : undefined}
-                        className={`app-shell-search-link${
-                            location.startsWith('/search') ? ' app-shell-search-link-active' : ''
-                        }`}
-                    >
-                        <SearchIcon aria-hidden="true" />
-                    </Link>
+                    {!isSearchRoute && (
+                        <Link href={searchHref} aria-label="Search inventory" className="app-shell-search-link">
+                            <SearchIcon aria-hidden="true" />
+                        </Link>
+                    )}
                 </Box>
             </Header>
 
-            {menuOpen && (
+            {menuOpen && !isSearchRoute && (
                 <Nav aria-label="Primary navigation" className="app-shell-menu">
-                    {menuItems.map((item) => {
+                    {navItems.map((item) => {
                         const active = item.isActive(location);
                         return (
                             <Link
