@@ -111,7 +111,7 @@ export const App = (): ReactElement => {
     // The App stays mounted across the own-details detour. Keep list state and
     // scroll only for that exact pair of routes; other navigation resets it.
     const contentsDetailsContext = useRef<{ contentsPath: string; detailPath: string; scrollTop: number }>();
-    const contentsDetailsButton = useRef<HTMLButtonElement | null>(null);
+    const contentsDetailsButton = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
     useEffect(() => {
         if (location !== contentsDetailsContext.current?.contentsPath) return;
         const frame = requestAnimationFrame(() => contentsDetailsButton.current?.focus({ preventScroll: true }));
@@ -344,8 +344,13 @@ export const App = (): ReactElement => {
             <Box fill style={{ minHeight: 0 }}>
                 <InventoryContentsHeader
                     detailsRef={(node) => {
-                        contentsDetailsButton.current = node instanceof HTMLButtonElement ? node : null;
+                        contentsDetailsButton.current = node;
                     }}
+                    detailsHref={
+                        initialContainerId === undefined
+                            ? undefined
+                            : `/items/${encodeURIComponent(initialContainerId)}`
+                    }
                     title={getItemsViewHeading(initialContainerId)}
                     identityLabel={
                         currentItemsContainerIdentity !== undefined && initialContainerId !== undefined

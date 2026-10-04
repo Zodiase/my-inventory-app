@@ -10,6 +10,7 @@ interface Props {
     title: string;
     identityLabel?: string;
     onDetails?: () => void;
+    detailsHref?: string;
     detailsRef?: (node: HTMLButtonElement | HTMLAnchorElement | null) => void;
     showFilters: boolean;
     onToggleFilters: () => void;
@@ -20,6 +21,7 @@ export const InventoryContentsHeader = ({
     title,
     identityLabel,
     onDetails,
+    detailsHref,
     detailsRef,
     showFilters,
     onToggleFilters,
@@ -32,7 +34,20 @@ export const InventoryContentsHeader = ({
                     {title}
                 </Heading>
                 {onDetails !== undefined && (
-                    <Button ref={detailsRef} label="Container details" onClick={onDetails} style={{ flexShrink: 0 }} />
+                    <Button
+                        ref={detailsRef}
+                        href={detailsHref}
+                        label="Container details"
+                        onClick={(event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
+                            // Preserve native copy/open and modified activation. Only the
+                            // ordinary same-tab journey retains in-memory contents state.
+                            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+                                return;
+                            event.preventDefault();
+                            onDetails();
+                        }}
+                        style={{ flexShrink: 0, minHeight: 44, minWidth: 44 }}
+                    />
                 )}
             </Box>
             {identityLabel !== undefined && (
@@ -46,10 +61,17 @@ export const InventoryContentsHeader = ({
                 icon={<Filter />}
                 label={showFilters ? 'Hide Filters' : 'Add Filters'}
                 onClick={onToggleFilters}
+                style={{ minHeight: 44, minWidth: 44, flexShrink: 0 }}
                 secondary={!showFilters}
                 primary={showFilters}
             />
-            <Button icon={<Add />} label="Create Item" primary onClick={onCreate} />
+            <Button
+                icon={<Add />}
+                label="Create Item"
+                primary
+                onClick={onCreate}
+                style={{ minHeight: 44, minWidth: 44, flexShrink: 0 }}
+            />
         </Box>
     </Box>
 );

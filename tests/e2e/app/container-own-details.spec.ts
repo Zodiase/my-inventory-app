@@ -38,7 +38,11 @@ test('own details target current rack and return preserves filters, list scroll 
     });
     const top = await list.evaluate((node) => node.scrollTop);
     expect(top).toBeGreaterThan(0);
-    await page.getByRole('button', { name: 'Container details', exact: true }).click();
+    await expect(page.getByRole('link', { name: 'Container details', exact: true })).toHaveAttribute(
+        'href',
+        `/items/${rack}`
+    );
+    await page.getByRole('link', { name: 'Container details', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/items/${rack}$`));
     await expect(page.getByRole('heading', { name: '📦 Network rack', exact: true })).toBeVisible();
     await expect(page.getByText('Rack-MODEL', { exact: true })).toBeVisible();
@@ -48,7 +52,7 @@ test('own details target current rack and return preserves filters, list scroll 
     await expect(page).toHaveURL(new RegExp(`/container/${rack}$`));
     await expect(page.getByRole('link', { name: 'View item Excluded child', exact: true })).toHaveCount(0);
     await expect.poll(() => list.evaluate((node) => node.scrollTop)).toBe(top);
-    await expect(page.getByRole('button', { name: 'Container details', exact: true })).toBeFocused();
+    await expect(page.getByRole('link', { name: 'Container details', exact: true })).toBeFocused();
     await expect(page.getByRole('button', { name: /Add Filters/ })).toBeVisible();
     const after = await callMeteorMethod(page, 'items.search', [{ type: 'containerScope', containerRootId: rack }]);
     expect(after).toEqual(before);
@@ -68,7 +72,7 @@ test('own details target current rack and return preserves filters, list scroll 
 test('empty and filtered-empty containers keep entry and browser Back preserves context', async ({ page }) => {
     const empty = await createItem(page, { name: 'Empty rack', isContainer: true });
     await page.goto(`/container/${empty}`);
-    await page.getByRole('button', { name: 'Container details', exact: true }).click();
+    await page.getByRole('link', { name: 'Container details', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/items/${empty}$`));
     await expect(page.getByText('Description:', { exact: true })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Properties', exact: true })).toHaveCount(0);
@@ -76,7 +80,7 @@ test('empty and filtered-empty containers keep entry and browser Back preserves 
     await page.getByRole('button', { name: /Add Filters/ }).click();
     await page.getByPlaceholder('Search by name...').fill('absent');
     await page.getByPlaceholder('Search by name...').press('Enter');
-    await page.getByRole('button', { name: 'Container details', exact: true }).click();
+    await page.getByRole('link', { name: 'Container details', exact: true }).click();
     await page.goBack();
     await expect(page).toHaveURL(new RegExp(`/container/${empty}$`));
     await expect(page.getByPlaceholder('Search by name...')).toBeVisible();
@@ -94,11 +98,11 @@ test('structured containers keep entry; global and missing omit it', async ({ pa
         },
     });
     await page.goto(`/container/${stack}`);
-    await page.getByRole('button', { name: 'Container details', exact: true }).click();
+    await page.getByRole('link', { name: 'Container details', exact: true }).click();
     await expect(page.getByText('Storage tiers', { exact: true })).toBeVisible();
     await page.goto('/items');
-    await expect(page.getByRole('button', { name: 'Container details', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Container details', exact: true })).toHaveCount(0);
     await page.goto('/container/missing-current-rack');
     await expect(page.getByRole('heading', { name: 'Container Not Found' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Container details', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Container details', exact: true })).toHaveCount(0);
 });

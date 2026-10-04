@@ -24,7 +24,7 @@ for (const story of [
             await page.goto(
                 `${STORYBOOK_BASE_URL}/iframe.html?id=integration-containerdetails--${story}&viewMode=story`
             );
-            const details = page.getByRole('button', { name: 'Container details', exact: true });
+            const details = page.getByRole('link', { name: 'Container details', exact: true });
             if (['global', 'loading', 'missing'].includes(story)) {
                 await expect(details).toHaveCount(0);
                 await expect(page.getByRole('banner')).toBeVisible();
@@ -37,6 +37,15 @@ for (const story of [
             const bounds = await details.boundingBox();
             expect(bounds?.height).toBeGreaterThanOrEqual(44);
             expect(bounds?.width).toBeGreaterThanOrEqual(44);
+            await expect(details).toHaveAttribute('href', /^\/items\//);
+            for (const control of [
+                page.getByRole('button', { name: /Add Filters/ }),
+                page.getByRole('button', { name: /Create Item/ }),
+            ]) {
+                const bounds = await control.boundingBox();
+                expect(bounds?.height).toBeGreaterThanOrEqual(44);
+                expect(bounds?.width).toBeGreaterThanOrEqual(44);
+            }
             const heading = await page.getByRole('heading', { level: 2 }).boundingBox();
             if (bounds!.y < heading!.y + heading!.height)
                 expect(

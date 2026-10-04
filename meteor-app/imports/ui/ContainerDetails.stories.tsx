@@ -95,6 +95,7 @@ const Fixture = ({ variant = 'populated' }: { variant?: string }): React.ReactEl
                 ) : (
                     <Box fill style={{ minHeight: 0 }}>
                         <InventoryContentsHeader
+                            detailsHref={`/items/${current._id}`}
                             title={variant === 'global' ? 'All Items' : current.name}
                             onDetails={
                                 variant === 'global'
