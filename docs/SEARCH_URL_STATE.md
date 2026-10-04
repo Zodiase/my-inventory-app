@@ -19,9 +19,13 @@ restored search becomes a checkpoint when its run completes.
 
 ## 2026-10-04 candidate verification
 
-Based on merged PR #163 (`2262f2c`). Adds app regressions for completed A/B
-Back/Forward, coalesced typing, and Enter without a duplicate draft. Independent
-app verification is pending; this candidate is not deployed or accepted yet.
+Based on merged PR #163 (`2262f2c`). Final code revision `b2dd3df` passed 48
+independent Chromium/iPad checks, including completed A/B Back/Forward,
+coalesced typing, Enter without duplicate drafts, and settled filter updates
+without new entries. Manual full-app review at 1280×720 restored A and B and
+exited to All Items without captured console errors. See the archived
+[independent review](visual-review/search-history-2026-10-04/INDEPENDENT-REVIEW.md).
+This candidate is not deployed; GitHub publication and CI remain pending.
 
 Shared local dependencies report an existing `Meteor.callAsync` generic type
 incompatibility in `App.tsx` (TS2558), with five related ESLint unsafe-value
