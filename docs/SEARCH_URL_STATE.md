@@ -27,8 +27,9 @@ exited to All Items without captured console errors. See the archived
 [independent review](visual-review/search-history-2026-10-04/INDEPENDENT-REVIEW.md).
 This candidate is not deployed; GitHub publication and CI remain pending.
 
-Shared local dependencies report an existing `Meteor.callAsync` generic type
-incompatibility in `App.tsx` (TS2558), with five related ESLint unsafe-value
-diagnostics. The history change does not change that call or its return handling.
-Formatting and diff whitespace checks pass. The verifier owns isolated app and
-manual full-shell checks against the exact candidate commit.
+The initial uninitialized checkout reported TS2558 at `Meteor.callAsync` and
+five related ESLint diagnostics. The verifier's initialized disposable clone
+passes TypeScript and App ESLint with zero errors and one existing `findOne`
+deprecation warning; the earlier dependency diagnostics are not a source defect.
+Formatting and diff whitespace checks pass. The unique independently passing
+repeat-Enter/history-length regression is retained in the candidate suite.
