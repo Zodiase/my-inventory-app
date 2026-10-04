@@ -12,7 +12,9 @@ import type { InventoryItem } from '/imports/model/InventoryItem';
 import { ItemRowActions } from '/imports/ui/ItemRowActions';
 import { LongPressContextMenu, type ContextMenuAction } from '/imports/ui/LongPressContextMenu';
 
-const Row = styled(Box)<{ $physicalSlot: boolean }>`
+const Row = styled(Box)<{ $physicalSlot: boolean; $fillHeight: boolean }>`
+    ${(props) => props.$fillHeight && `> div > div { height: 100%; }`}
+
     @media (max-width: 600px) {
         ${(props) =>
             props.$physicalSlot &&
@@ -31,12 +33,14 @@ export const InventoryActionRow = ({
     actions,
     onViewDetails,
     physicalSlot = false,
+    fillHeight = false,
     children,
 }: {
     item: InventoryItem;
     actions?: ContextMenuAction[];
     onViewDetails?: (id: string) => void;
     physicalSlot?: boolean;
+    fillHeight?: boolean;
     children: ReactNode;
 }): ReactElement => {
     const [, setLocation] = useLocation();
@@ -52,11 +56,12 @@ export const InventoryActionRow = ({
     return (
         <Row
             $physicalSlot={physicalSlot}
+            $fillHeight={fillHeight}
             direction="row"
             align="center"
-            style={{ minWidth: 0, height: physicalSlot ? '100%' : 'auto', flexShrink: 0 }}
+            style={{ minWidth: 0, height: physicalSlot || fillHeight ? '100%' : 'auto', flexShrink: 0 }}
         >
-            <Box flex style={{ minWidth: 0, height: physicalSlot ? '100%' : 'auto' }}>
+            <Box flex style={{ minWidth: 0, height: physicalSlot || fillHeight ? '100%' : 'auto' }}>
                 <LongPressContextMenu actions={availableActions}>{children}</LongPressContextMenu>
             </Box>
             <ItemRowActions name={item.name} actions={availableActions} />

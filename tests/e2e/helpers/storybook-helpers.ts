@@ -1,3 +1,4 @@
+/** Navigates isolated Storybook fixtures using the same configurable server as the test runner. */
 import type { Page } from '@playwright/test';
 
 /**
@@ -7,7 +8,7 @@ import type { Page } from '@playwright/test';
  * cd meteor-app && npm run storybook
  * ```
  */
-export const STORYBOOK_BASE_URL = 'http://localhost:6006';
+export const STORYBOOK_BASE_URL = process.env.STORYBOOK_BASE_URL ?? 'http://localhost:6006';
 
 /**
  * Builds a Storybook story URL for isolated component testing.

@@ -23,3 +23,18 @@ hoisted heading touch size, and pairwise mixed-height search/tag non-overlap.
 Actual routing, search return context, and touch/manual acceptance remain the
 independent actual-app verifier's responsibility. This report does not claim
 those results or approve merge/deployment.
+
+The full suite additionally detected unequal hoisted child primary-link heights
+after content-sized search sizing. Hoisted grid children explicitly fill their
+grid cells, including the long-press wrapper; search/tag wrappers retain their
+content height. The original equal-height/icon-alignment assertions pass again.
+The legacy 100px group cap was replaced by an explicit 44px header plus the
+unchanged compact body budget. Reviewed macOS physical-layout references now
+include the visible actions; Linux retains its geometry checks.
+
+Independent actual-app review at source 3d25def passed 18 app regressions, 32
+Storybook cases, five additional real-tap/geometry journeys including both iPad
+orientations and constrained phone, plus manual review of all five surfaces.
+Its additional journey is preserved as item-row-actions-geometry.spec.ts and
+passes all three existing app projects. The narrow grid follow-up and exact-head
+CI remain subject to independent closeout.

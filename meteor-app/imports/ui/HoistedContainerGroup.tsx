@@ -126,7 +126,7 @@ export const HoistedContainerGroup = ({
             <ChildGrid role="list">
                 {items.map((child) => (
                     <div key={child._id} role="listitem">
-                        <InventoryActionRow item={child} onViewDetails={onViewItemDetails}>
+                        <InventoryActionRow item={child} onViewDetails={onViewItemDetails} fillHeight>
                             <ChildLink
                                 href={child.isContainer ? `/container/${child._id}` : `/items/${child._id}`}
                                 aria-label={
