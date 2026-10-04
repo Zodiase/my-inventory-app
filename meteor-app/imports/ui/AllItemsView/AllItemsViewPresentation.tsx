@@ -5,7 +5,7 @@
  */
 import { Box, List, Text } from 'grommet';
 import { Folder, Next } from 'grommet-icons';
-import React, { type ComponentProps, type ReactElement, useRef } from 'react';
+import React, { type ComponentProps, type ReactElement, useRef, useEffect } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { Link } from 'wouter';
 
@@ -37,6 +37,7 @@ const noopRefresh = async (): Promise<void> => {
  */
 const ScrollableContainer = styled.div`
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 `;
@@ -129,6 +130,9 @@ export interface AllItemsViewPresentationProps {
      */
     items: InventoryItem[];
 
+    /** Restore the list after inspecting its current container. */
+    initialScrollTop?: number;
+
     /** Children projected into marked logical containers, keyed by that container's ID. */
     hoistedItemsByContainerId?: Readonly<Partial<Record<string, InventoryItem[]>>>;
 
@@ -178,6 +182,7 @@ export interface AllItemsViewPresentationProps {
 
 export const AllItemsViewPresentation = ({
     items,
+    initialScrollTop,
     hoistedItemsByContainerId = {},
     identities = [],
     containerPath,
@@ -190,6 +195,10 @@ export const AllItemsViewPresentation = ({
     ...rootElementProps
 }: AllItemsViewPresentationProps & ComponentProps<'div'>): ReactElement => {
     const containerRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (initialScrollTop !== undefined && containerRef.current !== null)
+            containerRef.current.scrollTop = initialScrollTop;
+    }, [initialScrollTop]);
     const identitiesByItemId = new Map(identities.map((binding) => [binding.itemId, binding.identity]));
 
     // Pull-to-refresh hook
@@ -329,7 +338,7 @@ export const AllItemsViewPresentation = ({
     const structuredLayoutKind = getStructuredStorageLayoutKind(currentContainer, items);
 
     return (
-        <Box {...rootElementProps} fill gap="small" pad="small">
+        <Box {...rootElementProps} fill gap="small" pad="small" style={{ minHeight: 0, ...rootElementProps.style }}>
             {/* Pull-to-refresh indicator */}
             {onRefresh !== undefined && (
                 <PullToRefreshIndicator

@@ -58,6 +58,7 @@ export interface AllItemsViewContainerProps {
      * Initial container ID to display. If undefined, shows root level items.
      */
     initialContainerId?: string;
+    initialScrollTop?: number;
 
     /**
      * Callback when navigating to a different container.
@@ -74,6 +75,7 @@ export interface AllItemsViewContainerProps {
 
 export const AllItemsViewContainer = ({
     initialContainerId,
+    initialScrollTop,
     onNavigate,
     filters = [],
     ...rootElementProps
@@ -193,6 +195,7 @@ export const AllItemsViewContainer = ({
 
     return (
         <AllItemsViewPresentation
+            initialScrollTop={initialScrollTop}
             {...rootElementProps}
             items={items}
             hoistedItemsByContainerId={hoistedItemsByContainerId}
