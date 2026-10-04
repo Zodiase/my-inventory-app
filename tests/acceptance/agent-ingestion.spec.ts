@@ -412,8 +412,8 @@ test('ranked search stays synchronized and agrees across agent and application p
     await page.goto('/search');
     await waitForMeteorReady(page);
     await page.getByRole('textbox', { name: 'Search query' }).fill('calibration quilts');
-    await page.getByRole('button', { name: 'Submit search' }).click();
-    await expect(page.getByRole('button', { name: new RegExp(pads.item.name) })).toContainText(laundry.item.name);
+    await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
+    await expect(page.getByRole('link', { name: new RegExp(pads.item.name) })).toContainText(laundry.item.name);
     await expect(page.getByText(/Matched description/)).toBeVisible();
 
     const updateResponse = await invoke({
