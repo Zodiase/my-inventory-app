@@ -3,8 +3,11 @@ import assert from 'node:assert/strict';
 import { writeFile } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
 
-const [url, output] = process.argv.slice(2);
-assert.ok(url && output, 'Usage: node scripts/prove-loading-capture-production.mjs LOOPBACK_URL OUTPUT_JSON');
+const [url, output, containerPath] = process.argv.slice(2);
+assert.ok(
+    url && output && /^\/container\/[^/?#]+$/u.test(containerPath ?? ''),
+    'Usage: node scripts/prove-loading-capture-production.mjs LOOPBACK_URL OUTPUT_JSON SYNTHETIC_CONTAINER_PATH'
+);
 const target = new URL(url);
 assert.ok(['127.0.0.1', 'localhost', '[::1]'].includes(target.hostname), 'Use an explicitly disposable local build');
 assert.ok(target.port, 'An explicit disposable port is required');
@@ -20,10 +23,7 @@ try {
     });
     await page.goto(url);
     await page.getByRole('heading', { name: 'All Items', exact: true }).waitFor();
-    const containerId = await page.evaluate(() =>
-        window.Meteor.callAsync('createItem', { name: 'Production diagnostic fixture', isContainer: true })
-    );
-    await page.goto(new URL(`/container/${containerId}`, url).href);
+    await page.goto(new URL(containerPath, url).href);
     await page.getByRole('heading', { name: 'Production diagnostic fixture', exact: true }).waitFor();
     const proof = await page.evaluate(() => ({
         production: window.Meteor?.isProduction,

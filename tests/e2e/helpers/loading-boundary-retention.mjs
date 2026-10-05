@@ -42,6 +42,12 @@ export async function proveInitialFailureRetention(root) {
         const report = JSON.parse(run.stdout);
         assert.equal(report.stats.unexpected, 1);
         assert.equal(report.stats.expected, 1);
+        const specs = report.suites.flatMap((s) => s.specs ?? []);
+        const failure = specs.find((s) => s.title === 'initial failure');
+        const attempt = failure.tests[0].results[0];
+        assert.equal(attempt.retry, 0);
+        assert.equal(attempt.status, 'failed');
+        assert.match(attempt.errors[0].message, /deliberately absent/);
         const artifacts = await files(join(dir, 'results'));
         const traces = artifacts.filter((p) => p.endsWith('trace.zip'));
         assert.equal(traces.length, 1);
