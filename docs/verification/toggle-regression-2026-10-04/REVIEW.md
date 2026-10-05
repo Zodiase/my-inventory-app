@@ -64,3 +64,15 @@ on both candidate48396 and unchanged preserved baseline48388. Toggle touch2/2
 passes. This old test was not part of the existing CI WebKit gate; the new step
 is explicitly limited to the requested toggle scope, not a silent skip of a
 previous gate. Followup bd-0ju retains classification. No old assertion relaxed.
+
+## Independent CI-selection correction
+
+Verifier found that the initial npm workflow command did not scope only the
+new file: the package script prepends the whole Storybook directory, and
+Playwright combines positional filters with OR. Thus the initial candidate's
+claim of an explicitly scoped WebKit gate was false; it also selected the known
+hoisted test. The workflow now uses direct `npx playwright test` with only the
+new file. The exact corrected command with `--list` selects2 tests in1 file;
+its real WebKit run passes2/2. Exact listing/run retained alongside this report.
+No old test or assertion was weakened. Independent acceptance must reconcile
+this revised head, rather than treating initial head b1865bd as accepted.
