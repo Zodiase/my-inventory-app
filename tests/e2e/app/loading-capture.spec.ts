@@ -36,6 +36,10 @@ test('links real gate and child commits and retains the child across root update
     await expect.poll(async () => (await read()).events.filter((e) => e.phase === 'passive-mount').length).toBe(1);
     const before = await read();
     expect(before.complete).toBe(true);
+    expect(before.events.some((e) => e.phase === 'tracker-before')).toBe(true);
+    expect(before.events.some((e) => e.phase === 'tree-end')).toBe(true);
+    expect(before.events.some((e) => e.phase === 'route-entry')).toBe(true);
+    expect(before.events.some((e) => e.phase === 'shell-commit')).toBe(true);
     const childCommit = before.events.findLast(
         (e) => e.phase === 'commit' && e.childFrame !== undefined && e.decision === 'contents'
     );
@@ -106,7 +110,14 @@ test('a failed real-browser assertion persists the opted-in ring alongside DDP e
         expect(artifact).toBeDefined();
         const evidence = JSON.parse(artifact!);
         expect(evidence.finalSampleCompleted).toBe(true);
-        expect(evidence.renderCapture).toMatchObject({ available: true, complete: true, stopped: true });
+        expect(evidence.renderCapture).toMatchObject({
+            schema: 'root-route-loading/v2',
+            available: true,
+            complete: true,
+            stopped: true,
+        });
+        expect(evidence.renderCapture.lastShellCommit).toMatchObject({ phase: 'shell-commit' });
+        expect(evidence.publicErrors).toMatchObject({ complete: true, stopped: true, dropped: 0 });
         expect(evidence.renderCapture.lastCommit).toMatchObject({ phase: 'commit' });
         expect(
             evidence.renderCapture.events.some(
@@ -124,4 +135,84 @@ test('a failed real-browser assertion persists the opted-in ring alongside DDP e
     } finally {
         await observer.finish({ status: 'passed', attach: async () => {} });
     }
+});
+
+test('shell geometry and subscription behavior agree with and without opt-in', async ({ browser }) => {
+    const readings: unknown[] = [];
+    let id: string | undefined;
+    for (const enabled of [false, true]) {
+        const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+        const page = await context.newPage();
+        try {
+            if (enabled)
+                await page.addInitScript(() => {
+                    Object.defineProperty(globalThis, 'inventoryE2eLoadingCapability', {
+                        value: Object.freeze({ schema: 1, epoch: 'document-0123456789abcdef' }),
+                        configurable: false,
+                        writable: false,
+                    });
+                });
+            await page.goto('/');
+            await waitForMeteorReady(page);
+            if (id === undefined) {
+                await resetDatabase(page);
+                id = await callMeteorMethod<string>(page, 'createItem', {
+                    name: 'Shell parity fixture',
+                    isContainer: true,
+                });
+            }
+            await page.goto(`/container/${id}`);
+            await expect(page.getByRole('heading', { name: 'Shell parity fixture', exact: true })).toBeVisible();
+            readings.push(
+                await page.evaluate(() => {
+                    const rect = (selector: string) => {
+                        const r = document.querySelector(selector)!.getBoundingClientRect();
+                        return [r.x, r.y, r.width, r.height];
+                    };
+                    const meteor = (
+                        window as unknown as {
+                            Meteor: {
+                                connection: { _subscriptions: Record<string, { name: string; ready: boolean }> };
+                            };
+                        }
+                    ).Meteor;
+                    return {
+                        main: rect('main'),
+                        header: rect('.app-shell-header'),
+                        subscriptions: Object.values(meteor.connection._subscriptions)
+                            .map((s) => [s.name, s.ready])
+                            .sort(),
+                    };
+                })
+            );
+            const screenshotPath = test.info().outputPath(enabled ? 'shell-opted-in.png' : 'shell-no-opt-in.png');
+            await page.screenshot({ path: screenshotPath });
+            await test.info().attach(enabled ? 'shell-opted-in' : 'shell-no-opt-in', {
+                path: screenshotPath,
+                contentType: 'image/png',
+            });
+        } finally {
+            await context.close();
+        }
+    }
+    expect(readings[1]).toEqual(readings[0]);
+});
+
+test('malformed and late capabilities cannot enable a retained document', async ({ page }) => {
+    await page.addInitScript(() => {
+        (globalThis as unknown as Record<string, unknown>).inventoryE2eLoadingCapability = {
+            schema: 1,
+            epoch: 'PRIVATE_BAD',
+        };
+    });
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
+    await page.evaluate(() => {
+        (globalThis as unknown as Record<string, unknown>).inventoryE2eLoadingCapability = {
+            schema: 1,
+            epoch: 'document-0123456789abcdef',
+        };
+    });
+    await page.getByRole('link', { name: 'Search inventory' }).click();
+    expect(await page.evaluate(() => 'inventoryE2eLoadingCapture' in globalThis)).toBe(false);
 });

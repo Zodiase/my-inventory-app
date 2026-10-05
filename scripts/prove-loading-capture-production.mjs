@@ -20,13 +20,18 @@ try {
     });
     await page.goto(url);
     await page.getByRole('heading', { name: 'All Items', exact: true }).waitFor();
+    const containerId = await page.evaluate(() =>
+        window.Meteor.callAsync('createItem', { name: 'Production diagnostic fixture', isContainer: true })
+    );
+    await page.goto(new URL(`/container/${containerId}`, url).href);
+    await page.getByRole('heading', { name: 'Production diagnostic fixture', exact: true }).waitFor();
     const proof = await page.evaluate(() => ({
         production: window.Meteor?.isProduction,
         development: window.Meteor?.isDevelopment,
         capabilityPresent: 'inventoryE2eLoadingCapability' in globalThis,
         capturePresent: 'inventoryE2eLoadingCapture' in globalThis,
         bootstrapPresent: 'inventoryE2eLoadingBootstrap' in globalThis,
-        headingVisible: document.querySelector('main')?.textContent?.includes('All Items') === true,
+        headingVisible: document.querySelector('main')?.textContent?.includes('Production diagnostic fixture') === true,
     }));
     assert.equal(proof.production, true, 'This must be an actual production client');
     assert.equal(proof.development, false);
@@ -37,7 +42,7 @@ try {
     await writeFile(output, JSON.stringify({ schema: 'loading-capture-production-proof/v1', ...proof }, null, 2), {
         mode: 0o600,
     });
-    console.log('Production client ignores forged capability; ordinary root content renders.');
+    console.log('Production client ignores forged capability; ordinary root and container content render.');
 } finally {
     await browser.close();
 }
