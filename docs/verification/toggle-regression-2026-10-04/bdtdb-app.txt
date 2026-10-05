@@ -1,0 +1,351 @@
+[1A[2K[2m[WebServer] [22m(node:12537) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[2m[WebServer] [22m[[[[[ /Volumes/Expansion/workspace/inventory-toggle-regression/meteor-app ]]]]]
+[2m[WebServer] [22m
+
+[1A[2K[2m[WebServer] [22m=> Started proxy.
+
+[1A[2K[2m[WebServer] [22m=> Started HMR server.
+
+[1A[2K[2m[WebServer] [22m=> Meteor 3.5.2 is available. Check the changelog
+[2m[WebServer] [22mhttps://docs.meteor.com/history.html and update this project with 'meteor
+[2m[WebServer] [22mupdate'.
+
+[1A[2K[2m[WebServer] [22m=> Started MongoDB.
+
+[1A[2K[2m[WebServer] [22m=> Linted your app. No linting errors.
+
+[1A[2K[2m[WebServer] [22m[1m[31m(node:12598) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m[22m
+[2m[WebServer] [22m[1m[31m[39m[22m
+
+[1A[2K[2m[WebServer] [22m[1m[31m(Use `node --trace-warnings ...` to show where the warning was created)[39m[22m
+[2m[WebServer] [22m[1m[31m[39m[22m
+
+[1A[2K[2m[WebServer] [22m[/server/gridfs.ts] GridFS bucket initialized for attachments
+
+[1A[2K[2m[WebServer] [22m[/server/main.ts] Creating database indexes...
+
+[1A[2K[2m[WebServer] [22m[/server/main.ts] Database indexes created successfully
+
+[1A[2K[2m[WebServer] [22m[/server/search/index.ts] Inventory search index rebuilt { count: [32m'[number]2'[39m }
+
+[1A[2K[2m[WebServer] [22m[api/tags] watching for tags without path...
+
+[1A[2K[2m[WebServer] [22m(node:12537) Warning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+
+[1A[2K[2m[WebServer] [22m=> Started your app.
+[2m[WebServer] [22m
+
+[1A[2K[2m[WebServer] [22m=> App running at http://127.0.0.1:48398/
+
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:12599) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:12599) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] [chromium] › tests/e2e/app/tag-toggle-regression.spec.ts:5:5 › direct tag choices preserve scoped query and unrelated URL filters
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.byContainer { containerId: [32m'[null]'[39m }
+
+[1A[2K[2m[WebServer] [22mThe Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[1A[2K[2m[WebServer] [22m  collectionName: [32m'items'[39m,
+[2m[WebServer] [22m  selector: { [32m'$or'[39m: [ [36m[Object][39m, [36m[Object][39m ] },
+[2m[WebServer] [22m  options: { transform: [1mnull[22m }
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Item created {
+[2m[WebServer] [22m  itemId: [32m'[string]8e2AoWQY6ZKRgmaYa'[39m,
+[2m[WebServer] [22m  name: [32m'[string]Toggle Rack'[39m,
+
+[1A[2K[2m[WebServer] [22m  isContainer: [32m'[boolean]true'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Item created {
+[2m[WebServer] [22m  itemId: [32m'[string]shYoZeFtgzjB2b3ox'[39m,
+
+[1A[2K[2m[WebServer] [22m  name: [32m'[string]Toggle fixture'[39m,
+[2m[WebServer] [22m  isContainer: [32m'[boolean]false'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-GHWKiWc5kP4QZciW'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]shYoZeFtgzjB2b3ox'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+[2m[WebServer] [22m  runId: [32m'[string]srch-WKRpom5dxrywsYbw'[39m,
+
+[1A[2K[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]shYoZeFtgzjB2b3ox'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-iEAutrsBJcsyKRpk'[39m,
+[2m[WebServer] [22m  status: [32m'[string]empty'[39m,
+[2m[WebServer] [22m  count: [32m'[number]0'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-D4NH3nFxdC5kFMPv'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]shYoZeFtgzjB2b3ox'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-D4NPwrt4qgBSnFKm'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]shYoZeFtgzjB2b3ox'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K(node:12608) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:12608) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[2/3] [iPad] › tests/e2e/app/tag-toggle-regression.spec.ts:5:5 › direct tag choices preserve scoped query and unrelated URL filters
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.byContainer { containerId: [32m'[null]'[39m }
+
+[1A[2K[2m[WebServer] [22mThe Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[2m[WebServer] [22m  collectionName: [32m'items'[39m,
+
+[1A[2K[2m[WebServer] [22m  selector: { [32m'$or'[39m: [ [36m[Object][39m, [36m[Object][39m ] },
+[2m[WebServer] [22m  options: { transform: [1mnull[22m }
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.byContainer { containerId: [32m'[null]'[39m }
+
+[1A[2K[2m[WebServer] [22mThe Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[2m[WebServer] [22m  collectionName: [32m'items'[39m,
+
+[1A[2K[2m[WebServer] [22m  selector: { [32m'$or'[39m: [ [36m[Object][39m, [36m[Object][39m ] },
+[2m[WebServer] [22m  options: { transform: [1mnull[22m }
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Item created {
+
+[1A[2K[2m[WebServer] [22m  itemId: [32m'[string]uMSTSDwPaox4tGq4B'[39m,
+[2m[WebServer] [22m  name: [32m'[string]Toggle Rack'[39m,
+[2m[WebServer] [22m  isContainer: [32m'[boolean]true'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Item created {
+
+[1A[2K[2m[WebServer] [22m  itemId: [32m'[string]aNXtvPpCTbaZg5HY3'[39m,
+[2m[WebServer] [22m  name: [32m'[string]Toggle fixture'[39m,
+[2m[WebServer] [22m  isContainer: [32m'[boolean]false'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-F6NxsFuZdybkLXor'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]aNXtvPpCTbaZg5HY3'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-nKYYm2XGtCJNjYvK'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]aNXtvPpCTbaZg5HY3'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+[2m[WebServer] [22m  runId: [32m'[string]srch-NMLrE88fsc7oEdZ4'[39m,
+
+[1A[2K[2m[WebServer] [22m  status: [32m'[string]empty'[39m,
+[2m[WebServer] [22m  count: [32m'[number]0'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-jFuDoduhn2JkxcPr'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]aNXtvPpCTbaZg5HY3'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-LALT938mxGjuHvhb'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]aNXtvPpCTbaZg5HY3'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+[2m[WebServer] [22m  runId: [32m'[string]srch-mvZrmea5u2o5mJL2'[39m,
+
+[1A[2K[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]aNXtvPpCTbaZg5HY3'[39m
+[2m[WebServer] [22m}
+
+[1A[2K(node:12627) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:12627) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[3/3] [iPhone] › tests/e2e/app/tag-toggle-regression.spec.ts:5:5 › direct tag choices preserve scoped query and unrelated URL filters
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.byContainer { containerId: [32m'[null]'[39m }
+
+[1A[2K[2m[WebServer] [22mThe Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[2m[WebServer] [22m  collectionName: [32m'items'[39m,
+[2m[WebServer] [22m  selector: { [32m'$or'[39m: [ [36m[Object][39m, [36m[Object][39m ] },
+[2m[WebServer] [22m  options: { transform: [1mnull[22m }
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.byContainer { containerId: [32m'[null]'[39m }
+
+[1A[2K[2m[WebServer] [22mThe Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[2m[WebServer] [22m  collectionName: [32m'items'[39m,
+[2m[WebServer] [22m  selector: { [32m'$or'[39m: [ [36m[Object][39m, [36m[Object][39m ] },
+
+[1A[2K[2m[WebServer] [22m  options: { transform: [1mnull[22m }
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Item created {
+
+[1A[2K[2m[WebServer] [22m  itemId: [32m'[string]zsiBKkwCzgxaxEqjs'[39m,
+[2m[WebServer] [22m  name: [32m'[string]Toggle Rack'[39m,
+[2m[WebServer] [22m  isContainer: [32m'[boolean]true'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Item created {
+
+[1A[2K[2m[WebServer] [22m  itemId: [32m'[string]hsLwfEJPFzk25cxCa'[39m,
+[2m[WebServer] [22m  name: [32m'[string]Toggle fixture'[39m,
+[2m[WebServer] [22m  isContainer: [32m'[boolean]false'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-HB37vCZhpNA5xdzu'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]hsLwfEJPFzk25cxCa'[39m
+[2m[WebServer] [22m}
+[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-p5r3K87jqpw7AdMi'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]hsLwfEJPFzk25cxCa'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-iuGNmmCjm9XghMR4'[39m,
+[2m[WebServer] [22m  status: [32m'[string]empty'[39m,
+[2m[WebServer] [22m  count: [32m'[number]0'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-CqNF8Sy4Q4GavQNr'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]hsLwfEJPFzk25cxCa'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+
+[1A[2K[2m[WebServer] [22m  runId: [32m'[string]srch-n8T6WH59GcnjwCGi'[39m,
+[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]hsLwfEJPFzk25cxCa'[39m
+[2m[WebServer] [22m}
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/tags] Publishing tags.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Publishing items.all
+
+[1A[2K[2m[WebServer] [22m[api/items] Inventory search run completed {
+[2m[WebServer] [22m  runId: [32m'[string]srch-AuKYAt6xRuin3Sz6'[39m,
+
+[1A[2K[2m[WebServer] [22m  status: [32m'[string]success'[39m,
+[2m[WebServer] [22m  count: [32m'[number]1'[39m,
+[2m[WebServer] [22m  [32m'resultIds.0'[39m: [32m'[string]hsLwfEJPFzk25cxCa'[39m
+[2m[WebServer] [22m}
+
+[1A[2K  3 passed (18.6s)

@@ -1,0 +1,20 @@
+
+> check:code-style
+> npm run check:code-style:prettier && npm run check:code-style:lint
+
+
+> check:code-style:prettier
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> check:code-style:lint
+> eslint .
+
+
+/Volumes/Expansion/workspace/inventory-toggle-regression/meteor-app/imports/ui/App.tsx
+  147:46  warning  `findOne` is deprecated. on server since 2.8. Check migration guide {@link https://guide.meteor.com/2.8-migration}  @typescript-eslint/no-deprecated
+
+✖ 1 problem (0 errors, 1 warning)
+

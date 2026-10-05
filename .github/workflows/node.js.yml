@@ -188,11 +188,11 @@ jobs:
                     - project: iPad
                       browser: webkit
                       artifact: ipad
-                      tests: tests/e2e/app/touch-optimization.spec.ts tests/e2e/app/ui-stabilization.spec.ts tests/e2e/app/container-own-details.spec.ts tests/e2e/app/item-detail-routing.spec.ts
+                      tests: tests/e2e/app/touch-optimization.spec.ts tests/e2e/app/ui-stabilization.spec.ts tests/e2e/app/container-own-details.spec.ts tests/e2e/app/item-detail-routing.spec.ts tests/e2e/app/tag-toggle-regression.spec.ts
                     - project: iPhone
                       browser: webkit
                       artifact: iphone
-                      tests: tests/e2e/app/touch-optimization.spec.ts tests/e2e/app/ui-stabilization.spec.ts tests/e2e/app/container-own-details.spec.ts tests/e2e/app/item-detail-routing.spec.ts
+                      tests: tests/e2e/app/touch-optimization.spec.ts tests/e2e/app/ui-stabilization.spec.ts tests/e2e/app/container-own-details.spec.ts tests/e2e/app/item-detail-routing.spec.ts tests/e2e/app/tag-toggle-regression.spec.ts
         steps:
             - uses: actions/checkout@v7
             - name: Use Node.js 22
@@ -260,8 +260,9 @@ jobs:
                       meteor-app/package-lock.json
             - run: npm ci --ignore-scripts
             - run: npm ci --ignore-scripts --prefix meteor-app
-            - run: npx playwright install --with-deps chromium
+            - run: npx playwright install --with-deps chromium webkit
             - run: npm run test:e2e:storybook -- --project=storybook-chromium --workers=1 --reporter=line
+            - run: npm run test:e2e:storybook -- tests/e2e/storybook/ToggleRegression.webkit.spec.ts --project=storybook-webkit --workers=1 --reporter=line
 
     agent-acceptance:
         name: Agent search acceptance

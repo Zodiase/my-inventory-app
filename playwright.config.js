@@ -172,7 +172,7 @@ export default defineConfig({
                 ...devices['Desktop Safari'],
                 baseURL: process.env.STORYBOOK_BASE_URL ?? 'http://localhost:6006',
             },
-            testMatch: /tests\/e2e\/storybook\/HoistedContainerGroup\.webkit\.spec\.ts/,
+            testMatch: /tests\/e2e\/storybook\/.*\.webkit\.spec\.ts/,
         },
     ],
 
