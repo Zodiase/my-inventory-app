@@ -1,0 +1,330 @@
+[WebServer] (node:99989) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] [[[[[ /Volumes/Expansion/workspace/inventory-phone-search/meteor-app ]]]]]
+[WebServer] 
+
+[WebServer] => Started proxy.
+
+[WebServer] => Started HMR server.
+
+[WebServer] => Meteor 3.5.2 is available. Check the changelog
+[WebServer] https://docs.meteor.com/history.html and update this project with 'meteor
+[WebServer] update'.
+
+[WebServer] => Started MongoDB.
+
+[WebServer] => Linted your app. No linting errors.
+
+[WebServer] (node:202) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] 
+
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 
+
+[WebServer] [/server/gridfs.ts] GridFS bucket initialized for attachments
+
+[WebServer] [/server/main.ts] Creating database indexes...
+
+[WebServer] [/server/main.ts] Database indexes created successfully
+
+[WebServer] [/server/search/index.ts] Inventory search index rebuilt { count: '[number]3' }
+
+[WebServer] [api/tags] watching for tags without path...
+
+[WebServer] (node:99989) Warning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+
+[WebServer] => Started your app.
+[WebServer] 
+
+[WebServer] => App running at http://127.0.0.1:48384/
+
+
+Running 2 tests using 1 worker
+
+(node:206) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:206) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:230:9 › Item detail routing › preserves scoped search context after opening a result and going back
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]pKjpnMnGmJ8y8wyJ3',
+[WebServer]   name: '[string]Scoped Search Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]athtnuApbLiaT8xop',
+
+[WebServer]   name: '[string]Scoped Wrench',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]BL4NFbv92thYuLqKt',
+[WebServer]   name: '[string]Global Wrench',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]8kvMankxsKM2iTzw3',
+[WebServer]   name: '[string]Scoped Spare Filter',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]HFZmaxBA26Y4wQu3Q',
+[WebServer]   name: '[string]Global Spare Filter',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]pKjpnMnGmJ8y8wyJ3' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]pKjpnMnGmJ8y8wyJ3' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-bw8bgLxdCaBuSGkt',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]athtnuApbLiaT8xop'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-XfnvABZZQgkbJNvy',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]athtnuApbLiaT8xop'
+[WebServer] }
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]athtnuApbLiaT8xop' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-ByrbAacMDgdWutWW',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]athtnuApbLiaT8xop'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]athtnuApbLiaT8xop' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-72iYji9Wsz9uvonq',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]athtnuApbLiaT8xop'
+[WebServer] }
+
+  1) [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:230:9 › Item detail routing › preserves scoped search context after opening a result and going back 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Clear search' })
+
+
+      293 |         await expect(page).toHaveURL(searchUrl);
+      294 |
+    > 295 |         await page.getByRole('button', { name: 'Clear search' }).click();
+          |                                                                  ^
+      296 |         await page.getByRole('textbox', { name: 'Search query' }).fill('Spare Filter');
+      297 |         await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
+      298 |
+        at /Volumes/Expansion/workspace/inventory-phone-search/tests/e2e/app/item-detail-routing.spec.ts:295:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/y0a-index-ready/app-item-detail-routing-It-5de19-ing-a-result-and-going-back-iPhone/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../../../private/tmp/y0a-index-ready/app-item-detail-routing-It-5de19-ing-a-result-and-going-back-iPhone/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/y0a-index-ready/app-item-detail-routing-It-5de19-ing-a-result-and-going-back-iPhone/error-context.md
+
+
+(node:759) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:759) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/2] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:303:9 › Item detail routing › returns to scoped search after deleting a search result detail
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]gm4nNn8McMo4NQDWj',
+
+[WebServer]   name: '[string]Search Delete Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]mvRZ2MxbRDAmvWwSN',
+[WebServer]   name: '[string]Scoped Delete Target',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]yjHStiiPeGrcHxgB3',
+[WebServer]   name: '[string]Global Delete Target',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]gm4nNn8McMo4NQDWj' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]gm4nNn8McMo4NQDWj' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-m5gfnar5fXZ7xayC',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]mvRZ2MxbRDAmvWwSN'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]mvRZ2MxbRDAmvWwSN' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item deleted {
+
+[WebServer]   itemId: '[string]mvRZ2MxbRDAmvWwSN',
+[WebServer]   name: '[string]Scoped Delete Target',
+[WebServer]   isContainer: '[boolean]false',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-JKabYaExwB7RDDqW',
+[WebServer]   status: '[string]empty',
+[WebServer]   count: '[number]0'
+[WebServer] }
+
+  1 failed
+    [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:230:9 › Item detail routing › preserves scoped search context after opening a result and going back 
+  1 passed (1.7m)

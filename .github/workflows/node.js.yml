@@ -188,11 +188,11 @@ jobs:
                     - project: iPad
                       browser: webkit
                       artifact: ipad
-                      tests: tests/e2e/app/touch-optimization.spec.ts tests/e2e/app/ui-stabilization.spec.ts tests/e2e/app/container-own-details.spec.ts
+                      tests: tests/e2e/app/touch-optimization.spec.ts tests/e2e/app/ui-stabilization.spec.ts tests/e2e/app/container-own-details.spec.ts tests/e2e/app/item-detail-routing.spec.ts
                     - project: iPhone
                       browser: webkit
                       artifact: iphone
-                      tests: tests/e2e/app/touch-optimization.spec.ts tests/e2e/app/ui-stabilization.spec.ts tests/e2e/app/container-own-details.spec.ts
+                      tests: tests/e2e/app/touch-optimization.spec.ts tests/e2e/app/ui-stabilization.spec.ts tests/e2e/app/container-own-details.spec.ts tests/e2e/app/item-detail-routing.spec.ts
         steps:
             - uses: actions/checkout@v7
             - name: Use Node.js 22
