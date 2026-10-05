@@ -1,0 +1,64 @@
+{
+    "schema": "meteor-loading-diagnostics/v1",
+    "samples": [
+        {
+            "elapsedMs": 23,
+            "available": false,
+            "connected": false,
+            "loading": false,
+            "route": "unavailable",
+            "subscriptionCount": 0,
+            "subscriptions": []
+        },
+        {
+            "elapsedMs": 207,
+            "available": true,
+            "connected": true,
+            "loading": true,
+            "route": "root",
+            "subscriptionCount": 1,
+            "subscriptions": [
+                {
+                    "id": "subscription-1",
+                    "name": "inventory.identities",
+                    "ready": false,
+                    "inactive": false,
+                    "parameterCount": 1
+                }
+            ]
+        },
+        {
+            "elapsedMs": 357,
+            "available": true,
+            "connected": true,
+            "loading": true,
+            "route": "root",
+            "subscriptionCount": 1,
+            "subscriptions": [
+                {
+                    "id": "subscription-1",
+                    "name": "inventory.identities",
+                    "ready": false,
+                    "inactive": false,
+                    "parameterCount": 1
+                }
+            ]
+        }
+    ],
+    "events": [
+        { "elapsedMs": 47, "type": "sub", "id": "subscription-1", "name": "inventory.identities" },
+        { "elapsedMs": 53, "type": "ready", "id": "subscription-1", "name": "inventory.identities" },
+        {
+            "elapsedMs": 53,
+            "type": "nosub",
+            "id": "subscription-1",
+            "name": "inventory.identities",
+            "errorPresent": true
+        }
+    ],
+    "droppedSamples": 0,
+    "droppedEvents": 0,
+    "ignoredFrames": 0,
+    "ignoredSockets": 0,
+    "finalSampleCompleted": true
+}

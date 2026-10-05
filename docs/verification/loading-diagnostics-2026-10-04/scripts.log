@@ -1,0 +1,242 @@
+
+> test:scripts
+> node --test scripts/*.test.mjs
+
+TAP version 13
+# Subtest: nested items, source and visible notes, identity lookup, correction and move history
+ok 1 - nested items, source and visible notes, identity lookup, correction and move history
+  ---
+  duration_ms: 9.324333
+  type: 'test'
+  ...
+# Subtest: exact replay survives service restart and changed payload conflicts
+ok 2 - exact replay survives service restart and changed payload conflicts
+  ---
+  duration_ms: 0.618958
+  type: 'test'
+  ...
+# Subtest: search journal barrier rejects lag, then permits retrieval at the completed point
+ok 3 - search journal barrier rejects lag, then permits retrieval at the completed point
+  ---
+  duration_ms: 0.449459
+  type: 'test'
+  ...
+# Subtest: stale correction and external identity reuse conflict without mutation
+ok 4 - stale correction and external identity reuse conflict without mutation
+  ---
+  duration_ms: 0.54075
+  type: 'test'
+  ...
+# Subtest: crash after inventory mutation before ledger completion stays indeterminate across restart
+ok 5 - crash after inventory mutation before ledger completion stays indeterminate across restart
+  ---
+  duration_ms: 0.274208
+  type: 'test'
+  ...
+# Subtest: invalid parent, cycles and malformed input do not reserve requests
+ok 6 - invalid parent, cycles and malformed input do not reserve requests
+  ---
+  duration_ms: 0.519375
+  type: 'test'
+  ...
+# Subtest: simultaneous duplicate requests cannot create twice
+ok 7 - simultaneous duplicate requests cannot create twice
+  ---
+  duration_ms: 0.19125
+  type: 'test'
+  ...
+# Subtest: HTTP requires opt-in, bearer auth and loopback with no browser/proxy headers
+ok 8 - HTTP requires opt-in, bearer auth and loopback with no browser/proxy headers
+  ---
+  duration_ms: 2.00175
+  type: 'test'
+  ...
+# Subtest: HTTP reports required search dependency failure distinctly
+ok 9 - HTTP reports required search dependency failure distinctly
+  ---
+  duration_ms: 0.570041
+  type: 'test'
+  ...
+# Subtest: HTTP reports search journal lag distinctly from an empty result
+ok 10 - HTTP reports search journal lag distinctly from an empty result
+  ---
+  duration_ms: 0.533833
+  type: 'test'
+  ...
+# Subtest: Meteor dev proxy accepts one verified loopback hop, retaining auth and production isolation
+ok 11 - Meteor dev proxy accepts one verified loopback hop, retaining auth and production isolation
+  ---
+  duration_ms: 0.723084
+  type: 'test'
+  ...
+# Subtest: live hierarchy discovers new descendants and moves without intake receipts; reads do not mutate
+ok 12 - live hierarchy discovers new descendants and moves without intake receipts; reads do not mutate
+  ---
+  duration_ms: 1.045709
+  type: 'test'
+  ...
+# Subtest: children pagination covers large sibling sets and root items without silently dropping rows
+ok 13 - children pagination covers large sibling sets and root items without silently dropping rows
+  ---
+  duration_ms: 5.138542
+  type: 'test'
+  ...
+# Subtest: bounded search finds names, descriptions and aliases with current location context
+ok 14 - bounded search finds names, descriptions and aliases with current location context
+  ---
+  duration_ms: 1.140916
+  type: 'test'
+  ...
+# Subtest: search omits a hit that disappears before its location path resolves
+ok 15 - search omits a hit that disappears before its location path resolves
+  ---
+  duration_ms: 0.334375
+  type: 'test'
+  ...
+# Subtest: hierarchy rejects cycles, invalid selectors and missing or noncontainer roots
+ok 16 - hierarchy rejects cycles, invalid selectors and missing or noncontainer roots
+  ---
+  duration_ms: 0.453416
+  type: 'test'
+  ...
+# Subtest: tag hierarchy, literal discovery, assignment, removal, replay and stale guards
+ok 17 - tag hierarchy, literal discovery, assignment, removal, replay and stale guards
+  ---
+  duration_ms: 1.54075
+  type: 'test'
+  ...
+# Subtest: tag creation crash exposes deterministic candidate and blocks duplicate retry
+ok 18 - tag creation crash exposes deterministic candidate and blocks duplicate retry
+  ---
+  duration_ms: 0.227792
+  type: 'test'
+  ...
+# Subtest: tag pagination and malformed requests are bounded and read only
+ok 19 - tag pagination and malformed requests are bounded and read only
+  ---
+  duration_ms: 5.25925
+  type: 'test'
+  ...
+# Subtest: check-prerequisites accepts a pinned feature directory on master via .specify/feature.json
+ok 20 - check-prerequisites accepts a pinned feature directory on master via .specify/feature.json
+  ---
+  duration_ms: 186.072167
+  type: 'test'
+  ...
+# Subtest: removes generated Meteor local state while preserving the local DB
+ok 21 - removes generated Meteor local state while preserving the local DB
+  ---
+  duration_ms: 19.546167
+  type: 'test'
+  ...
+# Subtest: correlates DDP readiness with samples without retaining private payloads
+ok 22 - correlates DDP readiness with samples without retaining private payloads
+  ---
+  duration_ms: 1.365125
+  type: 'test'
+  ...
+# Subtest: bounds retained history, aliases and frames while keeping the latest failure state
+ok 23 - bounds retained history, aliases and frames while keeping the latest failure state
+  ---
+  duration_ms: 5.136625
+  type: 'test'
+  ...
+# Subtest: a stalled browser cannot hang failure capture, and the artifact reports incomplete sampling
+ok 24 - a stalled browser cannot hang failure capture, and the artifact reports incomplete sampling
+  ---
+  duration_ms: 512.470959
+  type: 'test'
+  ...
+# Subtest: caps socket observers and removes all listeners after capture
+ok 25 - caps socket observers and removes all listeners after capture
+  ---
+  duration_ms: 1.601083
+  type: 'test'
+  ...
+# Subtest: benchmark refuses an index outside the disposable namespace
+ok 26 - benchmark refuses an index outside the disposable namespace
+  ---
+  duration_ms: 60.91725
+  type: 'test'
+  ...
+# Subtest: benchmark requires confirmation for an explicitly named disposable index
+ok 27 - benchmark requires confirmation for an explicitly named disposable index
+  ---
+  duration_ms: 50.740375
+  type: 'test'
+  ...
+# Subtest: formats visual delta percentages for PR comments
+ok 28 - formats visual delta percentages for PR comments
+  ---
+  duration_ms: 0.551459
+  type: 'test'
+  ...
+# Subtest: builds changed visual report with diff and composite files
+ok 29 - builds changed visual report with diff and composite files
+  ---
+  duration_ms: 1059.743833
+  type: 'test'
+  ...
+# Subtest: focuses changed composites around the padded changed bounds
+ok 30 - focuses changed composites around the padded changed bounds
+  ---
+  duration_ms: 173.238625
+  type: 'test'
+  ...
+# Subtest: renders changed composite as a translucent overlay on the after image
+ok 31 - renders changed composite as a translucent overlay on the after image
+  ---
+  duration_ms: 85.757917
+  type: 'test'
+  ...
+# Subtest: builds unchanged visual report without composite file
+ok 32 - builds unchanged visual report without composite file
+  ---
+  duration_ms: 2.199833
+  type: 'test'
+  ...
+# Subtest: builds scan-first PR comment with changed evidence gallery
+ok 33 - builds scan-first PR comment with changed evidence gallery
+  ---
+  duration_ms: 0.271292
+  type: 'test'
+  ...
+# Subtest: selects core route smoke for ordinary UI changes
+ok 34 - selects core route smoke for ordinary UI changes
+  ---
+  duration_ms: 1.223958
+  type: 'test'
+  ...
+# Subtest: selects core and focused Items screenshots for Items view changes
+ok 35 - selects core and focused Items screenshots for Items view changes
+  ---
+  duration_ms: 0.11475
+  type: 'test'
+  ...
+# Subtest: selects core and focused Tags screenshots for Tags view changes
+ok 36 - selects core and focused Tags screenshots for Tags view changes
+  ---
+  duration_ms: 0.071625
+  type: 'test'
+  ...
+# Subtest: selects all scenarios for shared visual infrastructure changes
+ok 37 - selects all scenarios for shared visual infrastructure changes
+  ---
+  duration_ms: 0.107416
+  type: 'test'
+  ...
+# Subtest: selects no scenarios for docs-only changes
+ok 38 - selects no scenarios for docs-only changes
+  ---
+  duration_ms: 0.055875
+  type: 'test'
+  ...
+1..38
+# tests 38
+# suites 0
+# pass 38
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1418.364334
