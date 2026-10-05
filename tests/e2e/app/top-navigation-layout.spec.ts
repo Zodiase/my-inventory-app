@@ -6,6 +6,15 @@ import { observeMeteorLoading } from '../helpers/meteor-loading-diagnostics.mjs'
 const test = base.extend<{ loadingEvidence: void }>({
     loadingEvidence: [
         async ({ page }, use, testInfo) => {
+            await page.addInitScript(() => {
+                const bytes = crypto.getRandomValues(new Uint8Array(8));
+                const epoch = `document-${Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')}`;
+                Object.defineProperty(globalThis, 'inventoryE2eLoadingCapability', {
+                    value: Object.freeze({ schema: 1, epoch }),
+                    writable: false,
+                    configurable: false,
+                });
+            });
             const observer = observeMeteorLoading(page);
             await use();
             await observer.finish(testInfo);

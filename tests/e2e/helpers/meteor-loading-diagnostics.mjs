@@ -24,6 +24,83 @@ export const diagnosticLimits = Object.freeze({
 const safeName = (name) => (publicationNames.has(name) ? name : 'other');
 const boundedCount = (count) => (Number.isSafeInteger(count) && count >= 0 ? Math.min(count, 999) : 0);
 
+export function sanitizeRenderCapture(raw) {
+    const unavailable = {
+        schema: 'root-route-loading/v1',
+        available: false,
+        complete: false,
+        reason: 'not-enabled',
+        events: [],
+    };
+    if (raw?.schema !== 'root-route-loading/v1' || !/^document-[a-f0-9]{16}$/u.test(raw.documentEpoch ?? ''))
+        return unavailable;
+    const cleanEvent = (event) => {
+        if (
+            !['root-render', 'route-attempt', 'child-render', 'commit', 'passive-mount', 'passive-unmount'].includes(
+                event?.phase
+            )
+        )
+            return undefined;
+        const out = { phase: event.phase };
+        if (/^instance-([1-9]|1[0-6])$/u.test(event.instance ?? '')) out.instance = event.instance;
+        for (const key of ['rootFrame', 'routeAttempt', 'childFrame', 'commitBatch', 'commitSequence', 'at'])
+            if (Number.isSafeInteger(event[key]) && event[key] >= 0 && event[key] <= (key === 'at' ? 86400000 : 999999))
+                out[key] = event[key];
+        if (['root-loading', 'contents', 'invalid', 'child-loading'].includes(event.decision))
+            out.decision = event.decision;
+        for (const key of [
+            'tagsLoading',
+            'allItemsLoading',
+            'identitiesLoading',
+            'items',
+            'hoisted',
+            'tags',
+            'identities',
+        ])
+            if (typeof event[key] === 'boolean') out[key] = event[key];
+        return out;
+    };
+    const events = (Array.isArray(raw.events) ? raw.events : []).slice(-200).map(cleanEvent).filter(Boolean);
+    const reasons = [
+        'hot-reload',
+        'unsupported-commit',
+        'counter-overflow',
+        'alias-overflow',
+        'overflow',
+        'no-completed-commit',
+    ];
+    const extraDropped = Math.max(0, (Array.isArray(raw.events) ? raw.events.length : 0) - 200);
+    const invalid =
+        !Array.isArray(raw.events) ||
+        events.length !== Math.min(raw.events.length, 200) ||
+        (raw.reason !== undefined && !reasons.includes(raw.reason));
+    const lastCommit = cleanEvent(raw.lastCommit);
+    const overflow = extraDropped > 0 || ['dropped', 'aliasOverflow', 'byteOverflow'].some((key) => raw[key] > 0);
+    const reason = invalid
+        ? 'invalid-capture'
+        : reasons.includes(raw.reason)
+          ? raw.reason
+          : overflow
+            ? 'overflow'
+            : lastCommit?.phase !== 'commit'
+              ? 'no-completed-commit'
+              : undefined;
+    const out = {
+        schema: raw.schema,
+        documentEpoch: raw.documentEpoch,
+        available: raw.available === true,
+        complete: raw.available === true && raw.complete === true && reason === undefined,
+        reason,
+        stopped: raw.stopped === true,
+        events,
+        lastCommit,
+    };
+    for (const key of ['dropped', 'aliasOverflow', 'byteOverflow'])
+        out[key] = Number.isSafeInteger(raw[key]) && raw[key] >= 0 ? Math.min(raw[key], 999999) : 0;
+    out.dropped = Math.min(out.dropped + extraDropped, 999999);
+    return out;
+}
+
 export function createLoadingEvidence() {
     const aliases = new Map();
     const names = new Map();
@@ -57,6 +134,7 @@ export function createLoadingEvidence() {
             return structuredClone(evidence);
         },
         sample(raw, elapsedMs) {
+            evidence.renderCapture = sanitizeRenderCapture(raw?.renderCapture);
             const subscriptions = (Array.isArray(raw?.subscriptions) ? raw.subscriptions : [])
                 .slice(0, diagnosticLimits.subscriptions)
                 .map((sub) => {
@@ -169,32 +247,39 @@ export function observeMeteorLoading(page) {
         sockets.push({ socket, received, sent });
     };
     page.on('websocket', socketListener);
-    const sample = () => {
+    const sample = (finish = false) => {
         if (stopped || pending) return;
         pending = page
-            .evaluate(() => {
-                const meteor = window.Meteor;
-                if (!meteor?.connection?._subscriptions) return { available: false };
-                const subscriptions = Object.entries(meteor.connection._subscriptions);
-                return {
-                    available: true,
-                    connected: meteor.status().connected,
-                    loading: document.querySelector('main')?.textContent?.includes('Loading…') === true,
-                    route: location.pathname.startsWith('/container/')
-                        ? 'container'
-                        : location.pathname === '/' || location.pathname === '/items'
-                          ? 'root'
-                          : 'other',
-                    subscriptionCount: subscriptions.length,
-                    subscriptions: subscriptions.slice(0, 12).map(([id, sub]) => ({
-                        id,
-                        name: sub.name,
-                        ready: sub.ready,
-                        inactive: sub.inactive,
-                        parameterCount: Array.isArray(sub.params) ? sub.params.length : 0,
-                    })),
-                };
-            })
+            .evaluate(
+                ({ finish }) => {
+                    const capture = window.inventoryE2eLoadingCapture;
+                    if (finish) capture?.stop?.();
+                    const renderCapture = capture?.read?.();
+                    const meteor = window.Meteor;
+                    if (!meteor?.connection?._subscriptions) return { available: false, renderCapture };
+                    const subscriptions = Object.entries(meteor.connection._subscriptions);
+                    return {
+                        available: true,
+                        renderCapture,
+                        connected: meteor.status().connected,
+                        loading: document.querySelector('main')?.textContent?.includes('Loading…') === true,
+                        route: location.pathname.startsWith('/container/')
+                            ? 'container'
+                            : location.pathname === '/' || location.pathname === '/items'
+                              ? 'root'
+                              : 'other',
+                        subscriptionCount: subscriptions.length,
+                        subscriptions: subscriptions.slice(0, 12).map(([id, sub]) => ({
+                            id,
+                            name: sub.name,
+                            ready: sub.ready,
+                            inactive: sub.inactive,
+                            parameterCount: Array.isArray(sub.params) ? sub.params.length : 0,
+                        })),
+                    };
+                },
+                { finish }
+            )
             .then((raw) => {
                 if (!stopped) evidence.sample(raw, elapsed());
             })
@@ -213,7 +298,7 @@ export function observeMeteorLoading(page) {
             if (stopped) return;
             clearInterval(interval);
             // A stalled page must not turn evidence capture into another unbounded wait.
-            const finalSample = sample() ?? pending;
+            const finalSample = Promise.resolve(pending).then(() => sample(true) ?? pending);
             let timeout,
                 finalSampleCompleted = false;
             await Promise.race([

@@ -15,6 +15,7 @@ import type InventorySearchResult from '/imports/model/InventorySearchResult';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import type { TracedInventorySearch } from '/imports/model/TracedInventorySearch';
 import { LoadingState } from '/imports/ui/common/LoadingState';
+import { captureRoot, captureRoute, captureTree } from '/imports/utility/e2eLoadingCapture';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
 
@@ -128,6 +129,7 @@ export const App = (): ReactElement => {
     const tagsLoading = isLoadingTags();
     const allItemsLoading = isLoadingAllItems();
     const identitiesLoading = isLoadingIdentities();
+    const loadingCaptureRoot = captureRoot(contentsRegion, { tagsLoading, allItemsLoading, identitiesLoading });
     const allTags = useTracker(() => {
         return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
     }, []);
@@ -439,19 +441,19 @@ export const App = (): ReactElement => {
     const renderContainerRoute = (rawRouteContainerId: string): ReactElement => {
         const containerId = decodeRouteParam(rawRouteContainerId);
         if (containerId === undefined) {
-            return renderInvalidContainerView();
+            return captureTree(captureRoute(loadingCaptureRoot, 'invalid'), renderInvalidContainerView());
         }
 
         if (allItemsLoading || identitiesLoading) {
-            return <LoadingState />;
+            return captureTree(captureRoute(loadingCaptureRoot, 'root-loading'), <LoadingState />);
         }
 
         const container = containerId === routeContainerId ? routeContainer : findInventoryItemById(containerId);
         if (container?.isContainer !== true) {
-            return renderInvalidContainerView();
+            return captureTree(captureRoute(loadingCaptureRoot, 'invalid'), renderInvalidContainerView());
         }
 
-        return renderItemsView(containerId);
+        return captureTree(captureRoute(loadingCaptureRoot, 'contents'), renderItemsView(containerId));
     };
 
     const headerContainerPath = currentItemsContainerId === undefined ? [] : getItemPath(currentItemsContainerId);

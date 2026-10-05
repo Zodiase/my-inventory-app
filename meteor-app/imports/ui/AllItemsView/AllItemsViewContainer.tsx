@@ -12,6 +12,7 @@ import { InventoryItemsCollection, type InventoryItem } from '/imports/api/items
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import { AllItemsViewPresentation } from '/imports/ui/AllItemsView/AllItemsViewPresentation';
 import { LoadingState } from '/imports/ui/common/LoadingState';
+import { captureChild, captureTree, recordExistingGetter } from '/imports/utility/e2eLoadingCapture';
 import { compareNaturalText } from '/imports/utility/naturalSort';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import { buildSearchQuery } from '/imports/utility/searchQuery';
@@ -189,11 +190,20 @@ export const AllItemsViewContainer = ({
         setLocation(containerId === undefined ? '/items' : `/container/${containerId}`);
     };
 
-    if (isLoadingItems() || isLoadingHoistedItems() || isLoadingTags() || isLoadingIdentities()) {
-        return <LoadingState />;
+    const loadingCapture = captureChild(setCurrentContainerId);
+    const loading =
+        recordExistingGetter(loadingCapture, 'items', isLoadingItems) ||
+        recordExistingGetter(loadingCapture, 'hoisted', isLoadingHoistedItems) ||
+        recordExistingGetter(loadingCapture, 'tags', isLoadingTags) ||
+        recordExistingGetter(loadingCapture, 'identities', isLoadingIdentities);
+    if (loading) {
+        if (loadingCapture !== undefined) loadingCapture.decision = 'child-loading';
+        return captureTree(loadingCapture, <LoadingState />, true);
     }
+    if (loadingCapture !== undefined) loadingCapture.decision = 'contents';
 
-    return (
+    return captureTree(
+        loadingCapture,
         <AllItemsViewPresentation
             initialScrollTop={initialScrollTop}
             {...rootElementProps}
@@ -211,6 +221,7 @@ export const AllItemsViewContainer = ({
             onViewItemDetails={(itemId) => {
                 setLocation(`/items/${itemId}`);
             }}
-        />
+        />,
+        true
     );
 };
