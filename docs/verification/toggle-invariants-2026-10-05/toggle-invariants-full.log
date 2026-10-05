@@ -1,0 +1,50 @@
+
+Running 30 tests using 1 worker
+
+[1A[2K(node:82479) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:82479) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 1280x720 text1 wrapped
+[1A[2K[2/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 1280x720 text1.25 wrapped
+[1A[2K[3/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 820x900 text1 wrapped
+[1A[2K[4/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 820x900 text1.25 wrapped
+[1A[2K[5/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 390x844 text1 wrapped
+[1A[2K[6/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 390x844 text1.25 wrapped
+[1A[2K[7/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 390x480 text1 wrapped
+[1A[2K[8/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 390x480 text1.25 wrapped
+[1A[2K[9/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 1280x720 text1 short
+[1A[2K[10/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 1280x720 text1.25 short
+[1A[2K[11/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 820x900 text1 short
+[1A[2K[12/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 820x900 text1.25 short
+[1A[2K[13/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 390x844 text1 short
+[1A[2K[14/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 390x844 text1.25 short
+[1A[2K[15/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 390x480 text1 short
+[1A[2K[16/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 390x480 text1.25 short
+[1A[2K[17/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:199:9 › CSS-timed in-flight reversals preserve handle identity and destination ltr
+[1A[2K[18/30] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:199:9 › CSS-timed in-flight reversals preserve handle identity and destination rtl
+[1A[2K[19/30] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:17:9 › composed toggle keeps independent hit areas and reachable filters 1280x720
+[1A[2K[20/30] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:17:9 › composed toggle keeps independent hit areas and reachable filters 820x900
+[1A[2K[21/30] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:17:9 › composed toggle keeps independent hit areas and reachable filters 390x844
+[1A[2K[22/30] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:17:9 › composed toggle keeps independent hit areas and reachable filters 390x480
+[1A[2K[23/30] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:118:5 › six transitions and rapid reversals retain one contained thumb and stationary labels
+[1A[2K[24/30] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:256:9 › keyboard and reduced motion preserve selected-state geometry ltr
+[1A[2K[25/30] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:256:9 › keyboard and reduced motion preserve selected-state geometry rtl
+[1A[2K[26/30] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:280:5 › real toggle stylesheet order does not change catalog neighbors
+[1A[2K[27/30] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:321:5 › toggle stylesheet keeps intended borders throughout the real composition
+[1A[2K[28/30] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:382:5 › visiting enlarged and compact proofs does not leak their styles into Search
+[1A[2K(node:82737) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:82737) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[29/30] [storybook-webkit] › tests/e2e/storybook/ToggleRegression.webkit.spec.ts:9:13 › WebKit direct tag touch 390 › touch each choice and reverse without changing other filters or query
+[1A[2K[30/30] [storybook-webkit] › tests/e2e/storybook/ToggleRegression.webkit.spec.ts:9:13 › WebKit direct tag touch 820 › touch each choice and reverse without changing other filters or query
+[1A[2K  30 passed (53.1s)

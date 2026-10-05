@@ -1,0 +1,43 @@
+
+Running 1 test using 1 worker
+
+[1A[2K(node:82745) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:82745) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/1] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 1280x720 text1 wrapped
+[1A[2K  1) [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 1280x720 text1 wrapped 
+
+    Error: choice text fits its independent target
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      136 |                         expect(text.width).toBeGreaterThanOrEqual(44);
+      137 |                         expect(text.height).toBeGreaterThanOrEqual(44);
+    > 138 |                         expect(text.fits, 'choice text fits its independent target').toBe(true);
+          |                                                                                      ^
+      139 |                         expect(text.center).toBeLessThanOrEqual(1);
+      140 |                         expect(text.crossCenter).toBeLessThanOrEqual(2);
+      141 |                     }
+        at /Volumes/Expansion/workspace/inventory-toggle-invariants/tests/e2e/storybook/ToggleInvariants.spec.ts:138:86
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/toggle-negative-final-text-overflow/storybook-ToggleInvariants-a462c--fit-1280x720-text1-wrapped-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../../../private/tmp/toggle-negative-final-text-overflow/storybook-ToggleInvariants-a462c--fit-1280x720-text1-wrapped-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/toggle-negative-final-text-overflow/storybook-ToggleInvariants-a462c--fit-1280x720-text1-wrapped-storybook-chromium/error-context.md
+
+
+[1A[2K  1 failed
+    [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:53:17 › composed relationships and text fit 1280x720 text1 wrapped 
