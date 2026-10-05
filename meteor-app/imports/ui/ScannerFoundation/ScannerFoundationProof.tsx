@@ -31,8 +31,8 @@ function recoveryGuidance(state: State, read: Read): string | undefined {
     const correction = read.corrected
         ? 'Correction already marked.'
         : read.epoch === state.epoch
-          ? 'Mark correction to flag this record.'
-          : 'Record retained for review.';
+        ? 'Mark correction to flag this record.'
+        : 'Record retained for review.';
     return `${blocked ?? 'Retry this failed read.'} ${correction}`;
 }
 const delays = { slow: 5000, orderSlots: 4, modulus: 3, step: 500, normal: 150, timeout: 3000 };
@@ -150,8 +150,8 @@ export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: 
                 mode === 'slow'
                     ? delays.slow
                     : mode === 'reordered'
-                      ? (delays.orderSlots - (read.sequence % delays.modulus)) * delays.step
-                      : delays.normal;
+                    ? (delays.orderSlots - (read.sequence % delays.modulus)) * delays.step
+                    : delays.normal;
             timers.current.push(
                 setTimeout(
                     () => {
@@ -165,13 +165,13 @@ export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: 
                                 wrongKind || mode === 'error' || mode === 'offline' || mode === 'timeout'
                                     ? 'error'
                                     : fixture === undefined
-                                      ? 'unknown'
-                                      : 'resolved',
+                                    ? 'unknown'
+                                    : 'resolved',
                             detail: wrongKind
                                 ? 'Wrong kind for synthetic workflow; classification retained, no action.'
                                 : mode === 'normal' || mode === 'slow' || mode === 'reordered'
-                                  ? (fixture?.name ?? 'No matching synthetic fixture. No owned identity inferred.')
-                                  : `Synthetic ${mode}. No inventory change.`,
+                                ? fixture?.name ?? 'No matching synthetic fixture. No owned identity inferred.'
+                                : `Synthetic ${mode}. No inventory change.`,
                         });
                     },
                     mode === 'timeout' ? delays.timeout : delay
@@ -453,10 +453,10 @@ export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: 
                     {state.capture === 'off'
                         ? 'Start, then enter a fixture and press Enter.'
                         : state.capture === 'paused'
-                          ? 'Resume to restore capture focus.'
-                          : state.capture === 'draining'
-                            ? 'Finish one discarded read with Enter; then scan again.'
-                            : 'Enter one complete fixture; press Enter. Repeated reads stay separate.'}
+                        ? 'Resume to restore capture focus.'
+                        : state.capture === 'draining'
+                        ? 'Finish one discarded read with Enter; then scan again.'
+                        : 'Enter one complete fixture; press Enter. Repeated reads stay separate.'}
                 </p>
             </section>
             {readResults}

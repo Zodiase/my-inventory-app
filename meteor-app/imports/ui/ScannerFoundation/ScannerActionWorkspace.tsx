@@ -154,28 +154,28 @@ export function ScannerActionWorkspace({
         state.capture === 'off'
             ? 'Tap Start to enable capture, then scan an action or a demo code.'
             : state.capture === 'paused'
-              ? 'Tap Resume to restore capture. Returning to this page will not resume it.'
-              : state.capture === 'draining'
-                ? 'The next read clears an interrupted boundary and will be discarded. Then scan again.'
-                : 'Scan an action card to change mode, or scan a demo code below.';
+            ? 'Tap Resume to restore capture. Returning to this page will not resume it.'
+            : state.capture === 'draining'
+            ? 'The next read clears an interrupted boundary and will be discarded. Then scan again.'
+            : 'Scan an action card to change mode, or scan a demo code below.';
     const outcome =
         last === undefined
             ? 'No demo codes read yet.'
             : last.kind === 'command'
-              ? `Action selected: ${modeName}.`
-              : last.outcome === 'resolved'
-                ? `${last.detail}. Read-only demo result.`
-                : last.outcome === 'pending'
-                  ? 'Reading demo code…'
-                  : last.outcome === 'discarded'
-                    ? 'Interrupted boundary cleared. Scan the code again.'
-                    : last.outcome === 'rejected'
-                      ? 'Read rejected. Follow the capture instructions above.'
-                      : last.outcome === 'cancelled'
-                        ? 'Previous read cancelled by a session change.'
-                        : last.outcome === 'unknown'
-                          ? 'No matching demo code. Try one of the synthetic test codes below.'
-                          : 'Demo lookup failed. Open diagnostics to review this read.';
+            ? `Action selected: ${modeName}.`
+            : last.outcome === 'resolved'
+            ? `${last.detail}. Read-only demo result.`
+            : last.outcome === 'pending'
+            ? 'Reading demo code…'
+            : last.outcome === 'discarded'
+            ? 'Interrupted boundary cleared. Scan the code again.'
+            : last.outcome === 'rejected'
+            ? 'Read rejected. Follow the capture instructions above.'
+            : last.outcome === 'cancelled'
+            ? 'Previous read cancelled by a session change.'
+            : last.outcome === 'unknown'
+            ? 'No matching demo code. Try one of the synthetic test codes below.'
+            : 'Demo lookup failed. Open diagnostics to review this read.';
     return (
         <Workspace>
             <h1>Scanner workspace</h1>
