@@ -45,8 +45,8 @@ const meta: Meta<typeof NavigationReview> = {
 Expected composition: menu opens immediately below the blue header, on the trigger side, with four readable links above the main content. It neither enlarges nor scrolls the document. Header, main content and search affordance remain reachable.
 Required viewports: 390x844 phone, 820x900 tablet, 1280x720 desktop, 1600x1000 wide desktop, 640x720 and 641x720 breakpoint, 390x240 short compact view.
 Responsive changes: header is 56px through width 640 and 60px above it. Menu remains anchored to its lower edge; a short viewport scrolls the menu internally to reach Data.
-Interactions: open/close with the trigger; native Tab and Enter link activation; link selection closes navigation and updates route; search route removes the hamburger; no horizontal/document overflow or browser error overlay.
-Exclusions: household data, Meteor publications, other route content and outside-click/Escape dismissal.`,
+Interactions: open/close with the trigger; native Tab and Enter link activation; Escape closes navigation and returns focus to the trigger; link selection closes navigation and updates route; search route removes the hamburger; no horizontal/document overflow or browser error overlay.
+Exclusions: household data, Meteor publications, other route content and outside-click dismissal.`,
             },
         },
     },

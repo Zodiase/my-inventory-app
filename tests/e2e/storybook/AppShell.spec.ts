@@ -45,6 +45,14 @@ for (const viewport of viewports) {
         await expect(page.getByRole('link', { name: 'Search inventory' })).toBeFocused();
         await page.keyboard.press('Tab');
         await expect(menu.getByRole('link', { name: 'Items', exact: true })).toBeFocused();
+        await page.keyboard.press('Escape');
+        await expect(menu).toHaveCount(0);
+        await expect(trigger).toBeFocused();
+        await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+        await page.keyboard.press('Enter');
+        await page.keyboard.press('Tab');
+        await page.keyboard.press('Tab');
+        await expect(menu.getByRole('link', { name: 'Items', exact: true })).toBeFocused();
         await page.keyboard.press('Tab');
         await expect(menu.getByRole('link', { name: 'Tags', exact: true })).toBeFocused();
         await page.keyboard.press('Enter');
