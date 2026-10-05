@@ -15,7 +15,8 @@ for (const viewport of [
             const title = page.getByRole('heading', { name: kind === 'tag' ? 'Create New Tag' : 'Delete Container' });
             await expect(title).toBeVisible();
             await page.evaluate(async () => {
-                await Promise.all(document.getAnimations().map((a) => a.finished));
+                // Grommet can cancel replaced enter/exit animations; cancellation also ends motion.
+                await Promise.allSettled(document.getAnimations().map((a) => a.finished));
             });
             await expect
                 .poll(() =>
@@ -45,7 +46,8 @@ for (const viewport of [
             await opener.press('Enter');
             await expect(title).toBeVisible();
             await page.evaluate(async () => {
-                await Promise.all(document.getAnimations().map((a) => a.finished));
+                // Grommet can cancel replaced enter/exit animations; cancellation also ends motion.
+                await Promise.allSettled(document.getAnimations().map((a) => a.finished));
             });
             await page.getByRole('button', { name: 'Cancel', exact: true }).focus();
             await page.keyboard.press('Escape');

@@ -102,7 +102,8 @@ for (const viewport of sizes) {
             await trigger.press('Enter');
             await expect(dialog).toBeVisible();
             await page.evaluate(async () => {
-                await Promise.all(document.getAnimations().map((a) => a.finished));
+                // Grommet can cancel replaced enter/exit animations; cancellation also ends motion.
+                await Promise.allSettled(document.getAnimations().map((a) => a.finished));
             });
             await page.mouse.click(20, 100);
             await expect(dialog).toHaveCount(0);
