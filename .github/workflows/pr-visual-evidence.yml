@@ -210,7 +210,7 @@ jobs:
 
             - name: Upload screenshot artifact
               id: upload
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: pr-visual-evidence
                   path: |
@@ -235,7 +235,7 @@ jobs:
                       --github-output "${GITHUB_OUTPUT}"
 
             - name: Upload comment body artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: pr-visual-evidence-comment
                   path: ${{ steps.comment-body.outputs.comment-body }}
