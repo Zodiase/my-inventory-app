@@ -3,7 +3,7 @@
  * Reuses the live page layout so responsive and scroll review targets production structure.
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Box } from 'grommet';
+import { Box, Button, Grommet } from 'grommet';
 import React, { useState } from 'react';
 
 import type { InventoryItem } from '/imports/model/InventoryItem';
@@ -16,6 +16,7 @@ import { SearchBanner } from './SearchBanner';
 import { hasRunnableFilter, resetSearchFilters, setItemTypeFilter, setTagFilterState } from './searchFilterState';
 import { SearchPageLayout } from './SearchPageLayout';
 import { SearchResultsView } from './SearchResultsView';
+import { DesignSystemGlobalStyle, theme } from './theme';
 
 type ReviewState = 'idle' | 'loading' | 'empty' | 'error' | 'results' | 'long';
 
@@ -26,6 +27,7 @@ interface SearchPageStoryProps {
     scopeAvailable?: boolean;
     contradictoryFilters?: boolean;
     legacyFilters?: boolean;
+    denseCatalog?: boolean;
 }
 
 const makeItem = (index: number): InventoryItem => ({
@@ -54,6 +56,7 @@ const SearchPageStory = ({
     scopeAvailable = true,
     contradictoryFilters = false,
     legacyFilters = false,
+    denseCatalog = false,
 }: SearchPageStoryProps): React.ReactElement => {
     const [scope, setScope] = useState(initialScope);
     const [query, setQuery] = useState(reviewState === 'idle' ? '' : 'storage');
@@ -72,6 +75,30 @@ const SearchPageStory = ({
               ]
             : []
     );
+    const availableTags = [
+        { _id: 'tag-tools', name: 'Tools', parentTagId: '', path: [{ _id: 'tag-tools', name: 'Tools' }] },
+        { _id: 'tag-spare', name: 'Spare', parentTagId: '', path: [{ _id: 'tag-spare', name: 'Spare' }] },
+        ...(denseCatalog
+            ? [
+                  { _id: 'equipment', name: 'Equipment with a long descriptive group name', parentTagId: '', path: [] },
+                  ...Array.from({ length: 20 }, (_, index) => ({
+                      _id: `part-${index}`,
+                      name: index === 0 ? 'Camera equipment with a long descriptive name' : `Hardware part ${index}`,
+                      parentTagId: 'equipment',
+                      path: [
+                          { _id: 'equipment', name: 'Equipment' },
+                          {
+                              _id: `part-${index}`,
+                              name:
+                                  index === 0
+                                      ? 'Camera equipment with a long descriptive name'
+                                      : `Hardware part ${index}`,
+                          },
+                      ],
+                  })),
+              ]
+            : []),
+    ];
     const [submitted, setSubmitted] = useState(reviewState !== 'idle');
     const items =
         reviewState === 'results'
@@ -112,20 +139,7 @@ const SearchPageStory = ({
                         scopeAvailable={scopeAvailable}
                         onScopeChange={setScope}
                         fragments={fragments}
-                        availableTags={[
-                            {
-                                _id: 'tag-tools',
-                                name: 'Tools',
-                                parentTagId: '',
-                                path: [{ _id: 'tag-tools', name: 'Tools' }],
-                            },
-                            {
-                                _id: 'tag-spare',
-                                name: 'Spare',
-                                parentTagId: '',
-                                path: [{ _id: 'tag-spare', name: 'Spare' }],
-                            },
-                        ]}
+                        availableTags={availableTags}
                         onSetTagState={(tagId, state) => {
                             const next = setTagFilterState(fragments, tagId, state);
                             setFragments(next);
@@ -154,10 +168,7 @@ const SearchPageStory = ({
                         ) ? (
                             <SearchAppliedFilters
                                 fragments={fragments}
-                                tags={[
-                                    { _id: 'tag-tools', name: 'Tools' },
-                                    { _id: 'tag-spare', name: 'Spare' },
-                                ]}
+                                tags={availableTags}
                                 onRemoveTag={(tagId) => {
                                     setFragments((current) => setTagFilterState(current, tagId, 'neutral'));
                                 }}
@@ -168,18 +179,28 @@ const SearchPageStory = ({
                         ) : undefined
                     }
                     results={
-                        <SearchResultsView
-                            items={items}
-                            loading={reviewState === 'loading'}
-                            hasSearched={submitted}
-                            errorMessage={
-                                reviewState === 'error'
-                                    ? 'Search is temporarily unavailable. Please try again.'
-                                    : undefined
-                            }
-                            searchRun={run}
-                            getItemPath={(itemId) => [rack, items.find((item) => item._id === itemId) ?? rack]}
-                        />
+                        <>
+                            {denseCatalog && (
+                                <Button
+                                    plain
+                                    label="Unrelated action"
+                                    data-testid="unrelated-action"
+                                    onClick={() => {}}
+                                />
+                            )}
+                            <SearchResultsView
+                                items={items}
+                                loading={reviewState === 'loading'}
+                                hasSearched={submitted}
+                                errorMessage={
+                                    reviewState === 'error'
+                                        ? 'Search is temporarily unavailable. Please try again.'
+                                        : undefined
+                                }
+                                searchRun={run}
+                                getItemPath={(itemId) => [rack, items.find((item) => item._id === itemId) ?? rack]}
+                            />
+                        </>
                     }
                 />
             </AppShell>
@@ -301,5 +322,33 @@ export const LongResults: Story = {
             'The banner stays fixed; only the bounded white results region scrolls through all linked cards.',
             ['Scroll results to the end and confirm banner position.', 'Confirm document itself does not scroll.']
         ),
+    },
+};
+
+export const ToggleRegression: Story = {
+    args: { scope: 'scoped', reviewState: 'results', activeFilters: true, denseCatalog: true },
+    render: (args) => (
+        <Grommet theme={theme}>
+            <DesignSystemGlobalStyle />
+            <SearchPageStory {...args} />
+        </Grommet>
+    ),
+    parameters: {
+        review: {
+            purpose: 'Objective toggle mechanics and neighboring style isolation in the real Search composition.',
+            requiredViewports: ['1280x720', '820x900', '390x844', '390x480'],
+            expectedComposition:
+                'Production theme, shell, banner, catalog and applied chips remain bounded. Long tag names truncate without covering three direct choices. Controls retain intended styles: banner controls and chips have borders, exit/catalog groups/plain action do not. Rail, thumb and touch area are distinct; current proportions are characterization, not approved design.',
+            responsiveChanges:
+                'Phone collapses header menus; many catalog rows scroll inside the menu with Find reachable. Wide controls remain separated; rows do not overlap hit regions.',
+            interactionChecks: [
+                'All six transitions and rapid reversals keep one contained thumb and stationary labels.',
+                'Pointer, keyboard and WebKit touch choose states independently; Escape returns focus and keeps query.',
+                'RTL and reduced motion retain final-state correctness.',
+                'Visit enlarged/compact proofs and reorder actual toggle styles without changing neighbors.',
+            ],
+            knownExclusions:
+                'No approved golden pixels or motion aesthetic tolerance. Mock callbacks do not establish Meteor persistence or actual URL routing; those require isolated app checks. This fixture does not approve current dimensions or the toggle design.',
+        },
     },
 };

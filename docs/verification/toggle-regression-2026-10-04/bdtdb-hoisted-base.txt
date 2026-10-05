@@ -1,0 +1,41 @@
+
+Running 1 test using 1 worker
+
+[1A[2K(node:13081) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:13081) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/1] [storybook-webkit] › tests/e2e/storybook/HoistedContainerGroup.webkit.spec.ts:5:5 › keeps group height stable before and after hovering its border label in WebKit
+[1A[2K  1) [storybook-webkit] › tests/e2e/storybook/HoistedContainerGroup.webkit.spec.ts:5:5 › keeps group height stable before and after hovering its border label in WebKit 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m100[39m
+    Received:    [31m111[39m
+
+      25 |
+      26 |     expect(beforeHover).toEqual(afterHover);
+    > 27 |     expect(beforeHover.height).toBeLessThanOrEqual(100);
+         |                                ^
+      28 |     expect(beforeHover.bottomInset).toBeLessThanOrEqual(12);
+      29 | });
+      30 |
+        at /Volumes/Expansion/workspace/inventory-toggle-regression/tests/e2e/storybook/HoistedContainerGroup.webkit.spec.ts:27:32
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/bdtdb-hoisted-base/storybook-HoistedContainer-68288--its-border-label-in-WebKit-storybook-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../../../private/tmp/bdtdb-hoisted-base/storybook-HoistedContainer-68288--its-border-label-in-WebKit-storybook-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/bdtdb-hoisted-base/storybook-HoistedContainer-68288--its-border-label-in-WebKit-storybook-webkit/error-context.md
+
+
+[1A[2K  1 failed
+    [storybook-webkit] › tests/e2e/storybook/HoistedContainerGroup.webkit.spec.ts:5:5 › keeps group height stable before and after hovering its border label in WebKit 

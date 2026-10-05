@@ -1,0 +1,47 @@
+
+Running 27 tests using 1 worker
+
+[1A[2K(node:13022) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:13022) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:28:9 › global-idle keeps a single usable banner row at every review width
+[1A[2K[2/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:28:9 › global-loading keeps a single usable banner row at every review width
+[1A[2K[3/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:28:9 › global-empty keeps a single usable banner row at every review width
+[1A[2K[4/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:28:9 › global-error keeps a single usable banner row at every review width
+[1A[2K[5/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:28:9 › global-results keeps a single usable banner row at every review width
+[1A[2K[6/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:28:9 › scoped-results keeps a single usable banner row at every review width
+[1A[2K[7/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:28:9 › scoped-active-filters keeps a single usable banner row at every review width
+[1A[2K[8/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:28:9 › contradictory-restored-filters keeps a single usable banner row at every review width
+[1A[2K[9/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:28:9 › legacy-saved-filters keeps a single usable banner row at every review width
+[1A[2K[10/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:28:9 › long-results keeps a single usable banner row at every review width
+[1A[2K[11/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:67:5 › scope, tags, type, combined menu and keyboard focus work
+[1A[2K[12/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:93:5 › contradictory restored tags warn without silently changing either selection
+[1A[2K[13/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:101:5 › older saved filters are immediately visible and Reset retains the query
+[1A[2K[14/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:122:5 › long results scroll without moving the banner
+[1A[2K[15/27] [storybook-chromium] › tests/e2e/storybook/SearchPageLayout.spec.ts:135:5 › Storybook manager renders the complete story without an error overlay
+[1A[2K[16/27] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:16:9 › composed toggle keeps independent hit areas and reachable filters 1280x720
+[1A[2K[17/27] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:16:9 › composed toggle keeps independent hit areas and reachable filters 820x900
+[1A[2K[18/27] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:16:9 › composed toggle keeps independent hit areas and reachable filters 390x844
+[1A[2K[19/27] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:16:9 › composed toggle keeps independent hit areas and reachable filters 390x480
+[1A[2K[20/27] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:88:5 › six transitions and rapid reversals retain one contained thumb and stationary labels
+[1A[2K[21/27] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:188:9 › keyboard and reduced motion preserve selected-state geometry ltr
+[1A[2K[22/27] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:188:9 › keyboard and reduced motion preserve selected-state geometry rtl
+[1A[2K[23/27] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:212:5 › real toggle stylesheet order does not change catalog neighbors
+[1A[2K[24/27] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:253:5 › toggle stylesheet keeps intended borders throughout the real composition
+[1A[2K[25/27] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:304:5 › visiting enlarged and compact proofs does not leak their styles into Search
+[1A[2K(node:13130) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:13130) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[26/27] [storybook-webkit] › tests/e2e/storybook/ToggleRegression.webkit.spec.ts:9:13 › WebKit direct tag touch 390 › touch each choice and reverse without changing other filters or query
+[1A[2K[27/27] [storybook-webkit] › tests/e2e/storybook/ToggleRegression.webkit.spec.ts:9:13 › WebKit direct tag touch 820 › touch each choice and reverse without changing other filters or query
+[1A[2K  27 passed (31.8s)

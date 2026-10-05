@@ -1,0 +1,32 @@
+
+Running 12 tests using 1 worker
+
+[1A[2K(node:15493) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:15493) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/12] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:16:9 › composed toggle keeps independent hit areas and reachable filters 1280x720
+[1A[2K[2/12] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:16:9 › composed toggle keeps independent hit areas and reachable filters 820x900
+[1A[2K[3/12] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:16:9 › composed toggle keeps independent hit areas and reachable filters 390x844
+[1A[2K[4/12] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:16:9 › composed toggle keeps independent hit areas and reachable filters 390x480
+[1A[2K[5/12] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:88:5 › six transitions and rapid reversals retain one contained thumb and stationary labels
+[1A[2K[6/12] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:224:9 › keyboard and reduced motion preserve selected-state geometry ltr
+[1A[2K[7/12] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:224:9 › keyboard and reduced motion preserve selected-state geometry rtl
+[1A[2K[8/12] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:248:5 › real toggle stylesheet order does not change catalog neighbors
+[1A[2K[9/12] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:289:5 › toggle stylesheet keeps intended borders throughout the real composition
+[1A[2K[10/12] [storybook-chromium] › tests/e2e/storybook/ToggleRegression.spec.ts:349:5 › visiting enlarged and compact proofs does not leak their styles into Search
+[1A[2K(node:15544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:15544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[11/12] [storybook-webkit] › tests/e2e/storybook/ToggleRegression.webkit.spec.ts:9:13 › WebKit direct tag touch 390 › touch each choice and reverse without changing other filters or query
+[1A[2K[12/12] [storybook-webkit] › tests/e2e/storybook/ToggleRegression.webkit.spec.ts:9:13 › WebKit direct tag touch 820 › touch each choice and reverse without changing other filters or query
+[1A[2K  12 passed (15.3s)

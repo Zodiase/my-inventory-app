@@ -1,0 +1,530 @@
+{
+  "requests": [
+    {
+      "state": "exclude",
+      "timestamp": 5367.60000038147
+    },
+    {
+      "state": "include",
+      "timestamp": 5420.800000190735
+    },
+    {
+      "state": "neutral",
+      "timestamp": 5505.400000095367
+    },
+    {
+      "state": "exclude",
+      "timestamp": 5586.5
+    },
+    {
+      "state": "include",
+      "timestamp": 5673.200000286102
+    }
+  ],
+  "samples": [
+    {
+      "x": 1.65625,
+      "t": 0,
+      "timestamp": 5370,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 16.300000190734863,
+      "timestamp": 5386.300000190735,
+      "requestedState": "exclude",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 26.234375,
+      "t": 33.60000038146973,
+      "timestamp": 5403.60000038147,
+      "requestedState": "exclude",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 49.8125,
+      "t": 50.30000019073486,
+      "timestamp": 5420.300000190735,
+      "requestedState": "exclude",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 67.984375,
+      "t": 66.7000002861023,
+      "timestamp": 5436.700000286102,
+      "requestedState": "exclude",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 80.21875,
+      "t": 84.2000002861023,
+      "timestamp": 5454.200000286102,
+      "requestedState": "exclude",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 80.21875,
+      "t": 101,
+      "timestamp": 5471,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 55.515625,
+      "t": 117.60000038146973,
+      "timestamp": 5487.60000038147,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 34.625,
+      "t": 134.30000019073486,
+      "timestamp": 5504.300000190735,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 21.796875,
+      "t": 151,
+      "timestamp": 5521,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 14.234375,
+      "t": 166.40000009536743,
+      "timestamp": 5536.400000095367,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 14.234375,
+      "t": 182.5,
+      "timestamp": 5552.5,
+      "requestedState": "neutral",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 23.6875,
+      "t": 201,
+      "timestamp": 5571,
+      "requestedState": "neutral",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 32.6875,
+      "t": 218,
+      "timestamp": 5588,
+      "requestedState": "neutral",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 39.609375,
+      "t": 233.40000009536743,
+      "timestamp": 5603.400000095367,
+      "requestedState": "neutral",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 44.28125,
+      "t": 251.10000038146973,
+      "timestamp": 5621.10000038147,
+      "requestedState": "neutral",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 44.28125,
+      "t": 267.6000003814697,
+      "timestamp": 5637.60000038147,
+      "requestedState": "exclude",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 59.125,
+      "t": 284.40000009536743,
+      "timestamp": 5654.400000095367,
+      "requestedState": "exclude",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 73.1875,
+      "t": 301.1000003814697,
+      "timestamp": 5671.10000038147,
+      "requestedState": "exclude",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 84.09375,
+      "t": 317.7000002861023,
+      "timestamp": 5687.700000286102,
+      "requestedState": "exclude",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 91.453125,
+      "t": 334,
+      "timestamp": 5704,
+      "requestedState": "exclude",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 91.453125,
+      "t": 350.90000009536743,
+      "timestamp": 5720.900000095367,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 70.765625,
+      "t": 366.7000002861023,
+      "timestamp": 5736.700000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 50.8125,
+      "t": 384.40000009536743,
+      "timestamp": 5754.400000095367,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 35.625,
+      "t": 399,
+      "timestamp": 5769,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 25.3125,
+      "t": 417.7000002861023,
+      "timestamp": 5787.700000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 18.34375,
+      "t": 432.30000019073486,
+      "timestamp": 5802.300000190735,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 13.5,
+      "t": 451,
+      "timestamp": 5821,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 10.0625,
+      "t": 465.7000002861023,
+      "timestamp": 5835.700000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 7.546875,
+      "t": 484.30000019073486,
+      "timestamp": 5854.300000190735,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 5.6875,
+      "t": 499.1000003814697,
+      "timestamp": 5869.10000038147,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 4.3125,
+      "t": 517.2000002861023,
+      "timestamp": 5887.200000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 3.3125,
+      "t": 532.5,
+      "timestamp": 5902.5,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 2.59375,
+      "t": 549.1000003814697,
+      "timestamp": 5919.10000038147,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 2.125,
+      "t": 565.9000000953674,
+      "timestamp": 5935.900000095367,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.828125,
+      "t": 584.4000000953674,
+      "timestamp": 5954.400000095367,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.6875,
+      "t": 599.2000002861023,
+      "timestamp": 5969.200000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 617.7000002861023,
+      "timestamp": 5987.700000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 632.5,
+      "timestamp": 6002.5,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 650.6000003814697,
+      "timestamp": 6020.60000038147,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 665.7000002861023,
+      "timestamp": 6035.700000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 684.2000002861023,
+      "timestamp": 6054.200000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 699.2000002861023,
+      "timestamp": 6069.200000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 715.9000000953674,
+      "timestamp": 6085.900000095367,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 732.6000003814697,
+      "timestamp": 6102.60000038147,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 749.3000001907349,
+      "timestamp": 6119.300000190735,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 765.9000000953674,
+      "timestamp": 6135.900000095367,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 782.6000003814697,
+      "timestamp": 6152.60000038147,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 799.3000001907349,
+      "timestamp": 6169.300000190735,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 816,
+      "timestamp": 6186,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 832.7000002861023,
+      "timestamp": 6202.700000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 849.3000001907349,
+      "timestamp": 6219.300000190735,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 866,
+      "timestamp": 6236,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 882.7000002861023,
+      "timestamp": 6252.700000286102,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 899.3000001907349,
+      "timestamp": 6269.300000190735,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    },
+    {
+      "x": 1.65625,
+      "t": 917.6000003814697,
+      "timestamp": 6287.60000038147,
+      "requestedState": "include",
+      "y": 2.5,
+      "inside": true,
+      "count": 1
+    }
+  ]
+}
