@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { execFileSync } from 'node:child_process';
 import { sanitizeRenderCapture } from '../tests/e2e/helpers/meteor-loading-diagnostics.mjs';
 import { createPublicErrorEvidence } from '../tests/e2e/helpers/loading-boundary-evidence.mjs';
 const require = createRequire(import.meta.url);
@@ -33,6 +32,38 @@ test('interrupted tracker path is valid; later shell commits cannot complete a m
     assert.equal(d.events.length, 3);
     assert.equal(d.lastCommit, undefined);
     assert.equal(d.lastShellCommit.rootFrame, 1);
+});
+test('synthetic phase-before-exception retains an interrupted path and linked public category', () => {
+    const { c, f } = capture();
+    const errors = createPublicErrorEvidence();
+    errors.link(errors.navigation(), epoch);
+    // This synthetic callback is not App fault injection or a bd-rjd reproduction.
+    function interruptedFixture() {
+        c.record('root-render', f);
+        c.record('tracker-before', { ...f, boundary: 'tags' });
+        throw new TypeError('PRIVATE synthetic exception message');
+    }
+    try {
+        interruptedFixture();
+        assert.fail('fixture must throw before tracker-after');
+    } catch (error) {
+        assert.ok(error instanceof TypeError);
+        errors.record('pageerror', error.name, 123);
+    }
+    errors.stop();
+    const renderCapture = sanitizeRenderCapture(c.snapshot());
+    const publicErrors = errors.snapshot(true);
+    assert.deepEqual(
+        renderCapture.events.map((event) => event.phase),
+        ['root-render', 'tracker-before']
+    );
+    assert.equal(renderCapture.complete, false);
+    assert.equal(renderCapture.reason, 'no-completed-commit');
+    assert.equal(renderCapture.lastCommit, undefined);
+    assert.equal(publicErrors.complete, true);
+    assert.equal(publicErrors.events[0].errorName, 'TypeError');
+    assert.equal(publicErrors.events[0].documentEpoch, renderCapture.documentEpoch);
+    assert.doesNotMatch(JSON.stringify({ renderCapture, publicErrors }), /PRIVATE|message|stack/u);
 });
 test('route and shell commits share native batch but preserve their own immutable frames', () => {
     const { c, f } = capture();
@@ -112,7 +143,16 @@ test('public errors never store private fields and early errors remain unlinked 
     assert.equal(e.snapshot(false).complete, false);
 });
 test('original hooks, reactive callbacks and getter evaluation order are unchanged from merged baseline', async () => {
-    const original = execFileSync('git', ['show', '07e7001:meteor-app/imports/ui/App.tsx'], { encoding: 'utf8' });
+    // Frozen merged-baseline AST data keeps this guard independent of checkout depth.
+    const baseline = JSON.parse(
+        await readFile(new URL('./fixtures/loading-app-baseline-calls.json', import.meta.url), 'utf8')
+    );
+    assert.equal(baseline.schema, 'loading-app-baseline-calls/v1');
+    assert.equal(baseline.revision, '07e7001fdd7217add1fb98c8ae4dc326193b3562');
+    assert.equal(baseline.path, 'meteor-app/imports/ui/App.tsx');
+    assert.match(baseline.sourceSha256, /^[a-f0-9]{64}$/u);
+    assert.equal(baseline.typescriptVersion, ts.version);
+    assert.ok(baseline.calls.length > 0);
     const current = await readFile(new URL('../meteor-app/imports/ui/App.tsx', import.meta.url), 'utf8');
     const printer = ts.createPrinter({ removeComments: true });
     function calls(text) {
@@ -126,7 +166,7 @@ test('original hooks, reactive callbacks and getter evaluation order are unchang
         visit(file);
         return out;
     }
-    assert.deepEqual(calls(current), calls(original));
+    assert.deepEqual(calls(current), baseline.calls);
     assert.match(current, /const appTree =/);
     assert.match(current, /return appTree/);
 });
