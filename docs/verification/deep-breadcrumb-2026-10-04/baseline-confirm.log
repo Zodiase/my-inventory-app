@@ -1,0 +1,41 @@
+
+Running 1 test using 1 worker
+
+(node:6479) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:6479) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] [storybook-chromium] › tests/e2e/storybook/DeepItemDetail.spec.ts:12:9 › deep detail manager 390x480
+  1) [storybook-chromium] › tests/e2e/storybook/DeepItemDetail.spec.ts:12:9 › deep detail manager 390x480
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 1
+    Received:    207
+
+      28 |             };
+      29 |         });
+    > 30 |         expect(metrics.document).toBeLessThanOrEqual(1);
+         |                                  ^
+      31 |         expect(metrics.navRight).toBeLessThanOrEqual(metrics.frameWidth);
+      32 |         expect(metrics.lastRight).toBeLessThanOrEqual(metrics.viewportRight + 1);
+      33 |         await page.screenshot({ path: testInfo.outputPath('manager.png'), fullPage: true });
+        at /Volumes/Expansion/workspace/inventory-deep-breadcrumb/tests/e2e/storybook/DeepItemDetail.spec.ts:30:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/bd8wk-baseline-confirm/storybook-DeepItemDetail-deep-detail-manager-390x480-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../../../private/tmp/bd8wk-baseline-confirm/storybook-DeepItemDetail-deep-detail-manager-390x480-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/bd8wk-baseline-confirm/storybook-DeepItemDetail-deep-detail-manager-390x480-storybook-chromium/error-context.md
+
+
+  1 failed
+    [storybook-chromium] › tests/e2e/storybook/DeepItemDetail.spec.ts:12:9 › deep detail manager 390x480

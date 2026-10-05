@@ -1,0 +1,210 @@
+[WebServer] (node:5545) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] [[[[[ /Volumes/Expansion/workspace/inventory-deep-breadcrumb/meteor-app ]]]]]
+[WebServer]
+
+[WebServer] => Started proxy.
+
+[WebServer] => Started HMR server.
+
+[WebServer] => Meteor 3.5.2 is available. Check the changelog
+[WebServer] https://docs.meteor.com/history.html and update this project with 'meteor
+[WebServer] update'.
+
+[WebServer] => Started MongoDB.
+
+[WebServer] => Linted your app. No linting errors.
+
+[WebServer] (node:5628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer]
+
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]
+
+[WebServer] [/server/gridfs.ts] GridFS bucket initialized for attachments
+
+[WebServer] [/server/main.ts] Creating database indexes...
+
+[WebServer] [/server/main.ts] Database indexes created successfully
+
+[WebServer] [/server/search/index.ts] Inventory search index rebuilt { count: '[number]5' }
+
+[WebServer] [api/tags] watching for tags without path...
+
+[WebServer] (node:5545) Warning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+
+[WebServer] => Started your app.
+
+[WebServer]
+
+[WebServer] => App running at http://127.0.0.1:48392/
+
+
+Running 2 tests using 1 worker
+
+(node:5631) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:5631) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [chromium] › tests/e2e/app/deep-breadcrumb.spec.ts:6:5 › deep item location stays inside the actual app on a short phone
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]LwFmN5479TPRo4AwC',
+[WebServer]   name: '[string]Home',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]d8zxiqgofRmtFfRyQ',
+
+[WebServer]   name: '[string]Garage',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]fPrA4CQgRjbcinngJ',
+
+[WebServer]   name: '[string]Storage Shelves',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]28MRrP2J3aNjZe76D',
+[WebServer]   name: '[string]Camping Equipment Box',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]d6aHYDDFgi6DRMkot',
+[WebServer]   name: '[string]Camping Tent',
+
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]d6aHYDDFgi6DRMkot' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+(node:5656) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:5656) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/2] [iPhone] › tests/e2e/app/deep-breadcrumb.spec.ts:6:5 › deep item location stays inside the actual app on a short phone
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]jbcgByeaXaxAmWXt3',
+[WebServer]   name: '[string]Home',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]isfCGcDAwNZcc5zx3',
+[WebServer]   name: '[string]Garage',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]3hQPKENajHHiTsJeh',
+[WebServer]   name: '[string]Storage Shelves',
+
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]FtRAQyDaxLLSQ5y6F',
+[WebServer]   name: '[string]Camping Equipment Box',
+
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]RX87JQfQLfb7onLqW',
+[WebServer]   name: '[string]Camping Tent',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]RX87JQfQLfb7onLqW' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]RX87JQfQLfb7onLqW' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+  2 passed (13.9s)

@@ -1,0 +1,5 @@
+
+> check:type
+> tsc --version && tsc --noEmit
+
+Version 5.9.3
