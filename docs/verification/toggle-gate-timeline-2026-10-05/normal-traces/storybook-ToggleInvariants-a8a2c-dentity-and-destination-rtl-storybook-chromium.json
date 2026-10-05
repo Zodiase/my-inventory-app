@@ -1,0 +1,3072 @@
+{
+  "duration": 260,
+  "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+  "requests": [
+    {
+      "state": "exclude",
+      "t": 33.89999961853027,
+      "x": 108.34375,
+      "activeBefore": true,
+      "animationsBefore": [
+        {
+          "id": 1,
+          "currentTime": 0,
+          "startTime": null,
+          "timelineTime": 919.9,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 0,
+            "progress": 0
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 108.34375,
+          "toX": 1.671875
+        }
+      ],
+      "afterX": 108.34375
+    },
+    {
+      "state": "include",
+      "t": 134.5,
+      "x": 21.453125,
+      "activeBefore": true,
+      "animationsBefore": [
+        {
+          "id": 2,
+          "currentTime": 0,
+          "startTime": null,
+          "timelineTime": 1020,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 211.79408081592996,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 211.79408081592996,
+            "currentIteration": 0,
+            "endTime": 211.79408081592996,
+            "localTime": 0,
+            "progress": 0
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(70.9728% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 21.453125,
+          "toX": 108.34375
+        }
+      ],
+      "afterX": 21.453125
+    },
+    {
+      "state": "neutral",
+      "t": 234,
+      "x": 97.421875,
+      "activeBefore": true,
+      "animationsBefore": [
+        {
+          "id": 3,
+          "currentTime": 0,
+          "startTime": null,
+          "timelineTime": 1120,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 0,
+            "progress": 0
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(23.4906% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(50% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 97.421875,
+          "toX": 55
+        }
+      ],
+      "afterX": 97.421875
+    },
+    {
+      "state": "exclude",
+      "t": 334.09999990463257,
+      "x": 62.875,
+      "activeBefore": true,
+      "animationsBefore": [
+        {
+          "id": 4,
+          "currentTime": 0,
+          "startTime": null,
+          "timelineTime": 1220,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 0,
+            "progress": 0
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(45.085% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 62.875,
+          "toX": 1.671875
+        }
+      ],
+      "afterX": 62.875
+    },
+    {
+      "state": "include",
+      "t": 434.2999997138977,
+      "x": 13.046875,
+      "activeBefore": true,
+      "animationsBefore": [
+        {
+          "id": 5,
+          "currentTime": 0,
+          "startTime": null,
+          "timelineTime": 1320,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 0,
+            "progress": 0
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "afterX": 13.046875
+    }
+  ],
+  "samples": [
+    {
+      "t": 11,
+      "raf": 903.39,
+      "documentTime": 903.39,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 27.59999990463257,
+      "raf": 919.9,
+      "documentTime": 919.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 44.5,
+      "raf": 936.6,
+      "documentTime": 936.6,
+      "animations": [
+        {
+          "id": 1,
+          "currentTime": 0,
+          "startTime": null,
+          "timelineTime": 936.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 0,
+            "progress": 0
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 108.34375,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 108.34375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 61.09999990463257,
+      "raf": 953.3,
+      "documentTime": 953.3,
+      "animations": [
+        {
+          "id": 1,
+          "currentTime": 16.70000000000005,
+          "startTime": 936.6,
+          "timelineTime": 953.3,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 16.70000000000005,
+            "progress": 0.23177268779191473
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 108.34375,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 83.62012281944685,
+      "x": 83.625,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 77.89999961853027,
+      "raf": 970,
+      "documentTime": 970,
+      "animations": [
+        {
+          "id": 1,
+          "currentTime": 33.399999999999984,
+          "startTime": 936.6,
+          "timelineTime": 970,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 33.399999999999984,
+            "progress": 0.45261046407302813
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 108.34375,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 60.062943152709956,
+      "x": 60.0625,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 94.7999997138977,
+      "raf": 986.6,
+      "documentTime": 986.6,
+      "animations": [
+        {
+          "id": 1,
+          "currentTime": 50.00000000000004,
+          "startTime": 936.6,
+          "timelineTime": 986.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 50.00000000000004,
+            "progress": 0.6217314977267571
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 108.34375,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 42.02248539092858,
+      "x": 42.015625,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 111.2999997138977,
+      "raf": 1003.3,
+      "documentTime": 1003.3,
+      "animations": [
+        {
+          "id": 1,
+          "currentTime": 66.70000000000009,
+          "startTime": 936.6,
+          "timelineTime": 1003.3,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 66.70000000000009,
+            "progress": 0.7370911923078427
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 108.34375,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 29.71685047053684,
+      "x": 29.71875,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 128,
+      "raf": 1020,
+      "documentTime": 1020,
+      "animations": [
+        {
+          "id": 1,
+          "currentTime": 83.40000000000003,
+          "startTime": 936.6,
+          "timelineTime": 1020,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 83.40000000000003,
+            "progress": 0.8145926185228075
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 108.34375,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 21.449628021012387,
+      "x": 21.453125,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 144.5,
+      "raf": 1036.6,
+      "documentTime": 1036.6,
+      "animations": [
+        {
+          "id": 2,
+          "currentTime": 0,
+          "startTime": null,
+          "timelineTime": 1036.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 211.79408081592996,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 211.79408081592996,
+            "currentIteration": 0,
+            "endTime": 211.79408081592996,
+            "localTime": 0,
+            "progress": 0
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(70.9728% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 21.453125,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 21.453125,
+      "x": 21.453125,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 161.2999997138977,
+      "raf": 1053.3,
+      "documentTime": 1053.3,
+      "animations": [
+        {
+          "id": 2,
+          "currentTime": 16.69999999999994,
+          "startTime": 1036.6,
+          "timelineTime": 1053.3,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 211.79408081592996,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 211.79408081592996,
+            "currentIteration": 0,
+            "endTime": 211.79408081592996,
+            "localTime": 16.69999999999994,
+            "progress": 0.284662440902232
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(70.9728% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 21.453125,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 46.1876224040205,
+      "x": 46.1875,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 178,
+      "raf": 1070,
+      "documentTime": 1070,
+      "animations": [
+        {
+          "id": 2,
+          "currentTime": 33.4000000000001,
+          "startTime": 1036.6,
+          "timelineTime": 1070,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 211.79408081592996,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 211.79408081592996,
+            "currentIteration": 0,
+            "endTime": 211.79408081592996,
+            "localTime": 33.4000000000001,
+            "progress": 0.537502607599749
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(70.9728% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 21.453125,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 68.15706251347194,
+      "x": 68.15625,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 194.69999980926514,
+      "raf": 1086.6,
+      "documentTime": 1086.6,
+      "animations": [
+        {
+          "id": 2,
+          "currentTime": 50.00000000000004,
+          "startTime": 1036.6,
+          "timelineTime": 1086.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 211.79408081592996,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 211.79408081592996,
+            "currentIteration": 0,
+            "endTime": 211.79408081592996,
+            "localTime": 50.00000000000004,
+            "progress": 0.7053052462886055
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(70.9728% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 21.453125,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 82.73753866579585,
+      "x": 82.734375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 211.39999961853027,
+      "raf": 1103.3,
+      "documentTime": 1103.3,
+      "animations": [
+        {
+          "id": 2,
+          "currentTime": 66.69999999999999,
+          "startTime": 1036.6,
+          "timelineTime": 1103.3,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 211.79408081592996,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 211.79408081592996,
+            "currentIteration": 0,
+            "endTime": 211.79408081592996,
+            "localTime": 66.69999999999999,
+            "progress": 0.8086924973506471
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(70.9728% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 21.453125,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 91.72092152760857,
+      "x": 91.71875,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 228.09999990463257,
+      "raf": 1120,
+      "documentTime": 1120,
+      "animations": [
+        {
+          "id": 2,
+          "currentTime": 83.40000000000015,
+          "startTime": 1036.6,
+          "timelineTime": 1120,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 211.79408081592996,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 211.79408081592996,
+            "currentIteration": 0,
+            "endTime": 211.79408081592996,
+            "localTime": 83.40000000000015,
+            "progress": 0.8743441788861278
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(70.9728% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 21.453125,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 97.42543716852745,
+      "x": 97.421875,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 244.59999990463257,
+      "raf": 1136.6,
+      "documentTime": 1136.6,
+      "animations": [
+        {
+          "id": 3,
+          "currentTime": 0,
+          "startTime": null,
+          "timelineTime": 1136.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 0,
+            "progress": 0
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(23.4906% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(50% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 97.421875,
+          "toX": 55
+        }
+      ],
+      "expectedX": 97.421875,
+      "x": 97.421875,
+      "sameNode": true,
+      "state": "neutral",
+      "inside": true
+    },
+    {
+      "t": 261.3999996185303,
+      "raf": 1153.3,
+      "documentTime": 1153.3,
+      "animations": [
+        {
+          "id": 3,
+          "currentTime": 16.69999999999994,
+          "startTime": 1136.6000000000001,
+          "timelineTime": 1153.3,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 16.69999999999994,
+            "progress": 0.23177268779191318
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(23.4906% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(50% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 97.421875,
+          "toX": 55
+        }
+      ],
+      "expectedX": 87.58964301007744,
+      "x": 87.59375,
+      "sameNode": true,
+      "state": "neutral",
+      "inside": true
+    },
+    {
+      "t": 278.09999990463257,
+      "raf": 1170,
+      "documentTime": 1170,
+      "animations": [
+        {
+          "id": 3,
+          "currentTime": 33.39999999999988,
+          "startTime": 1136.6000000000001,
+          "timelineTime": 1170,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 33.39999999999988,
+            "progress": 0.4526104640730268
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(23.4906% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(50% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 97.421875,
+          "toX": 55
+        }
+      ],
+      "expectedX": 78.22129046940206,
+      "x": 78.21875,
+      "sameNode": true,
+      "state": "neutral",
+      "inside": true
+    },
+    {
+      "t": 294.7999997138977,
+      "raf": 1186.6,
+      "documentTime": 1186.6,
+      "animations": [
+        {
+          "id": 3,
+          "currentTime": 50.00000000000004,
+          "startTime": 1136.6000000000001,
+          "timelineTime": 1186.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 50.00000000000004,
+            "progress": 0.6217314977267571
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(23.4906% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(50% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 97.421875,
+          "toX": 55
+        }
+      ],
+      "expectedX": 71.04685911987272,
+      "x": 71.046875,
+      "sameNode": true,
+      "state": "neutral",
+      "inside": true
+    },
+    {
+      "t": 311.3999996185303,
+      "raf": 1203.3,
+      "documentTime": 1203.3,
+      "animations": [
+        {
+          "id": 3,
+          "currentTime": 66.69999999999999,
+          "startTime": 1136.6000000000001,
+          "timelineTime": 1203.3,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 66.69999999999999,
+            "progress": 0.7370911923078421
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(23.4906% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(50% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 97.421875,
+          "toX": 55
+        }
+      ],
+      "expectedX": 66.15308457631576,
+      "x": 66.15625,
+      "sameNode": true,
+      "state": "neutral",
+      "inside": true
+    },
+    {
+      "t": 328.09999990463257,
+      "raf": 1220,
+      "documentTime": 1220,
+      "animations": [
+        {
+          "id": 3,
+          "currentTime": 83.39999999999992,
+          "startTime": 1136.6000000000001,
+          "timelineTime": 1220,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 83.39999999999992,
+            "progress": 0.8145926185228068
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(23.4906% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(50% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 97.421875,
+          "toX": 55
+        }
+      ],
+      "expectedX": 62.8653287611028,
+      "x": 62.875,
+      "sameNode": true,
+      "state": "neutral",
+      "inside": true
+    },
+    {
+      "t": 344.69999980926514,
+      "raf": 1236.7,
+      "documentTime": 1236.7,
+      "animations": [
+        {
+          "id": 4,
+          "currentTime": 0,
+          "startTime": null,
+          "timelineTime": 1236.7,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 0,
+            "progress": 0
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(45.085% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 62.875,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 62.875,
+      "x": 62.875,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 361.3999996185303,
+      "raf": 1253.2,
+      "documentTime": 1253.2,
+      "animations": [
+        {
+          "id": 4,
+          "currentTime": 16.50000000000018,
+          "startTime": 1236.6999999999998,
+          "timelineTime": 1253.2,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 16.50000000000018,
+            "progress": 0.22897178075910962
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(45.085% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 62.875,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 48.86121148072762,
+      "x": 48.859375,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 378.19999980926514,
+      "raf": 1269.9,
+      "documentTime": 1269.9,
+      "animations": [
+        {
+          "id": 4,
+          "currentTime": 33.20000000000012,
+          "startTime": 1236.6999999999998,
+          "timelineTime": 1269.9,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 33.20000000000012,
+            "progress": 0.4502135074359382
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(45.085% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 62.875,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 35.32052642770985,
+      "x": 35.3125,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 394.7999997138977,
+      "raf": 1286.6,
+      "documentTime": 1286.6,
+      "animations": [
+        {
+          "id": 4,
+          "currentTime": 49.900000000000055,
+          "startTime": 1236.6999999999998,
+          "timelineTime": 1286.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 49.900000000000055,
+            "progress": 0.6208895246641575
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(45.085% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 62.875,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 24.87462081078899,
+      "x": 24.875,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 411.59999990463257,
+      "raf": 1303.3,
+      "documentTime": 1303.3,
+      "animations": [
+        {
+          "id": 4,
+          "currentTime": 66.6,
+          "startTime": 1236.6999999999998,
+          "timelineTime": 1303.3,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 66.6,
+            "progress": 0.7365304519383685
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(45.085% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 62.875,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 17.79703468370954,
+      "x": 17.796875,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 428.19999980926514,
+      "raf": 1320,
+      "documentTime": 1320,
+      "animations": [
+        {
+          "id": 4,
+          "currentTime": 83.30000000000015,
+          "startTime": 1236.6999999999998,
+          "timelineTime": 1320,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 83.30000000000015,
+            "progress": 0.8142100984133166
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(45.085% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(83.3333% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 62.875,
+          "toX": 1.671875
+        }
+      ],
+      "expectedX": 13.042797570547485,
+      "x": 13.046875,
+      "sameNode": true,
+      "state": "exclude",
+      "inside": true
+    },
+    {
+      "t": 444.7999997138977,
+      "raf": 1336.6,
+      "documentTime": 1336.6,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 0,
+          "startTime": null,
+          "timelineTime": 1336.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 0,
+            "progress": 0
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 13.046875,
+      "x": 13.046875,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 461.3999996185303,
+      "raf": 1353.3,
+      "documentTime": 1353.3,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 16.69999999999994,
+          "startTime": 1336.6,
+          "timelineTime": 1353.3,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 16.69999999999994,
+            "progress": 0.23177268779191318
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 35.134087856919976,
+      "x": 35.125,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 478.2999997138977,
+      "raf": 1370,
+      "documentTime": 1370,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 33.4000000000001,
+          "startTime": 1336.6,
+          "timelineTime": 1370,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 33.4000000000001,
+            "progress": 0.4526104640730294
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 56.17923781845948,
+      "x": 56.171875,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 494.7999997138977,
+      "raf": 1386.6,
+      "documentTime": 1386.6,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 50.00000000000004,
+          "startTime": 1336.6,
+          "timelineTime": 1386.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 50.00000000000004,
+            "progress": 0.6217314977267571
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 72.29594382242955,
+      "x": 72.296875,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 511.59999990463257,
+      "raf": 1403.3,
+      "documentTime": 1403.3,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 66.69999999999999,
+          "startTime": 1336.6,
+          "timelineTime": 1403.3,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 66.69999999999999,
+            "progress": 0.7370911923078421
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 83.2893622169614,
+      "x": 83.28125,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 528.2999997138977,
+      "raf": 1420,
+      "documentTime": 1420,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 83.39999999999992,
+          "startTime": 1336.6,
+          "timelineTime": 1420,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 83.39999999999992,
+            "progress": 0.8145926185228068
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 90.67500594329061,
+      "x": 90.671875,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 544.8999996185303,
+      "raf": 1436.6,
+      "documentTime": 1436.6,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 100.00000000000009,
+          "startTime": 1336.6,
+          "timelineTime": 1436.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 100.00000000000009,
+            "progress": 0.8680585773549986
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 95.77014473887714,
+      "x": 95.765625,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 561.5,
+      "raf": 1453.2,
+      "documentTime": 1453.2,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 116.60000000000004,
+          "startTime": 1336.6,
+          "timelineTime": 1453.2,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 116.60000000000004,
+            "progress": 0.9063453475543773
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 99.41875429272105,
+      "x": 99.421875,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 578.2999997138977,
+      "raf": 1469.9,
+      "documentTime": 1469.9,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 133.29999999999998,
+          "startTime": 1336.6,
+          "timelineTime": 1469.9,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 133.29999999999998,
+            "progress": 0.9344745507893426
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 102.09937945725314,
+      "x": 102.09375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 594.8999996185303,
+      "raf": 1486.6,
+      "documentTime": 1486.6,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 149.99999999999991,
+          "startTime": 1336.6,
+          "timelineTime": 1486.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 149.99999999999991,
+            "progress": 0.9552126283699255
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 104.07565344419024,
+      "x": 104.078125,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 610.5,
+      "raf": 1503.2,
+      "documentTime": 1503.2,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 166.60000000000008,
+          "startTime": 1336.6,
+          "timelineTime": 1503.2,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 166.60000000000008,
+            "progress": 0.9704283393963625
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 105.52566315591274,
+      "x": 105.515625,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 628.2999997138977,
+      "raf": 1520,
+      "documentTime": 1520,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 183.4,
+          "startTime": 1336.6,
+          "timelineTime": 1520,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 183.4,
+            "progress": 0.9816621430838532
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 106.59620954169408,
+      "x": 106.59375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 643.2999997138977,
+      "raf": 1536.6,
+      "documentTime": 1536.6,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 199.99999999999994,
+          "startTime": 1336.6,
+          "timelineTime": 1536.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 199.99999999999994,
+            "progress": 0.9895507444029598
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 107.3479685955258,
+      "x": 107.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 661.5999999046326,
+      "raf": 1553.3,
+      "documentTime": 1553.3,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 216.6999999999999,
+          "startTime": 1336.6,
+          "timelineTime": 1553.3,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 216.6999999999999,
+            "progress": 0.9949207547854915
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 107.85971380369863,
+      "x": 107.859375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 678.2999997138977,
+      "raf": 1569.9,
+      "documentTime": 1569.9,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 233.30000000000007,
+          "startTime": 1336.6,
+          "timelineTime": 1569.9,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 233.30000000000007,
+            "progress": 0.9981884047716966
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 108.17111063597777,
+      "x": 108.171875,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 695,
+      "raf": 1586.6,
+      "documentTime": 1586.6,
+      "animations": [
+        {
+          "id": 5,
+          "currentTime": 250,
+          "startTime": 1336.6,
+          "timelineTime": 1586.6,
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 260,
+            "easing": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1,
+            "activeDuration": 260,
+            "currentIteration": 0,
+            "endTime": 260,
+            "localTime": 250,
+            "progress": 0.9997607642159463
+          },
+          "keyframes": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(76.2272% - 26px)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "right": "calc(16.6667% - 26px)",
+              "computedOffset": 1
+            }
+          ],
+          "fromX": 13.046875,
+          "toX": 108.34375
+        }
+      ],
+      "expectedX": 108.32095157739151,
+      "x": 108.3125,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 711.6999998092651,
+      "raf": 1603.3,
+      "documentTime": 1603.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 726.1999998092651,
+      "raf": 1619.9,
+      "documentTime": 1619.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 744.8999996185303,
+      "raf": 1636.6,
+      "documentTime": 1636.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 760.7999997138977,
+      "raf": 1653.2,
+      "documentTime": 1653.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 778.0999999046326,
+      "raf": 1669.9,
+      "documentTime": 1669.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 793.1999998092651,
+      "raf": 1686.6,
+      "documentTime": 1686.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 810.3999996185303,
+      "raf": 1703.2,
+      "documentTime": 1703.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 826.2999997138977,
+      "raf": 1719.9,
+      "documentTime": 1719.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 845,
+      "raf": 1736.6,
+      "documentTime": 1736.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 861.5999999046326,
+      "raf": 1753.2,
+      "documentTime": 1753.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 878.2999997138977,
+      "raf": 1769.9,
+      "documentTime": 1769.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 894.8999996185303,
+      "raf": 1786.6,
+      "documentTime": 1786.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 911.5999999046326,
+      "raf": 1803.3,
+      "documentTime": 1803.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 928.1999998092651,
+      "raf": 1819.9,
+      "documentTime": 1819.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 944.8999996185303,
+      "raf": 1836.6,
+      "documentTime": 1836.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 961.5,
+      "raf": 1853.3,
+      "documentTime": 1853.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 978.2999997138977,
+      "raf": 1869.9,
+      "documentTime": 1869.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 994.7999997138977,
+      "raf": 1886.6,
+      "documentTime": 1886.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1011.5,
+      "raf": 1903.3,
+      "documentTime": 1903.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1028.0999999046326,
+      "raf": 1920,
+      "documentTime": 1920,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1044.8999996185303,
+      "raf": 1936.6,
+      "documentTime": 1936.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1060.2999997138977,
+      "raf": 1953.3,
+      "documentTime": 1953.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1078.1999998092651,
+      "raf": 1969.9,
+      "documentTime": 1969.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1094.7999997138977,
+      "raf": 1986.6,
+      "documentTime": 1986.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1110.7999997138977,
+      "raf": 2003.3,
+      "documentTime": 2003.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1128.1999998092651,
+      "raf": 2020,
+      "documentTime": 2020,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1144.8999996185303,
+      "raf": 2036.6,
+      "documentTime": 2036.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1161.5999999046326,
+      "raf": 2053.2,
+      "documentTime": 2053.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1176.3999996185303,
+      "raf": 2070,
+      "documentTime": 2070,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1194.8999996185303,
+      "raf": 2086.6,
+      "documentTime": 2086.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1211.5,
+      "raf": 2103.3,
+      "documentTime": 2103.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1228.1999998092651,
+      "raf": 2119.9,
+      "documentTime": 2119.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1244.8999996185303,
+      "raf": 2136.6,
+      "documentTime": 2136.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1259.5,
+      "raf": 2153.2,
+      "documentTime": 2153.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1277.0999999046326,
+      "raf": 2169.9,
+      "documentTime": 2169.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1293.5,
+      "raf": 2186.5,
+      "documentTime": 2186.5,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1311.5999999046326,
+      "raf": 2203.2,
+      "documentTime": 2203.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1328.0999999046326,
+      "raf": 2219.9,
+      "documentTime": 2219.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1345,
+      "raf": 2236.6,
+      "documentTime": 2236.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1360.0999999046326,
+      "raf": 2253.3,
+      "documentTime": 2253.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1378.2999997138977,
+      "raf": 2269.9,
+      "documentTime": 2269.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1394.7999997138977,
+      "raf": 2286.6,
+      "documentTime": 2286.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1411.5999999046326,
+      "raf": 2303.3,
+      "documentTime": 2303.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1428.1999998092651,
+      "raf": 2319.9,
+      "documentTime": 2319.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1444.8999996185303,
+      "raf": 2336.5,
+      "documentTime": 2336.5,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1461.5,
+      "raf": 2353.2,
+      "documentTime": 2353.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1478.1999998092651,
+      "raf": 2369.9,
+      "documentTime": 2369.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1494.7999997138977,
+      "raf": 2386.6,
+      "documentTime": 2386.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1511.5999999046326,
+      "raf": 2403.3,
+      "documentTime": 2403.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1528.1999998092651,
+      "raf": 2419.9,
+      "documentTime": 2419.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1544.8999996185303,
+      "raf": 2436.5,
+      "documentTime": 2436.5,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1559.6999998092651,
+      "raf": 2453.2,
+      "documentTime": 2453.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1578.2999997138977,
+      "raf": 2469.9,
+      "documentTime": 2469.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1594.7999997138977,
+      "raf": 2486.6,
+      "documentTime": 2486.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1610.0999999046326,
+      "raf": 2503.2,
+      "documentTime": 2503.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1627.5999999046326,
+      "raf": 2519.9,
+      "documentTime": 2519.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1644.8999996185303,
+      "raf": 2536.5,
+      "documentTime": 2536.5,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1660.3999996185303,
+      "raf": 2553.2,
+      "documentTime": 2553.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1678.1999998092651,
+      "raf": 2569.9,
+      "documentTime": 2569.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1693.2999997138977,
+      "raf": 2586.6,
+      "documentTime": 2586.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1710.7999997138977,
+      "raf": 2603.2,
+      "documentTime": 2603.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1727.5999999046326,
+      "raf": 2619.9,
+      "documentTime": 2619.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1743.1999998092651,
+      "raf": 2636.6,
+      "documentTime": 2636.6,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1761.3999996185303,
+      "raf": 2653.3,
+      "documentTime": 2653.3,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1778.1999998092651,
+      "raf": 2669.9,
+      "documentTime": 2669.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1793.0999999046326,
+      "raf": 2686.5,
+      "documentTime": 2686.5,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1810.1999998092651,
+      "raf": 2703.2,
+      "documentTime": 2703.2,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    },
+    {
+      "t": 1826.5999999046326,
+      "raf": 2719.9,
+      "documentTime": 2719.9,
+      "animations": [],
+      "expectedX": 108.3359375,
+      "x": 108.34375,
+      "sameNode": true,
+      "state": "include",
+      "inside": true
+    }
+  ],
+  "ends": [
+    {
+      "state": "include",
+      "x": 108.3359375
+    },
+    {
+      "state": "neutral",
+      "x": 55.0078125
+    },
+    {
+      "state": "exclude",
+      "x": 1.6796875
+    }
+  ]
+}

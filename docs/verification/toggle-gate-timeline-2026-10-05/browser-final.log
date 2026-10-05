@@ -1,0 +1,30 @@
+
+Running 18 tests using 1 worker
+
+[1A[2K(node:24701) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:24701) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 1280x720 text1 wrapped
+[1A[2K[2/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 1280x720 text1.25 wrapped
+[1A[2K[3/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 820x900 text1 wrapped
+[1A[2K[4/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 820x900 text1.25 wrapped
+[1A[2K[5/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 390x844 text1 wrapped
+[1A[2K[6/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 390x844 text1.25 wrapped
+[1A[2K[7/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 390x480 text1 wrapped
+[1A[2K[8/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 390x480 text1.25 wrapped
+[1A[2K[9/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 1280x720 text1 short
+[1A[2K[10/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 1280x720 text1.25 short
+[1A[2K[11/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 820x900 text1 short
+[1A[2K[12/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 820x900 text1.25 short
+[1A[2K[13/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 390x844 text1 short
+[1A[2K[14/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 390x844 text1.25 short
+[1A[2K[15/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 390x480 text1 short
+[1A[2K[16/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:54:17 › composed relationships and text fit 390x480 text1.25 short
+[1A[2K[17/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:200:9 › CSS-timed in-flight reversals preserve handle identity and destination ltr
+[1A[2K[18/18] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:200:9 › CSS-timed in-flight reversals preserve handle identity and destination rtl
+[1A[2K  18 passed (38.1s)
