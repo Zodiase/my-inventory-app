@@ -1,4 +1,5 @@
 import { expect, test, type Page, type Locator } from '@playwright/test';
+import { writeFileSync } from 'node:fs';
 
 const label = 'Camera equipment with a long descriptive name';
 const views = [
@@ -214,6 +215,48 @@ for (const direction of ['ltr', 'rtl']) {
             const easing = style.transitionTimingFunction;
             const requests: { state: string; t: number; x: number; afterX?: number; activeBefore: boolean }[] = [];
             const start = performance.now();
+            const animationIds = new WeakMap<Animation, number>();
+            let nextId = 1;
+            const endpoints = new WeakMap<Animation, { fromX: number; toX: number }>();
+            const resolveX = (value: string) => {
+                // Resolve native calc()/logical endpoints without moving the observed handle.
+                const probe = original.cloneNode(true) as HTMLElement;
+                probe.style.transition = 'none';
+                probe.style.visibility = 'hidden';
+                probe.style.insetInlineStart = value;
+                el.appendChild(probe);
+                const x = probe.getBoundingClientRect().x - el.getBoundingClientRect().x;
+                probe.remove();
+                return x;
+            };
+            const animationTiming = () =>
+                original.getAnimations().map((a) => {
+                    if (!animationIds.has(a)) animationIds.set(a, nextId++);
+                    const keyframes = (a.effect as KeyframeEffect).getKeyframes();
+                    if (!endpoints.has(a)) {
+                        const value = (frame: ComputedKeyframe) => String(frame.left ?? frame.right);
+                        endpoints.set(a, {
+                            fromX: resolveX(value(keyframes[0])),
+                            toX: resolveX(value(keyframes.at(-1)!)),
+                        });
+                    }
+                    return {
+                        id: animationIds.get(a),
+                        currentTime: a.currentTime,
+                        startTime: a.startTime,
+                        timelineTime: a.timeline?.currentTime,
+                        timing: a.effect!.getComputedTiming(),
+                        keyframes,
+                        ...endpoints.get(a)!,
+                    };
+                });
+            const ends = [...el.querySelectorAll('label')].map((l) => ({
+                state: l.className.split(' ').at(-1)!,
+                x:
+                    l.getBoundingClientRect().x +
+                    (l.getBoundingClientRect().width - original.getBoundingClientRect().width) / 2 -
+                    el.getBoundingClientRect().x,
+            }));
             const position = () => original.getBoundingClientRect().x - el.getBoundingClientRect().x;
             const listener = (event: Event) => {
                 const input = event.target as HTMLInputElement;
@@ -222,6 +265,7 @@ for (const direction of ['ltr', 'rtl']) {
                     t: performance.now() - start,
                     x: position(),
                     activeBefore: original.getAnimations().some((a) => a.playState === 'running'),
+                    animationsBefore: animationTiming(),
                     afterX: undefined as number | undefined,
                 };
                 requests.push(request);
@@ -229,14 +273,29 @@ for (const direction of ['ltr', 'rtl']) {
                     request.afterX = position();
                 });
             };
+            const afterListener = () => {
+                // Microtasks may run between native listeners: sample again after the
+                // bubbling handlers, including injected mutation and React update.
+                const request = requests.at(-1);
+                if (request) request.afterX = position();
+            };
             el.addEventListener('change', listener, true);
+            el.addEventListener('change', afterListener);
             const samples = [];
             while (performance.now() - start < duration * 7) {
-                await new Promise(requestAnimationFrame);
+                const raf = await new Promise<number>(requestAnimationFrame);
                 const r = el.getBoundingClientRect(),
                     h = el.querySelector('.tri-state-handle')!.getBoundingClientRect();
+                const animations = animationTiming();
+                const active = animations.find((a) => typeof a.timing.progress === 'number');
                 samples.push({
                     t: performance.now() - start,
+                    raf,
+                    documentTime: document.timeline.currentTime,
+                    animations,
+                    expectedX: active
+                        ? active.fromX + (active.toX - active.fromX) * active.timing.progress!
+                        : ends.find((e) => e.state === el.getAttribute('data-state'))!.x,
                     x: h.x - r.x,
                     sameNode: el.querySelector('.tri-state-handle') === original,
                     state: el.getAttribute('data-state'),
@@ -244,13 +303,7 @@ for (const direction of ['ltr', 'rtl']) {
                 });
             }
             el.removeEventListener('change', listener, true);
-            const ends = [...el.querySelectorAll('label')].map((l) => ({
-                state: l.className.split(' ').at(-1)!,
-                x:
-                    l.getBoundingClientRect().x +
-                    (l.getBoundingClientRect().width - original.getBoundingClientRect().width) / 2 -
-                    el.getBoundingClientRect().x,
-            }));
+            el.removeEventListener('change', afterListener);
             return { duration, easing, requests, samples, ends };
         });
         const sequence = ['exclude', 'include', 'neutral', 'exclude', 'include'];
@@ -283,8 +336,12 @@ for (const direction of ['ltr', 'rtl']) {
             requestFailure = error;
         }
         const result = await trace;
+        const curve = result.easing.match(/cubic-bezier\(([^)]+)\)/u);
+        expect(curve, 'motion model retains the declared CSS cubic-bezier').not.toBeNull();
+        const tracePath = info.outputPath('request-correlated-trace.json');
+        writeFileSync(tracePath, JSON.stringify(result, null, 2));
         await info.attach('request-correlated-trace', {
-            body: JSON.stringify(result),
+            path: tracePath,
             contentType: 'application/json',
         });
         expect(
@@ -303,25 +360,26 @@ for (const direction of ['ltr', 'rtl']) {
         ).toBe(true);
         expect(result.samples.every((s) => s.inside)).toBe(true);
         expect(result.duration).toBeGreaterThan(0);
-        const curve = result.easing.match(/cubic-bezier\(([^)]+)\)/u);
-        expect(curve, 'motion envelope derives from the actual CSS cubic-bezier').not.toBeNull();
-        const [x1, y1, x2, y2] = curve![1].split(',').map(Number);
-        let slope = 0;
-        for (let i = 0; i <= 1000; i++) {
-            const t = i / 1000;
-            const derivative = (a: number, b: number) =>
-                3 * (1 - t) ** 2 * a + 6 * (1 - t) * t * (b - a) + 3 * t * t * (1 - b);
-            slope = Math.max(slope, derivative(y1, y2) / derivative(x1, x2));
-        }
         const travel = Math.max(...result.ends.map((e) => e.x)) - Math.min(...result.ends.map((e) => e.x));
+        expect(
+            result.samples.some((s) => s.animations.length > 0),
+            'sampled active transition segments'
+        ).toBe(true);
+        for (const sample of result.samples) {
+            // Native iteration progress is eased and uses each actual transition duration,
+            // including shortened reversals. Callback wall time is only diagnostic.
+            expect(
+                Math.abs(sample.x - sample.expectedX),
+                'position follows active animation segment'
+            ).toBeLessThanOrEqual(1);
+        }
         for (let i = 1; i < result.samples.length; i++) {
             const a = result.samples[i - 1],
                 b = result.samples[i];
-            const elapsed = b.t - a.t;
-            // Full-rail travel and measured CSS time avoid fixed per-frame budgets on slow CI.
-            expect(Math.abs(b.x - a.x) / travel, 'elapsed-normalized continuous movement').toBeLessThanOrEqual(
-                (slope * elapsed) / result.duration + 0.025
-            );
+            expect(
+                Math.abs(b.x - a.x - (b.expectedX - a.expectedX)) / travel,
+                'continuous movement agrees with the animation timeline'
+            ).toBeLessThanOrEqual(0.025);
         }
         for (const r of result.requests)
             expect(Math.abs(r.afterX! - r.x) / travel, 'request boundary has no teleport').toBeLessThanOrEqual(0.025);
