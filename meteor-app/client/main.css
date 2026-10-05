@@ -82,7 +82,7 @@ body {
     background: rgb(255 255 255 / 20%);
 }
 
-.app-shell-menu {
+.app-shell-header .app-shell-menu {
     position: absolute;
     top: 100%;
     left: 16px;
@@ -90,6 +90,9 @@ body {
     display: flex;
     flex-direction: column;
     min-width: 220px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100dvh - var(--app-shell-header-height) - 8px);
+    overflow-y: auto;
     padding: 8px;
     background: #ffffff;
     border-radius: 8px;

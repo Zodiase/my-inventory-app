@@ -103,6 +103,12 @@ test.describe('top navigation layout', () => {
         await page.goto('/');
         await page.getByRole('button', { name: 'Open navigation menu' }).click();
         const menu = page.getByRole('navigation', { name: 'Primary navigation' });
+        await expect(menu).toBeInViewport({ ratio: 1 });
+        await menu.getByRole('link', { name: 'Tags' }).click();
+        await expect(page).toHaveURL(/\/tags$/);
+        await expect(page.getByRole('heading', { name: 'Tags', exact: true })).toBeVisible();
+        await expect(menu).toHaveCount(0);
+        await page.getByRole('button', { name: 'Open navigation menu' }).click();
         await expect(menu.getByRole('link', { name: 'Tags' })).toBeVisible();
         await expect(menu.getByRole('link', { name: 'Search' })).toHaveAttribute('href', '/search');
         await expect(menu.getByRole('link', { name: 'Data' })).toBeVisible();

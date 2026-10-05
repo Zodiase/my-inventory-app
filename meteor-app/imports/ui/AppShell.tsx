@@ -4,7 +4,7 @@
  */
 import { Box, Button, Header, Main, Nav, Text } from 'grommet';
 import { Apps, Configure, Menu, Search as SearchIcon, Tag as TagIcon } from 'grommet-icons';
-import React, { type ReactElement, type ReactNode, useEffect, useState } from 'react';
+import React, { type ReactElement, type ReactNode, useEffect, useRef, useState } from 'react';
 import { Link } from 'wouter';
 
 interface AppShellProps {
@@ -57,6 +57,7 @@ export const AppShell = ({
     searchHref = '/search',
 }: AppShellProps): ReactElement => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const menuButtonRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
     const isSearchRoute = location === '/search';
     useEffect(() => {
         if (isSearchRoute) setMenuOpen(false);
@@ -73,6 +74,9 @@ export const AppShell = ({
                     {!isSearchRoute && (
                         <>
                             <Button
+                                ref={(element: HTMLButtonElement | HTMLAnchorElement | null) => {
+                                    menuButtonRef.current = element;
+                                }}
                                 plain
                                 icon={<Menu color="white" />}
                                 aria-label="Open navigation menu"
@@ -96,33 +100,43 @@ export const AppShell = ({
                         </Link>
                     )}
                 </Box>
+                {menuOpen && !isSearchRoute && (
+                    <Nav
+                        background="white"
+                        aria-label="Primary navigation"
+                        className="app-shell-menu"
+                        onKeyDown={(event) => {
+                            if (event.key === 'Escape') {
+                                event.preventDefault();
+                                setMenuOpen(false);
+                                menuButtonRef.current?.focus();
+                            }
+                        }}
+                    >
+                        {navItems.map((item) => {
+                            const active = item.isActive(location);
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    aria-current={getAriaCurrent(active)}
+                                    className={`app-shell-menu-link${active ? ' app-shell-menu-link-active' : ''}`}
+                                    onClick={() => {
+                                        setMenuOpen(false);
+                                    }}
+                                >
+                                    <Box aria-hidden="true" className="app-shell-nav-link-icon">
+                                        {item.icon}
+                                    </Box>
+                                    <Text as="span" weight={active ? 'bold' : 'normal'}>
+                                        {item.label}
+                                    </Text>
+                                </Link>
+                            );
+                        })}
+                    </Nav>
+                )}
             </Header>
-
-            {menuOpen && !isSearchRoute && (
-                <Nav aria-label="Primary navigation" className="app-shell-menu">
-                    {navItems.map((item) => {
-                        const active = item.isActive(location);
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                aria-current={getAriaCurrent(active)}
-                                className={`app-shell-menu-link${active ? ' app-shell-menu-link-active' : ''}`}
-                                onClick={() => {
-                                    setMenuOpen(false);
-                                }}
-                            >
-                                <Box aria-hidden="true" className="app-shell-nav-link-icon">
-                                    {item.icon}
-                                </Box>
-                                <Text as="span" weight={active ? 'bold' : 'normal'}>
-                                    {item.label}
-                                </Text>
-                            </Link>
-                        );
-                    })}
-                </Nav>
-            )}
 
             <Main
                 pad="medium"
