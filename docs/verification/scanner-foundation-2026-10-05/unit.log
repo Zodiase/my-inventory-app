@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: F01/F09 new epoch cancels pending and rejects old results; repeated mode entry is idempotent
+ok 1 - F01/F09 new epoch cancels pending and rejects old results; repeated mode entry is idempotent
+  ---
+  duration_ms: 1.452458
+  type: 'test'
+  ...
+# Subtest: F02 literal UUID case and numeric zeros survive, product is not an owned identity
+ok 2 - F02 literal UUID case and numeric zeros survive, product is not an owned identity
+  ---
+  duration_ms: 0.215875
+  type: 'test'
+  ...
+# Subtest: F03 grammar rejects empty, whitespace, truncated, control, URLs and unknown action versions
+ok 3 - F03 grammar rejects empty, whitespace, truncated, control, URLs and unknown action versions
+  ---
+  duration_ms: 0.057959
+  type: 'test'
+  ...
+# Subtest: F04 clean pause resumes immediately; interrupted partial requires a discarded boundary
+ok 4 - F04 clean pause resumes immediately; interrupted partial requires a discarded boundary
+  ---
+  duration_ms: 0.090792
+  type: 'test'
+  ...
+# Subtest: F05/F07 doubled empty delimiters never duplicate; identical reads remain distinct
+ok 5 - F05/F07 doubled empty delimiters never duplicate; identical reads remain distinct
+  ---
+  duration_ms: 0.066041
+  type: 'test'
+  ...
+# Subtest: F08 capture ABC resolves C/A/B without reordering or replacing latest evidence
+ok 6 - F08 capture ABC resolves C/A/B without reordering or replacing latest evidence
+  ---
+  duration_ms: 0.072958
+  type: 'test'
+  ...
+# Subtest: F12 scan commands are unavailable off/paused, reserved invalid verbs never reach resolution
+ok 7 - F12 scan commands are unavailable off/paused, reserved invalid verbs never reach resolution
+  ---
+  duration_ms: 0.051542
+  type: 'test'
+  ...
+# Subtest: F13 every allowlisted command and tap have matching semantic mode and capture effects
+ok 8 - F13 every allowlisted command and tap have matching semantic mode and capture effects
+  ---
+  duration_ms: 0.111
+  type: 'test'
+  ...
+# Subtest: F15 retry links original, retains failed outcome, rejects previous attempt and cancellation results
+ok 9 - F15 retry links original, retains failed outcome, rejects previous attempt and cancellation results
+  ---
+  duration_ms: 0.263416
+  type: 'test'
+  ...
+# Subtest: F16 pending backpressure is visible and no unseen queued read survives resume
+ok 10 - F16 pending backpressure is visible and no unseen queued read survives resume
+  ---
+  duration_ms: 0.29075
+  type: 'test'
+  ...
+# Subtest: record bound also applies to repeated interruptions and discarded reads
+ok 11 - record bound also applies to repeated interruptions and discarded reads
+  ---
+  duration_ms: 0.285666
+  type: 'test'
+  ...
+# Subtest: targeted negative controls fail at partial concat, stale epoch, outside command and duplicate delimiter guards
+ok 12 - targeted negative controls fail at partial concat, stale epoch, outside command and duplicate delimiter guards
+  ---
+  duration_ms: 33.791667
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 246.951125

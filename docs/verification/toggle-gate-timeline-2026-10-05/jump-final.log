@@ -1,0 +1,90 @@
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:23938) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:23938) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:200:9 › CSS-timed in-flight reversals preserve handle identity and destination ltr
+[1A[2K  1) [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:200:9 › CSS-timed in-flight reversals preserve handle identity and destination ltr 
+
+    Error: request boundary has no teleport
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m0.025[39m
+    Received:    [31m0.650161148549663[39m
+
+      359 |         }
+      360 |         for (const r of result.requests)
+    > 361 |             expect(Math.abs(r.afterX! - r.x) / travel, 'request boundary has no teleport').toBeLessThanOrEqual(0.025);
+          |                                                                                            ^
+      362 |         const final = result.samples.at(-1)!;
+      363 |         expect(final.state).toBe(sequence.at(-1));
+      364 |         expect(
+        at /Volumes/Expansion/workspace/inventory-toggle-gate-timeline/tests/e2e/storybook/ToggleInvariants.spec.ts:361:92
+
+    attachment #1: request-correlated-trace (application/json) ─────────────────────────────────────
+    test-results/storybook-ToggleInvariants-d53f2-dentity-and-destination-ltr-storybook-chromium/attachments/request-correlated-trace-b265716a7da10811d6b900226dae1a96346e8277.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ToggleInvariants-d53f2-dentity-and-destination-ltr-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ToggleInvariants-d53f2-dentity-and-destination-ltr-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/storybook-ToggleInvariants-d53f2-dentity-and-destination-ltr-storybook-chromium/error-context.md
+
+
+[1A[2K(node:23944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:23944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[2/2] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:200:9 › CSS-timed in-flight reversals preserve handle identity and destination rtl
+[1A[2K  2) [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:200:9 › CSS-timed in-flight reversals preserve handle identity and destination rtl 
+
+    Error: request boundary has no teleport
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m0.025[39m
+    Received:    [31m0.650161148549663[39m
+
+      359 |         }
+      360 |         for (const r of result.requests)
+    > 361 |             expect(Math.abs(r.afterX! - r.x) / travel, 'request boundary has no teleport').toBeLessThanOrEqual(0.025);
+          |                                                                                            ^
+      362 |         const final = result.samples.at(-1)!;
+      363 |         expect(final.state).toBe(sequence.at(-1));
+      364 |         expect(
+        at /Volumes/Expansion/workspace/inventory-toggle-gate-timeline/tests/e2e/storybook/ToggleInvariants.spec.ts:361:92
+
+    attachment #1: request-correlated-trace (application/json) ─────────────────────────────────────
+    test-results/storybook-ToggleInvariants-a8a2c-dentity-and-destination-rtl-storybook-chromium/attachments/request-correlated-trace-b47eb178843e0b049902e8dac3bf9e2529c99b05.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ToggleInvariants-a8a2c-dentity-and-destination-rtl-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ToggleInvariants-a8a2c-dentity-and-destination-rtl-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/storybook-ToggleInvariants-a8a2c-dentity-and-destination-rtl-storybook-chromium/error-context.md
+
+
+[1A[2K  2 failed
+    [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:200:9 › CSS-timed in-flight reversals preserve handle identity and destination ltr 
+    [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:200:9 › CSS-timed in-flight reversals preserve handle identity and destination rtl 

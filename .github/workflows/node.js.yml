@@ -262,7 +262,29 @@ jobs:
             - run: npm ci --ignore-scripts --prefix meteor-app
             - run: npx playwright install --with-deps chromium webkit
             - run: npm run test:e2e:storybook -- --project=storybook-chromium --workers=1 --reporter=line
-            - run: npx playwright test tests/e2e/storybook/ToggleRegression.webkit.spec.ts --project=storybook-webkit --workers=1 --reporter=line
+            - name: Retain Storybook results and failure diagnostics
+              if: always()
+              uses: actions/upload-artifact@v6
+              with:
+                  name: storybook-e2e-results
+                  path: |
+                      test-results/
+                      playwright-report/
+                  if-no-files-found: warn
+                  retention-days: 14
+            - name: Run Storybook WebKit smoke
+              id: storybook-webkit
+              run: npx playwright test tests/e2e/storybook/ToggleRegression.webkit.spec.ts --project=storybook-webkit --workers=1 --reporter=line
+            - name: Retain Storybook WebKit results
+              if: always() && steps.storybook-webkit.outcome != 'skipped'
+              uses: actions/upload-artifact@v6
+              with:
+                  name: storybook-webkit-results
+                  path: |
+                      test-results/
+                      playwright-report/
+                  if-no-files-found: warn
+                  retention-days: 14
 
     agent-acceptance:
         name: Agent search acceptance

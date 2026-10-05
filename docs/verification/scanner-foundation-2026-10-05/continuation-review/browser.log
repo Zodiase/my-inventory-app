@@ -1,0 +1,34 @@
+
+Running 22 tests using 1 worker
+
+[1A[2K(node:10847) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:10847) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:25:5 › scoped keyboard frames preserve repeats, paste provenance, invalid payloads and empty delimiters
+[1A[2K[2/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:46:5 › clean-boundary pause resumes ready; partial timeout drains and never resolves the recovery read
+[1A[2K[3/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:70:5 › ordinary input, IME, navigation, dialog, window blur and visibility never auto-rearm
+[1A[2K[4/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:104:5 › out-of-order resolution, retry, cancellation and exit keep capture evidence and session boundaries
+[1A[2K[5/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:137:5 › command and tap share semantic dispatcher, wrong kinds remain classified, capacity is explicit
+[1A[2K[6/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:169:5 › page navigation never replays reads or resumes capture on browser return
+[1A[2K[7/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:181:5 › nonterminating keys, modifiers and key repeat do not complete a frame
+[1A[2K[8/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:203:5 › textarea and contenteditable focus pause capture while retaining ordinary editing
+[1A[2K[9/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:228:5 › unknown identity, offline and timeout faults remain resolution failures without navigation or writes
+[1A[2K[10/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:257:5 › full history retries the existing record; full pending queue visibly blocks until cancellation
+[1A[2K[11/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 1280x720 text 1
+[1A[2K[12/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 1280x720 text 1.25
+[1A[2K[13/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 820x900 text 1
+[1A[2K[14/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 820x900 text 1.25
+[1A[2K[15/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 390x844 text 1
+[1A[2K[16/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 390x844 text 1.25
+[1A[2K[17/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 390x480 text 1
+[1A[2K[18/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 390x480 text 1.25
+[1A[2K[19/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:377:5 › same-input command cancels pending epoch and immediately captures next scan without a tap
+[1A[2K[20/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:394:9 › live hidden context refuses a command even before lifecycle pause fires
+[1A[2K[21/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:394:9 › live unfocused-document context refuses a command even before lifecycle pause fires
+[1A[2K[22/22] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:394:9 › live dialog context refuses a command even before lifecycle pause fires
+[1A[2K  22 passed (28.0s)

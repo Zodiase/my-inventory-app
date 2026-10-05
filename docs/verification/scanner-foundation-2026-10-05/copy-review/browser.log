@@ -1,0 +1,30 @@
+
+Running 18 tests using 1 worker
+
+[1A[2K(node:403) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:403) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:25:5 › scoped keyboard frames preserve repeats, paste provenance, invalid payloads and empty delimiters
+[1A[2K[2/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:46:5 › clean-boundary pause resumes ready; partial timeout drains and never resolves the recovery read
+[1A[2K[3/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:70:5 › ordinary input, IME, navigation, dialog, window blur and visibility never auto-rearm
+[1A[2K[4/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:104:5 › out-of-order resolution, retry, cancellation and exit keep capture evidence and session boundaries
+[1A[2K[5/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:137:5 › command and tap share semantic dispatcher, wrong kinds remain classified, capacity is explicit
+[1A[2K[6/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:163:5 › page navigation never replays reads or resumes capture on browser return
+[1A[2K[7/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:175:5 › nonterminating keys, modifiers and key repeat do not complete a frame
+[1A[2K[8/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:197:5 › textarea and contenteditable focus pause capture while retaining ordinary editing
+[1A[2K[9/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:222:5 › unknown identity, offline and timeout faults remain resolution failures without navigation or writes
+[1A[2K[10/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:251:5 › full history retries the existing record; full pending queue visibly blocks until cancellation
+[1A[2K[11/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:330:13 › manager proof has readable controls, scroll access and no overflow 1280x720 text 1
+[1A[2K[12/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:330:13 › manager proof has readable controls, scroll access and no overflow 1280x720 text 1.25
+[1A[2K[13/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:330:13 › manager proof has readable controls, scroll access and no overflow 820x900 text 1
+[1A[2K[14/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:330:13 › manager proof has readable controls, scroll access and no overflow 820x900 text 1.25
+[1A[2K[15/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:330:13 › manager proof has readable controls, scroll access and no overflow 390x844 text 1
+[1A[2K[16/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:330:13 › manager proof has readable controls, scroll access and no overflow 390x844 text 1.25
+[1A[2K[17/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:330:13 › manager proof has readable controls, scroll access and no overflow 390x480 text 1
+[1A[2K[18/18] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:330:13 › manager proof has readable controls, scroll access and no overflow 390x480 text 1.25
+[1A[2K  18 passed (24.8s)
