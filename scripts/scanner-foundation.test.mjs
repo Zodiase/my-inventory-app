@@ -230,3 +230,82 @@ test('F15/F16 existing-record retry retains full history and shares explicit pen
     assert.equal(retryBlockReason(queued, queued.reads[0]), undefined);
     assert.equal(reduce(queued, { type: 'retry', id: queued.reads[0].id }).reads[0].attempt, 2);
 });
+
+test('verified same-input scan transitions continue, cancel old epoch and accept the next frame', () => {
+    let s = scan(start(), codes[0]);
+    const old = s.reads[0];
+    const safeScan = (state, value) =>
+        reduce(reduce(state, { type: 'input', value }), {
+            type: 'delimiter',
+            continuationAllowed: true,
+        });
+    s = safeScan(s, 'inventory-action:v1:show-actions');
+    assert.equal(s.capture, 'ready');
+    assert.equal(s.epoch, old.epoch + 1);
+    assert.equal(s.reads[0].outcome, 'cancelled');
+    assert.deepEqual(result(s, old), s);
+    const epoch = s.epoch;
+    s = safeScan(s, 'inventory-action:v1:show-actions');
+    assert.equal(s.epoch, epoch);
+    s = safeScan(s, codes[1]);
+    assert.equal(s.reads.at(-1).epoch, epoch);
+    assert.equal(s.reads.at(-1).outcome, 'pending');
+    assert.equal(safeScan(s, 'inventory-action:v1:pause').capture, 'paused');
+    assert.equal(safeScan(s, 'inventory-action:v1:exit').capture, 'off');
+});
+test('continuation authorization cannot bypass interruption, partial boundary or tap transitions', () => {
+    const transition = (s, origin = 'scan') =>
+        reduce(s, {
+            type: 'action',
+            action: 'show-actions',
+            origin,
+            continuationAllowed: true,
+        });
+    assert.equal(transition(start(), 'tap').capture, 'paused');
+    assert.equal(transition(reduce(start(), { type: 'input', value: 'partial' })).capture, 'paused');
+    const paused = reduce(start(), { type: 'pause', reason: 'window blur' });
+    assert.deepEqual(transition(paused), paused);
+    assert.equal(transition({ ...start(), uncertain: true }).capture, 'paused');
+    const draining = action(
+        reduce(reduce(start(), { type: 'input', value: 'partial' }), {
+            type: 'pause',
+            reason: 'blur',
+        }),
+        'resume'
+    );
+    assert.equal(draining.capture, 'draining');
+    assert.deepEqual(transition(draining), draining);
+    const discarded = reduce(reduce(draining, { type: 'input', value: 'inventory-action:v1:show-actions' }), {
+        type: 'delimiter',
+        continuationAllowed: true,
+    });
+    assert.equal(discarded.mode, 'inspect-demo');
+    assert.equal(discarded.reads.at(-1).outcome, 'discarded');
+    for (const continuationAllowed of [undefined, false]) {
+        const s = reduce(reduce(start(), { type: 'input', value: 'inventory-action:v1:show-actions' }), {
+            type: 'delimiter',
+            continuationAllowed,
+        });
+        assert.equal(s.capture, 'paused');
+    }
+});
+
+test('negative control detects removal of verified-context gate', async () => {
+    const mutated = source.replace('event.continuationAllowed === true &&', 'true &&');
+    assert.notEqual(mutated, source);
+    const unsafe = await load(mutated);
+    const check = (model) => {
+        const started = model.reduce(model.initialState(), {
+            type: 'action',
+            action: 'start',
+            origin: 'tap',
+            localGesture: true,
+        });
+        const s = model.reduce(model.reduce(started, { type: 'input', value: 'inventory-action:v1:show-actions' }), {
+            type: 'delimiter',
+        });
+        assert.equal(s.capture, 'paused');
+    };
+    check({ reduce, initialState });
+    assert.throws(() => check(unsafe), /ready/);
+});

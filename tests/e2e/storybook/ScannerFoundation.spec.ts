@@ -144,11 +144,17 @@ test('command and tap share semantic dispatcher, wrong kinds remain classified, 
     await scan(page, codes[2]);
     await page.clock.fastForward(200);
     await expect(f.getByTestId('last-outcome')).toContainText('Wrong kind');
+    const sink = f.getByRole('textbox', { name: 'Synthetic scan input', exact: true });
+    const originalSink = await sink.elementHandle();
     await scan(page, 'inventory-action:v1:show-actions');
-    await expect(state(f)).toHaveText('paused');
-    await f.getByRole('button', { name: 'Resume', exact: true }).click();
+    await expect(state(f)).toHaveText('ready');
+    await expect(sink).toBeFocused();
     await scan(page, 'inventory-action:v1:inspect-demo');
-    await expect(state(f)).toHaveText('paused');
+    await expect(state(f)).toHaveText('ready');
+    expect(await sink.evaluate((input, original) => input === original, originalSink)).toBe(true);
+    await scan(page, codes[0]);
+    await page.clock.fastForward(200);
+    await expect(f.getByTestId('last-outcome')).toContainText('resolved');
     await f.getByRole('button', { name: 'inspect-demo', exact: true }).click();
     await history(f);
     await expect(f.getByTestId('action-history')).toContainText('scan');
@@ -367,3 +373,42 @@ for (const viewport of [
         });
     }
 }
+
+test('same-input command cancels pending epoch and immediately captures next scan without a tap', async ({ page }) => {
+    await page.clock.install();
+    const f = await open(page);
+    await f.getByRole('combobox', { name: 'Resolver fault' }).selectOption('slow');
+    await f.getByRole('button', { name: 'Start', exact: true }).click();
+    await scan(page, codes[0]);
+    await scan(page, 'inventory-action:v1:show-actions');
+    await expect(state(f)).toHaveText('ready');
+    await expect(f.getByRole('region', { name: 'Capture session' })).toContainText('Session 2');
+    await scan(page, codes[1]);
+    await page.clock.fastForward(6000);
+    await history(f);
+    await expect(f.getByTestId('read-record').first()).toContainText('cancelled');
+    await expect(f.getByTestId('read-record').last()).toContainText('resolved');
+    await expect(f.getByTestId('read-record').last()).toContainText(codes[1]);
+});
+for (const interrupted of ['hidden', 'unfocused-document', 'dialog'] as const)
+    test(`live ${interrupted} context refuses a command even before lifecycle pause fires`, async ({ page }) => {
+        const f = await open(page);
+        await f.getByRole('button', { name: 'Start', exact: true }).click();
+        await page.keyboard.type('inventory-action:v1:show-actions');
+        await f.getByRole('textbox', { name: 'Synthetic scan input', exact: true }).evaluate((input, interrupted) => {
+            if (interrupted === 'hidden')
+                Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+            if (interrupted === 'unfocused-document') document.hasFocus = () => false;
+            if (interrupted === 'dialog') {
+                const dialog = document.createElement('dialog');
+                dialog.setAttribute('open', '');
+                document.body.appendChild(dialog);
+            }
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+        }, interrupted);
+        await expect(state(f)).toHaveText('paused');
+        await expect(f.getByRole('region', { name: 'Capture session' })).toContainText('Session 1');
+        await expect(f.getByTestId('counters')).toContainText('Rejected 1');
+        await history(f);
+        await expect(f.getByTestId('action-history')).not.toContainText('show-actions');
+    });

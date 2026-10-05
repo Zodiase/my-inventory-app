@@ -39,7 +39,17 @@ export function attachCapture(input: HTMLInputElement, state: () => State, send:
         if (state().capture === 'off' || state().capture === 'paused') return;
         event.preventDefault();
         clear();
-        send({ type: 'delimiter' });
+        if (
+            !input.isConnected ||
+            document.activeElement !== input ||
+            document.hidden ||
+            !document.hasFocus() ||
+            document.querySelector('dialog[open]') !== null
+        ) {
+            pause('Capture context interrupted. Resume explicitly.');
+            return;
+        }
+        send({ type: 'delimiter', continuationAllowed: true });
         pasted = false;
     };
     const pause = (reason: string): void => {

@@ -71,9 +71,9 @@ export function classify(value: string): { kind: Kind; action?: Action } {
     return { kind: 'invalid' };
 }
 export type Event =
-    | { type: 'action'; action: Action; origin: 'tap' | 'scan'; localGesture?: boolean }
+    | { type: 'action'; action: Action; origin: 'tap' | 'scan'; localGesture?: boolean; continuationAllowed?: boolean }
     | { type: 'input'; value: string; pasted?: boolean }
-    | { type: 'delimiter' }
+    | { type: 'delimiter'; continuationAllowed?: boolean }
     | { type: 'pause'; reason: string }
     | { type: 'timeout' }
     | {
@@ -84,7 +84,9 @@ export type Event =
           outcome: 'resolved' | 'unknown' | 'error';
           detail: string;
       }
-    | { type: 'retry' | 'cancel' | 'correct'; id: string };
+    | { type: 'retry'; id: string }
+    | { type: 'cancel'; id: string }
+    | { type: 'correct'; id: string };
 function append(
     state: State,
     read: Omit<Read, 'id' | 'sequence' | 'epoch' | 'attempt' | 'corrected' | 'attempts'>
@@ -151,6 +153,15 @@ export function reduce(state: State, event: Event): State {
         if (action === 'start' && state.capture !== 'off') return state;
         if (action === 'resume' && state.capture !== 'paused') return state;
         if (state.capture === 'off' && action !== 'start') return state;
+        // Only the two read-only proof modes retain the same capture sink. A scoped
+        // adapter must verify live focus/visibility at a completed frame boundary.
+        const continueCapture =
+            origin === 'scan' &&
+            event.continuationAllowed === true &&
+            (action === 'inspect-demo' || action === 'show-actions') &&
+            state.capture === 'ready' &&
+            state.buffer === '' &&
+            !state.uncertain;
         let next = {
             ...state,
             actions: [...state.actions.slice(1 - limits.records), { action, origin, epoch: state.epoch }],
@@ -200,9 +211,11 @@ export function reduce(state: State, event: Event): State {
             ...(action !== state.mode
                 ? {
                       buffer: '',
-                      capture: 'paused',
+                      capture: continueCapture ? 'ready' : 'paused',
                       uncertain: next.uncertain,
-                      reason: 'Mode changed. Resume explicitly.',
+                      reason: continueCapture
+                          ? 'Mode changed. Ready for the next Enter-delimited synthetic read.'
+                          : 'Mode changed. Resume explicitly.',
                   }
                 : {}),
         };
@@ -300,14 +313,18 @@ export function reduce(state: State, event: Event): State {
                     ? 'Synthetic action dispatched.'
                     : 'Captured; awaiting read-only fixture.',
         });
-        if (classified.action !== undefined) return dispatchAction(next, classified.action, { origin: 'scan' });
+        if (classified.action !== undefined)
+            return dispatchAction(next, classified.action, {
+                origin: 'scan',
+                continuationAllowed: event.continuationAllowed === true,
+            });
         return next;
     }
 }
 export function dispatchAction(
     state: State,
     action: Action,
-    context: { origin: 'tap' | 'scan'; localGesture?: boolean }
+    context: { origin: 'tap' | 'scan'; localGesture?: boolean; continuationAllowed?: boolean }
 ): State {
     return reduce(state, { type: 'action', action, ...context });
 }

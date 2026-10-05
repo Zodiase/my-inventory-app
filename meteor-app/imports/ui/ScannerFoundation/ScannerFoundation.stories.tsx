@@ -21,6 +21,7 @@ const meta = {
                 'Status, next step, last outcome and Exit stay readable; vertical scrolling is allowed.',
                 'No horizontal document overflow. Touch targets are at least 44px; focus is visible.',
                 'Interrupted input shows a discarded boundary recovery before any successful capture.',
+                'A focused complete read-only mode command stays ready for the next scan; a real interruption shows explicit Resume.',
                 'All actions and proof controls remain usable at 125% text. No hardware or saved-inventory claim.',
             ],
         },
