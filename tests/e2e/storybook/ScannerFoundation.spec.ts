@@ -265,6 +265,11 @@ test('full history retries the existing record; full pending queue visibly block
     await expect(f.getByTestId('read-record')).toHaveCount(100);
     const last = f.getByTestId('read-record').last();
     await expect(last.getByRole('button', { name: 'Retry', exact: true })).toBeEnabled();
+    await expect(last.getByRole('button', { name: 'Cancel', exact: true })).toBeDisabled();
+    await expect(f.getByTestId('last-recovery-guidance')).toHaveText(
+        'Retry this failed read. Mark correction to flag this record.'
+    );
+    await expect(f.getByTestId('last-outcome')).not.toContainText('cancel');
     await last.getByRole('button', { name: 'Retry', exact: true }).click();
     await page.clock.fastForward(200);
     await expect(last).toContainText('attempt 2');
@@ -273,6 +278,17 @@ test('full history retries the existing record; full pending queue visibly block
     await last.getByRole('button', { name: 'Retry', exact: true }).click();
     await page.clock.fastForward(200);
     await expect(last).toContainText('Retry attempt limit reached.');
+    await expect(f.getByTestId('last-recovery-guidance')).toHaveText(
+        'Retry attempt limit reached. Mark correction to flag this record.'
+    );
+    await expect(last.getByTestId('read-recovery-guidance')).toHaveText(
+        'Retry attempt limit reached. Mark correction to flag this record.'
+    );
+    await last.getByRole('button', { name: 'Mark correction', exact: true }).click();
+    await expect(f.getByTestId('last-recovery-guidance')).toHaveText(
+        'Retry attempt limit reached. Correction already marked.'
+    );
+    await expect(last.getByRole('button', { name: 'Mark correction', exact: true })).toBeDisabled();
     await expect(last.getByRole('button', { name: 'Retry', exact: true })).toBeDisabled();
     await page.reload();
     await f.getByRole('combobox', { name: 'Resolver fault' }).selectOption('error');
@@ -289,6 +305,12 @@ test('full history retries the existing record; full pending queue visibly block
     }
     await f.getByText('Ordered capture evidence', { exact: true }).click();
     const failed = f.getByTestId('read-record').first();
+    await expect(f.getByTestId('last-recovery-guidance')).toHaveText(
+        'Wait for the result, or cancel this pending read.'
+    );
+    await expect(
+        f.getByTestId('read-record').last().getByRole('button', { name: 'Cancel', exact: true })
+    ).toBeEnabled();
     await expect(failed).toContainText('Pending queue full');
     await expect(failed.getByRole('button', { name: 'Retry', exact: true })).toBeDisabled();
     await f.getByTestId('read-record').last().getByRole('button', { name: 'Cancel', exact: true }).click();

@@ -19,7 +19,21 @@ import {
     type Event,
     type Action,
     type State,
+    type Read,
 } from './model';
+/** Live guidance follows current action guards; resolver evidence stays factual. */
+function recoveryGuidance(state: State, read: Read): string | undefined {
+    if (read.outcome === 'pending' && read.epoch === state.epoch)
+        return 'Wait for the result, or cancel this pending read.';
+    if (read.outcome !== 'error') return undefined;
+    const blocked = retryBlockReason(state, read);
+    const correction = read.corrected
+        ? 'Correction already marked.'
+        : read.epoch === state.epoch
+        ? 'Mark correction to flag this record.'
+        : 'Record retained for review.';
+    return `${blocked ?? 'Retry this failed read.'} ${correction}`;
+}
 const delays = { slow: 5000, orderSlots: 4, modulus: 3, step: 500, normal: 150, timeout: 3000 };
 const jsonIndent = 2;
 const Surface = styled.main`
@@ -154,7 +168,7 @@ export const ScannerFoundationProof = (): ReactElement => {
                                 ? 'Wrong kind for synthetic workflow; classification retained, no action.'
                                 : mode === 'normal' || mode === 'slow' || mode === 'reordered'
                                 ? fixture?.name ?? 'No matching synthetic fixture. No owned identity inferred.'
-                                : `Synthetic ${mode}; retry or cancel locally.`,
+                                : `Synthetic ${mode}. No inventory change.`,
                         });
                     },
                     mode === 'timeout' ? delays.timeout : delay
@@ -260,6 +274,9 @@ export const ScannerFoundationProof = (): ReactElement => {
                 <p data-testid="last-outcome">
                     {last === undefined ? 'No captures yet.' : `${last.id} · ${last.outcome} · ${last.detail}`}
                 </p>
+                {last !== undefined && recoveryGuidance(state, last) !== undefined && (
+                    <p data-testid="last-recovery-guidance">{recoveryGuidance(state, last)}</p>
+                )}
                 <p data-testid="counters">
                     Captured {captured.length} · Pending {captured.filter((r) => r.outcome === 'pending').length} ·
                     Resolved {captured.filter((r) => r.outcome === 'resolved').length} · Rejected{' '}
@@ -282,8 +299,10 @@ export const ScannerFoundationProof = (): ReactElement => {
                                     {read.attempts.map((a) => a.outcome).join(', ')}
                                     {read.corrected ? ' · marked for correction' : ''}
                                 </p>
-                                {read.outcome === 'error' && retryBlockReason(state, read) !== undefined && (
-                                    <p role="status">{retryBlockReason(state, read)}</p>
+                                {recoveryGuidance(state, read) !== undefined && (
+                                    <p role="status" data-testid="read-recovery-guidance">
+                                        {recoveryGuidance(state, read)}
+                                    </p>
                                 )}
                                 <Controls>
                                     <TouchButton

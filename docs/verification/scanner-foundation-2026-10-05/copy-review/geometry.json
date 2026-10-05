@@ -1,0 +1,498 @@
+[
+  {
+    "w": 1280,
+    "h": 720,
+    "scale": 1,
+    "state": "failed",
+    "guidance": "Retry this failed read. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 16,
+        "disabled": false,
+        "width": 80.9375,
+        "height": 44
+      },
+      {
+        "text": "Cancel",
+        "size": 16,
+        "disabled": true,
+        "width": 92.09375,
+        "height": 44
+      },
+      {
+        "text": "Mark correction",
+        "size": 16,
+        "disabled": false,
+        "width": 160.453125,
+        "height": 44
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 1280,
+    "h": 720,
+    "scale": 1,
+    "state": "attempt-limit",
+    "guidance": "Retry attempt limit reached. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 16,
+        "disabled": true,
+        "width": 80.9375,
+        "height": 44
+      },
+      {
+        "text": "Cancel",
+        "size": 16,
+        "disabled": true,
+        "width": 92.09375,
+        "height": 44
+      },
+      {
+        "text": "Mark correction",
+        "size": 16,
+        "disabled": false,
+        "width": 160.453125,
+        "height": 44
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 1280,
+    "h": 720,
+    "scale": 1.25,
+    "state": "failed",
+    "guidance": "Retry this failed read. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 20,
+        "disabled": false,
+        "width": 89.59375,
+        "height": 47
+      },
+      {
+        "text": "Cancel",
+        "size": 20,
+        "disabled": true,
+        "width": 103.4375,
+        "height": 47
+      },
+      {
+        "text": "Mark correction",
+        "size": 20,
+        "disabled": false,
+        "width": 185.59375,
+        "height": 47
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 1280,
+    "h": 720,
+    "scale": 1.25,
+    "state": "attempt-limit",
+    "guidance": "Retry attempt limit reached. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 20,
+        "disabled": true,
+        "width": 89.59375,
+        "height": 47
+      },
+      {
+        "text": "Cancel",
+        "size": 20,
+        "disabled": true,
+        "width": 103.4375,
+        "height": 47
+      },
+      {
+        "text": "Mark correction",
+        "size": 20,
+        "disabled": false,
+        "width": 185.59375,
+        "height": 47
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 820,
+    "h": 900,
+    "scale": 1,
+    "state": "failed",
+    "guidance": "Retry this failed read. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 16,
+        "disabled": false,
+        "width": 80.9375,
+        "height": 44
+      },
+      {
+        "text": "Cancel",
+        "size": 16,
+        "disabled": true,
+        "width": 92.09375,
+        "height": 44
+      },
+      {
+        "text": "Mark correction",
+        "size": 16,
+        "disabled": false,
+        "width": 160.453125,
+        "height": 44
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 820,
+    "h": 900,
+    "scale": 1,
+    "state": "attempt-limit",
+    "guidance": "Retry attempt limit reached. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 16,
+        "disabled": true,
+        "width": 80.9375,
+        "height": 44
+      },
+      {
+        "text": "Cancel",
+        "size": 16,
+        "disabled": true,
+        "width": 92.09375,
+        "height": 44
+      },
+      {
+        "text": "Mark correction",
+        "size": 16,
+        "disabled": false,
+        "width": 160.453125,
+        "height": 44
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 820,
+    "h": 900,
+    "scale": 1.25,
+    "state": "failed",
+    "guidance": "Retry this failed read. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 20,
+        "disabled": false,
+        "width": 89.59375,
+        "height": 47
+      },
+      {
+        "text": "Cancel",
+        "size": 20,
+        "disabled": true,
+        "width": 103.4375,
+        "height": 47
+      },
+      {
+        "text": "Mark correction",
+        "size": 20,
+        "disabled": false,
+        "width": 185.59375,
+        "height": 47
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 820,
+    "h": 900,
+    "scale": 1.25,
+    "state": "attempt-limit",
+    "guidance": "Retry attempt limit reached. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 20,
+        "disabled": true,
+        "width": 89.59375,
+        "height": 47
+      },
+      {
+        "text": "Cancel",
+        "size": 20,
+        "disabled": true,
+        "width": 103.4375,
+        "height": 47
+      },
+      {
+        "text": "Mark correction",
+        "size": 20,
+        "disabled": false,
+        "width": 185.59375,
+        "height": 47
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "scale": 1,
+    "state": "failed",
+    "guidance": "Retry this failed read. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 16,
+        "disabled": false,
+        "width": 80.9375,
+        "height": 44
+      },
+      {
+        "text": "Cancel",
+        "size": 16,
+        "disabled": true,
+        "width": 92.09375,
+        "height": 44
+      },
+      {
+        "text": "Mark correction",
+        "size": 16,
+        "disabled": false,
+        "width": 160.453125,
+        "height": 44
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "scale": 1,
+    "state": "attempt-limit",
+    "guidance": "Retry attempt limit reached. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 16,
+        "disabled": true,
+        "width": 80.9375,
+        "height": 44
+      },
+      {
+        "text": "Cancel",
+        "size": 16,
+        "disabled": true,
+        "width": 92.09375,
+        "height": 44
+      },
+      {
+        "text": "Mark correction",
+        "size": 16,
+        "disabled": false,
+        "width": 160.453125,
+        "height": 44
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "scale": 1.25,
+    "state": "failed",
+    "guidance": "Retry this failed read. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 20,
+        "disabled": false,
+        "width": 89.59375,
+        "height": 47
+      },
+      {
+        "text": "Cancel",
+        "size": 20,
+        "disabled": true,
+        "width": 103.4375,
+        "height": 47
+      },
+      {
+        "text": "Mark correction",
+        "size": 20,
+        "disabled": false,
+        "width": 185.59375,
+        "height": 47
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "scale": 1.25,
+    "state": "attempt-limit",
+    "guidance": "Retry attempt limit reached. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 20,
+        "disabled": true,
+        "width": 89.59375,
+        "height": 47
+      },
+      {
+        "text": "Cancel",
+        "size": 20,
+        "disabled": true,
+        "width": 103.4375,
+        "height": 47
+      },
+      {
+        "text": "Mark correction",
+        "size": 20,
+        "disabled": false,
+        "width": 185.59375,
+        "height": 47
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 480,
+    "scale": 1,
+    "state": "failed",
+    "guidance": "Retry this failed read. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 16,
+        "disabled": false,
+        "width": 80.9375,
+        "height": 44
+      },
+      {
+        "text": "Cancel",
+        "size": 16,
+        "disabled": true,
+        "width": 92.09375,
+        "height": 44
+      },
+      {
+        "text": "Mark correction",
+        "size": 16,
+        "disabled": false,
+        "width": 160.453125,
+        "height": 44
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 480,
+    "scale": 1,
+    "state": "attempt-limit",
+    "guidance": "Retry attempt limit reached. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 16,
+        "disabled": true,
+        "width": 80.9375,
+        "height": 44
+      },
+      {
+        "text": "Cancel",
+        "size": 16,
+        "disabled": true,
+        "width": 92.09375,
+        "height": 44
+      },
+      {
+        "text": "Mark correction",
+        "size": 16,
+        "disabled": false,
+        "width": 160.453125,
+        "height": 44
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 480,
+    "scale": 1.25,
+    "state": "failed",
+    "guidance": "Retry this failed read. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 20,
+        "disabled": false,
+        "width": 89.59375,
+        "height": 47
+      },
+      {
+        "text": "Cancel",
+        "size": 20,
+        "disabled": true,
+        "width": 103.4375,
+        "height": 47
+      },
+      {
+        "text": "Mark correction",
+        "size": 20,
+        "disabled": false,
+        "width": 185.59375,
+        "height": 47
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 480,
+    "scale": 1.25,
+    "state": "attempt-limit",
+    "guidance": "Retry attempt limit reached. Mark correction to flag this record.",
+    "controls": [
+      {
+        "text": "Retry",
+        "size": 20,
+        "disabled": true,
+        "width": 89.59375,
+        "height": 47
+      },
+      {
+        "text": "Cancel",
+        "size": 20,
+        "disabled": true,
+        "width": 103.4375,
+        "height": 47
+      },
+      {
+        "text": "Mark correction",
+        "size": 20,
+        "disabled": false,
+        "width": 185.59375,
+        "height": 47
+      }
+    ],
+    "overflow": false
+  }
+]

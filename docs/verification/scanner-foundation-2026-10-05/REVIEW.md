@@ -134,3 +134,14 @@ review and designer acceptance are still required before integration.
 Review the frozen PR candidate with the existing design and verification owners.
 Keep bd-un3 open. Do not merge into the product flow, deploy, configure hardware,
 or expand PR177 while those acceptance and follow-on decisions remain pending.
+
+
+## Subsequent recovery-copy correction
+
+Designer found factual error text offered Cancel on a failed record, where Cancel
+is intentionally disabled. Resolver detail now states only failure/no inventory
+change. Live guidance beside last outcome and each record follows existing Retry,
+epoch and correction guards; pending reads alone offer Cancel. Attempt limit and
+already-marked correction are explicit. No model/adapter/action guard changed.
+See copy-review/REVIEW.md for18 passing browser assertions, scoped types/lint,
+16 full-manager captures+8 crops personally inspected, and remaining review gates.
