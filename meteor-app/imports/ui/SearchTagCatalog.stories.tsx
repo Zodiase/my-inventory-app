@@ -62,7 +62,23 @@ const Example = ({ selectedOnly = false }: { selectedOnly?: boolean }): React.Re
 const meta = {
     title: 'UI/SearchTagCatalog',
     component: Example,
-    parameters: { layout: 'padded' },
+    parameters: {
+        layout: 'padded',
+        review: {
+            purpose: 'Shared grouped tag catalog and selected-only state in a bounded panel.',
+            expectedComposition:
+                'Short labels keep compact rows; longer names and ancestry wrap fully beside a centered 162x29 rail without clipped identity. Each toggle choice retains 44px hit bounds and neighboring rows remain separated.',
+            requiredViewports: ['1280x720', '820x900', '390x844', '390x480'],
+            expectedResponsiveChanges:
+                'Panel uses available width up to 390px; header may wrap on narrow screens. Inside the fixed-height panel only the list scrolls; Find and selected-only remain reachable. A shorter Storybook preview may scroll the unchanged 560px panel into view.',
+            interactionChecks: [
+                'Find Camera and toggle Include/Off/Exclude; clear Find and scroll to the last row.',
+                'Enable selected-only and clear a selection, checking focus and recovery.',
+            ],
+            knownExclusions:
+                'Synthetic tags, no Meteor persistence. Geometry retained from current design, not subjective sizing/motion approval.',
+        },
+    },
 } satisfies Meta<typeof Example>;
 export default meta;
 type Story = StoryObj<typeof meta>;

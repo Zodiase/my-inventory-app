@@ -338,12 +338,13 @@ export const ToggleRegression: Story = {
             purpose: 'Objective toggle mechanics and neighboring style isolation in the real Search composition.',
             requiredViewports: ['1280x720', '820x900', '390x844', '390x480'],
             expectedComposition:
-                'Production theme, shell, banner, catalog and applied chips remain bounded. Long tag names truncate without covering three direct choices. Controls retain intended styles: banner controls and chips have borders, exit/catalog groups/plain action do not. Rail, thumb and touch area are distinct; current proportions are characterization, not approved design.',
+                'Production theme, shell, banner, catalog and applied chips remain bounded. Long tag names and their visible ancestry wrap completely without covering three direct choices. Rows grow around the text while the slim162x29 rail remains centered beside it with44px hit regions. Controls retain intended styles: banner controls and chips have borders, exit/catalog groups/plain action do not. Rail, thumb and touch area are distinct; current proportions are characterization, not approved design.',
             responsiveChanges:
-                'Phone collapses header menus; many catalog rows scroll inside the menu with Find reachable. Wide controls remain separated; rows do not overlap hit regions.',
+                'Phone collapses header menus; many catalog rows scroll inside the menu with Find reachable. Text wraps within remaining row width; short rows retain compact density and multiline rows grow. Wide controls remain separated; rows do not overlap hit regions.',
             interactionChecks: [
                 'All six transitions and rapid reversals keep one contained thumb and stationary labels.',
                 'Pointer, keyboard and WebKit touch choose states independently; Escape returns focus and keeps query.',
+                'Find Camera and read the complete long name without hovering; select Include and clear Find, scroll the catalog, then recover with Escape.',
                 'RTL and reduced motion retain final-state correctness.',
                 'Visit enlarged/compact proofs and reorder actual toggle styles without changing neighbors.',
             ],
