@@ -1,6 +1,18 @@
-import { expect, test } from '@playwright/test';
+import { expect, test as base } from '@playwright/test';
 
 import { callMeteorMethod, resetDatabase, waitForMeteorReady } from '../helpers/database';
+import { observeMeteorLoading } from '../helpers/meteor-loading-diagnostics.mjs';
+
+const test = base.extend<{ loadingEvidence: void }>({
+    loadingEvidence: [
+        async ({ page }, use, testInfo) => {
+            const observer = observeMeteorLoading(page);
+            await use();
+            await observer.finish(testInfo);
+        },
+        { auto: true },
+    ],
+});
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');

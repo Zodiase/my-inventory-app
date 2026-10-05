@@ -1,0 +1,17 @@
+
+Running 5 tests using 1 worker
+
+[1A[2K(node:23172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:23172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/5] [chromium] › tests/e2e/app/meteor-loading-diagnostics.spec.ts:10:5 › retains redacted failure readiness evidence without swallowing the failed assertion
+[1A[2K[2/5] [chromium] › tests/e2e/app/meteor-loading-diagnostics.spec.ts:91:5 › does not attach diagnostics for a passing journey and removes its listeners
+[1A[2K[3/5] [chromium] › tests/e2e/app/top-navigation-layout.spec.ts:26:5 › top navigation layout › keeps the root view title without a duplicate breadcrumb
+[1A[2K[4/5] [chromium] › tests/e2e/app/top-navigation-layout.spec.ts:48:5 › top navigation layout › shows one root icon and parent names in nested breadcrumbs
+[1A[2K[5/5] [chromium] › tests/e2e/app/top-navigation-layout.spec.ts:86:5 › top navigation layout › keeps secondary navigation available in the hamburger menu
+[1A[2K  5 passed (6.7s)
