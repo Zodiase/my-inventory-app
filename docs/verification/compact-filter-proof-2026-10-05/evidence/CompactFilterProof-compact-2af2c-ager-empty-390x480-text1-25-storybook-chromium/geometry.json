@@ -1,0 +1,26 @@
+{
+  "browser": {
+    "width": 390,
+    "height": 480
+  },
+  "surface": "manager",
+  "scale": 1.25,
+  "controls": [],
+  "height": 80,
+  "owners": 0,
+  "completeRows": 0,
+  "sheetBottom": 349,
+  "viewport": 399,
+  "viewportWidth": 390,
+  "sheet": {
+    "x": 12,
+    "y": 60,
+    "w": 366,
+    "h": 289
+  },
+  "header": 53,
+  "catalogHeader": 52,
+  "find": 44,
+  "width": 364,
+  "clientWidth": 364
+}

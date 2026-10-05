@@ -1,0 +1,62 @@
+
+Running 50 tests using 1 worker
+
+[1A[2K(node:88274) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:88274) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager many-tags 1280x720 text1
+[1A[2K[2/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager many-tags 1280x720 text1.25
+[1A[2K[3/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager many-tags 820x900 text1
+[1A[2K[4/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager many-tags 820x900 text1.25
+[1A[2K[5/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager many-tags 390x844 text1
+[1A[2K[6/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager many-tags 390x844 text1.25
+[1A[2K[7/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager many-tags 390x480 text1
+[1A[2K[8/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager many-tags 390x480 text1.25
+[1A[2K[9/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager empty 1280x720 text1
+[1A[2K[10/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager empty 1280x720 text1.25
+[1A[2K[11/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager empty 820x900 text1
+[1A[2K[12/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager empty 820x900 text1.25
+[1A[2K[13/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager empty 390x844 text1
+[1A[2K[14/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager empty 390x844 text1.25
+[1A[2K[15/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager empty 390x480 text1
+[1A[2K[16/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager empty 390x480 text1.25
+[1A[2K[17/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager selected-only 1280x720 text1
+[1A[2K[18/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager selected-only 1280x720 text1.25
+[1A[2K[19/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager selected-only 820x900 text1
+[1A[2K[20/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager selected-only 820x900 text1.25
+[1A[2K[21/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager selected-only 390x844 text1
+[1A[2K[22/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager selected-only 390x844 text1.25
+[1A[2K[23/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager selected-only 390x480 text1
+[1A[2K[24/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof manager selected-only 390x480 text1.25
+[1A[2K[25/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition many-tags 1280x720 text1
+[1A[2K[26/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition many-tags 1280x720 text1.25
+[1A[2K[27/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition many-tags 820x900 text1
+[1A[2K[28/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition many-tags 820x900 text1.25
+[1A[2K[29/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition many-tags 390x844 text1
+[1A[2K[30/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition many-tags 390x844 text1.25
+[1A[2K[31/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition many-tags 390x480 text1
+[1A[2K[32/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition many-tags 390x480 text1.25
+[1A[2K[33/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition empty 1280x720 text1
+[1A[2K[34/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition empty 1280x720 text1.25
+[1A[2K[35/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition empty 820x900 text1
+[1A[2K[36/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition empty 820x900 text1.25
+[1A[2K[37/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition empty 390x844 text1
+[1A[2K[38/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition empty 390x844 text1.25
+[1A[2K[39/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition empty 390x480 text1
+[1A[2K[40/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition empty 390x480 text1.25
+[1A[2K[41/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition selected-only 1280x720 text1
+[1A[2K[42/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition selected-only 1280x720 text1.25
+[1A[2K[43/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition selected-only 820x900 text1
+[1A[2K[44/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition selected-only 820x900 text1.25
+[1A[2K[45/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition selected-only 390x844 text1
+[1A[2K[46/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition selected-only 390x844 text1.25
+[1A[2K[47/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition selected-only 390x480 text1
+[1A[2K[48/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:13:21 › compact proof composition selected-only 390x480 text1.25
+[1A[2K[49/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:154:9 › one-owner fallback composition390x240 text1
+[1A[2K[50/50] [storybook-chromium] › tests/e2e/storybook/CompactFilterProof.spec.ts:154:9 › one-owner fallback composition390x240 text1.25
+[1A[2K  50 passed (35.2s)
