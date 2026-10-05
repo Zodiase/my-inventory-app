@@ -1,0 +1,4418 @@
+[
+  {
+    "w": 1280,
+    "h": 720,
+    "scale": 1,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H1",
+        "before": 25.6,
+        "after": 25.6
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "SPAN",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIALOG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "PRE",
+        "before": 16,
+        "after": 16
+      }
+    ],
+    "qr": [
+      {
+        "payload": "inventory-action:v1:inspect-demo",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "inventory-action:v1:show-actions",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "item: 11111111-1111-4111-8111-111111111111",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "container: 33333333-3333-4333-8333-333333333333",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "00012345678905",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      }
+    ],
+    "controls": [
+      {
+        "text": "Start",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Resume",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Pause",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Exit",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Inspect",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Show actions",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Open dialog",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Simulate reconnect",
+        "h": 44,
+        "size": 16
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 1280,
+    "h": 720,
+    "scale": 1.25,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H1",
+        "before": 25.6,
+        "after": 32
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "SPAN",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIALOG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "PRE",
+        "before": 16,
+        "after": 20
+      }
+    ],
+    "qr": [
+      {
+        "payload": "inventory-action:v1:inspect-demo",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "inventory-action:v1:show-actions",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "item: 11111111-1111-4111-8111-111111111111",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "container: 33333333-3333-4333-8333-333333333333",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "00012345678905",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      }
+    ],
+    "controls": [
+      {
+        "text": "Start",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Resume",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Pause",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Exit",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Inspect",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Show actions",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Open dialog",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Simulate reconnect",
+        "h": 47,
+        "size": 20
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 820,
+    "h": 900,
+    "scale": 1,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H1",
+        "before": 25.6,
+        "after": 25.6
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "SPAN",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIALOG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "PRE",
+        "before": 16,
+        "after": 16
+      }
+    ],
+    "qr": [
+      {
+        "payload": "inventory-action:v1:inspect-demo",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "inventory-action:v1:show-actions",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "item: 11111111-1111-4111-8111-111111111111",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "container: 33333333-3333-4333-8333-333333333333",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "00012345678905",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      }
+    ],
+    "controls": [
+      {
+        "text": "Start",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Resume",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Pause",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Exit",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Inspect",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Show actions",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Open dialog",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Simulate reconnect",
+        "h": 44,
+        "size": 16
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 820,
+    "h": 900,
+    "scale": 1.25,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H1",
+        "before": 25.6,
+        "after": 32
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "SPAN",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIALOG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "PRE",
+        "before": 16,
+        "after": 20
+      }
+    ],
+    "qr": [
+      {
+        "payload": "inventory-action:v1:inspect-demo",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "inventory-action:v1:show-actions",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "item: 11111111-1111-4111-8111-111111111111",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "container: 33333333-3333-4333-8333-333333333333",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "00012345678905",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      }
+    ],
+    "controls": [
+      {
+        "text": "Start",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Resume",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Pause",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Exit",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Inspect",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Show actions",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Open dialog",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Simulate reconnect",
+        "h": 47,
+        "size": 20
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "scale": 1,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H1",
+        "before": 25.6,
+        "after": 25.6
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "SPAN",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIALOG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "PRE",
+        "before": 16,
+        "after": 16
+      }
+    ],
+    "qr": [
+      {
+        "payload": "inventory-action:v1:inspect-demo",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "inventory-action:v1:show-actions",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "item: 11111111-1111-4111-8111-111111111111",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "container: 33333333-3333-4333-8333-333333333333",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "00012345678905",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      }
+    ],
+    "controls": [
+      {
+        "text": "Start",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Resume",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Pause",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Exit",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Inspect",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Show actions",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Open dialog",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Simulate reconnect",
+        "h": 44,
+        "size": 16
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "scale": 1.25,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H1",
+        "before": 25.6,
+        "after": 32
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "SPAN",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIALOG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "PRE",
+        "before": 16,
+        "after": 20
+      }
+    ],
+    "qr": [
+      {
+        "payload": "inventory-action:v1:inspect-demo",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "inventory-action:v1:show-actions",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "item: 11111111-1111-4111-8111-111111111111",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "container: 33333333-3333-4333-8333-333333333333",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "00012345678905",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      }
+    ],
+    "controls": [
+      {
+        "text": "Start",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Resume",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Pause",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Exit",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Inspect",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Show actions",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Open dialog",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Simulate reconnect",
+        "h": 47,
+        "size": 20
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 480,
+    "scale": 1,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H1",
+        "before": 25.6,
+        "after": 25.6
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "SPAN",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 17.6
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIALOG",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "PRE",
+        "before": 16,
+        "after": 16
+      }
+    ],
+    "qr": [
+      {
+        "payload": "inventory-action:v1:inspect-demo",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "inventory-action:v1:show-actions",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "item: 11111111-1111-4111-8111-111111111111",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "container: 33333333-3333-4333-8333-333333333333",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "00012345678905",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      }
+    ],
+    "controls": [
+      {
+        "text": "Start",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Resume",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Pause",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Exit",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Inspect",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Show actions",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Open dialog",
+        "h": 44,
+        "size": 16
+      },
+      {
+        "text": "Simulate reconnect",
+        "h": 44,
+        "size": 16
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 480,
+    "scale": 1.25,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H1",
+        "before": 25.6,
+        "after": 32
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "SPAN",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "ARTICLE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H3",
+        "before": 17.6,
+        "after": 22
+      },
+      {
+        "tag": "IMG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIALOG",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "PRE",
+        "before": 16,
+        "after": 20
+      }
+    ],
+    "qr": [
+      {
+        "payload": "inventory-action:v1:inspect-demo",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "inventory-action:v1:show-actions",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "item: 11111111-1111-4111-8111-111111111111",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "container: 33333333-3333-4333-8333-333333333333",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      },
+      {
+        "payload": "00012345678905",
+        "w": 224,
+        "h": 224,
+        "background": "rgb(255, 255, 255)"
+      }
+    ],
+    "controls": [
+      {
+        "text": "Start",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Resume",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Pause",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Exit",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Inspect",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Show actions",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Open dialog",
+        "h": 47,
+        "size": 20
+      },
+      {
+        "text": "Simulate reconnect",
+        "h": 47,
+        "size": 20
+      }
+    ],
+    "overflow": false
+  }
+]

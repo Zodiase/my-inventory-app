@@ -1,0 +1,320 @@
+
+Running 10 tests using 1 worker
+
+[1A[2K(node:19559) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:19559) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/10] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:23:5 › action QR payloads and taps share semantics; command then fixture continues without Resume
+[1A[2K[2/10] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:43:5 › partial interruption and dialogs still need explicit Resume and discarded recovery boundary
+[1A[2K[3/10] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1
+[1A[2K  1) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.boundingBox: Test timeout of 30000ms exceeded.
+
+      65 |         for(let i=0;i<5;i++) {
+      66 |             const img=images.nth(i);await img.scrollIntoViewIfNeeded();
+    > 67 |             const box=await img.boundingBox();expect(box?.width).toBe(224);expect(box?.height).toBe(224);
+         |                                 ^
+      68 |             const {data,info}=await sharp(await img.screenshot()).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+      69 |             expect(jsQR(new Uint8ClampedArray(data),info.width,info.height)?.data).toBe(expected[i]);
+      70 |             const svg = decodeURIComponent((await img.getAttribute('src')) ?? '');
+        at /Volumes/Expansion/workspace/inventory-scanner-action-cards/tests/e2e/storybook/ScannerActionCodes.spec.ts:67:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-bcfd7-ble-controls-1280x720-text1-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-bcfd7-ble-controls-1280x720-text1-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/storybook-ScannerActionCod-bcfd7-ble-controls-1280x720-text1-storybook-chromium/error-context.md
+
+
+[1A[2K(node:19645) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:19645) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[4/10] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1.25
+[1A[2K  2) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1.25 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.boundingBox: Target page, context or browser has been closed
+
+      65 |     await f.getByText('Developer diagnostics', { exact: true }).click();
+      66 |     await f.getByRole('button', { name: 'Open dialog', exact: true }).click();
+    > 67 |     await f.getByRole('button', { name: 'Close dialog', exact: true }).click();
+         |                                 ^
+      68 |     await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+      69 | });
+      70 | for (const [width, height] of [
+        at /Volumes/Expansion/workspace/inventory-scanner-action-cards/tests/e2e/storybook/ScannerActionCodes.spec.ts:67:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-bb9b4--controls-1280x720-text1-25-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-bb9b4--controls-1280x720-text1-25-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/storybook-ScannerActionCod-bb9b4--controls-1280x720-text1-25-storybook-chromium/error-context.md
+
+
+[1A[2K(node:20100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:20100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[5/10] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1
+[1A[2K  3) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.screenshot: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - taking element screenshot[22m
+    [2m  - waiting for fonts to load...[22m
+    [2m  - fonts loaded[22m
+    [2m  - attempting scroll into view action[22m
+    [2m    - waiting for element to be stable[22m
+
+
+      66 |     await f.getByRole('button', { name: 'Open dialog', exact: true }).click();
+      67 |     await f.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    > 68 |     await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+         |                                                     ^
+      69 | });
+      70 | for (const [width, height] of [
+      71 |     [1280, 720],
+        at /Volumes/Expansion/workspace/inventory-scanner-action-cards/tests/e2e/storybook/ScannerActionCodes.spec.ts:68:53
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-db564-able-controls-820x900-text1-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-db564-able-controls-820x900-text1-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/storybook-ScannerActionCod-db564-able-controls-820x900-text1-storybook-chromium/error-context.md
+
+
+[1A[2K(node:20277) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:20277) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[6/10] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1.25
+[1A[2K  4) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1.25 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.screenshot: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('#storybook-preview-iframe').contentFrame().locator('img').nth(3)[22m
+
+
+      66 |     await f.getByRole('button', { name: 'Open dialog', exact: true }).click();
+      67 |     await f.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    > 68 |     await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+         |                                                     ^
+      69 | });
+      70 | for (const [width, height] of [
+      71 |     [1280, 720],
+        at /Volumes/Expansion/workspace/inventory-scanner-action-cards/tests/e2e/storybook/ScannerActionCodes.spec.ts:68:53
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-99b3d-e-controls-820x900-text1-25-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-99b3d-e-controls-820x900-text1-25-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/storybook-ScannerActionCod-99b3d-e-controls-820x900-text1-25-storybook-chromium/error-context.md
+
+
+[1A[2K(node:20368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:20368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[7/10] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1
+[1A[2K  5) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.scrollIntoViewIfNeeded: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - attempting scroll into view action[22m
+    [2m    - waiting for element to be stable[22m
+
+
+      64 |     await expect(f.getByTestId('last-outcome').first()).toContainText('Read-only demo result');
+      65 |     await f.getByText('Developer diagnostics', { exact: true }).click();
+    > 66 |     await f.getByRole('button', { name: 'Open dialog', exact: true }).click();
+         |                                               ^
+      67 |     await f.getByRole('button', { name: 'Close dialog', exact: true }).click();
+      68 |     await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+      69 | });
+        at /Volumes/Expansion/workspace/inventory-scanner-action-cards/tests/e2e/storybook/ScannerActionCodes.spec.ts:66:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-ac201-able-controls-390x844-text1-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-ac201-able-controls-390x844-text1-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/storybook-ScannerActionCod-ac201-able-controls-390x844-text1-storybook-chromium/error-context.md
+
+
+[1A[2K(node:20478) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:20478) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[8/10] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1.25
+[1A[2K  6) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1.25 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.boundingBox: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('#storybook-preview-iframe').contentFrame().locator('img').nth(3)[22m
+
+
+      65 |     await f.getByText('Developer diagnostics', { exact: true }).click();
+      66 |     await f.getByRole('button', { name: 'Open dialog', exact: true }).click();
+    > 67 |     await f.getByRole('button', { name: 'Close dialog', exact: true }).click();
+         |                                 ^
+      68 |     await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+      69 | });
+      70 | for (const [width, height] of [
+        at /Volumes/Expansion/workspace/inventory-scanner-action-cards/tests/e2e/storybook/ScannerActionCodes.spec.ts:67:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-34ed5-e-controls-390x844-text1-25-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-34ed5-e-controls-390x844-text1-25-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/storybook-ScannerActionCod-34ed5-e-controls-390x844-text1-25-storybook-chromium/error-context.md
+
+
+[1A[2K(node:20980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:20980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[9/10] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1
+[1A[2K  7) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.scrollIntoViewIfNeeded: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - attempting scroll into view action[22m
+    [2m    - waiting for element to be stable[22m
+
+
+      64 |     await expect(f.getByTestId('last-outcome').first()).toContainText('Read-only demo result');
+      65 |     await f.getByText('Developer diagnostics', { exact: true }).click();
+    > 66 |     await f.getByRole('button', { name: 'Open dialog', exact: true }).click();
+         |                                               ^
+      67 |     await f.getByRole('button', { name: 'Close dialog', exact: true }).click();
+      68 |     await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+      69 | });
+        at /Volumes/Expansion/workspace/inventory-scanner-action-cards/tests/e2e/storybook/ScannerActionCodes.spec.ts:66:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-febfe-able-controls-390x480-text1-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-febfe-able-controls-390x480-text1-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/storybook-ScannerActionCod-febfe-able-controls-390x480-text1-storybook-chromium/error-context.md
+
+
+[1A[2K(node:21399) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:21399) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[10/10] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1.25
+[1A[2K  8) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1.25 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.scrollIntoViewIfNeeded: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - attempting scroll into view action[22m
+    [2m    - waiting for element to be stable[22m
+
+
+      64 |     await expect(f.getByTestId('last-outcome').first()).toContainText('Read-only demo result');
+      65 |     await f.getByText('Developer diagnostics', { exact: true }).click();
+    > 66 |     await f.getByRole('button', { name: 'Open dialog', exact: true }).click();
+         |                                               ^
+      67 |     await f.getByRole('button', { name: 'Close dialog', exact: true }).click();
+      68 |     await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+      69 | });
+        at /Volumes/Expansion/workspace/inventory-scanner-action-cards/tests/e2e/storybook/ScannerActionCodes.spec.ts:66:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-84974-e-controls-390x480-text1-25-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-84974-e-controls-390x480-text1-25-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/storybook-ScannerActionCod-84974-e-controls-390x480-text1-25-storybook-chromium/error-context.md
+
+
+[1A[2K  8 failed
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1.25 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1.25 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1.25 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:60:9 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1.25 
+  2 passed (5.5m)
