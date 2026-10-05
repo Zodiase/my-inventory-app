@@ -96,33 +96,32 @@ export const AppShell = ({
                         </Link>
                     )}
                 </Box>
+                {menuOpen && !isSearchRoute && (
+                    <Nav background="white" aria-label="Primary navigation" className="app-shell-menu">
+                        {navItems.map((item) => {
+                            const active = item.isActive(location);
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    aria-current={getAriaCurrent(active)}
+                                    className={`app-shell-menu-link${active ? ' app-shell-menu-link-active' : ''}`}
+                                    onClick={() => {
+                                        setMenuOpen(false);
+                                    }}
+                                >
+                                    <Box aria-hidden="true" className="app-shell-nav-link-icon">
+                                        {item.icon}
+                                    </Box>
+                                    <Text as="span" weight={active ? 'bold' : 'normal'}>
+                                        {item.label}
+                                    </Text>
+                                </Link>
+                            );
+                        })}
+                    </Nav>
+                )}
             </Header>
-
-            {menuOpen && !isSearchRoute && (
-                <Nav aria-label="Primary navigation" className="app-shell-menu">
-                    {navItems.map((item) => {
-                        const active = item.isActive(location);
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                aria-current={getAriaCurrent(active)}
-                                className={`app-shell-menu-link${active ? ' app-shell-menu-link-active' : ''}`}
-                                onClick={() => {
-                                    setMenuOpen(false);
-                                }}
-                            >
-                                <Box aria-hidden="true" className="app-shell-nav-link-icon">
-                                    {item.icon}
-                                </Box>
-                                <Text as="span" weight={active ? 'bold' : 'normal'}>
-                                    {item.label}
-                                </Text>
-                            </Link>
-                        );
-                    })}
-                </Nav>
-            )}
 
             <Main
                 pad="medium"
