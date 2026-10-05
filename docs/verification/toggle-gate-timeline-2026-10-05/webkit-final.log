@@ -1,0 +1,14 @@
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:24523) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:24523) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] [storybook-webkit] › tests/e2e/storybook/ToggleRegression.webkit.spec.ts:9:13 › WebKit direct tag touch 390 › touch each choice and reverse without changing other filters or query
+[1A[2K[2/2] [storybook-webkit] › tests/e2e/storybook/ToggleRegression.webkit.spec.ts:9:13 › WebKit direct tag touch 820 › touch each choice and reverse without changing other filters or query
+[1A[2K  2 passed (3.6s)

@@ -1,0 +1,14 @@
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:23575) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:23575) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:199:9 › CSS-timed in-flight reversals preserve handle identity and destination ltr
+[1A[2K[2/2] [storybook-chromium] › tests/e2e/storybook/ToggleInvariants.spec.ts:199:9 › CSS-timed in-flight reversals preserve handle identity and destination rtl
+[1A[2K  2 passed (7.1s)
