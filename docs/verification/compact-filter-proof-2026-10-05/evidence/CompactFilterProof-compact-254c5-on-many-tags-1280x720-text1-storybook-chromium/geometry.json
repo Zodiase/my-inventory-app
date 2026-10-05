@@ -1,0 +1,99 @@
+{
+  "browser": {
+    "width": 1280,
+    "height": 720
+  },
+  "surface": "composition",
+  "scale": 1,
+  "controls": [
+    {
+      "row": {
+        "width": 478,
+        "height": 50
+      },
+      "rail": {
+        "width": 162,
+        "height": 29
+      },
+      "handle": {
+        "width": 52,
+        "height": 24
+      },
+      "hit": {
+        "width": 53.328125,
+        "height": 44
+      }
+    },
+    {
+      "row": {
+        "width": 478,
+        "height": 50
+      },
+      "rail": {
+        "width": 162,
+        "height": 29
+      },
+      "handle": {
+        "width": 52,
+        "height": 24
+      },
+      "hit": {
+        "width": 53.328125,
+        "height": 44
+      }
+    },
+    {
+      "row": {
+        "width": 478,
+        "height": 50
+      },
+      "rail": {
+        "width": 162,
+        "height": 29
+      },
+      "handle": {
+        "width": 52,
+        "height": 24
+      },
+      "hit": {
+        "width": 53.328125,
+        "height": 44
+      }
+    },
+    {
+      "row": {
+        "width": 478,
+        "height": 50
+      },
+      "rail": {
+        "width": 162,
+        "height": 29
+      },
+      "handle": {
+        "width": 52,
+        "height": 24
+      },
+      "hit": {
+        "width": 53.328125,
+        "height": 44
+      }
+    }
+  ],
+  "height": 440,
+  "owners": 1,
+  "completeRows": 7,
+  "sheetBottom": 660,
+  "viewport": 720,
+  "viewportWidth": 1280,
+  "sheet": {
+    "x": 12,
+    "y": 60,
+    "w": 480,
+    "h": 600
+  },
+  "header": 53,
+  "catalogHeader": 52,
+  "find": 44,
+  "width": 478,
+  "clientWidth": 478
+}
