@@ -117,7 +117,45 @@ test(
         const { observeMeteorLoading } = await import('../tests/e2e/helpers/meteor-loading-diagnostics.mjs');
         const directory = await mkdtemp(join(tmpdir(), 'loading-evidence-'));
         const page = new EventEmitter();
-        page.evaluate = () => new Promise(() => {});
+        let reads = 0;
+        page.evaluate = () =>
+            ++reads === 1
+                ? Promise.resolve({
+                      available: true,
+                      renderCapture: {
+                          schema: 'root-route-loading/v1',
+                          documentEpoch: 'document-0123456789abcdef',
+                          available: true,
+                          complete: true,
+                          stopped: false,
+                          dropped: 0,
+                          aliasOverflow: 0,
+                          byteOverflow: 0,
+                          events: [
+                              {
+                                  phase: 'commit',
+                                  at: 1,
+                                  instance: 'instance-1',
+                                  rootFrame: 1,
+                                  routeAttempt: 1,
+                                  commitBatch: 1,
+                                  commitSequence: 1,
+                                  decision: 'contents',
+                              },
+                          ],
+                          lastCommit: {
+                              phase: 'commit',
+                              at: 1,
+                              instance: 'instance-1',
+                              rootFrame: 1,
+                              routeAttempt: 1,
+                              commitBatch: 1,
+                              commitSequence: 1,
+                              decision: 'contents',
+                          },
+                      },
+                  })
+                : new Promise(() => {});
         const observer = observeMeteorLoading(page);
         let attachment;
         try {
@@ -130,6 +168,8 @@ test(
             });
             const evidence = JSON.parse(await readFile(attachment.path, 'utf8'));
             assert.equal(evidence.finalSampleCompleted, false);
+            assert.equal(evidence.renderCapture.complete, false);
+            assert.equal(evidence.renderCapture.reason, 'drain-timeout');
             assert.equal(page.listenerCount('websocket'), 0);
             assert.equal(attachment.contentType, 'application/json');
         } finally {
