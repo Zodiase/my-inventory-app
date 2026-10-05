@@ -1,4 +1,5 @@
 import { expect, test, type FrameLocator } from '@playwright/test';
+import { writeFile } from 'node:fs/promises';
 
 const name = 'Camera equipment with a long descriptive name';
 const radio = (frame: FrameLocator, state: string) =>
@@ -105,6 +106,12 @@ test('six transitions and rapid reversals retain one contained thumb and station
     ]) {
         await control(from).click();
         await page.waitForTimeout(300);
+        const endpoints = await rail.evaluate((el, target) => {
+            const r = el.getBoundingClientRect(),
+                h = el.querySelector('.tri-state-handle')!.getBoundingClientRect(),
+                label = el.querySelector(`label.${target}`)!.getBoundingClientRect();
+            return { start: h.x - r.x, end: (label.left + label.right - h.width) / 2 - r.x };
+        }, to);
         const sampling = rail.evaluate(async (el) => {
             const labels = () =>
                 [...el.querySelectorAll('.tri-state-position > span')].map((e) => {
@@ -120,6 +127,10 @@ test('six transitions and rapid reversals retain one contained thumb and station
                 const r = el.getBoundingClientRect(),
                     h = el.querySelector('.tri-state-handle')!.getBoundingClientRect();
                 samples.push({
+                    x: h.x - r.x,
+                    t: performance.now() - start,
+                    timestamp: performance.now(),
+                    requestedState: el.getAttribute('data-state'),
                     y: h.y - r.y,
                     inside:
                         h.left >= r.left - 1 &&
@@ -134,7 +145,20 @@ test('six transitions and rapid reversals retain one contained thumb and station
         });
         await control(to).click();
         const result = await sampling;
-        results.push({ from, to, ...result });
+        results.push({ from, to, endpoints, ...result });
+        const progress = result.samples.map(
+            (sample) => (sample.x - endpoints.start) / (endpoints.end - endpoints.start)
+        );
+        expect(
+            progress.some((value) => value > 0.01 && value < 0.99),
+            'transition must expose intermediate horizontal progress'
+        ).toBe(true);
+        for (let i = 1; i < progress.length; i++) {
+            expect(result.samples[i].t).toBeGreaterThan(result.samples[i - 1].t);
+            expect(progress[i]).toBeGreaterThanOrEqual(progress[i - 1] - 0.02);
+        }
+        expect(Math.abs(result.samples.at(-1)!.x - endpoints.end)).toBeLessThanOrEqual(1);
+        expect(result.samples.at(-1)!.requestedState).toBe(to);
         expect(result.samples.every((s) => s.inside && s.count === 1)).toBe(true);
         expect(
             Math.max(...result.samples.map((s) => s.y)) - Math.min(...result.samples.map((s) => s.y))
@@ -150,6 +174,10 @@ test('six transitions and rapid reversals retain one contained thumb and station
             const r = el.getBoundingClientRect(),
                 h = el.querySelector('.tri-state-handle')!.getBoundingClientRect();
             samples.push({
+                x: h.x - r.x,
+                t: performance.now() - start,
+                timestamp: performance.now(),
+                requestedState: el.getAttribute('data-state'),
                 y: h.y - r.y,
                 inside:
                     h.left >= r.left - 1 && h.right <= r.right + 1 && h.top >= r.top - 1 && h.bottom <= r.bottom + 1,
@@ -158,14 +186,25 @@ test('six transitions and rapid reversals retain one contained thumb and station
         }
         return samples;
     });
+    const requests = [];
     for (const state of ['exclude', 'include', 'neutral', 'exclude', 'include']) {
+        requests.push({ state, timestamp: await page.evaluate(() => performance.now()) });
         await control(state).click();
         await page.waitForTimeout(45);
     }
     const rapid = await rapidSampling;
     expect(rapid.every((s) => s.inside && s.count === 1)).toBe(true);
+    expect(new Set(rapid.map((s) => s.requestedState))).toEqual(new Set(['include', 'neutral', 'exclude']));
+    expect(Math.max(...rapid.map((s) => s.x)) - Math.min(...rapid.map((s) => s.x))).toBeGreaterThan(1);
+    for (let i = 1; i < rapid.length; i++) expect(rapid[i].t).toBeGreaterThan(rapid[i - 1].t);
+    expect(rapid.at(-1)!.requestedState).toBe('include');
     expect(Math.max(...rapid.map((s) => s.y)) - Math.min(...rapid.map((s) => s.y))).toBeLessThanOrEqual(1);
-    await info.attach('rapid-reversal-samples', { body: JSON.stringify(rapid), contentType: 'application/json' });
+    await writeFile(info.outputPath('rapid-reversal.json'), JSON.stringify({ requests, samples: rapid }, null, 2));
+    await writeFile(info.outputPath('six-transitions.json'), JSON.stringify(results, null, 2));
+    await info.attach('rapid-reversal-samples', {
+        body: JSON.stringify({ requests, samples: rapid }),
+        contentType: 'application/json',
+    });
     await expect(control('include')).toBeChecked();
     await control('include').click();
     await expect(control('include')).toBeChecked();
@@ -255,7 +294,7 @@ test('toggle stylesheet keeps intended borders throughout the real composition',
     await page.goto('/iframe.html?id=ui-searchpagelayout--toggle-regression&viewMode=story');
     await page.getByRole('button', { name: /^Tags:/u }).click();
     const selectors =
-        '[role="search"] button, [role="search"] a, .search-tag-group, .selected-tags-switch-track, [data-testid="unrelated-action"]';
+        '[role="search"] button, [role="search"] a, .search-tag-group, .selected-tags-switch-track, [data-testid="unrelated-action"], .search-applied-chip, button[aria-label^="Actions for "]';
     const measure = () =>
         page.locator(selectors).evaluateAll((es) =>
             es.map((e) => {
@@ -272,7 +311,16 @@ test('toggle stylesheet keeps intended borders throughout the real composition',
                 };
             })
         );
+    await expect(page.getByRole('button', { name: 'Remove include filter for Tools', exact: true })).toHaveCSS(
+        'border-width',
+        '1px'
+    );
+    await expect(page.locator('.search-applied-chip')).toHaveCount(2);
+    await expect(page.getByRole('button', { name: /^Actions for Storage item/u })).toHaveCount(3);
     const original = await measure();
+    const actions = original.filter((e) => e.name?.startsWith('Actions for Storage item'));
+    expect(actions).toHaveLength(3);
+    expect(actions.every((e) => e.border === '0px')).toBe(true);
     expect(original.find((e) => e.name === 'Unrelated action')?.border).toBe('0px');
     expect(original.filter((e) => e.name?.includes('Equipment with')).every((e) => e.border === '0px')).toBe(true);
     expect(
@@ -295,6 +343,7 @@ test('toggle stylesheet keeps intended borders throughout the real composition',
         expect(count).toBeGreaterThan(0);
         expect(await measure()).toEqual(original);
     }
+    await writeFile(info.outputPath('composed-neighbor-styles.json'), JSON.stringify(original, null, 2));
     await info.attach('real-composition-style-isolation', {
         body: JSON.stringify(original),
         contentType: 'application/json',

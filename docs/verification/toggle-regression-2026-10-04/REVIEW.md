@@ -76,3 +76,26 @@ new file. The exact corrected command with `--list` selects2 tests in1 file;
 its real WebKit run passes2/2. Exact listing/run retained alongside this report.
 No old test or assertion was weakened. Independent acceptance must reconcile
 this revised head, rather than treating initial head b1865bd as accepted.
+
+## Coordinator-required objective gap repair
+
+The design coordinator made the two verifier coverage limits blocking for this
+bounded candidate. The style-order test now explicitly includes both applied-chip
+remove buttons and all3 result-action buttons; presence, intended chip1px/action0
+borders, and invariant measured styles/dimensions across stylesheet order are
+asserted. The retained `composed-neighbor-styles.json` proves those selectors
+actually matched, rather than relying on fixture presence.
+
+Six transitions now retain x/time/absolute timestamp/requested state and measured
+start/target. Each requires at least one intermediate horizontal position,
+monotonic progress within numerical tolerance, and final alignment/request state.
+This detects an instantaneous endpoint jump without choosing an approved easing
+curve. Rapid retargeting retains the requested sequence/timestamps and sampled
+x/time/state, requires actual horizontal travel and every requested state to be
+observed, and preserves containment/one thumb/no cross-axis travel/latest target.
+Diagnostics are retained as six-transitions.json and rapid-reversal.json.
+
+Affected suite12/12 passes; final persisted diagnostic rerun2/2 passes. This
+revision changes only tests/review evidence; earlier independent UI/app results
+remain relevant but revised assertions need independent rerun and new exact-head
+CI. No aesthetic timing/geometry/golden approval is implied.

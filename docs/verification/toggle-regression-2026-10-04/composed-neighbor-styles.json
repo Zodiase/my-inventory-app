@@ -1,0 +1,119 @@
+[
+  {
+    "name": "Return to Rack A",
+    "border": "0px",
+    "background": "rgba(0, 0, 0, 0)",
+    "padding": "0px",
+    "radius": "8px",
+    "width": 44,
+    "height": 44
+  },
+  {
+    "name": "Scope: Rack A",
+    "border": "1px",
+    "background": "rgba(255, 255, 255, 0.14)",
+    "padding": "0px 9px",
+    "radius": "8px",
+    "width": 77.21875,
+    "height": 44
+  },
+  {
+    "name": "Clear search",
+    "border": "0px",
+    "background": "rgba(0, 0, 0, 0)",
+    "padding": "1px 6px",
+    "radius": "7px",
+    "width": 40,
+    "height": 40
+  },
+  {
+    "name": "Tags: 1 selected",
+    "border": "1px",
+    "background": "rgba(255, 255, 255, 0.28)",
+    "padding": "0px 9px",
+    "radius": "8px",
+    "width": 81.609375,
+    "height": 44
+  },
+  {
+    "name": "Type: Items",
+    "border": "1px",
+    "background": "rgba(255, 255, 255, 0.14)",
+    "padding": "0px 9px",
+    "radius": "8px",
+    "width": 105.3125,
+    "height": 44
+  },
+  {
+    "name": "",
+    "border": "1px",
+    "background": "rgb(243, 246, 249)",
+    "padding": "1px",
+    "radius": "999px",
+    "width": 35,
+    "height": 22
+  },
+  {
+    "name": "▾ Equipment with a long descriptive group name",
+    "border": "0px",
+    "background": "rgb(243, 246, 249)",
+    "padding": "1px 6px 1px 12px",
+    "radius": "0px",
+    "width": 390,
+    "height": 40
+  },
+  {
+    "name": "Remove include filter for Tools",
+    "border": "1px",
+    "background": "rgb(245, 248, 251)",
+    "padding": "2px 8px",
+    "radius": "999px",
+    "width": 58.875,
+    "height": 30
+  },
+  {
+    "name": "Remove type filter items",
+    "border": "1px",
+    "background": "rgb(245, 248, 251)",
+    "padding": "2px 8px",
+    "radius": "999px",
+    "width": 60,
+    "height": 30
+  },
+  {
+    "name": "Unrelated action",
+    "border": "0px",
+    "background": "rgba(0, 0, 0, 0)",
+    "padding": "0px",
+    "radius": "0px",
+    "width": 1248,
+    "height": 24
+  },
+  {
+    "name": "Actions for Storage item 01",
+    "border": "0px",
+    "background": "rgba(0, 0, 0, 0)",
+    "padding": "0px",
+    "radius": "6px",
+    "width": 44,
+    "height": 44
+  },
+  {
+    "name": "Actions for Storage item 02",
+    "border": "0px",
+    "background": "rgba(0, 0, 0, 0)",
+    "padding": "0px",
+    "radius": "6px",
+    "width": 44,
+    "height": 44
+  },
+  {
+    "name": "Actions for Storage item 03",
+    "border": "0px",
+    "background": "rgba(0, 0, 0, 0)",
+    "padding": "0px",
+    "radius": "6px",
+    "width": 44,
+    "height": 44
+  }
+]
