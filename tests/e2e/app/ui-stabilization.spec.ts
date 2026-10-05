@@ -125,7 +125,15 @@ test.describe('Milestone 1 UI stabilization', () => {
         const editHeading = page.getByRole('heading', { name: 'Edit Item' });
         const closeControl = page.getByRole('button', { name: 'Close Edit Item dialog' });
         await page.locator('input[name="name"]').fill('Unsaved Draft');
-        await closeControl.dispatchEvent('click');
+        await expect
+            .poll(() =>
+                closeControl.evaluate((el) => {
+                    const r = el.getBoundingClientRect();
+                    return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
+                })
+            )
+            .toBe(true);
+        await closeControl.click();
 
         await expect(editHeading).toHaveCount(0);
         await expect(page.getByRole('heading', { name: 'Unchanged Item' })).toBeVisible();

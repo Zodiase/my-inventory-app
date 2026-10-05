@@ -1,3 +1,4 @@
+/** Shared visual tokens and Grommet theme, including portal stacking above application chrome. */
 import { createGlobalStyle } from 'styled-components';
 
 export const uiTokens = {
@@ -95,6 +96,7 @@ export const uiTokens = {
     },
     zIndex: {
         nav: 20,
+        layer: 1000,
         overlay: 9999,
     },
 } as const;
@@ -150,6 +152,8 @@ ${cssVariableDeclarations}
 
 // Grommet theme with iOS-style design and touch-friendly sizing.
 export const theme = {
+    // Portal layers must cover app chrome and its navigation dropdown.
+    layer: { zIndex: String(uiTokens.zIndex.layer) },
     global: {
         colors: {
             brand: uiTokens.color.brand,

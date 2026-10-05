@@ -309,6 +309,10 @@ a.app-shell-menu-link:focus-visible,
     min-width: 0;
 }
 
+.item-dialog-header {
+    flex-shrink: 0;
+}
+
 .item-dialog-title {
     overflow-wrap: anywhere;
 }
