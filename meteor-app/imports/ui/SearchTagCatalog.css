@@ -2,7 +2,8 @@
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    min-height: 180px;
+    /* Keep a group and wrapped leaf visible inside combined filter menus. */
+    min-height: 244px;
 }
 .search-tag-catalog-head {
     display: flex;
@@ -61,19 +62,19 @@
     justify-content: space-between;
     gap: 8px;
     min-height: 50px;
-    padding: 2px 12px;
+    padding: 3px 12px;
     border-bottom: 1px solid #edf1f5;
 }
 .search-tag-identity {
     display: flex;
+    flex: 1 1 auto;
     flex-direction: column;
     min-width: 0;
 }
 .search-tag-identity span,
 .search-tag-identity small {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
+    white-space: normal;
 }
 .search-tag-identity > span {
     line-height: 20px;

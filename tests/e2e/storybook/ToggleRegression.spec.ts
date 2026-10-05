@@ -30,6 +30,35 @@ for (const viewport of [
         await find.fill('Camera equipment');
         const rail = frame.getByRole('radiogroup', { name: `Filter ${name}`, exact: true });
         await expect(rail).toBeVisible();
+        const wrapping = await menu.getByText(name, { exact: true }).evaluate((element) => {
+            const text = element.getBoundingClientRect();
+            const row = element.closest('.search-tag-row')!;
+            const bounds = row.getBoundingClientRect();
+            const control = row.querySelector('.tri-state-rail')!.getBoundingClientRect();
+            const list = element.closest('.search-tag-list')!.getBoundingClientRect();
+            const hits = [...row.querySelectorAll('.tri-state-position')].map((hit) => hit.getBoundingClientRect());
+            return {
+                whiteSpace: getComputedStyle(element).whiteSpace,
+                height: text.height,
+                fullyVisible: text.top >= list.top && text.bottom <= list.bottom,
+                clientWidth: element.clientWidth,
+                scrollWidth: element.scrollWidth,
+                gap: control.left - text.right,
+                centered: Math.abs(control.y + control.height / 2 - (bounds.y + bounds.height / 2)),
+                clearance: Math.min(...hits.flatMap((hit) => [hit.top - bounds.top, bounds.bottom - hit.bottom])),
+            };
+        });
+        expect(wrapping.whiteSpace).toBe('normal');
+        expect(wrapping.fullyVisible).toBe(true);
+        expect(wrapping.height).toBeGreaterThanOrEqual(40);
+        expect(wrapping.scrollWidth).toBeLessThanOrEqual(wrapping.clientWidth + 1);
+        expect(wrapping.gap).toBeGreaterThanOrEqual(7);
+        expect(wrapping.centered).toBeLessThanOrEqual(1);
+        expect(wrapping.clearance).toBeGreaterThanOrEqual(2);
+        await info.attach('full-name-wrap-and-row-clearance', {
+            body: JSON.stringify(wrapping),
+            contentType: 'application/json',
+        });
         const geometry = await rail.evaluate((el) => {
             const r = el.getBoundingClientRect();
             const labels = [...el.querySelectorAll('label')].map((e) => {
