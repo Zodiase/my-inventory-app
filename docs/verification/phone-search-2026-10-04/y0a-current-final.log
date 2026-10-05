@@ -1,0 +1,2386 @@
+[WebServer] (node:1373) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] [[[[[ /Volumes/Expansion/workspace/inventory-phone-search/meteor-app ]]]]]
+[WebServer] 
+[WebServer] => Started proxy.
+
+[WebServer] => Started HMR server.
+
+[WebServer] => Meteor 3.5.2 is available. Check the changelog
+[WebServer] https://docs.meteor.com/history.html and update this project with 'meteor
+[WebServer] update'.
+
+[WebServer] => Started MongoDB.
+
+[WebServer] => Linted your app. No linting errors.
+
+[WebServer] (node:1440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] 
+
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 
+
+[WebServer] [/server/gridfs.ts] GridFS bucket initialized for attachments
+
+[WebServer] [/server/main.ts] Creating database indexes...
+
+[WebServer] [/server/main.ts] Database indexes created successfully
+
+[WebServer] [/server/search/index.ts] Inventory search index rebuilt { count: '[number]1' }
+[WebServer] [api/tags] watching for tags without path...
+
+[WebServer] (node:1373) Warning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+
+[WebServer] => Started your app.
+
+[WebServer] 
+[WebServer] => App running at http://127.0.0.1:48384/
+
+
+Running 33 tests using 1 worker
+
+(node:1441) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:1441) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:37:9 › Item detail routing › keeps scoped Search mode while hiding the normal menu
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]4eNXPwnE5tjPJxFBj',
+[WebServer]   name: '[string]Kitchen',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]6TyZQZ85GnXfWjTjA',
+
+[WebServer]   name: '[string]Kitchen Spatula',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]4eNXPwnE5tjPJxFBj' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-3PvSg3NtG2yJuffe',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]6TyZQZ85GnXfWjTjA'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]6TyZQZ85GnXfWjTjA' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[2/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:112:9 › Item detail routing › recreates query, filters, and results from a direct search URL after refresh
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]A9eGYoWsp7Y2pvYPh',
+[WebServer]   name: '[string]Encoded Fixture Box',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]A5oJjLtJZZm8oc8cQ',
+[WebServer]   name: '[string]Encoded Fixture Item',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-tbG9XK44Na4Wp6a4',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]A9eGYoWsp7Y2pvYPh'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-qnH3RcPgXHHhKxRG',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]A9eGYoWsp7Y2pvYPh'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[3/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:142:9 › Item detail routing › updates the URL when opening an item from the list
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]HJL7fCHuM7p6yRLTA',
+[WebServer]   name: '[string]Route Backed Lamp',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]HJL7fCHuM7p6yRLTA' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[4/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:163:9 › Item detail routing › renders item details from a direct item URL
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]djrGm27vkreCxiypo',
+[WebServer]   name: '[string]Direct Link Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]Ty8DL4KBbSGbSsppu',
+[WebServer]   name: '[string]Direct Link Flashlight',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]Ty8DL4KBbSGbSsppu' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[5/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:184:9 › Item detail routing › returns to the containing container after deleting a nested route-backed item
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]CikNpc8ZLQYnNz8yG',
+[WebServer]   name: '[string]Return Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]6XRpMEu4eP48uoNCF',
+[WebServer]   name: '[string]Return Battery',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]6XRpMEu4eP48uoNCF' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item deleted {
+
+[WebServer]   itemId: '[string]6XRpMEu4eP48uoNCF',
+[WebServer]   name: '[string]Return Battery',
+[WebServer]   isContainer: '[boolean]false',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]CikNpc8ZLQYnNz8yG' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[6/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:208:9 › Item detail routing › returns to the items list after deleting a root route-backed item
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]3tzjLyDLbdinY8Mhg',
+[WebServer]   name: '[string]Return Root Item',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]3tzjLyDLbdinY8Mhg' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item deleted {
+
+[WebServer]   itemId: '[string]3tzjLyDLbdinY8Mhg',
+[WebServer]   name: '[string]Return Root Item',
+[WebServer]   isContainer: '[boolean]false',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[7/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:226:9 › Item detail routing › shows a not-found state for missing and deleted container routes
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]SX222kwYEaSd2nLbs',
+[WebServer]   name: '[string]Deleted Container Route',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item deleted {
+
+[WebServer]   itemId: '[string]SX222kwYEaSd2nLbs',
+[WebServer]   name: '[string]Deleted Container Route',
+[WebServer]   isContainer: '[boolean]true',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[8/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:249:9 › Item detail routing › preserves scoped search context after opening a result and going back
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]BZw6f32jpSQSQcCjS',
+[WebServer]   name: '[string]Scoped Search Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]st89ZE2HuYwLvRu8f',
+
+[WebServer]   name: '[string]Scoped Wrench',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]s476rjGpNecGFyPHC',
+[WebServer]   name: '[string]Global Wrench',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]3wpvfoYwNA6ZYqCnD',
+[WebServer]   name: '[string]Scoped Spare Filter',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]fNABY6PNkeJgTmTgJ',
+[WebServer]   name: '[string]Global Spare Filter',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]BZw6f32jpSQSQcCjS' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-wAEpgeyX6ABf9QpF',
+[WebServer]   status: '[string]success',
+
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]st89ZE2HuYwLvRu8f'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-JTeJDhrhM6NCJa5t',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]st89ZE2HuYwLvRu8f'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]st89ZE2HuYwLvRu8f' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-d6Jb6xD5rpBJ5HGt',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]st89ZE2HuYwLvRu8f'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]st89ZE2HuYwLvRu8f' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-yfAYZTAAcTtmPn37',
+[WebServer]   status: '[string]success',
+
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]st89ZE2HuYwLvRu8f'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-8WgxxX2gNsdhj5Qp',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]3wpvfoYwNA6ZYqCnD'
+[WebServer] }
+
+[9/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:329:9 › Item detail routing › returns to scoped search after deleting a search result detail
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]QF93hPTQbxrcAd9hy',
+[WebServer]   name: '[string]Search Delete Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]yNJ69PmwKFP8nN3Gx',
+[WebServer]   name: '[string]Scoped Delete Target',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]CXho5vioWqKcgPNt5',
+
+[WebServer]   name: '[string]Global Delete Target',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]QF93hPTQbxrcAd9hy' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-NNJy5kKnw5jTeYvS',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]yNJ69PmwKFP8nN3Gx'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]yNJ69PmwKFP8nN3Gx' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item deleted {
+[WebServer]   itemId: '[string]yNJ69PmwKFP8nN3Gx',
+
+[WebServer]   name: '[string]Scoped Delete Target',
+[WebServer]   isContainer: '[boolean]false',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-sSBfGvikwS53soWP',
+[WebServer]   status: '[string]empty',
+[WebServer]   count: '[number]0'
+[WebServer] }
+
+[10/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:374:9 › Item detail routing › does not reuse stale scoped context after direct item-detail navigation
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]3ky7HrrdpRcXB9J4H',
+[WebServer]   name: '[string]Prior Scope Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]Q56viZBE9hP9qzewM',
+[WebServer]   name: '[string]Scoped Socket Set',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]GqwoKwQjEPoo4KLfm',
+[WebServer]   name: '[string]Global Socket Set',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]5jmPumqWxuSZxNW6f',
+[WebServer]   name: '[string]Direct Detail Compass',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]3ky7HrrdpRcXB9J4H' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-mgcAduDu8Tt6Jicb',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]Q56viZBE9hP9qzewM'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]5jmPumqWxuSZxNW6f' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-iHcrxSW9DsSwuBty',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]2',
+[WebServer]   'resultIds.0': '[string]Q56viZBE9hP9qzewM',
+[WebServer]   'resultIds.1': '[string]GqwoKwQjEPoo4KLfm'
+[WebServer] }
+
+[11/33] [chromium] › tests/e2e/app/item-detail-routing.spec.ts:419:9 › Item detail routing › removes a tag from route-backed item details
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]MvqWnNoqSLxgNjuLL',
+[WebServer]   name: '[string]Tagged Route Item',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]MvqWnNoqSLxgNjuLL' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]MvqWnNoqSLxgNjuLL' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+(node:1503) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:1503) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[12/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:37:9 › Item detail routing › keeps scoped Search mode while hiding the normal menu
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]Kiwryd88Tzt52PzPP',
+[WebServer]   name: '[string]Kitchen',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]u3M6cXuvdDsH5ocjP',
+[WebServer]   name: '[string]Kitchen Spatula',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]Kiwryd88Tzt52PzPP' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]Kiwryd88Tzt52PzPP' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-nq9WsRrSYYMsdtBx',
+[WebServer]   status: '[string]success',
+
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]u3M6cXuvdDsH5ocjP'
+[WebServer] }
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]u3M6cXuvdDsH5ocjP' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-pKJeap56RfeeC7or',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]u3M6cXuvdDsH5ocjP'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[13/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:112:9 › Item detail routing › recreates query, filters, and results from a direct search URL after refresh
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]k8vX5hvB9BME39o5Y',
+[WebServer]   name: '[string]Encoded Fixture Box',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]6bpDPtHRjjfB8qR3h',
+[WebServer]   name: '[string]Encoded Fixture Item',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-moTBMxb4QuuTMXyC',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]k8vX5hvB9BME39o5Y'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-kaQuGyWstDNyY7tQ',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]k8vX5hvB9BME39o5Y'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[14/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:142:9 › Item detail routing › updates the URL when opening an item from the list
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]bAdLbbSofx4EcutzT',
+[WebServer]   name: '[string]Route Backed Lamp',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]bAdLbbSofx4EcutzT' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[15/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:163:9 › Item detail routing › renders item details from a direct item URL
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]MPjECt2q5LWnFigCv',
+[WebServer]   name: '[string]Direct Link Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]pLJfX9KeFrNuHXc8S',
+[WebServer]   name: '[string]Direct Link Flashlight',
+[WebServer]   isContainer: '[boolean]false'
+
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]pLJfX9KeFrNuHXc8S' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[16/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:184:9 › Item detail routing › returns to the containing container after deleting a nested route-backed item
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]AeiaEHCYRKB2jE9eo',
+[WebServer]   name: '[string]Return Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]5roGYj89NmKbGMtQR',
+[WebServer]   name: '[string]Return Battery',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]5roGYj89NmKbGMtQR' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]5roGYj89NmKbGMtQR' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item deleted {
+[WebServer]   itemId: '[string]5roGYj89NmKbGMtQR',
+[WebServer]   name: '[string]Return Battery',
+[WebServer]   isContainer: '[boolean]false',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]AeiaEHCYRKB2jE9eo' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[17/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:208:9 › Item detail routing › returns to the items list after deleting a root route-backed item
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]TFZEd2Prsgecxykj7',
+[WebServer]   name: '[string]Return Root Item',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]TFZEd2Prsgecxykj7' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]TFZEd2Prsgecxykj7' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item deleted {
+
+[WebServer]   itemId: '[string]TFZEd2Prsgecxykj7',
+[WebServer]   name: '[string]Return Root Item',
+[WebServer]   isContainer: '[boolean]false',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[18/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:226:9 › Item detail routing › shows a not-found state for missing and deleted container routes
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]nA9TpWpsmrqdMawFd',
+[WebServer]   name: '[string]Deleted Container Route',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item deleted {
+
+[WebServer]   itemId: '[string]nA9TpWpsmrqdMawFd',
+[WebServer]   name: '[string]Deleted Container Route',
+[WebServer]   isContainer: '[boolean]true',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[19/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:249:9 › Item detail routing › preserves scoped search context after opening a result and going back
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]jgvFvGSmgC4WJ7S9Y',
+[WebServer]   name: '[string]Scoped Search Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]THiJwmm23aY8quiGK',
+[WebServer]   name: '[string]Scoped Wrench',
+[WebServer]   isContainer: '[boolean]false'
+
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]uu8a7vhdwYqYAeojX',
+[WebServer]   name: '[string]Global Wrench',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]xFuMRzkgsWnWu6puy',
+[WebServer]   name: '[string]Scoped Spare Filter',
+
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]CehFZQLznvyEB7QMD',
+[WebServer]   name: '[string]Global Spare Filter',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]jgvFvGSmgC4WJ7S9Y' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]jgvFvGSmgC4WJ7S9Y' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-xDYzbYRbXGDGPrFn',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+
+[WebServer]   'resultIds.0': '[string]THiJwmm23aY8quiGK'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-JP2QudGNXJDmcSNC',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]THiJwmm23aY8quiGK'
+[WebServer] }
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]THiJwmm23aY8quiGK' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-SGx4uaSS6atfwDNF',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]THiJwmm23aY8quiGK'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]THiJwmm23aY8quiGK' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-nHEPZqmF8tMGpHRG',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+
+[WebServer]   'resultIds.0': '[string]THiJwmm23aY8quiGK'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-BcbdezGkipKMmAAc',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]xFuMRzkgsWnWu6puy'
+[WebServer] }
+
+[20/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:329:9 › Item detail routing › returns to scoped search after deleting a search result detail
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]4Q7w58BjwwzbAx7Xy',
+[WebServer]   name: '[string]Search Delete Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]3P7HtMxmuuC7z45i3',
+[WebServer]   name: '[string]Scoped Delete Target',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]gRiXK3dnyiYfhFGr3',
+[WebServer]   name: '[string]Global Delete Target',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]4Q7w58BjwwzbAx7Xy' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]4Q7w58BjwwzbAx7Xy' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-t6aoTLZFoyY5wwqx',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]3P7HtMxmuuC7z45i3'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]3P7HtMxmuuC7z45i3' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item deleted {
+[WebServer]   itemId: '[string]3P7HtMxmuuC7z45i3',
+[WebServer]   name: '[string]Scoped Delete Target',
+[WebServer]   isContainer: '[boolean]false',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-jriMKLs7hmcqcPPQ',
+[WebServer]   status: '[string]empty',
+[WebServer]   count: '[number]0'
+[WebServer] }
+
+[21/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:374:9 › Item detail routing › does not reuse stale scoped context after direct item-detail navigation
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]neMtytdprsgQzWe83',
+[WebServer]   name: '[string]Prior Scope Cabinet',
+
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]DjBGFCmpvidHyn3Pd',
+[WebServer]   name: '[string]Scoped Socket Set',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]5QpmqQoo3YC5kvYw9',
+[WebServer]   name: '[string]Global Socket Set',
+
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]J7mhcPpNsYPSQAGfd',
+
+[WebServer]   name: '[string]Direct Detail Compass',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]neMtytdprsgQzWe83' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]neMtytdprsgQzWe83' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-nSRvxcy5hnneix2y',
+[WebServer]   status: '[string]success',
+
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]DjBGFCmpvidHyn3Pd'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]J7mhcPpNsYPSQAGfd' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-ukehQL3XSniEk2dk',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]2',
+[WebServer]   'resultIds.0': '[string]DjBGFCmpvidHyn3Pd',
+[WebServer]   'resultIds.1': '[string]5QpmqQoo3YC5kvYw9'
+[WebServer] }
+
+[22/33] [iPad] › tests/e2e/app/item-detail-routing.spec.ts:419:9 › Item detail routing › removes a tag from route-backed item details
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]sSeHHdupfFJxWa5ne',
+
+[WebServer]   name: '[string]Tagged Route Item',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]sSeHHdupfFJxWa5ne' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]sSeHHdupfFJxWa5ne' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]sSeHHdupfFJxWa5ne' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+(node:1649) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:1649) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[23/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:37:9 › Item detail routing › keeps scoped Search mode while hiding the normal menu
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]QgcAavQRervuKqPyC',
+[WebServer]   name: '[string]Kitchen',
+
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]qf3QHRtZjLsrNHuHS',
+[WebServer]   name: '[string]Kitchen Spatula',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]QgcAavQRervuKqPyC' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]QgcAavQRervuKqPyC' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-kwqNqmvQxbLHbzwd',
+[WebServer]   status: '[string]success',
+
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]qf3QHRtZjLsrNHuHS'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]qf3QHRtZjLsrNHuHS' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-WTuaZscmpociGoTy',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]qf3QHRtZjLsrNHuHS'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[24/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:112:9 › Item detail routing › recreates query, filters, and results from a direct search URL after refresh
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]7MxitXGKk4cPchLFF',
+[WebServer]   name: '[string]Encoded Fixture Box',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]ukJShjKvRGoQpjq2j',
+[WebServer]   name: '[string]Encoded Fixture Item',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-aTNMsWnZKfsmiEDJ',
+[WebServer]   status: '[string]success',
+
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]7MxitXGKk4cPchLFF'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-CRoyk4zSGnv67JTL',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]7MxitXGKk4cPchLFF'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[25/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:142:9 › Item detail routing › updates the URL when opening an item from the list
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]iD8TT9akkDdAuaNtJ',
+[WebServer]   name: '[string]Route Backed Lamp',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]iD8TT9akkDdAuaNtJ' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[26/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:163:9 › Item detail routing › renders item details from a direct item URL
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]A38YzfTpiR2G76dko',
+[WebServer]   name: '[string]Direct Link Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]pifsZhmkN7KvbfJWe',
+[WebServer]   name: '[string]Direct Link Flashlight',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]pifsZhmkN7KvbfJWe' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[27/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:184:9 › Item detail routing › returns to the containing container after deleting a nested route-backed item
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]ChCRKd76W6QigbBuX',
+[WebServer]   name: '[string]Return Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]rzXCtfAhhApNXaWRH',
+[WebServer]   name: '[string]Return Battery',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]rzXCtfAhhApNXaWRH' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item deleted {
+
+[WebServer]   itemId: '[string]rzXCtfAhhApNXaWRH',
+[WebServer]   name: '[string]Return Battery',
+[WebServer]   isContainer: '[boolean]false',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]ChCRKd76W6QigbBuX' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[28/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:208:9 › Item detail routing › returns to the items list after deleting a root route-backed item
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]WtRsHPyG2GKaDLZNk',
+[WebServer]   name: '[string]Return Root Item',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]WtRsHPyG2GKaDLZNk' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item deleted {
+[WebServer]   itemId: '[string]WtRsHPyG2GKaDLZNk',
+
+[WebServer]   name: '[string]Return Root Item',
+[WebServer]   isContainer: '[boolean]false',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[29/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:226:9 › Item detail routing › shows a not-found state for missing and deleted container routes
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]bZ4ZFWzGgoq7Qcb8T',
+[WebServer]   name: '[string]Deleted Container Route',
+[WebServer]   isContainer: '[boolean]true'
+
+[WebServer] }
+
+[WebServer] [api/items] Item deleted {
+
+[WebServer]   itemId: '[string]bZ4ZFWzGgoq7Qcb8T',
+[WebServer]   name: '[string]Deleted Container Route',
+[WebServer]   isContainer: '[boolean]true',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[30/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:249:9 › Item detail routing › preserves scoped search context after opening a result and going back
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]RxsJS9axhPuQQpnBa',
+[WebServer]   name: '[string]Scoped Search Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]yZw7qN2KYpWnyuLCL',
+[WebServer]   name: '[string]Scoped Wrench',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]yKMyHwtvwai4zxkqE',
+[WebServer]   name: '[string]Global Wrench',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]JepQR4McRWQYT5sDL',
+[WebServer]   name: '[string]Scoped Spare Filter',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]i4kz5JBLTeoq8Ld7c',
+[WebServer]   name: '[string]Global Spare Filter',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]RxsJS9axhPuQQpnBa' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]RxsJS9axhPuQQpnBa' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-yp7kMqGnrCXB7Cxd',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]yZw7qN2KYpWnyuLCL'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-JCrAL6Tohn5L3tRJ',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]yZw7qN2KYpWnyuLCL'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]yZw7qN2KYpWnyuLCL' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-pMMMEwnege6oWDxz',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]yZw7qN2KYpWnyuLCL'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]yZw7qN2KYpWnyuLCL' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-vfpFqjH4iamk4RYg',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]yZw7qN2KYpWnyuLCL'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-e5CXHJ83gAgGLLWj',
+
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]JepQR4McRWQYT5sDL'
+[WebServer] }
+
+[31/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:329:9 › Item detail routing › returns to scoped search after deleting a search result detail
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]FEBe9w6d3woCvrLoS',
+[WebServer]   name: '[string]Search Delete Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]2mriB9CmDm5dggptQ',
+[WebServer]   name: '[string]Scoped Delete Target',
+[WebServer]   isContainer: '[boolean]false'
+
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]wYC2eNAi8k9pLkRq3',
+[WebServer]   name: '[string]Global Delete Target',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]FEBe9w6d3woCvrLoS' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]FEBe9w6d3woCvrLoS' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-WMuE9ctK2Pohrnh2',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]2mriB9CmDm5dggptQ'
+[WebServer] }
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]2mriB9CmDm5dggptQ' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Item deleted {
+
+[WebServer]   itemId: '[string]2mriB9CmDm5dggptQ',
+[WebServer]   name: '[string]Scoped Delete Target',
+[WebServer]   isContainer: '[boolean]false',
+[WebServer]   rowsAffected: '[number]1'
+[WebServer] }
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-Rywtt8dkswkTzLDr',
+[WebServer]   status: '[string]empty',
+
+[WebServer]   count: '[number]0'
+[WebServer] }
+
+[32/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:374:9 › Item detail routing › does not reuse stale scoped context after direct item-detail navigation
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]yhr3ajEiyiwX4g6aA',
+[WebServer]   name: '[string]Prior Scope Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]H948mhv7wBsrwB32M',
+[WebServer]   name: '[string]Scoped Socket Set',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]uvkXHcewF6Tshb358',
+[WebServer]   name: '[string]Global Socket Set',
+[WebServer]   isContainer: '[boolean]false'
+
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]MnYHJ6xS7ZSqSaxQo',
+[WebServer]   name: '[string]Direct Detail Compass',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]yhr3ajEiyiwX4g6aA' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]yhr3ajEiyiwX4g6aA' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+[WebServer]   runId: '[string]srch-DAnRAtzYJ8HBhwwX',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+
+[WebServer]   'resultIds.0': '[string]H948mhv7wBsrwB32M'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]MnYHJ6xS7ZSqSaxQo' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]MnYHJ6xS7ZSqSaxQo' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-HmbFTE2XZ4hyodBE',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]2',
+[WebServer]   'resultIds.0': '[string]H948mhv7wBsrwB32M',
+[WebServer]   'resultIds.1': '[string]uvkXHcewF6Tshb358'
+[WebServer] }
+
+[33/33] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:419:9 › Item detail routing › removes a tag from route-backed item details
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]u9dbKSKdhDiMehAvF',
+[WebServer]   name: '[string]Tagged Route Item',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]u9dbKSKdhDiMehAvF' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]u9dbKSKdhDiMehAvF' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]u9dbKSKdhDiMehAvF' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byId { itemId: '[string]u9dbKSKdhDiMehAvF' }
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+  33 passed (1.6m)

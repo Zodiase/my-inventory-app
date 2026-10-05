@@ -1,7 +1,28 @@
-import { expect, test } from '@playwright/test';
+/**
+ * Exercises real URL-owned item/search navigation across desktop and touch layouts.
+ * Fixtures explicitly wait for asynchronous indexing; responsive controls must
+ * preserve query, scope and identity rather than mimic desktop-only affordances.
+ */
+import { expect, test, type Page } from '@playwright/test';
 
 import { callMeteorMethod, resetDatabase, waitForMeteorReady } from '../helpers/database';
 import { createItem, createTag } from '../helpers/factories';
+
+// Fixture creation returns before the external search index finishes its queued writes.
+// Wait for both scoped and global records so an empty index cannot falsely prove scope.
+async function waitForIndexedItems(page: Page, query: string, expectedIds: string[]): Promise<void> {
+    await expect
+        .poll(
+            async () => {
+                const results = await callMeteorMethod<Array<{ _id: string }>>(page, 'items.search', [
+                    { type: 'text', value: query },
+                ]);
+                return results.map((item) => item._id).sort();
+            },
+            { timeout: 30_000 }
+        )
+        .toEqual([...expectedIds].sort());
+}
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -53,7 +74,18 @@ test.describe('Item detail routing', () => {
         await waitForMeteorReady(page);
         await expect(page.locator(`a[href="/items/${spatulaId}"]`)).toBeVisible();
         await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('Spatula');
-        await expect(page.getByRole('button', { name: 'Type: Items' })).toBeVisible();
+        if ((page.viewportSize()?.width ?? 1280) < 460) {
+            const compactMenu = page.getByRole('button', { name: /Scope: Kitchen; 1 active filter/ });
+            await compactMenu.tap();
+            await expect(page.getByRole('button', { name: /^(?:✓ )?Items$/, exact: true })).toHaveAttribute(
+                'aria-pressed',
+                'true'
+            );
+            await page.screenshot({ path: testInfo.outputPath('phone-selected-type-menu.png') });
+            await page.keyboard.press('Escape');
+        } else {
+            await expect(page.getByRole('button', { name: 'Type: Items' })).toBeVisible();
+        }
         await expect(searchLink).toHaveCount(0);
         await expect(page).toHaveURL(submittedUrl);
         await expect(page.getByRole('button', { name: 'Scope: Kitchen' })).toBeVisible();
@@ -224,16 +256,18 @@ test.describe('Item detail routing', () => {
             name: 'Scoped Wrench',
             containerId,
         });
-        await createItem(page, {
+        const globalWrenchId = await createItem(page, {
             name: 'Global Wrench',
         });
-        await createItem(page, {
+        const scopedSpareId = await createItem(page, {
             name: 'Scoped Spare Filter',
             containerId,
         });
-        await createItem(page, {
+        const globalSpareId = await createItem(page, {
             name: 'Global Spare Filter',
         });
+        await waitForIndexedItems(page, 'Wrench', [firstScopedItemId, globalWrenchId]);
+        await waitForIndexedItems(page, 'Spare Filter', [scopedSpareId, globalSpareId]);
 
         await page.goto(`/container/${containerId}`);
         await waitForMeteorReady(page);
@@ -277,7 +311,14 @@ test.describe('Item detail routing', () => {
         await page.getByRole('link', { name: 'Back to search' }).click();
         await expect(page).toHaveURL(searchUrl);
 
-        await page.getByRole('button', { name: 'Clear search' }).click();
+        if ((page.viewportSize()?.width ?? 1280) < 460) {
+            await scopedSearchButton.tap();
+            await page.getByRole('button', { name: 'Clear query', exact: true }).tap();
+            await page.keyboard.press('Escape');
+        } else {
+            await page.getByRole('button', { name: 'Clear search' }).click();
+        }
+        await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('');
         await page.getByRole('textbox', { name: 'Search query' }).fill('Spare Filter');
         await page.getByRole('textbox', { name: 'Search query' }).press('Enter');
 
@@ -294,9 +335,10 @@ test.describe('Item detail routing', () => {
             name: 'Scoped Delete Target',
             containerId,
         });
-        await createItem(page, {
+        const globalDeleteId = await createItem(page, {
             name: 'Global Delete Target',
         });
+        await waitForIndexedItems(page, 'Delete Target', [itemId, globalDeleteId]);
 
         await page.goto(`/container/${containerId}`);
         await waitForMeteorReady(page);

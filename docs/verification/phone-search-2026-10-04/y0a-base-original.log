@@ -1,0 +1,383 @@
+[WebServer] (node:98969) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] [[[[[ /Volumes/Expansion/workspace/inventory-phone-search-base/meteor-app ]]]]]
+[WebServer] 
+
+[WebServer] => Started proxy.
+
+[WebServer] => Started HMR server.
+
+[WebServer] => Meteor 3.5.2 is available. Check the changelog
+[WebServer] https://docs.meteor.com/history.html and update this project with 'meteor
+[WebServer] update'.
+
+[WebServer] => Started MongoDB.
+
+[WebServer] => Linted your app. No linting errors.
+
+[WebServer] (node:99148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 
+
+[WebServer] [/server/gridfs.ts] GridFS bucket initialized for attachments
+
+[WebServer] [/server/main.ts] Creating database indexes...
+
+[WebServer] [/server/main.ts] Database indexes created successfully
+
+[WebServer] [/server/search/index.ts] Inventory search index rebuilt { count: '[number]0' }
+
+[WebServer] [api/tags] watching for tags without path...
+
+[WebServer] (node:98969) Warning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+
+[WebServer] => Started your app.
+
+[WebServer] 
+
+[WebServer] => App running at http://127.0.0.1:48386/
+
+
+Running 3 tests using 1 worker
+
+(node:99150) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:99150) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/3] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:16:9 › Item detail routing › keeps scoped Search mode while hiding the normal menu
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]uNFAkkHCZYBLMnRRL',
+[WebServer]   name: '[string]Kitchen',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]RnPzTuz5Wd2FkqTX8',
+
+[WebServer]   name: '[string]Kitchen Spatula',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]uNFAkkHCZYBLMnRRL' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]uNFAkkHCZYBLMnRRL' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-3aohH728tfqE2MaZ',
+[WebServer]   status: '[string]success',
+[WebServer]   count: '[number]1',
+[WebServer]   'resultIds.0': '[string]RnPzTuz5Wd2FkqTX8'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+  1) [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:16:9 › Item detail routing › keeps scoped Search mode while hiding the normal menu 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('button', { name: 'Type: Items' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByRole('button', { name: 'Type: Items' })
+
+
+      54 |         await expect(page.locator(`a[href="/items/${spatulaId}"]`)).toBeVisible();
+      55 |         await expect(page.getByRole('textbox', { name: 'Search query' })).toHaveValue('Spatula');
+    > 56 |         await expect(page.getByRole('button', { name: 'Type: Items' })).toBeVisible();
+         |                                                                         ^
+      57 |         await expect(searchLink).toHaveCount(0);
+      58 |         await expect(page).toHaveURL(submittedUrl);
+      59 |         await expect(page.getByRole('button', { name: 'Scope: Kitchen' })).toBeVisible();
+        at /Volumes/Expansion/workspace/inventory-phone-search-base/tests/e2e/app/item-detail-routing.spec.ts:56:73
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/y0a-base-original/app-item-detail-routing-It-b43d6-hile-hiding-the-normal-menu-iPhone/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../../../private/tmp/y0a-base-original/app-item-detail-routing-It-b43d6-hile-hiding-the-normal-menu-iPhone/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/y0a-base-original/app-item-detail-routing-It-b43d6-hile-hiding-the-normal-menu-iPhone/error-context.md
+
+
+(node:99226) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:99226) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/3] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:217:9 › Item detail routing › preserves scoped search context after opening a result and going back
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]FSjPvy6rQd2Yp3bg2',
+[WebServer]   name: '[string]Scoped Search Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]F3pdQBccyAREc6W72',
+
+[WebServer]   name: '[string]Scoped Wrench',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]GDnS3F82Akh5ZMqDK',
+[WebServer]   name: '[string]Global Wrench',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]cZpNxbQXqtMdW7PuX',
+[WebServer]   name: '[string]Scoped Spare Filter',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]X3uRXLkMYRAC7xwdM',
+[WebServer]   name: '[string]Global Spare Filter',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]FSjPvy6rQd2Yp3bg2' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]FSjPvy6rQd2Yp3bg2' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-K6EAPvyyBMybC27D',
+[WebServer]   status: '[string]empty',
+[WebServer]   count: '[number]0'
+[WebServer] }
+
+  2) [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:217:9 › Item detail routing › preserves scoped search context after opening a result and going back 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('a[href^="/items/"]').filter({ hasText: 'Scoped Wrench' }).first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('a[href^="/items/"]').filter({ hasText: 'Scoped Wrench' }).first()
+
+
+      251 |
+      252 |         const scopedWrenchResult = page.locator('a[href^="/items/"]').filter({ hasText: 'Scoped Wrench' }).first();
+    > 253 |         await expect(scopedWrenchResult).toBeVisible();
+          |                                          ^
+      254 |         await expect(scopedWrenchResult).toHaveAttribute('href', `/items/${firstScopedItemId}`);
+      255 |         await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Global Wrench' })).toHaveCount(0);
+      256 |
+        at /Volumes/Expansion/workspace/inventory-phone-search-base/tests/e2e/app/item-detail-routing.spec.ts:253:42
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/y0a-base-original/app-item-detail-routing-It-5de19-ing-a-result-and-going-back-iPhone/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../../../private/tmp/y0a-base-original/app-item-detail-routing-It-5de19-ing-a-result-and-going-back-iPhone/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/y0a-base-original/app-item-detail-routing-It-5de19-ing-a-result-and-going-back-iPhone/error-context.md
+
+
+(node:99306) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:99306) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/3] [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:288:9 › Item detail routing › returns to scoped search after deleting a search result detail
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] The Mongo server and the Meteor query disagree on how many documents match your query. Cursor description:  CursorDescription {
+[WebServer]   collectionName: 'items',
+[WebServer]   selector: { '$or': [ [Object], [Object] ] },
+[WebServer]   options: { transform: null }
+
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[null]' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]vEmwgsZE2L9Ad8wH9',
+[WebServer]   name: '[string]Search Delete Cabinet',
+[WebServer]   isContainer: '[boolean]true'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+[WebServer]   itemId: '[string]hS57WAqwQfwuFh7Xh',
+[WebServer]   name: '[string]Scoped Delete Target',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/items] Item created {
+
+[WebServer]   itemId: '[string]iLrh5BbeWWiAvZ2JA',
+[WebServer]   name: '[string]Global Delete Target',
+[WebServer]   isContainer: '[boolean]false'
+[WebServer] }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]vEmwgsZE2L9Ad8wH9' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Publishing items.byContainer { containerId: '[string]vEmwgsZE2L9Ad8wH9' }
+
+[WebServer] [api/tags] Publishing tags.all
+
+[WebServer] [api/items] Inventory search run completed {
+
+[WebServer]   runId: '[string]srch-jX72887KaFeDNQWa',
+[WebServer]   status: '[string]empty',
+[WebServer]   count: '[number]0'
+[WebServer] }
+
+  3) [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:288:9 › Item detail routing › returns to scoped search after deleting a search result detail 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('a[href^="/items/"]').filter({ hasText: 'Scoped Delete Target' }).first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('a[href^="/items/"]').filter({ hasText: 'Scoped Delete Target' }).first()
+
+
+      313 |             .filter({ hasText: 'Scoped Delete Target' })
+      314 |             .first();
+    > 315 |         await expect(scopedDeleteResult).toBeVisible();
+          |                                          ^
+      316 |         await expect(page.locator('a[href^="/items/"]').filter({ hasText: 'Global Delete Target' })).toHaveCount(0);
+      317 |
+      318 |         await scopedDeleteResult.click();
+        at /Volumes/Expansion/workspace/inventory-phone-search-base/tests/e2e/app/item-detail-routing.spec.ts:315:42
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/y0a-base-original/app-item-detail-routing-It-87e2c-ting-a-search-result-detail-iPhone/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../../../private/tmp/y0a-base-original/app-item-detail-routing-It-87e2c-ting-a-search-result-detail-iPhone/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/y0a-base-original/app-item-detail-routing-It-87e2c-ting-a-search-result-detail-iPhone/error-context.md
+
+
+  3 failed
+    [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:16:9 › Item detail routing › keeps scoped Search mode while hiding the normal menu 
+    [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:217:9 › Item detail routing › preserves scoped search context after opening a result and going back 
+    [iPhone] › tests/e2e/app/item-detail-routing.spec.ts:288:9 › Item detail routing › returns to scoped search after deleting a search result detail 
