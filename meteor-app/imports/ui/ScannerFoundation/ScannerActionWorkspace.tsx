@@ -11,10 +11,16 @@ import { TouchButton } from '../TouchButton';
 import type { Action, State } from './model';
 import { actionCards, fixtureCards, qrImage } from './qrCodes';
 
-const Workspace = styled.main`
+const Frame = styled.main`
     max-width: 1100px;
     margin: auto;
-    padding: 24px;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
     background: #f5f7fa;
     color: #17283b;
     font:
@@ -79,9 +85,13 @@ const Workspace = styled.main`
     dialog {
         max-width: min(90vw, 500px);
     }
-    @media (max-width: 480px) {
-        padding: 12px;
-    }
+
+`;
+const Workspace = styled.div`
+    min-height: 0;
+    overflow-y: auto;
+    padding: 24px;
+    @media (max-width: 480px) { padding: 12px; }
 `;
 const Primary = styled.div`
     display: grid;
@@ -136,6 +146,15 @@ const Card = styled.article`
         min-height: 24px;
     }
 `;
+const CaptureDock = styled.aside`
+    min-width: 0;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    background: white;
+    border-top: 2px solid #64748b;
+    input { min-height: 44px; font-size: max(16px, 1em); }
+    p { margin: 4px 0 0; height: 60px; overflow-y: auto; overflow-wrap: anywhere; }
+`;
+const diagnosticIndent = 2;
 const names = { off: 'Off', ready: 'Ready', collecting: 'Reading', paused: 'Paused', draining: 'Recovering' };
 export function ScannerActionWorkspace({
     state,
@@ -170,113 +189,129 @@ export function ScannerActionWorkspace({
             : last.outcome === 'discarded'
             ? 'Interrupted boundary cleared. Scan the code again.'
             : last.outcome === 'rejected'
-            ? 'Read rejected. Follow the capture instructions above.'
+            ? `Read rejected. ${last.detail}`
             : last.outcome === 'cancelled'
             ? 'Previous read cancelled by a session change.'
             : last.outcome === 'unknown'
             ? 'No matching demo code. Try one of the synthetic test codes below.'
             : 'Demo lookup failed. Open diagnostics to review this read.';
     return (
-        <Workspace>
-            <h1>Scanner workspace</h1>
-            <p>Read-only demo · nothing is saved to inventory</p>
-            <Primary>
-                <Session aria-label="Capture session">
-                    <h2>
-                        Capture: <span data-testid="capture-state">{names[state.capture]}</span>
-                    </h2>
-                    <p data-testid="mode">Mode: {modeName}</p>
-                    <Buttons>
-                        <TouchButton
-                            disabled={state.capture !== 'off'}
-                            onClick={() => {
-                                onAction('start');
-                            }}
-                        >
-                            Start
-                        </TouchButton>
-                        <TouchButton
-                            disabled={state.capture !== 'paused'}
-                            onClick={() => {
-                                onAction('resume');
-                            }}
-                        >
-                            Resume
-                        </TouchButton>
-                        <TouchButton
-                            disabled={state.capture === 'off'}
-                            variant="secondary"
-                            onClick={() => {
-                                onAction('pause');
-                            }}
-                        >
-                            Pause
-                        </TouchButton>
-                        <TouchButton
-                            disabled={state.capture === 'off'}
-                            variant="danger"
-                            onClick={() => {
-                                onAction('exit');
-                            }}
-                        >
-                            Exit
-                        </TouchButton>
-                    </Buttons>
-                    <p role="status">{next}</p>
-                    <label>Scanner input{captureInput}</label>
-                    <p role="status" data-testid="last-outcome">
-                        {outcome}
+        <Frame>
+            <Workspace data-testid="workspace-scroll">
+                <h1>Scanner workspace</h1>
+                <p>Read-only demo · nothing is saved to inventory</p>
+                <Primary>
+                    <Session aria-label="Capture session">
+                        <h2>
+                            Capture: <span data-testid="capture-state">{names[state.capture]}</span>
+                        </h2>
+                        <p data-testid="mode">Mode: {modeName}</p>
+                        <Buttons>
+                            <TouchButton
+                                disabled={state.capture !== 'off'}
+                                onClick={() => {
+                                    onAction('start');
+                                }}
+                            >
+                                Start
+                            </TouchButton>
+                            <TouchButton
+                                disabled={state.capture !== 'paused'}
+                                onClick={() => {
+                                    onAction('resume');
+                                }}
+                            >
+                                Resume
+                            </TouchButton>
+                            <TouchButton
+                                disabled={state.capture === 'off'}
+                                variant="secondary"
+                                onClick={() => {
+                                    onAction('pause');
+                                }}
+                            >
+                                Pause
+                            </TouchButton>
+                            <TouchButton
+                                disabled={state.capture === 'off'}
+                                variant="danger"
+                                onClick={() => {
+                                    onAction('exit');
+                                }}
+                            >
+                                Exit
+                            </TouchButton>
+                        </Buttons>
+                        <p role="status">{next}</p>
+                        <p role="status" data-testid="last-outcome">
+                            {outcome}
+                        </p>
+                    </Session>
+                    <section aria-label="Action codes">
+                        <h2>Choose an action</h2>
+                        <p>Scan the QR code, or tap its matching button. A tap that moves focus requires Resume.</p>
+                        <Grid>
+                            {actionCards.map((card) => (
+                                <Card key={card.action} data-testid="action-card">
+                                    <h3>{card.label}</h3>
+                                    <img
+                                        alt={`${card.label} action QR code`}
+                                        src={qrImage(card.payload)}
+                                        data-payload={card.payload}
+                                    />
+                                    <p>{card.description}</p>
+                                    <TouchButton
+                                        disabled={state.capture === 'off'}
+                                        variant="secondary"
+                                        onClick={() => {
+                                            onAction(card.action);
+                                        }}
+                                    >
+                                        {card.label}
+                                    </TouchButton>
+                                </Card>
+                            ))}
+                        </Grid>
+                    </section>
+                </Primary>
+                <section aria-label="Synthetic test codes">
+                    <h2>Synthetic test codes</h2>
+                    <p>
+                        These are demo identities, not your belongings. Product codes do not identify an owned instance.
                     </p>
-                </Session>
-                <section aria-label="Action codes">
-                    <h2>Choose an action</h2>
-                    <p>Scan the QR code, or tap its matching button. A tap that moves focus requires Resume.</p>
                     <Grid>
-                        {actionCards.map((card) => (
-                            <Card key={card.action} data-testid="action-card">
+                        {fixtureCards.map((card) => (
+                            <Card key={card.payload} data-testid="fixture-card">
                                 <h3>{card.label}</h3>
                                 <img
-                                    alt={`${card.label} action QR code`}
+                                    alt={`${card.label} synthetic QR code`}
                                     src={qrImage(card.payload)}
                                     data-payload={card.payload}
                                 />
                                 <p>{card.description}</p>
-                                <TouchButton
-                                    disabled={state.capture === 'off'}
-                                    variant="secondary"
-                                    onClick={() => {
-                                        onAction(card.action);
-                                    }}
-                                >
-                                    {card.label}
-                                </TouchButton>
                             </Card>
                         ))}
                     </Grid>
                 </section>
-            </Primary>
-            <section aria-label="Synthetic test codes">
-                <h2>Synthetic test codes</h2>
-                <p>These are demo identities, not your belongings. Product codes do not identify an owned instance.</p>
-                <Grid>
-                    {fixtureCards.map((card) => (
-                        <Card key={card.payload} data-testid="fixture-card">
-                            <h3>{card.label}</h3>
-                            <img
-                                alt={`${card.label} synthetic QR code`}
-                                src={qrImage(card.payload)}
-                                data-payload={card.payload}
-                            />
-                            <p>{card.description}</p>
-                        </Card>
-                    ))}
-                </Grid>
-            </section>
-            <p>Physical screen scanning has not been tested. No scanner settings codes are shown.</p>
-            <details>
-                <summary>Developer diagnostics</summary>
-                {diagnostics}
-            </details>
-        </Workspace>
+                <p>Physical screen scanning has not been tested. No scanner settings codes are shown.</p>
+                <details>
+                    <summary>Developer diagnostics</summary>
+                    <p>Raw text below stays in this temporary, read-only page. Refresh clears it.</p>
+                    <pre data-testid="raw-capture">
+                        {JSON.stringify({ buffer: state.buffer, lastRead: last?.value }, null, diagnosticIndent)}
+                    </pre>
+                    {diagnostics}
+                </details>
+            </Workspace>
+            <CaptureDock aria-label="Scanner capture dock">
+                <label>
+                    Scanner input · {names[state.capture]}
+                    {captureInput}
+                </label>
+                <p role="status" data-testid="dock-feedback">
+                    {state.capture === 'paused' || state.capture === 'draining' ? `${state.reason} ${next}` : outcome}
+                </p>
+            </CaptureDock>
+        </Frame>
     );
 }

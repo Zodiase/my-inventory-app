@@ -89,6 +89,10 @@ for (const [width, height] of [
                 const box = await img.boundingBox();
                 expect(box?.width).toBe(224);
                 expect(box?.height).toBe(224);
+                const content = await f.getByTestId('workspace-scroll').boundingBox();
+                expect(content!.height).toBeGreaterThanOrEqual(224);
+                expect(box!.y).toBeGreaterThanOrEqual(content!.y - 1);
+                expect(box!.y + box!.height).toBeLessThanOrEqual(content!.y + content!.height + 1);
                 const { data, info } = await sharp(await img.screenshot())
                     .ensureAlpha()
                     .raw()
@@ -138,3 +142,100 @@ for (const [width, height] of [
             await f.getByRole('button', { name: 'Exit', exact: true }).click();
             await expect(f.getByTestId('capture-state')).toHaveText('Off');
         });
+
+test('mobile capture opts out of text transformation and explains uppercase rejection without normalization', async ({
+    page,
+}) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const f = await open(page);
+    const input = f.getByRole('textbox', { name: 'Scanner input', exact: true });
+    await expect(input).toHaveAttribute('autocapitalize', 'none');
+    await expect(input).toHaveAttribute('autocorrect', 'off');
+    await expect(input).toHaveAttribute('spellcheck', 'false');
+    await expect(input).toHaveAttribute('autocomplete', 'off');
+    await f.getByRole('button', { name: 'Start', exact: true }).click();
+    await scan(page, 'Inventory-action:v1:show-actions');
+    await expect(f.getByTestId('mode')).toHaveText('Mode: Inspect');
+    await expect(f.getByTestId('dock-feedback')).toContainText('capitalization differs');
+    await expect(f.getByTestId('dock-feedback')).toContainText(expected[1]);
+    await f.getByText('Developer diagnostics', { exact: true }).click();
+    await expect(f.getByTestId('raw-capture')).toContainText('Inventory-action:v1:show-actions');
+    await expect(f.getByTestId('action-history')).not.toContainText('show-actions');
+    await f.getByRole('button', { name: 'Resume', exact: true }).click();
+    await scan(page, expected[1]);
+    await expect(f.getByTestId('mode')).toHaveText('Mode: Show actions');
+});
+
+test('fixed capture field keeps code browsing stable during keystrokes and never steals editing focus', async ({
+    page,
+}) => {
+    await page.setViewportSize({ width: 390, height: 480 });
+    const f = await open(page);
+    await f.getByRole('button', { name: 'Start', exact: true }).click();
+    const image = f.locator('[data-testid="action-card"] img').last();
+    await image.scrollIntoViewIfNeeded();
+    const imagePosition = await f.locator('[data-testid="action-card"] img').last().boundingBox();
+    const input = f.getByRole('textbox', { name: 'Scanner input', exact: true });
+    const box = await input.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y).toBeGreaterThanOrEqual(0);
+    expect(box!.y + box!.height).toBeLessThanOrEqual(480);
+    await page.keyboard.type(expected[1], { delay: 5 });
+    expect((await f.locator('[data-testid="action-card"] img').last().boundingBox())!.y).toBeCloseTo(
+        imagePosition!.y,
+        0
+    );
+    await page.keyboard.press('Enter');
+    await expect(input).toBeFocused();
+    expect((await f.locator('[data-testid="action-card"] img').last().boundingBox())!.y).toBeCloseTo(
+        imagePosition!.y,
+        0
+    );
+    await f.getByText('Developer diagnostics', { exact: true }).click();
+    const editor = f.getByRole('textbox', { name: 'Ordinary editing field', exact: true });
+    await editor.fill('ordinary edit');
+    await expect(editor).toBeFocused();
+    await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+    await expect(input).not.toBeFocused();
+});
+
+test('raw rejected text is escaped and timeout recovery reason stays visible', async ({ page }) => {
+    const f = await open(page);
+    await f.getByRole('button', { name: 'Start', exact: true }).click();
+    await page.keyboard.type('<img src=x onerror=alert(1)>');
+    await expect(f.getByTestId('capture-state')).toHaveText('Paused', { timeout: 5000 });
+    await expect(f.getByTestId('dock-feedback')).toContainText('Incomplete read timed out');
+    await expect(f.getByTestId('dock-feedback')).toContainText('Resume');
+    await f.getByText('Developer diagnostics', { exact: true }).click();
+    await expect(f.getByTestId('raw-capture')).toContainText('<img src=x onerror=alert(1)>');
+    await expect(f.getByTestId('raw-capture').locator('img')).toHaveCount(0);
+});
+
+for (const scale of [1, 1.25])
+    test(`standalone short-phone viewport keeps dock anchored and complete QR visible text${scale}`, async ({
+        page,
+    }) => {
+        await page.setViewportSize({ width: 390, height: 480 });
+        await page.goto(`${manager}/iframe.html?id=scanner-foundation--action-codes&viewMode=story`);
+        await expect(page.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+        // The scaling helper accepts the same locator operations as this standalone page.
+        await scaleScannerProof(page, scale);
+        await page.getByRole('button', { name: 'Start', exact: true }).click();
+        const image = page.locator('[data-testid="action-card"] img').last();
+        await image.scrollIntoViewIfNeeded();
+        const before = await image.boundingBox();
+        const content = await page.getByTestId('workspace-scroll').boundingBox();
+        const dock = page.getByRole('complementary', { name: 'Scanner capture dock' });
+        const dockBefore = await dock.boundingBox();
+        expect(dockBefore!.y + dockBefore!.height).toBeCloseTo(480, 0);
+        expect(before!.y).toBeGreaterThanOrEqual(content!.y - 1);
+        expect(before!.y + before!.height).toBeLessThanOrEqual(content!.y + content!.height + 1);
+        await scan(page, expected[1]);
+        await scan(page, expected[2]);
+        await expect(page.getByRole('textbox', { name: 'Scanner input', exact: true })).toBeFocused();
+        expect((await image.boundingBox())!.y).toBeCloseTo(before!.y, 0);
+        expect((await dock.boundingBox())!.y).toBeCloseTo(dockBefore!.y, 0);
+        await page.evaluate(() => window.scrollTo(0, 1000));
+        expect(await page.evaluate(() => window.scrollY)).toBe(0);
+        expect((await dock.boundingBox())!.y).toBeCloseTo(dockBefore!.y, 0);
+    });

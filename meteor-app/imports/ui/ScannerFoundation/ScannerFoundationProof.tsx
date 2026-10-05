@@ -190,7 +190,7 @@ export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: 
         current.current = next;
         setState(next);
         if (value === 'start' || value === 'resume') {
-            sink.current?.focus();
+            sink.current?.focus({ preventScroll: true });
             if (document.hidden || document.activeElement !== sink.current || dialog.current?.open === true)
                 send({
                     type: 'pause',
@@ -224,7 +224,7 @@ export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: 
                                 {read.id} · {read.kind} · {read.outcome}
                             </strong>
                             <p>
-                                <code>{read.value}</code>
+                                <code>{JSON.stringify(read.value)}</code>
                             </p>
                             <p>
                                 {read.detail} · {read.provenance} · attempt {read.attempt} · prior outcomes{' '}
@@ -383,6 +383,9 @@ export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: 
                             /* Native adapter owns framing. */
                         }}
                         autoComplete="off"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
                     />
                 }
             />
@@ -446,6 +449,9 @@ export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: 
                             /* Native adapter owns input framing. */
                         }}
                         autoComplete="off"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
                     />
                 </label>
                 <p>
