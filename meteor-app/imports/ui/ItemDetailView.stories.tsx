@@ -1,3 +1,8 @@
+/**
+ * Representative item-detail states with mock hierarchy and action callbacks.
+ * Viewport-sensitive stories own bounded frames so intrinsic mock content cannot
+ * enlarge the preview; production routing and persistence belong to app tests.
+ */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Button, Heading, Layer, Text } from 'grommet';
 import React, { useState } from 'react';
@@ -281,6 +286,30 @@ export const ManyTags: Story = {
 
 // Story: Deep container path
 export const DeepContainerPath: Story = {
+    parameters: {
+        layout: 'fullscreen',
+        docs: {
+            description: {
+                story: `Purpose: inspect item details with four ancestor locations.
+Expected composition: title, location trail, description, tags and actions form one
+bounded vertical page, with a maximum 980px reading width. Location ancestors use
+horizontal scrolling inside the trail; the document never grows horizontally.
+The nearest location remains initially visible and earlier ancestors can be revealed
+by keyboard focus. Actions remain reachable by vertical scrolling on short screens.
+Required manager viewports: 390x480, 390x844, 768x1024, 1280x720, 1600x1000.
+Responsive changes: actions wrap on phone; breadcrumb scrolling appears only when
+needed; desktop retains the bounded reading width. Title and metadata stay readable.
+Interactions: focus Home to reveal an early ancestor; scroll to Delete; check focus
+and no page-width growth. Exclusions: mocked callbacks do not prove routing,
+persistence, modal workflows or the actual app shell.`,
+            },
+        },
+    },
+    render: (args) => (
+        <div style={{ width: '100%', maxWidth: 980, height: '100vh', minWidth: 0, margin: '0 auto' }}>
+            <ItemDetailViewPresentation {...args} />
+        </div>
+    ),
     args: {
         item: sampleItem,
         containerPath: [
