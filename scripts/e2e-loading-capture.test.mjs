@@ -121,3 +121,53 @@ test('drain cannot promote malformed or truncated evidence to complete', () => {
     ])
         assert.equal(sanitizeRenderCapture({ ...c.snapshot(), ...changed }).complete, false);
 });
+
+test('malformed supplied metadata and damaged last-commit correlation fail closed', () => {
+    const c = createLoadingCapture(epoch, () => 1);
+    c.record('commit', {
+        instance: c.alias({}),
+        rootFrame: 1,
+        routeAttempt: 1,
+        commitBatch: c.batchFor(10),
+        decision: 'contents',
+        allItemsLoading: false,
+    });
+    const valid = c.snapshot();
+    assert.equal(sanitizeRenderCapture(valid).complete, true);
+    for (const key of ['dropped', 'aliasOverflow', 'byteOverflow']) {
+        for (const bad of [-1, 1.5, 'INVALID', undefined, NaN, 1000000]) {
+            assert.equal(sanitizeRenderCapture({ ...valid, [key]: bad }).complete, false);
+        }
+    }
+    for (const [key, value] of [
+        ['instance', 'PRIVATE_ID'],
+        ['rootFrame', 'INVALID'],
+        ['routeAttempt', -1],
+        ['commitSequence', undefined],
+        ['commitBatch', 0],
+        ['at', 1.5],
+        ['allItemsLoading', 'false'],
+        ['decision', 'PRIVATE_ERROR'],
+    ]) {
+        const event = { ...valid.lastCommit, [key]: value };
+        const output = sanitizeRenderCapture({ ...valid, events: [event], lastCommit: event });
+        assert.equal(output.complete, false, key);
+        assert.doesNotMatch(JSON.stringify(output), /PRIVATE/);
+    }
+    assert.equal(
+        sanitizeRenderCapture({ ...valid, lastCommit: { ...valid.lastCommit, routeAttempt: 2 } }).complete,
+        false
+    );
+    const reproduction = {
+        schema: 'root-route-loading/v1',
+        documentEpoch: epoch,
+        available: true,
+        complete: true,
+        events: [{ phase: 'commit', routeAttempt: 'INVALID', instance: 'PRIVATE_ID' }],
+        lastCommit: { phase: 'commit', routeAttempt: 'INVALID', instance: 'PRIVATE_ID' },
+        dropped: -1,
+        aliasOverflow: 'INVALID',
+        byteOverflow: 0,
+    };
+    assert.equal(sanitizeRenderCapture(reproduction).complete, false);
+});

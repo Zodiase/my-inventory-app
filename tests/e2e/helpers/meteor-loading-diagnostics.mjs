@@ -34,6 +34,19 @@ export function sanitizeRenderCapture(raw) {
     };
     if (raw?.schema !== 'root-route-loading/v1' || !/^document-[a-f0-9]{16}$/u.test(raw.documentEpoch ?? ''))
         return unavailable;
+    let damagedEvent = false;
+    const integer = (value, max = 999999) => Number.isSafeInteger(value) && value >= 0 && value <= max;
+    const decisions = ['root-loading', 'contents', 'invalid', 'child-loading'];
+    const numericFields = ['rootFrame', 'routeAttempt', 'childFrame', 'commitBatch', 'commitSequence', 'at'];
+    const booleanFields = [
+        'tagsLoading',
+        'allItemsLoading',
+        'identitiesLoading',
+        'items',
+        'hoisted',
+        'tags',
+        'identities',
+    ];
     const cleanEvent = (event) => {
         if (
             !['root-render', 'route-attempt', 'child-render', 'commit', 'passive-mount', 'passive-unmount'].includes(
@@ -41,6 +54,37 @@ export function sanitizeRenderCapture(raw) {
             )
         )
             return undefined;
+        if (
+            (event.instance !== undefined && !/^instance-([1-9]|1[0-6])$/u.test(event.instance)) ||
+            numericFields.some(
+                (key) => event[key] !== undefined && !integer(event[key], key === 'at' ? 86400000 : 999999)
+            ) ||
+            booleanFields.some((key) => event[key] !== undefined && typeof event[key] !== 'boolean') ||
+            (event.decision !== undefined && !decisions.includes(event.decision)) ||
+            !integer(event.at, 86400000)
+        )
+            damagedEvent = true;
+        if (event.phase === 'commit') {
+            const route =
+                integer(event.rootFrame) &&
+                event.rootFrame > 0 &&
+                integer(event.routeAttempt) &&
+                event.routeAttempt > 0 &&
+                ['root-loading', 'contents', 'invalid'].includes(event.decision);
+            const child =
+                integer(event.childFrame) &&
+                event.childFrame > 0 &&
+                ['child-loading', 'contents'].includes(event.decision);
+            if (
+                !/^instance-([1-9]|1[0-6])$/u.test(event.instance ?? '') ||
+                !integer(event.commitSequence) ||
+                event.commitSequence === 0 ||
+                !integer(event.commitBatch) ||
+                event.commitBatch === 0 ||
+                !(route || child)
+            )
+                damagedEvent = true;
+        }
         const out = { phase: event.phase };
         if (/^instance-([1-9]|1[0-6])$/u.test(event.instance ?? '')) out.instance = event.instance;
         for (const key of ['rootFrame', 'routeAttempt', 'childFrame', 'commitBatch', 'commitSequence', 'at'])
@@ -70,11 +114,16 @@ export function sanitizeRenderCapture(raw) {
         'no-completed-commit',
     ];
     const extraDropped = Math.max(0, (Array.isArray(raw.events) ? raw.events.length : 0) - 200);
+    const lastCommit = cleanEvent(raw.lastCommit);
+    const latestRetainedCommit = events.findLast((event) => event.phase === 'commit');
     const invalid =
+        damagedEvent ||
+        ['available', 'complete', 'stopped'].some((key) => typeof raw[key] !== 'boolean') ||
+        ['dropped', 'aliasOverflow', 'byteOverflow'].some((key) => !integer(raw[key])) ||
+        (lastCommit !== undefined && JSON.stringify(lastCommit) !== JSON.stringify(latestRetainedCommit)) ||
         !Array.isArray(raw.events) ||
         events.length !== Math.min(raw.events.length, 200) ||
         (raw.reason !== undefined && !reasons.includes(raw.reason));
-    const lastCommit = cleanEvent(raw.lastCommit);
     const overflow = extraDropped > 0 || ['dropped', 'aliasOverflow', 'byteOverflow'].some((key) => raw[key] > 0);
     const reason = invalid
         ? 'invalid-capture'
@@ -319,7 +368,11 @@ export function observeMeteorLoading(page) {
             if (['failed', 'timedOut'].includes(testInfo.status)) {
                 const path = testInfo.outputPath('meteor-loading-diagnostics.json');
                 await mkdir(dirname(path), { recursive: true });
-                await writeFile(path, JSON.stringify({ ...evidence.snapshot(), finalSampleCompleted }), {
+                const snapshot = evidence.snapshot();
+                if (!finalSampleCompleted && snapshot.renderCapture !== undefined) {
+                    snapshot.renderCapture = { ...snapshot.renderCapture, complete: false, reason: 'drain-timeout' };
+                }
+                await writeFile(path, JSON.stringify({ ...snapshot, finalSampleCompleted }), {
                     mode: 0o600,
                 });
                 await testInfo.attach('meteor-loading-diagnostics', { path, contentType: 'application/json' });
