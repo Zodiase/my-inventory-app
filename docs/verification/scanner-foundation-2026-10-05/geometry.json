@@ -1,0 +1,858 @@
+[
+  {
+    "w": 1280,
+    "h": 720,
+    "scale": 1,
+    "geometry": {
+      "overflow": false,
+      "buttons": [
+        {
+          "text": "Start",
+          "width": 77.8125,
+          "height": 44
+        },
+        {
+          "text": "Resume",
+          "width": 100.890625,
+          "height": 44
+        },
+        {
+          "text": "Pause",
+          "width": 86.03125,
+          "height": 44
+        },
+        {
+          "text": "Exit",
+          "width": 68.28125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "inspect-demo",
+          "width": 146.078125,
+          "height": 44
+        },
+        {
+          "text": "show-actions",
+          "width": 142.703125,
+          "height": 44
+        },
+        {
+          "text": "pause",
+          "width": 85.921875,
+          "height": 44
+        },
+        {
+          "text": "exit",
+          "width": 67.578125,
+          "height": 44
+        },
+        {
+          "text": "Open dialog",
+          "width": 130.953125,
+          "height": 44
+        },
+        {
+          "text": "Simulate reconnect",
+          "width": 187.125,
+          "height": 44
+        }
+      ],
+      "focus": null
+    },
+    "errors": []
+  },
+  {
+    "w": 1280,
+    "h": 720,
+    "scale": 1.25,
+    "geometry": {
+      "overflow": false,
+      "buttons": [
+        {
+          "text": "Start",
+          "width": 77.8125,
+          "height": 44
+        },
+        {
+          "text": "Resume",
+          "width": 100.890625,
+          "height": 44
+        },
+        {
+          "text": "Pause",
+          "width": 86.03125,
+          "height": 44
+        },
+        {
+          "text": "Exit",
+          "width": 68.28125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "inspect-demo",
+          "width": 146.078125,
+          "height": 44
+        },
+        {
+          "text": "show-actions",
+          "width": 142.703125,
+          "height": 44
+        },
+        {
+          "text": "pause",
+          "width": 85.921875,
+          "height": 44
+        },
+        {
+          "text": "exit",
+          "width": 67.578125,
+          "height": 44
+        },
+        {
+          "text": "Open dialog",
+          "width": 130.953125,
+          "height": 44
+        },
+        {
+          "text": "Simulate reconnect",
+          "width": 187.125,
+          "height": 44
+        }
+      ],
+      "focus": null
+    },
+    "errors": []
+  },
+  {
+    "w": 820,
+    "h": 900,
+    "scale": 1,
+    "geometry": {
+      "overflow": false,
+      "buttons": [
+        {
+          "text": "Start",
+          "width": 77.8125,
+          "height": 44
+        },
+        {
+          "text": "Resume",
+          "width": 100.890625,
+          "height": 44
+        },
+        {
+          "text": "Pause",
+          "width": 86.03125,
+          "height": 44
+        },
+        {
+          "text": "Exit",
+          "width": 68.28125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "inspect-demo",
+          "width": 146.078125,
+          "height": 44
+        },
+        {
+          "text": "show-actions",
+          "width": 142.703125,
+          "height": 44
+        },
+        {
+          "text": "pause",
+          "width": 85.921875,
+          "height": 44
+        },
+        {
+          "text": "exit",
+          "width": 67.578125,
+          "height": 44
+        },
+        {
+          "text": "Open dialog",
+          "width": 130.953125,
+          "height": 44
+        },
+        {
+          "text": "Simulate reconnect",
+          "width": 187.125,
+          "height": 44
+        }
+      ],
+      "focus": null
+    },
+    "errors": []
+  },
+  {
+    "w": 820,
+    "h": 900,
+    "scale": 1.25,
+    "geometry": {
+      "overflow": false,
+      "buttons": [
+        {
+          "text": "Start",
+          "width": 77.8125,
+          "height": 44
+        },
+        {
+          "text": "Resume",
+          "width": 100.890625,
+          "height": 44
+        },
+        {
+          "text": "Pause",
+          "width": 86.03125,
+          "height": 44
+        },
+        {
+          "text": "Exit",
+          "width": 68.28125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "inspect-demo",
+          "width": 146.078125,
+          "height": 44
+        },
+        {
+          "text": "show-actions",
+          "width": 142.703125,
+          "height": 44
+        },
+        {
+          "text": "pause",
+          "width": 85.921875,
+          "height": 44
+        },
+        {
+          "text": "exit",
+          "width": 67.578125,
+          "height": 44
+        },
+        {
+          "text": "Open dialog",
+          "width": 130.953125,
+          "height": 44
+        },
+        {
+          "text": "Simulate reconnect",
+          "width": 187.125,
+          "height": 44
+        }
+      ],
+      "focus": null
+    },
+    "errors": []
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "scale": 1,
+    "geometry": {
+      "overflow": false,
+      "buttons": [
+        {
+          "text": "Start",
+          "width": 77.8125,
+          "height": 44
+        },
+        {
+          "text": "Resume",
+          "width": 100.890625,
+          "height": 44
+        },
+        {
+          "text": "Pause",
+          "width": 86.03125,
+          "height": 44
+        },
+        {
+          "text": "Exit",
+          "width": 68.28125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "inspect-demo",
+          "width": 146.078125,
+          "height": 44
+        },
+        {
+          "text": "show-actions",
+          "width": 142.703125,
+          "height": 44
+        },
+        {
+          "text": "pause",
+          "width": 85.921875,
+          "height": 44
+        },
+        {
+          "text": "exit",
+          "width": 67.578125,
+          "height": 44
+        },
+        {
+          "text": "Open dialog",
+          "width": 130.953125,
+          "height": 44
+        },
+        {
+          "text": "Simulate reconnect",
+          "width": 187.125,
+          "height": 44
+        }
+      ],
+      "focus": null
+    },
+    "errors": []
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "scale": 1.25,
+    "geometry": {
+      "overflow": false,
+      "buttons": [
+        {
+          "text": "Start",
+          "width": 77.8125,
+          "height": 44
+        },
+        {
+          "text": "Resume",
+          "width": 100.890625,
+          "height": 44
+        },
+        {
+          "text": "Pause",
+          "width": 86.03125,
+          "height": 44
+        },
+        {
+          "text": "Exit",
+          "width": 68.28125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "inspect-demo",
+          "width": 146.078125,
+          "height": 44
+        },
+        {
+          "text": "show-actions",
+          "width": 142.703125,
+          "height": 44
+        },
+        {
+          "text": "pause",
+          "width": 85.921875,
+          "height": 44
+        },
+        {
+          "text": "exit",
+          "width": 67.578125,
+          "height": 44
+        },
+        {
+          "text": "Open dialog",
+          "width": 130.953125,
+          "height": 44
+        },
+        {
+          "text": "Simulate reconnect",
+          "width": 187.125,
+          "height": 44
+        }
+      ],
+      "focus": null
+    },
+    "errors": []
+  },
+  {
+    "w": 390,
+    "h": 480,
+    "scale": 1,
+    "geometry": {
+      "overflow": false,
+      "buttons": [
+        {
+          "text": "Start",
+          "width": 77.8125,
+          "height": 44
+        },
+        {
+          "text": "Resume",
+          "width": 100.890625,
+          "height": 44
+        },
+        {
+          "text": "Pause",
+          "width": 86.03125,
+          "height": 44
+        },
+        {
+          "text": "Exit",
+          "width": 68.28125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "inspect-demo",
+          "width": 146.078125,
+          "height": 44
+        },
+        {
+          "text": "show-actions",
+          "width": 142.703125,
+          "height": 44
+        },
+        {
+          "text": "pause",
+          "width": 85.921875,
+          "height": 44
+        },
+        {
+          "text": "exit",
+          "width": 67.578125,
+          "height": 44
+        },
+        {
+          "text": "Open dialog",
+          "width": 130.953125,
+          "height": 44
+        },
+        {
+          "text": "Simulate reconnect",
+          "width": 187.125,
+          "height": 44
+        }
+      ],
+      "focus": null
+    },
+    "errors": []
+  },
+  {
+    "w": 390,
+    "h": 480,
+    "scale": 1.25,
+    "geometry": {
+      "overflow": false,
+      "buttons": [
+        {
+          "text": "Start",
+          "width": 77.8125,
+          "height": 44
+        },
+        {
+          "text": "Resume",
+          "width": 100.890625,
+          "height": 44
+        },
+        {
+          "text": "Pause",
+          "width": 86.03125,
+          "height": 44
+        },
+        {
+          "text": "Exit",
+          "width": 68.28125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "Retry",
+          "width": 80.9375,
+          "height": 44
+        },
+        {
+          "text": "Cancel",
+          "width": 92.09375,
+          "height": 44
+        },
+        {
+          "text": "Mark correction",
+          "width": 160.453125,
+          "height": 44
+        },
+        {
+          "text": "inspect-demo",
+          "width": 146.078125,
+          "height": 44
+        },
+        {
+          "text": "show-actions",
+          "width": 142.703125,
+          "height": 44
+        },
+        {
+          "text": "pause",
+          "width": 85.921875,
+          "height": 44
+        },
+        {
+          "text": "exit",
+          "width": 67.578125,
+          "height": 44
+        },
+        {
+          "text": "Open dialog",
+          "width": 130.953125,
+          "height": 44
+        },
+        {
+          "text": "Simulate reconnect",
+          "width": 187.125,
+          "height": 44
+        }
+      ],
+      "focus": null
+    },
+    "errors": []
+  }
+]

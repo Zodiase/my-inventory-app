@@ -120,6 +120,7 @@ test('out-of-order resolution, retry, cancellation and exit keep capture evidenc
     await f.getByTestId('read-record').last().getByRole('button', { name: 'Retry', exact: true }).click();
     await page.clock.fastForward(200);
     await expect(f.getByTestId('read-record').last()).toContainText('attempt 2 · prior outcomes error');
+    await f.getByRole('combobox', { name: 'Resolver fault' }).focus();
     await f.getByRole('combobox', { name: 'Resolver fault' }).selectOption('slow');
     await f.getByRole('button', { name: 'Resume', exact: true }).click();
     await scan(page, codes[1]);
@@ -168,6 +169,82 @@ test('page navigation never replays reads or resumes capture on browser return',
     await expect(state(f)).not.toHaveText('ready');
     await expect(state(f)).not.toHaveText('collecting');
     await expect(f.getByTestId('counters')).not.toContainText('Captured 2');
+});
+
+test('nonterminating keys, modifiers and key repeat do not complete a frame', async ({ page }) => {
+    const f = await open(page);
+    await f.getByRole('button', { name: 'Start', exact: true }).click();
+    await page.keyboard.type(codes[3]);
+    await page.keyboard.press('Shift+Enter');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowRight');
+    await expect(f.getByTestId('counters')).toContainText('Captured 0');
+    await f
+        .getByRole('textbox', { name: 'Synthetic scan input', exact: true })
+        .evaluate((input) =>
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', repeat: true, bubbles: true }))
+        );
+    await expect(f.getByTestId('counters')).toContainText('Captured 0');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Enter');
+    await expect(f.getByTestId('counters')).toContainText('Captured 1');
+    await page.keyboard.type('badX');
+    await page.keyboard.press('Backspace');
+    await page.keyboard.press('Escape');
+    await expect(state(f)).toHaveText('paused');
+});
+test('textarea and contenteditable focus pause capture while retaining ordinary editing', async ({ page }) => {
+    const f = await open(page);
+    await f.locator('main').evaluate((main) => {
+        const text = document.createElement('textarea');
+        text.setAttribute('aria-label', 'Textarea fixture');
+        main.appendChild(text);
+        const editable = document.createElement('div');
+        editable.contentEditable = 'true';
+        editable.setAttribute('role', 'textbox');
+        editable.setAttribute('aria-label', 'Editable fixture');
+        main.appendChild(editable);
+    });
+    for (const name of ['Textarea fixture', 'Editable fixture']) {
+        const startOrResume = (await state(f).textContent()) === 'off' ? 'Start' : 'Resume';
+        await f.getByRole('button', { name: startOrResume, exact: true }).click();
+        await page.keyboard.type('partial');
+        await f.getByRole('textbox', { name }).fill('inventory-action:v1:exit');
+        await expect(state(f)).toHaveText('paused');
+        if (name === 'Editable fixture')
+            await expect(f.getByRole('textbox', { name })).toHaveText('inventory-action:v1:exit');
+        else await expect(f.getByRole('textbox', { name })).toHaveValue('inventory-action:v1:exit');
+    }
+    await history(f);
+    await expect(f.getByTestId('resolver-history')).toHaveText('Resolver calls: none');
+});
+test('unknown identity, offline and timeout faults remain resolution failures without navigation or writes', async ({
+    page,
+}) => {
+    await page.clock.install();
+    const f = await open(page);
+    await f.getByRole('button', { name: 'Start', exact: true }).click();
+    await scan(page, 'container: 44444444-4444-4444-8444-444444444444');
+    await page.clock.fastForward(200);
+    await expect(f.getByTestId('last-outcome')).toContainText('unknown');
+    for (const fault of ['offline', 'timeout']) {
+        await f.getByRole('combobox', { name: 'Resolver fault' }).focus();
+        await f.getByRole('combobox', { name: 'Resolver fault' }).selectOption(fault);
+        await f.getByRole('button', { name: 'Resume', exact: true }).click();
+        await scan(page, codes[0]);
+        await page.clock.fastForward(3200);
+        await expect(f.getByTestId('last-outcome')).toContainText(`Synthetic ${fault}`);
+    }
+    await f.getByRole('combobox', { name: 'Resolver fault' }).focus();
+    await f.getByRole('combobox', { name: 'Resolver fault' }).selectOption('slow');
+    await f.getByRole('button', { name: 'Resume', exact: true }).click();
+    await scan(page, codes[1]);
+    await f.getByText('Ordered capture evidence', { exact: true }).click();
+    await f.getByTestId('read-record').last().getByRole('button', { name: 'Cancel', exact: true }).click();
+    await f.getByTestId('read-record').last().getByRole('button', { name: 'Mark correction', exact: true }).click();
+    await page.clock.fastForward(6000);
+    await expect(f.getByTestId('read-record').last()).toContainText('cancelled');
+    await expect(f.getByTestId('read-record').last()).toContainText('marked for correction');
 });
 
 for (const viewport of [
