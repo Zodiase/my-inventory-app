@@ -132,6 +132,16 @@ function capacity(state: State): boolean {
         state.reads.filter((read) => read.outcome === 'pending').length < limits.pending
     );
 }
+/** Existing-record retries consume pending capacity, never another history slot. */
+export function retryBlockReason(state: State, read: Read): string | undefined {
+    if (read.epoch !== state.epoch) return 'Retry unavailable for an earlier session.';
+    if (read.outcome !== 'error') return 'Only failed reads can be retried.';
+    if (read.attempt >= limits.attempts) return 'Retry attempt limit reached.';
+    if (state.capture === 'off') return 'Start capture before retrying.';
+    if (state.reads.filter((entry) => entry.outcome === 'pending').length >= limits.pending)
+        return 'Pending queue full; wait for a result or cancel a pending read before retrying.';
+    return undefined;
+}
 export function reduce(state: State, event: Event): State {
     if (event.type === 'action') {
         const { action, origin } = event;
@@ -218,13 +228,7 @@ export function reduce(state: State, event: Event): State {
                 if (event.type === 'correct') return { ...read, corrected: true };
                 if (event.type === 'cancel' && read.outcome === 'pending')
                     return { ...read, outcome: 'cancelled', detail: 'Cancelled locally; no inventory change.' };
-                if (
-                    event.type === 'retry' &&
-                    read.outcome === 'error' &&
-                    read.attempt < limits.attempts &&
-                    capacity(state) &&
-                    state.capture !== 'off'
-                )
+                if (event.type === 'retry' && retryBlockReason(state, read) === undefined)
                     return {
                         ...read,
                         outcome: 'pending',

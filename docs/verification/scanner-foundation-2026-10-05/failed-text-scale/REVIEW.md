@@ -1,23 +1,8 @@
 # Scanner foundation proof — implementation self-review
 
-2026-10-05, America/Los_Angeles. Original implementation commit cca5d9d; this revision also repairs full-history retries. This is a bounded
+2026-10-05, America/Los_Angeles. Source implementation commit cca5d9d;
+subsequent changes add acceptance tests and evidence only. This is a bounded
 synthetic foundation candidate for bd-un3, not app integration or hardware acceptance.
-
-## Correction of prior evidence
-
-Independent review held c4bc703 for full-history Retry and incomplete enlarged
-button text. The earlier claim that all button labels were enlarged was unsupported
-and is withdrawn. Original failed 125% captures, geometry and report are preserved
-under `failed-text-scale/`; they are not acceptance evidence. New top-level captures
-replace them. Text-only test overrides now measure every existing node before/after,
-assert control fonts, and keep dynamically created record buttons enlarged. Browser
-zoom and manager chrome remain 100%; product component styles are unchanged.
-
-Existing-record Retry now uses the same `retryBlockReason` in UI and reducer.
-100 error records with zero pending can retry the same ID without growing history;
-eight pending resolutions disable Retry with a visible reason. Cancellation frees
-capacity; prior outcomes, epoch checks and the three-attempt limit remain enforced.
-The reducer regression and actual browser journey cover both capacity boundaries.
 
 ## Ownership and architecture
 
@@ -42,7 +27,7 @@ attempt; stale epochs and cancelled attempts cannot change a later session.
 Retries retain previous attempt outcomes, have a three-attempt bound, and do not
 create another capture. Corrections are local evidence marks, not household edits.
 
-Limits: 512 UTF-16 code units per frame, two-second inactivity cancellation, eight
+Limits: 512 characters per frame, two-second inactivity cancellation, eight
 pending resolutions, 100 records per temporary proof document, three attempts.
 Capacity visibly pauses capture. Refresh clears state; navigation does not replay
 reads or automatically resume. Browser back cache may retain paused memory; that
@@ -51,11 +36,11 @@ input. Paste provenance is a distinct synthetic event, not a device claim.
 
 ## Validation and PR checks
 
-- 65/65 repository script tests pass, including 13 scanner invariant tests.
+- 64/64 repository script tests pass, including 12 scanner invariant tests.
 - Four targeted source mutations fail their intended assertions: bypass uncertain
   boundary recovery, accept a stale epoch, accept a paused scan command, and
   create an extra record from an empty doubled delimiter.
-- 18/18 Chromium Storybook integration tests pass without retries. Genuine browser
+- 13/13 Chromium Storybook integration tests pass without retries. Genuine browser
   keyboard/focus/dialog/navigation behavior is exercised. Visibility, composition,
   paste and key-repeat events are explicitly injected synthetic browser events.
 - Scoped strict TypeScript check of all four new modules passes; type-aware ESLint
@@ -111,7 +96,7 @@ open were superseded. These files are evidence, not approved golden baselines.
 | 390×844  | PASS / PASS          | `manager-390x844-{1,1.25}-{overview,recovery,outcome,controls}.png`: sidebar becomes manager footer; Exit wraps to a separate row; status/outcome wrap in readable phrases; proof controls and disclosures remain reachable.                                           |
 | 390×480  | PASS / PASS          | `manager-390x480-{1,1.25}-{overview,recovery,outcome,controls}.png`: the frame exceeds the short viewport intentionally; scrolling was exercised to reach the next-step hint, outcome, controls and return to Exit. No attempt to compress everything into one screen. |
 
-All32 regenerated artifacts personally opened for this repair. All eight dimensions inspected at every combination: page frame, containment,
+All eight dimensions inspected at every combination: page frame, containment,
 scale/proportions, internal composition, text, interaction cues, hierarchy/rhythm
 and continuity across sizes. Cards retain consistent spacing and ownership;
 no isolated-letter wrapping or overlapping controls was observed. The empty
@@ -123,10 +108,8 @@ behavior; the visible label identifies the field, with paused-input warning abov
 The browser tests also exercised disclosures, dialog close, manual editing,
 scroll-to-controls and scroll-back-to-Exit. Viewport edges clipping scrolled cards
 are ordinary viewport cropping, not inaccessible content or nested-scroll owners.
-Measured normal control text is 16px; corrected125% is20px, including record
-buttons created after capture. Start changes77.8125×44 to85.65625×47; Resume
-100.890625×44 to114.28125×47. These changes occur at every required viewport.
-The Storybook manager chrome and browser zoom remain100%. This is implementation self-review only: independent functional
+Text scaling was applied to the story’s content and buttons, not the Storybook
+manager chrome. This is implementation self-review only: independent functional
 review and designer acceptance are still required before integration.
 
 ## Next action

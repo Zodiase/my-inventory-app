@@ -13,9 +13,9 @@ import {
     commands,
     fixtures,
     dispatchAction,
-    limits,
     initialState,
     reduce,
+    retryBlockReason,
     type Event,
     type Action,
     type State,
@@ -282,15 +282,13 @@ export const ScannerFoundationProof = (): ReactElement => {
                                     {read.attempts.map((a) => a.outcome).join(', ')}
                                     {read.corrected ? ' · marked for correction' : ''}
                                 </p>
+                                {read.outcome === 'error' && retryBlockReason(state, read) !== undefined && (
+                                    <p role="status">{retryBlockReason(state, read)}</p>
+                                )}
                                 <Controls>
                                     <TouchButton
                                         variant="secondary"
-                                        disabled={
-                                            read.outcome !== 'error' ||
-                                            read.attempt >= limits.attempts ||
-                                            read.epoch !== state.epoch ||
-                                            state.capture === 'off'
-                                        }
+                                        disabled={retryBlockReason(state, read) !== undefined}
                                         onClick={() => {
                                             send({ type: 'retry', id: read.id });
                                         }}

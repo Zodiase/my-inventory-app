@@ -11,7 +11,7 @@ async function load(text = source) {
     }).outputText;
     return import('data:text/javascript;base64,' + Buffer.from(compiled).toString('base64'));
 }
-const { reduce, initialState, classify, fixtures, limits } = await load();
+const { reduce, initialState, classify, fixtures, limits, retryBlockReason } = await load();
 const codes = Object.keys(fixtures);
 const action = (state, value, origin = 'tap') =>
     reduce(state, { type: 'action', action: value, origin, localGesture: origin === 'tap' });
@@ -201,4 +201,32 @@ test('targeted negative controls fail at partial concat, stale epoch, outside co
         const m = await load(source.replace(before, after));
         assert.throws(() => check(m), assert.AssertionError);
     }
+});
+
+test('F15/F16 existing-record retry retains full history and shares explicit pending/attempt guards', () => {
+    let s = start();
+    for (let i = 0; i < limits.records; i++) {
+        s = scan(s, codes[0]);
+        s = result(s, s.reads.at(-1), 'error', 'Synthetic failure');
+    }
+    const read = s.reads.at(-1);
+    assert.equal(retryBlockReason(s, read), undefined);
+    s = reduce(s, { type: 'retry', id: read.id });
+    assert.equal(s.reads.length, limits.records);
+    assert.equal(s.reads.at(-1).id, read.id);
+    assert.equal(s.reads.at(-1).attempt, 2);
+    assert.deepEqual(s.reads.at(-1).attempts, [{ attempt: 1, outcome: 'error', detail: 'Synthetic failure' }]);
+    s = result(s, s.reads.at(-1), 'error');
+    s = reduce(s, { type: 'retry', id: read.id });
+    s = result(s, s.reads.at(-1), 'error');
+    assert.match(retryBlockReason(s, s.reads.at(-1)), /attempt limit/);
+    assert.deepEqual(reduce(s, { type: 'retry', id: read.id }), s);
+    let queued = scan(start(), codes[0]);
+    queued = result(queued, queued.reads[0], 'error');
+    for (let i = 0; i < limits.pending; i++) queued = scan(queued, codes[1]);
+    assert.match(retryBlockReason(queued, queued.reads[0]), /Pending queue full/);
+    assert.deepEqual(reduce(queued, { type: 'retry', id: queued.reads[0].id }), queued);
+    queued = reduce(queued, { type: 'cancel', id: queued.reads[1].id });
+    assert.equal(retryBlockReason(queued, queued.reads[0]), undefined);
+    assert.equal(reduce(queued, { type: 'retry', id: queued.reads[0].id }).reads[0].attempt, 2);
 });

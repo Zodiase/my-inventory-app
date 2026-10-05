@@ -3,103 +3,556 @@
     "w": 1280,
     "h": 720,
     "scale": 1,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "text": "Scanner foundationSynthetic proof · Enter delimiter · read-only fixtures · hardw",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H1",
+        "text": "Scanner foundation",
+        "before": 25.6,
+        "after": 25.6
+      },
+      {
+        "tag": "P",
+        "text": "Synthetic proof · Enter delimiter · read-only fixtures · hardware not qualified",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Capture: offStart a synthetic session.Session 0 · Mode inspect-demoStartResumePa",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Capture: off",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "SPAN",
+        "text": "off",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Start a synthetic session.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Session 0 · Mode inspect-demo",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "StartResumePauseExit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Start",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Resume",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Pause",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Exit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic scan input",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Next: Start, then enter a fixture and press Enter.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Last outcomeNo captures yet.Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · D",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Last outcome",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "No captures yet.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · Discarded 0",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Tap / scan parityAction payload: inventory-action:v1:verb. Start and Resume requ",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Tap / scan parity",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Action payload: inventory-action:v1:verb. Start and Resume require a local tap. ",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "inventory-action:v1:verb",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "inspect-demoshow-actionspauseexit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "inspect-demo",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "show-actions",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "pause",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "exit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Dispatch and resolver history[]Resolver calls: none",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Dispatch and resolver history",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "PRE",
+        "text": "[]",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Resolver calls: none",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Proof controlsSynthetic expected kindanyitemcontainerResolver faultNormal fixtur",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Proof controls",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic expected kindanyitemcontainer",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "text": "anyitemcontainer",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "any",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "item",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "container",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Resolver faultNormal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "text": "Normal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "Normal fixture",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "slow",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "reordered",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "error",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "offline",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "timeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Ordinary editing field",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "Open dialogSimulate reconnect",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Open dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Simulate reconnect",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIALOG",
+        "text": "Capture pausedClosing this dialog does not resume capture.Close dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Capture paused",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Closing this dialog does not resume capture.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Close dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Exact synthetic fixtures and limitsitem: 11111111-1111-4111-8111-111111111111ite",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Exact synthetic fixtures and limits",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "text": "item: 11111111-1111-4111-8111-111111111111item: 22222222-2222-4222-8222-22222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "512 characters/frame, 2 seconds inactivity cancellation, 8 pending, 100 records ",
+        "before": 16,
+        "after": 16
+      }
+    ],
     "geometry": {
       "overflow": false,
       "buttons": [
         {
           "text": "Start",
           "width": 77.8125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Resume",
           "width": 100.890625,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Pause",
           "width": 86.03125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Exit",
           "width": 68.28125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "inspect-demo",
           "width": 146.078125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "show-actions",
           "width": 142.703125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "pause",
           "width": 85.921875,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "exit",
           "width": 67.578125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Open dialog",
           "width": 130.953125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Simulate reconnect",
           "width": 187.125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         }
       ],
       "focus": null
@@ -110,103 +563,556 @@
     "w": 1280,
     "h": 720,
     "scale": 1.25,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "text": "Scanner foundationSynthetic proof · Enter delimiter · read-only fixtures · hardw",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H1",
+        "text": "Scanner foundation",
+        "before": 25.6,
+        "after": 32
+      },
+      {
+        "tag": "P",
+        "text": "Synthetic proof · Enter delimiter · read-only fixtures · hardware not qualified",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Capture: offStart a synthetic session.Session 0 · Mode inspect-demoStartResumePa",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Capture: off",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "SPAN",
+        "text": "off",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Start a synthetic session.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Session 0 · Mode inspect-demo",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "StartResumePauseExit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Start",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Resume",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Pause",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Exit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic scan input",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Next: Start, then enter a fixture and press Enter.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Last outcomeNo captures yet.Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · D",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Last outcome",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "No captures yet.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · Discarded 0",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Tap / scan parityAction payload: inventory-action:v1:verb. Start and Resume requ",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Tap / scan parity",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Action payload: inventory-action:v1:verb. Start and Resume require a local tap. ",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "inventory-action:v1:verb",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "inspect-demoshow-actionspauseexit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "inspect-demo",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "show-actions",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "pause",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "exit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Dispatch and resolver history[]Resolver calls: none",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Dispatch and resolver history",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "PRE",
+        "text": "[]",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Resolver calls: none",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Proof controlsSynthetic expected kindanyitemcontainerResolver faultNormal fixtur",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Proof controls",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic expected kindanyitemcontainer",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "text": "anyitemcontainer",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "any",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "item",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "container",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Resolver faultNormal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "text": "Normal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "Normal fixture",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "slow",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "reordered",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "error",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "offline",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "timeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Ordinary editing field",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "Open dialogSimulate reconnect",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Open dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Simulate reconnect",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIALOG",
+        "text": "Capture pausedClosing this dialog does not resume capture.Close dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Capture paused",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Closing this dialog does not resume capture.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Close dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Exact synthetic fixtures and limitsitem: 11111111-1111-4111-8111-111111111111ite",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Exact synthetic fixtures and limits",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "text": "item: 11111111-1111-4111-8111-111111111111item: 22222222-2222-4222-8222-22222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "512 characters/frame, 2 seconds inactivity cancellation, 8 pending, 100 records ",
+        "before": 16,
+        "after": 20
+      }
+    ],
     "geometry": {
       "overflow": false,
       "buttons": [
         {
           "text": "Start",
-          "width": 77.8125,
-          "height": 44
+          "width": 85.65625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Resume",
-          "width": 100.890625,
-          "height": 44
+          "width": 114.28125,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Pause",
-          "width": 86.03125,
-          "height": 44
+          "width": 95.9375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Exit",
-          "width": 68.28125,
-          "height": 44
+          "width": 74.140625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "inspect-demo",
-          "width": 146.078125,
-          "height": 44
+          "width": 168.90625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "show-actions",
-          "width": 142.703125,
-          "height": 44
+          "width": 164.90625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "pause",
-          "width": 85.921875,
-          "height": 44
+          "width": 95.890625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "exit",
-          "width": 67.578125,
-          "height": 44
+          "width": 73.328125,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Open dialog",
-          "width": 130.953125,
-          "height": 44
+          "width": 150.375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Simulate reconnect",
-          "width": 187.125,
-          "height": 44
+          "width": 218.203125,
+          "height": 47,
+          "fontSize": "20px"
         }
       ],
       "focus": null
@@ -217,103 +1123,556 @@
     "w": 820,
     "h": 900,
     "scale": 1,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "text": "Scanner foundationSynthetic proof · Enter delimiter · read-only fixtures · hardw",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H1",
+        "text": "Scanner foundation",
+        "before": 25.6,
+        "after": 25.6
+      },
+      {
+        "tag": "P",
+        "text": "Synthetic proof · Enter delimiter · read-only fixtures · hardware not qualified",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Capture: offStart a synthetic session.Session 0 · Mode inspect-demoStartResumePa",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Capture: off",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "SPAN",
+        "text": "off",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Start a synthetic session.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Session 0 · Mode inspect-demo",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "StartResumePauseExit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Start",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Resume",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Pause",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Exit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic scan input",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Next: Start, then enter a fixture and press Enter.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Last outcomeNo captures yet.Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · D",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Last outcome",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "No captures yet.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · Discarded 0",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Tap / scan parityAction payload: inventory-action:v1:verb. Start and Resume requ",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Tap / scan parity",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Action payload: inventory-action:v1:verb. Start and Resume require a local tap. ",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "inventory-action:v1:verb",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "inspect-demoshow-actionspauseexit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "inspect-demo",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "show-actions",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "pause",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "exit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Dispatch and resolver history[]Resolver calls: none",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Dispatch and resolver history",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "PRE",
+        "text": "[]",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Resolver calls: none",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Proof controlsSynthetic expected kindanyitemcontainerResolver faultNormal fixtur",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Proof controls",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic expected kindanyitemcontainer",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "text": "anyitemcontainer",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "any",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "item",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "container",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Resolver faultNormal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "text": "Normal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "Normal fixture",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "slow",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "reordered",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "error",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "offline",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "timeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Ordinary editing field",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "Open dialogSimulate reconnect",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Open dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Simulate reconnect",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIALOG",
+        "text": "Capture pausedClosing this dialog does not resume capture.Close dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Capture paused",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Closing this dialog does not resume capture.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Close dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Exact synthetic fixtures and limitsitem: 11111111-1111-4111-8111-111111111111ite",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Exact synthetic fixtures and limits",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "text": "item: 11111111-1111-4111-8111-111111111111item: 22222222-2222-4222-8222-22222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "512 characters/frame, 2 seconds inactivity cancellation, 8 pending, 100 records ",
+        "before": 16,
+        "after": 16
+      }
+    ],
     "geometry": {
       "overflow": false,
       "buttons": [
         {
           "text": "Start",
           "width": 77.8125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Resume",
           "width": 100.890625,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Pause",
           "width": 86.03125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Exit",
           "width": 68.28125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "inspect-demo",
           "width": 146.078125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "show-actions",
           "width": 142.703125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "pause",
           "width": 85.921875,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "exit",
           "width": 67.578125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Open dialog",
           "width": 130.953125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Simulate reconnect",
           "width": 187.125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         }
       ],
       "focus": null
@@ -324,103 +1683,556 @@
     "w": 820,
     "h": 900,
     "scale": 1.25,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "text": "Scanner foundationSynthetic proof · Enter delimiter · read-only fixtures · hardw",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H1",
+        "text": "Scanner foundation",
+        "before": 25.6,
+        "after": 32
+      },
+      {
+        "tag": "P",
+        "text": "Synthetic proof · Enter delimiter · read-only fixtures · hardware not qualified",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Capture: offStart a synthetic session.Session 0 · Mode inspect-demoStartResumePa",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Capture: off",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "SPAN",
+        "text": "off",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Start a synthetic session.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Session 0 · Mode inspect-demo",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "StartResumePauseExit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Start",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Resume",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Pause",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Exit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic scan input",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Next: Start, then enter a fixture and press Enter.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Last outcomeNo captures yet.Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · D",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Last outcome",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "No captures yet.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · Discarded 0",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Tap / scan parityAction payload: inventory-action:v1:verb. Start and Resume requ",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Tap / scan parity",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Action payload: inventory-action:v1:verb. Start and Resume require a local tap. ",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "inventory-action:v1:verb",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "inspect-demoshow-actionspauseexit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "inspect-demo",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "show-actions",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "pause",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "exit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Dispatch and resolver history[]Resolver calls: none",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Dispatch and resolver history",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "PRE",
+        "text": "[]",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Resolver calls: none",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Proof controlsSynthetic expected kindanyitemcontainerResolver faultNormal fixtur",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Proof controls",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic expected kindanyitemcontainer",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "text": "anyitemcontainer",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "any",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "item",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "container",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Resolver faultNormal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "text": "Normal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "Normal fixture",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "slow",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "reordered",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "error",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "offline",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "timeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Ordinary editing field",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "Open dialogSimulate reconnect",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Open dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Simulate reconnect",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIALOG",
+        "text": "Capture pausedClosing this dialog does not resume capture.Close dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Capture paused",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Closing this dialog does not resume capture.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Close dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Exact synthetic fixtures and limitsitem: 11111111-1111-4111-8111-111111111111ite",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Exact synthetic fixtures and limits",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "text": "item: 11111111-1111-4111-8111-111111111111item: 22222222-2222-4222-8222-22222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "512 characters/frame, 2 seconds inactivity cancellation, 8 pending, 100 records ",
+        "before": 16,
+        "after": 20
+      }
+    ],
     "geometry": {
       "overflow": false,
       "buttons": [
         {
           "text": "Start",
-          "width": 77.8125,
-          "height": 44
+          "width": 85.65625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Resume",
-          "width": 100.890625,
-          "height": 44
+          "width": 114.28125,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Pause",
-          "width": 86.03125,
-          "height": 44
+          "width": 95.9375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Exit",
-          "width": 68.28125,
-          "height": 44
+          "width": 74.140625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "inspect-demo",
-          "width": 146.078125,
-          "height": 44
+          "width": 168.90625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "show-actions",
-          "width": 142.703125,
-          "height": 44
+          "width": 164.90625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "pause",
-          "width": 85.921875,
-          "height": 44
+          "width": 95.890625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "exit",
-          "width": 67.578125,
-          "height": 44
+          "width": 73.328125,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Open dialog",
-          "width": 130.953125,
-          "height": 44
+          "width": 150.375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Simulate reconnect",
-          "width": 187.125,
-          "height": 44
+          "width": 218.203125,
+          "height": 47,
+          "fontSize": "20px"
         }
       ],
       "focus": null
@@ -431,103 +2243,556 @@
     "w": 390,
     "h": 844,
     "scale": 1,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "text": "Scanner foundationSynthetic proof · Enter delimiter · read-only fixtures · hardw",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H1",
+        "text": "Scanner foundation",
+        "before": 25.6,
+        "after": 25.6
+      },
+      {
+        "tag": "P",
+        "text": "Synthetic proof · Enter delimiter · read-only fixtures · hardware not qualified",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Capture: offStart a synthetic session.Session 0 · Mode inspect-demoStartResumePa",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Capture: off",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "SPAN",
+        "text": "off",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Start a synthetic session.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Session 0 · Mode inspect-demo",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "StartResumePauseExit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Start",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Resume",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Pause",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Exit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic scan input",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Next: Start, then enter a fixture and press Enter.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Last outcomeNo captures yet.Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · D",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Last outcome",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "No captures yet.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · Discarded 0",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Tap / scan parityAction payload: inventory-action:v1:verb. Start and Resume requ",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Tap / scan parity",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Action payload: inventory-action:v1:verb. Start and Resume require a local tap. ",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "inventory-action:v1:verb",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "inspect-demoshow-actionspauseexit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "inspect-demo",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "show-actions",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "pause",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "exit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Dispatch and resolver history[]Resolver calls: none",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Dispatch and resolver history",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "PRE",
+        "text": "[]",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Resolver calls: none",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Proof controlsSynthetic expected kindanyitemcontainerResolver faultNormal fixtur",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Proof controls",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic expected kindanyitemcontainer",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "text": "anyitemcontainer",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "any",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "item",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "container",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Resolver faultNormal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "text": "Normal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "Normal fixture",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "slow",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "reordered",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "error",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "offline",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "timeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Ordinary editing field",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "Open dialogSimulate reconnect",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Open dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Simulate reconnect",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIALOG",
+        "text": "Capture pausedClosing this dialog does not resume capture.Close dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Capture paused",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Closing this dialog does not resume capture.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Close dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Exact synthetic fixtures and limitsitem: 11111111-1111-4111-8111-111111111111ite",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Exact synthetic fixtures and limits",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "text": "item: 11111111-1111-4111-8111-111111111111item: 22222222-2222-4222-8222-22222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "512 characters/frame, 2 seconds inactivity cancellation, 8 pending, 100 records ",
+        "before": 16,
+        "after": 16
+      }
+    ],
     "geometry": {
       "overflow": false,
       "buttons": [
         {
           "text": "Start",
           "width": 77.8125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Resume",
           "width": 100.890625,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Pause",
           "width": 86.03125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Exit",
           "width": 68.28125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "inspect-demo",
           "width": 146.078125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "show-actions",
           "width": 142.703125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "pause",
           "width": 85.921875,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "exit",
           "width": 67.578125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Open dialog",
           "width": 130.953125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Simulate reconnect",
           "width": 187.125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         }
       ],
       "focus": null
@@ -538,103 +2803,556 @@
     "w": 390,
     "h": 844,
     "scale": 1.25,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "text": "Scanner foundationSynthetic proof · Enter delimiter · read-only fixtures · hardw",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H1",
+        "text": "Scanner foundation",
+        "before": 25.6,
+        "after": 32
+      },
+      {
+        "tag": "P",
+        "text": "Synthetic proof · Enter delimiter · read-only fixtures · hardware not qualified",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Capture: offStart a synthetic session.Session 0 · Mode inspect-demoStartResumePa",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Capture: off",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "SPAN",
+        "text": "off",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Start a synthetic session.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Session 0 · Mode inspect-demo",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "StartResumePauseExit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Start",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Resume",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Pause",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Exit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic scan input",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Next: Start, then enter a fixture and press Enter.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Last outcomeNo captures yet.Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · D",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Last outcome",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "No captures yet.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · Discarded 0",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Tap / scan parityAction payload: inventory-action:v1:verb. Start and Resume requ",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Tap / scan parity",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Action payload: inventory-action:v1:verb. Start and Resume require a local tap. ",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "inventory-action:v1:verb",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "inspect-demoshow-actionspauseexit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "inspect-demo",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "show-actions",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "pause",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "exit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Dispatch and resolver history[]Resolver calls: none",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Dispatch and resolver history",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "PRE",
+        "text": "[]",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Resolver calls: none",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Proof controlsSynthetic expected kindanyitemcontainerResolver faultNormal fixtur",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Proof controls",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic expected kindanyitemcontainer",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "text": "anyitemcontainer",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "any",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "item",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "container",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Resolver faultNormal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "text": "Normal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "Normal fixture",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "slow",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "reordered",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "error",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "offline",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "timeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Ordinary editing field",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "Open dialogSimulate reconnect",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Open dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Simulate reconnect",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIALOG",
+        "text": "Capture pausedClosing this dialog does not resume capture.Close dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Capture paused",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Closing this dialog does not resume capture.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Close dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Exact synthetic fixtures and limitsitem: 11111111-1111-4111-8111-111111111111ite",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Exact synthetic fixtures and limits",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "text": "item: 11111111-1111-4111-8111-111111111111item: 22222222-2222-4222-8222-22222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "512 characters/frame, 2 seconds inactivity cancellation, 8 pending, 100 records ",
+        "before": 16,
+        "after": 20
+      }
+    ],
     "geometry": {
       "overflow": false,
       "buttons": [
         {
           "text": "Start",
-          "width": 77.8125,
-          "height": 44
+          "width": 85.65625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Resume",
-          "width": 100.890625,
-          "height": 44
+          "width": 114.28125,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Pause",
-          "width": 86.03125,
-          "height": 44
+          "width": 95.9375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Exit",
-          "width": 68.28125,
-          "height": 44
+          "width": 74.140625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "inspect-demo",
-          "width": 146.078125,
-          "height": 44
+          "width": 168.90625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "show-actions",
-          "width": 142.703125,
-          "height": 44
+          "width": 164.90625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "pause",
-          "width": 85.921875,
-          "height": 44
+          "width": 95.890625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "exit",
-          "width": 67.578125,
-          "height": 44
+          "width": 73.328125,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Open dialog",
-          "width": 130.953125,
-          "height": 44
+          "width": 150.375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Simulate reconnect",
-          "width": 187.125,
-          "height": 44
+          "width": 218.203125,
+          "height": 47,
+          "fontSize": "20px"
         }
       ],
       "focus": null
@@ -645,103 +3363,556 @@
     "w": 390,
     "h": 480,
     "scale": 1,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "text": "Scanner foundationSynthetic proof · Enter delimiter · read-only fixtures · hardw",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H1",
+        "text": "Scanner foundation",
+        "before": 25.6,
+        "after": 25.6
+      },
+      {
+        "tag": "P",
+        "text": "Synthetic proof · Enter delimiter · read-only fixtures · hardware not qualified",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Capture: offStart a synthetic session.Session 0 · Mode inspect-demoStartResumePa",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Capture: off",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "SPAN",
+        "text": "off",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Start a synthetic session.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Session 0 · Mode inspect-demo",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "StartResumePauseExit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Start",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Resume",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Pause",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Exit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic scan input",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Next: Start, then enter a fixture and press Enter.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Last outcomeNo captures yet.Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · D",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Last outcome",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "No captures yet.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · Discarded 0",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Tap / scan parityAction payload: inventory-action:v1:verb. Start and Resume requ",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Tap / scan parity",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Action payload: inventory-action:v1:verb. Start and Resume require a local tap. ",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "inventory-action:v1:verb",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "inspect-demoshow-actionspauseexit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "inspect-demo",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "show-actions",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "pause",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "exit",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Dispatch and resolver history[]Resolver calls: none",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Dispatch and resolver history",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "PRE",
+        "text": "[]",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "Resolver calls: none",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SECTION",
+        "text": "Proof controlsSynthetic expected kindanyitemcontainerResolver faultNormal fixtur",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Proof controls",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic expected kindanyitemcontainer",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "text": "anyitemcontainer",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "any",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "item",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "container",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Resolver faultNormal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SELECT",
+        "text": "Normal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "Normal fixture",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "slow",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "reordered",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "error",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "offline",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "OPTION",
+        "text": "timeout",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LABEL",
+        "text": "Ordinary editing field",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIV",
+        "text": "Open dialogSimulate reconnect",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Open dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Simulate reconnect",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DIALOG",
+        "text": "Capture pausedClosing this dialog does not resume capture.Close dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "H2",
+        "text": "Capture paused",
+        "before": 18.4,
+        "after": 18.4
+      },
+      {
+        "tag": "P",
+        "text": "Closing this dialog does not resume capture.",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Close dialog",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Exact synthetic fixtures and limitsitem: 11111111-1111-4111-8111-111111111111ite",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Exact synthetic fixtures and limits",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "UL",
+        "text": "item: 11111111-1111-4111-8111-111111111111item: 22222222-2222-4222-8222-22222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "LI",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "CODE",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "tag": "P",
+        "text": "512 characters/frame, 2 seconds inactivity cancellation, 8 pending, 100 records ",
+        "before": 16,
+        "after": 16
+      }
+    ],
     "geometry": {
       "overflow": false,
       "buttons": [
         {
           "text": "Start",
           "width": 77.8125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Resume",
           "width": 100.890625,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Pause",
           "width": 86.03125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Exit",
           "width": 68.28125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Retry",
           "width": 80.9375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Cancel",
           "width": 92.09375,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Mark correction",
           "width": 160.453125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "inspect-demo",
           "width": 146.078125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "show-actions",
           "width": 142.703125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "pause",
           "width": 85.921875,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "exit",
           "width": 67.578125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Open dialog",
           "width": 130.953125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         },
         {
           "text": "Simulate reconnect",
           "width": 187.125,
-          "height": 44
+          "height": 44,
+          "fontSize": "16px"
         }
       ],
       "focus": null
@@ -752,103 +3923,556 @@
     "w": 390,
     "h": 480,
     "scale": 1.25,
+    "fonts": [
+      {
+        "tag": "MAIN",
+        "text": "Scanner foundationSynthetic proof · Enter delimiter · read-only fixtures · hardw",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H1",
+        "text": "Scanner foundation",
+        "before": 25.6,
+        "after": 32
+      },
+      {
+        "tag": "P",
+        "text": "Synthetic proof · Enter delimiter · read-only fixtures · hardware not qualified",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Capture: offStart a synthetic session.Session 0 · Mode inspect-demoStartResumePa",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Capture: off",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "SPAN",
+        "text": "off",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Start a synthetic session.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Session 0 · Mode inspect-demo",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "StartResumePauseExit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Start",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Resume",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Pause",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Exit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic scan input",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Next: Start, then enter a fixture and press Enter.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Last outcomeNo captures yet.Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · D",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Last outcome",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "No captures yet.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Captured 0 · Pending 0 · Resolved 0 · Rejected 0 · Discarded 0",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Ordered capture evidence",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Tap / scan parityAction payload: inventory-action:v1:verb. Start and Resume requ",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Tap / scan parity",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Action payload: inventory-action:v1:verb. Start and Resume require a local tap. ",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "inventory-action:v1:verb",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "inspect-demoshow-actionspauseexit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "inspect-demo",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "show-actions",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "pause",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "exit",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Dispatch and resolver history[]Resolver calls: none",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Dispatch and resolver history",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "PRE",
+        "text": "[]",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "Resolver calls: none",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SECTION",
+        "text": "Proof controlsSynthetic expected kindanyitemcontainerResolver faultNormal fixtur",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Proof controls",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "LABEL",
+        "text": "Synthetic expected kindanyitemcontainer",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "text": "anyitemcontainer",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "any",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "item",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "container",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Resolver faultNormal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SELECT",
+        "text": "Normal fixtureslowreorderederrorofflinetimeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "Normal fixture",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "slow",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "reordered",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "error",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "offline",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "OPTION",
+        "text": "timeout",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LABEL",
+        "text": "Ordinary editing field",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIV",
+        "text": "Open dialogSimulate reconnect",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Open dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Simulate reconnect",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DIALOG",
+        "text": "Capture pausedClosing this dialog does not resume capture.Close dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "H2",
+        "text": "Capture paused",
+        "before": 18.4,
+        "after": 23
+      },
+      {
+        "tag": "P",
+        "text": "Closing this dialog does not resume capture.",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Close dialog",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "DETAILS",
+        "text": "Exact synthetic fixtures and limitsitem: 11111111-1111-4111-8111-111111111111ite",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "SUMMARY",
+        "text": "Exact synthetic fixtures and limits",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "UL",
+        "text": "item: 11111111-1111-4111-8111-111111111111item: 22222222-2222-4222-8222-22222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 11111111-1111-4111-8111-111111111111",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "item: 22222222-2222-4222-8222-222222222222",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "container: 33333333-3333-4333-8333-333333333333",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "LI",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "CODE",
+        "text": "00012345678905",
+        "before": 16,
+        "after": 20
+      },
+      {
+        "tag": "P",
+        "text": "512 characters/frame, 2 seconds inactivity cancellation, 8 pending, 100 records ",
+        "before": 16,
+        "after": 20
+      }
+    ],
     "geometry": {
       "overflow": false,
       "buttons": [
         {
           "text": "Start",
-          "width": 77.8125,
-          "height": 44
+          "width": 85.65625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Resume",
-          "width": 100.890625,
-          "height": 44
+          "width": 114.28125,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Pause",
-          "width": 86.03125,
-          "height": 44
+          "width": 95.9375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Exit",
-          "width": 68.28125,
-          "height": 44
+          "width": 74.140625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Retry",
-          "width": 80.9375,
-          "height": 44
+          "width": 89.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Cancel",
-          "width": 92.09375,
-          "height": 44
+          "width": 103.4375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Mark correction",
-          "width": 160.453125,
-          "height": 44
+          "width": 185.59375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "inspect-demo",
-          "width": 146.078125,
-          "height": 44
+          "width": 168.90625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "show-actions",
-          "width": 142.703125,
-          "height": 44
+          "width": 164.90625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "pause",
-          "width": 85.921875,
-          "height": 44
+          "width": 95.890625,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "exit",
-          "width": 67.578125,
-          "height": 44
+          "width": 73.328125,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Open dialog",
-          "width": 130.953125,
-          "height": 44
+          "width": 150.375,
+          "height": 47,
+          "fontSize": "20px"
         },
         {
           "text": "Simulate reconnect",
-          "width": 187.125,
-          "height": 44
+          "width": 218.203125,
+          "height": 47,
+          "fontSize": "20px"
         }
       ],
       "focus": null

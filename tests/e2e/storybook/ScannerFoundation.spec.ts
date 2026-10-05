@@ -1,4 +1,5 @@
 import { test, expect, type FrameLocator, type Page } from '@playwright/test';
+import { scaleScannerProof } from '../helpers/scanner-proof-text-scale';
 const codes = [
     'item: 11111111-1111-4111-8111-111111111111',
     'item: 22222222-2222-4222-8222-222222222222',
@@ -156,7 +157,7 @@ test('command and tap share semantic dispatcher, wrong kinds remain classified, 
     await f.getByRole('button', { name: 'Resume', exact: true }).click();
     for (let i = 0; i < 9; i++) await scan(page, codes[0]);
     await expect(state(f)).toHaveText('paused');
-    await expect(f.getByRole('status')).toContainText('Capacity');
+    await expect(f.getByRole('status').filter({ hasText: 'Capacity reached' })).toContainText('Capacity');
 });
 
 test('page navigation never replays reads or resumes capture on browser return', async ({ page }) => {
@@ -247,27 +248,100 @@ test('unknown identity, offline and timeout faults remain resolution failures wi
     await expect(f.getByTestId('read-record').last()).toContainText('marked for correction');
 });
 
+test('full history retries the existing record; full pending queue visibly blocks until cancellation', async ({
+    page,
+}) => {
+    await page.clock.install();
+    const f = await open(page);
+    await f.getByRole('combobox', { name: 'Resolver fault' }).selectOption('error');
+    await f.getByRole('button', { name: 'Start', exact: true }).click();
+    const input = f.getByRole('textbox', { name: 'Synthetic scan input', exact: true });
+    for (let i = 0; i < 100; i++) {
+        await input.fill(codes[0]);
+        await input.press('Enter');
+        await page.clock.fastForward(200);
+    }
+    await f.getByText('Ordered capture evidence', { exact: true }).click();
+    await expect(f.getByTestId('read-record')).toHaveCount(100);
+    const last = f.getByTestId('read-record').last();
+    await expect(last.getByRole('button', { name: 'Retry', exact: true })).toBeEnabled();
+    await last.getByRole('button', { name: 'Retry', exact: true }).click();
+    await page.clock.fastForward(200);
+    await expect(last).toContainText('attempt 2');
+    await expect(last).toContainText('prior outcomes error');
+    await expect(f.getByTestId('read-record')).toHaveCount(100);
+    await last.getByRole('button', { name: 'Retry', exact: true }).click();
+    await page.clock.fastForward(200);
+    await expect(last).toContainText('Retry attempt limit reached.');
+    await expect(last.getByRole('button', { name: 'Retry', exact: true })).toBeDisabled();
+    await page.reload();
+    await f.getByRole('combobox', { name: 'Resolver fault' }).selectOption('error');
+    await f.getByRole('button', { name: 'Start', exact: true }).click();
+    await input.fill(codes[0]);
+    await input.press('Enter');
+    await page.clock.fastForward(200);
+    await f.getByRole('combobox', { name: 'Resolver fault' }).focus();
+    await f.getByRole('combobox', { name: 'Resolver fault' }).selectOption('slow');
+    await f.getByRole('button', { name: 'Resume', exact: true }).click();
+    for (let i = 0; i < 8; i++) {
+        await input.fill(codes[1]);
+        await input.press('Enter');
+    }
+    await f.getByText('Ordered capture evidence', { exact: true }).click();
+    const failed = f.getByTestId('read-record').first();
+    await expect(failed).toContainText('Pending queue full');
+    await expect(failed.getByRole('button', { name: 'Retry', exact: true })).toBeDisabled();
+    await f.getByTestId('read-record').last().getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(failed.getByRole('button', { name: 'Retry', exact: true })).toBeEnabled();
+    await failed.getByRole('button', { name: 'Retry', exact: true }).click();
+    await expect(failed).toContainText('attempt 2');
+    await expect(f.getByTestId('read-record')).toHaveCount(9);
+});
+
 for (const viewport of [
     { width: 1280, height: 720 },
     { width: 820, height: 900 },
     { width: 390, height: 844 },
     { width: 390, height: 480 },
 ]) {
-    test(`manager proof has readable controls, scroll access and no overflow ${viewport.width}x${viewport.height}`, async ({
-        page,
-    }) => {
-        await page.setViewportSize(viewport);
-        const f = await open(page);
-        await f.getByRole('button', { name: 'Start', exact: true }).click();
-        await scan(page, codes[0]);
-        await expect(f.getByTestId('last-outcome')).toContainText('resolved');
-        const overflow = await f
-            .locator('main')
-            .evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
-        expect(overflow).toBe(false);
-        await f.getByRole('button', { name: 'Open dialog', exact: true }).scrollIntoViewIfNeeded();
-        await expect(f.getByRole('button', { name: 'Open dialog', exact: true })).toBeInViewport();
-        await f.getByRole('button', { name: 'Exit', exact: true }).scrollIntoViewIfNeeded();
-        await expect(f.getByRole('button', { name: 'Exit', exact: true })).toBeInViewport();
-    });
+    for (const textScale of [1, 1.25]) {
+        test(`manager proof has readable controls, scroll access and no overflow ${viewport.width}x${viewport.height} text ${textScale}`, async ({
+            page,
+        }, info) => {
+            await page.setViewportSize(viewport);
+            const f = await open(page);
+            const fonts = await scaleScannerProof(f, textScale);
+            const controls = fonts.filter((entry) => ['BUTTON', 'INPUT', 'SELECT', 'LABEL'].includes(entry.tag));
+            expect(controls.length).toBeGreaterThan(0);
+            for (const font of fonts)
+                expect(font.after, `${font.tag} ${font.text}`).toBeCloseTo(font.before * textScale, 3);
+            for (const control of controls.filter((entry) => entry.tag === 'BUTTON' && entry.width > 0)) {
+                expect(control.width).toBeGreaterThanOrEqual(44);
+                expect(control.height).toBeGreaterThanOrEqual(44);
+            }
+            await info.attach('computed-text-scaling', {
+                body: JSON.stringify({ textScale, fonts }, null, 2),
+                contentType: 'application/json',
+            });
+            await f.getByRole('button', { name: 'Start', exact: true }).click();
+            await scan(page, codes[0]);
+            await expect(f.getByTestId('last-outcome')).toContainText('resolved');
+            await f.getByText('Ordered capture evidence', { exact: true }).click();
+            const lateControls = await f
+                .locator('main button, main input, main select')
+                .evaluateAll((nodes) =>
+                    nodes.map((node) => ({ text: node.textContent, size: parseFloat(getComputedStyle(node).fontSize) }))
+                );
+            for (const control of lateControls)
+                expect(control.size, `post-capture ${control.text}`).toBeCloseTo(16 * textScale, 3);
+            const overflow = await f
+                .locator('main')
+                .evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+            expect(overflow).toBe(false);
+            await f.getByRole('button', { name: 'Open dialog', exact: true }).scrollIntoViewIfNeeded();
+            await expect(f.getByRole('button', { name: 'Open dialog', exact: true })).toBeInViewport();
+            await f.getByRole('button', { name: 'Exit', exact: true }).scrollIntoViewIfNeeded();
+            await expect(f.getByRole('button', { name: 'Exit', exact: true })).toBeInViewport();
+        });
+    }
 }
