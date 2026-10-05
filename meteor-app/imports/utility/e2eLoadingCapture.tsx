@@ -6,7 +6,12 @@
 import { Meteor } from 'meteor/meteor';
 import React, { Profiler, useEffect, type ReactElement, type ProfilerOnRenderCallback } from 'react';
 
-import { createLoadingCapture, validCaptureCapability, type CaptureFrame } from './e2eLoadingEvidence';
+import {
+    createLoadingCapture,
+    validCaptureCapability,
+    type CaptureFrame,
+    type CaptureBoundary,
+} from './e2eLoadingEvidence';
 
 type Capture = ReturnType<typeof createLoadingCapture>;
 interface CaptureWindow {
@@ -41,7 +46,7 @@ const epoch = host.inventoryE2eLoadingBootstrap?.epoch;
 // topology for a retained component. Only a new document starts a fresh capture.
 const existing = enabled ? host.inventoryE2eLoadingCapture : undefined;
 const collector = enabled
-    ? existing?.collector ?? createLoadingCapture(epoch ?? 'document-unavailable', () => performance.now())
+    ? existing?.collector ?? createLoadingCapture(epoch ?? 'document-unavailable', () => performance.now(), true)
     : undefined;
 if (collector !== undefined && enabled) {
     if (existing !== undefined) collector.markUnavailable('hot-reload');
@@ -102,6 +107,28 @@ export function captureTree(frame: CaptureFrame | undefined, element: ReactEleme
         >
             {element}
             {child && <PassiveLifecycle instance={snapshot.instance} />}
+        </Profiler>
+    );
+}
+
+/** Fixed scalar boundaries never evaluate application values or schedule work. */
+export function captureBoundary(
+    frame: CaptureFrame | undefined,
+    phase: 'tracker-before' | 'tracker-after' | 'tree-start' | 'tree-end' | 'route-entry',
+    boundary?: CaptureBoundary
+): void {
+    if (collector !== undefined && frame !== undefined) collector.record(phase, { ...frame, boundary });
+}
+/** Observes only this shell subtree; descendant commits can reuse an older frame. */
+export function captureShell(frame: CaptureFrame | undefined, element: ReactElement): ReactElement {
+    if (collector === undefined || frame === undefined) return element;
+    const frozen = Object.freeze({ ...frame });
+    const onRender: ProfilerOnRenderCallback = (...args) => {
+        collector.record('shell-commit', { ...frozen, commitBatch: collector.batchFor(args[5]) });
+    };
+    return (
+        <Profiler id="loading-shell" onRender={onRender}>
+            {element}
         </Profiler>
     );
 }

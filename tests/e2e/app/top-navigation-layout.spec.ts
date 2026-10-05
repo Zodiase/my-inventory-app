@@ -1,7 +1,7 @@
 import { expect, test as base } from '@playwright/test';
 
 import { callMeteorMethod, resetDatabase, waitForMeteorReady } from '../helpers/database';
-import { observeMeteorLoading } from '../helpers/meteor-loading-diagnostics.mjs';
+import { observeMeteorLoading, loadingDiagnosticTrace } from '../helpers/meteor-loading-diagnostics.mjs';
 
 const test = base.extend<{ loadingEvidence: void }>({
     loadingEvidence: [
@@ -22,6 +22,9 @@ const test = base.extend<{ loadingEvidence: void }>({
         { auto: true },
     ],
 });
+
+// Retain the genuine initial failure, rather than only its passing retry.
+test.use({ trace: loadingDiagnosticTrace });
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');

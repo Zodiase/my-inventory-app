@@ -4,7 +4,14 @@
  * capture behavior can be tested without evaluating application getters.
  */
 export type CaptureDecision = 'root-loading' | 'contents' | 'invalid' | 'child-loading';
+export type CaptureBoundary = 'tags' | 'route-container' | 'search-scope' | 'contents-identity';
 export type CapturePhase =
+    | 'tracker-before'
+    | 'tracker-after'
+    | 'tree-start'
+    | 'tree-end'
+    | 'route-entry'
+    | 'shell-commit'
     | 'root-render'
     | 'route-attempt'
     | 'child-render'
@@ -12,6 +19,7 @@ export type CapturePhase =
     | 'passive-mount'
     | 'passive-unmount';
 export interface CaptureFrame {
+    boundary?: CaptureBoundary;
     instance?: string;
     rootFrame?: number;
     routeAttempt?: number;
@@ -35,6 +43,12 @@ export const captureLimits = Object.freeze({
     metadataBytes: 4096,
 });
 const phases: CapturePhase[] = [
+    'tracker-before',
+    'tracker-after',
+    'tree-start',
+    'tree-end',
+    'route-entry',
+    'shell-commit',
     'root-render',
     'route-attempt',
     'child-render',
@@ -61,6 +75,7 @@ interface CaptureSnapshot {
     aliasOverflow: number;
     byteOverflow: number;
     lastCommit?: CaptureEvent;
+    lastShellCommit?: CaptureEvent;
     events: CaptureEvent[];
 }
 interface LoadingCapture {
@@ -82,7 +97,7 @@ export function recordExistingGetter(
     if (frame !== undefined) frame[slot] = value;
     return value;
 }
-export function createLoadingCapture(epoch: string, clock: () => number): LoadingCapture {
+export function createLoadingCapture(epoch: string, clock: () => number, boundaries = false): LoadingCapture {
     const aliases = new WeakMap<object, string>();
     const sequences = new WeakMap<object, number>();
     let aliasCount = 0;
@@ -98,6 +113,7 @@ export function createLoadingCapture(epoch: string, clock: () => number): Loadin
     type Event = CaptureFrame & { phase: CapturePhase; at: number; commitSequence?: number };
     const events: Event[] = [];
     let lastCommit: Event | undefined = undefined;
+    let lastShellCommit: Event | undefined = undefined;
     const alias = (token: object): string | undefined => {
         if (aliases.has(token)) return aliases.get(token);
         if (aliasCount === captureLimits.aliases) {
@@ -117,6 +133,8 @@ export function createLoadingCapture(epoch: string, clock: () => number): Loadin
     };
     const clean = (raw: CaptureFrame): CaptureFrame => {
         const out: CaptureFrame = {};
+        if (boundaries && ['tags', 'route-container', 'search-scope', 'contents-identity'].includes(raw.boundary ?? ''))
+            out.boundary = raw.boundary;
         if (typeof raw.instance === 'string' && /^instance-([1-9]|1[0-6])$/u.test(raw.instance))
             out.instance = raw.instance;
         for (const key of ['rootFrame', 'routeAttempt', 'childFrame', 'commitBatch'] as const)
@@ -162,14 +180,15 @@ export function createLoadingCapture(epoch: string, clock: () => number): Loadin
                 phase,
                 at: Number.isFinite(at) ? Math.max(0, Math.min(Math.round(at), captureLimits.maxElapsedMs)) : 0,
             };
-            if (phase === 'commit') {
+            if (phase === 'commit' || phase === 'shell-commit') {
                 if (commitSequence === captureLimits.counter) {
                     unavailable = 'counter-overflow';
                     return;
                 }
                 commitSequence = Math.min(commitSequence + 1, captureLimits.counter);
                 event.commitSequence = commitSequence;
-                lastCommit = event;
+                if (phase === 'commit') lastCommit = event;
+                else lastShellCommit = event;
             }
             events.push(event);
             if (events.length > captureLimits.events) {
@@ -195,7 +214,7 @@ export function createLoadingCapture(epoch: string, clock: () => number): Loadin
                     ? 'no-completed-commit'
                     : undefined);
             return {
-                schema: 'root-route-loading/v1',
+                schema: boundaries ? 'root-route-loading/v2' : 'root-route-loading/v1',
                 documentEpoch: validCaptureCapability({ schema: 1, epoch }) ? epoch : 'document-unavailable',
                 available: unavailable === undefined,
                 complete: reason === undefined,
@@ -205,6 +224,9 @@ export function createLoadingCapture(epoch: string, clock: () => number): Loadin
                 aliasOverflow,
                 byteOverflow,
                 lastCommit: lastCommit === undefined ? undefined : { ...lastCommit },
+                ...(boundaries
+                    ? { lastShellCommit: lastShellCommit === undefined ? undefined : { ...lastShellCommit } }
+                    : {}),
                 events: events.map((e) => ({ ...e })),
             };
         },

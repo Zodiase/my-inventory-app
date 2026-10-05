@@ -5,6 +5,9 @@
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
+import { sanitizeBoundaryCapture, createPublicErrorEvidence } from './loading-boundary-evidence.mjs';
+
+export const loadingDiagnosticTrace = 'retain-on-failure';
 
 const publicationNames = new Set([
     'items.all',
@@ -25,6 +28,7 @@ const safeName = (name) => (publicationNames.has(name) ? name : 'other');
 const boundedCount = (count) => (Number.isSafeInteger(count) && count >= 0 ? Math.min(count, 999) : 0);
 
 export function sanitizeRenderCapture(raw) {
+    if (raw?.schema === 'root-route-loading/v2') return sanitizeBoundaryCapture(raw);
     const unavailable = {
         schema: 'root-route-loading/v1',
         available: false,
@@ -206,6 +210,9 @@ export function createLoadingEvidence() {
                     connected: raw?.connected === true,
                     loading: raw?.loading === true,
                     route: ['root', 'container', 'other'].includes(raw?.route) ? raw.route : 'unavailable',
+                    ...(raw?.navigation === 'unknown' || /^navigation-[1-9][0-9]{0,5}$/u.test(raw?.navigation ?? '')
+                        ? { navigation: raw.navigation }
+                        : {}),
                     subscriptionCount: boundedCount(raw?.subscriptionCount),
                     subscriptions,
                 },
@@ -280,6 +287,15 @@ export function createLoadingEvidence() {
 export function observeMeteorLoading(page) {
     const started = performance.now();
     const evidence = createLoadingEvidence();
+    const publicErrors = createPublicErrorEvidence();
+    const navigate = (frame) => {
+        if (frame === page.mainFrame?.()) publicErrors.navigate();
+    };
+    const pageError = (error) => publicErrors.record('pageerror', error?.name, elapsed());
+    const consoleError = (message) => publicErrors.record('console', message.type(), elapsed());
+    page.on('framenavigated', navigate);
+    page.on('pageerror', pageError);
+    page.on('console', consoleError);
     const sockets = [];
     let stopped = false,
         pending;
@@ -298,6 +314,7 @@ export function observeMeteorLoading(page) {
     page.on('websocket', socketListener);
     const sample = (finish = false) => {
         if (stopped || pending) return;
+        const navigationAtStart = publicErrors.navigation();
         pending = page
             .evaluate(
                 ({ finish }) => {
@@ -330,7 +347,17 @@ export function observeMeteorLoading(page) {
                 { finish }
             )
             .then((raw) => {
-                if (!stopped) evidence.sample(raw, elapsed());
+                if (!stopped) {
+                    publicErrors.link(navigationAtStart, raw?.renderCapture?.documentEpoch);
+                    evidence.sample(
+                        {
+                            ...raw,
+                            navigation: navigationAtStart === publicErrors.navigation() ? navigationAtStart : 'unknown',
+                        },
+                        elapsed()
+                    );
+                    // Link only the document actually sampled, not a later navigation.
+                }
             })
             .catch(() => {
                 if (!stopped) evidence.sample({ available: false }, elapsed());
@@ -361,6 +388,10 @@ export function observeMeteorLoading(page) {
             clearTimeout(timeout);
             stopped = true;
             page.off('websocket', socketListener);
+            page.off('framenavigated', navigate);
+            page.off('pageerror', pageError);
+            page.off('console', consoleError);
+            publicErrors.stop();
             for (const { socket, received, sent } of sockets) {
                 socket.off('framereceived', received);
                 socket.off('framesent', sent);
@@ -372,9 +403,17 @@ export function observeMeteorLoading(page) {
                 if (!finalSampleCompleted && snapshot.renderCapture !== undefined) {
                     snapshot.renderCapture = { ...snapshot.renderCapture, complete: false, reason: 'drain-timeout' };
                 }
-                await writeFile(path, JSON.stringify({ ...snapshot, finalSampleCompleted }), {
-                    mode: 0o600,
-                });
+                await writeFile(
+                    path,
+                    JSON.stringify({
+                        ...snapshot,
+                        finalSampleCompleted,
+                        publicErrors: publicErrors.snapshot(finalSampleCompleted),
+                    }),
+                    {
+                        mode: 0o600,
+                    }
+                );
                 await testInfo.attach('meteor-loading-diagnostics', { path, contentType: 'application/json' });
             }
         },
