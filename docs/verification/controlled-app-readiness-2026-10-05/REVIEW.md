@@ -101,3 +101,33 @@ plausible update path and original failure linkage remain separate from producti
 repair, DDP error/reconnect/lifecycle acceptance, CI/design/security disposition.
 This is the last current bounded discriminator; if inconclusive reassess scanner
 delivery, do not add another diagnostic stack or passing matrix automatically.
+
+## 2026-10-06 focused oracle correction after independent HOLD
+
+The original bbaae77 preparation and evidence remain archived. The revised shared
+oracle is used by both the proposed App cases and source-only negative controls.
+Equal/changed require release < invalidation < setter < old stop < fresh ready
+firstRun < setter return < drain start < drain end < trigger end. Flush-first
+requires stop/fresh firstRun inside the first drain, before its end and setter;
+retained requires a same-computation non-firstRun ready read inside the drain and
+no old-computation stop. Reordered reads beyond each bound, wrong firstRun and
+stop-before-setter controls reject.
+
+Baseline classification now requires the installed Playwright toBeVisible
+positive assertion result (5000ms timeout, visible expected, hidden/missing
+received), the exact Living room heading locator and matching assertion message.
+ANSI formatting is removed only for message matching. The assertion duration is
+sampled before final evidence collection. Page closure/transport/unrelated late
+errors reject; final Loading must remain visible, heading absent, page open, and
+public error capture complete, stopped, lossless and empty. The existing observer
+is finalized before classification and remains idempotent in fixture teardown.
+No application controller, hook, dependency, command ordering, deadline, planned
+four-case matrix or retry configuration changed.
+
+Fresh checks: 16 focused source tests and 115 total script tests pass; TypeScript
+5.9.3, targeted proposal type-check and scoped formatting pass. A pre-existing
+bootstrap tuple inference error found by the targeted check was corrected with a
+type-only tuple annotation; runtime bootstrap values are unchanged. The installed Playwright message formatter is
+exercised with a synthetic matcher result without a browser. No App/browser/build
+execution occurred. These are guard checks, not observed actual React lifecycle
+or proof of the natural DDP failure. Focused independent rereview is next.

@@ -187,3 +187,188 @@ test('prepared matrix has exactly four variants and original five-second deadlin
         /_runFlush|_pending|_reactInternals|setInterval|setTimeout|requestAnimationFrame|autorun\(/
     );
 });
+
+// Exercise the same oracle imported by the proposed App cases, without launching a browser.
+const { verifyControlledChain, verifyControlledTimeout } = await import(
+    '../tests/e2e/helpers/controlled-readiness-oracle.mjs'
+);
+function lifecycle(variant) {
+    const event = (phase, extra = {}) => ({ phase, ...extra });
+    const ready = event('subscription-read', {
+        name: 'inventory.identities',
+        computation: variant === 'retained-pending' ? 'old' : 'new',
+        underlyingReady: true,
+        observedReady: true,
+        firstRun: variant !== 'retained-pending',
+    });
+    const stop = event('stop', { computation: 'old', stopped: true, invalidated: true });
+    const setter = event('trigger-setter', { renderedValue: true, intendedValue: variant !== 'changed-state' });
+    const phases =
+        variant === 'flush-first'
+            ? [
+                  event('drain-start'),
+                  stop,
+                  ready,
+                  event('drain-end'),
+                  setter,
+                  event('trigger-setter-return'),
+                  event('drain-start'),
+                  event('drain-end'),
+              ]
+            : [
+                  setter,
+                  ...(variant === 'retained-pending' ? [] : [stop, ready]),
+                  event('trigger-setter-return'),
+                  event('drain-start'),
+                  ...(variant === 'retained-pending' ? [ready] : []),
+                  event('drain-end'),
+              ];
+    return {
+        complete: true,
+        dropped: 0,
+        variant,
+        events: [
+            event('subscription-read', {
+                name: 'inventory.identities',
+                computation: 'old',
+                underlyingReady: true,
+                observedReady: false,
+            }),
+            event('gate-release'),
+            event('invalidate', { computation: 'old', stopped: false, invalidated: true }),
+            ...phases,
+            event('trigger-end'),
+        ].map((e, i) => ({ ...e, sequence: i + 1 })),
+    };
+}
+for (const variant of ['equal-pending', 'changed-state', 'flush-first', 'retained-pending'])
+    test(`lifecycle oracle ${variant} rejects a ready read beyond its drain bound`, () => {
+        const snapshot = lifecycle(variant);
+        verifyControlledChain(snapshot, variant);
+        const readyIndex = snapshot.events.findIndex(
+            (e) => e.phase === 'subscription-read' && e.observedReady === true
+        );
+        const [ready] = snapshot.events.splice(readyIndex, 1);
+        const boundary = snapshot.events.findIndex(
+            (e) => e.phase === (['equal-pending', 'changed-state'].includes(variant) ? 'drain-start' : 'drain-end')
+        );
+        snapshot.events.splice(boundary + 1, 0, ready);
+        snapshot.events.forEach((e, i) => {
+            e.sequence = i + 1;
+        });
+        assert.throws(() => verifyControlledChain(snapshot, variant), /variant lifecycle order/);
+    });
+test('lifecycle oracle rejects wrong firstRun, stop before setter, and readiness beyond trigger-end', () => {
+    for (const mutate of [
+        (s) => {
+            s.events.find((e) => e.phase === 'subscription-read' && e.observedReady).firstRun = false;
+        },
+        (s) => {
+            const setter = s.events.findIndex((e) => e.phase === 'trigger-setter');
+            [s.events[setter], s.events[setter + 1]] = [s.events[setter + 1], s.events[setter]];
+        },
+        (s) => {
+            const index = s.events.findIndex((e) => e.phase === 'subscription-read' && e.observedReady);
+            s.events.push(...s.events.splice(index, 1));
+        },
+    ]) {
+        const s = lifecycle('equal-pending');
+        mutate(s);
+        s.events.forEach((e, i) => {
+            e.sequence = i + 1;
+        });
+        assert.throws(() => verifyControlledChain(s, s.variant), /variant lifecycle order/);
+    }
+});
+function expectedTimeout() {
+    const headingLocator = "locator('.app-shell-main').getByRole('heading', { name: 'Living room', exact: true })";
+    const error = Object.assign(new Error(`expect(locator).toBeVisible() failed\nLocator: ${headingLocator}`), {
+        matcherResult: {
+            name: 'toBeVisible',
+            pass: false,
+            expected: 'visible',
+            actual: '<element(s) not found>',
+            timeout: 5000,
+        },
+    });
+    return {
+        error,
+        elapsedMs: 5002,
+        headingLocator,
+        finalLoading: true,
+        finalHeading: false,
+        pageClosed: false,
+        publicErrors: {
+            schema: 'public-browser-errors/v1',
+            started: true,
+            stopped: true,
+            finalSampleCompleted: true,
+            complete: true,
+            dropped: 0,
+            unlinkedEvents: 0,
+            events: [],
+        },
+    };
+}
+test('baseline oracle rejects unrelated late errors, other locators/deadlines, and incomplete or dirty final evidence', () => {
+    verifyControlledTimeout(expectedTimeout());
+    for (const mutate of [
+        (x) => {
+            x.error = new Error('Target page, context or browser has been closed');
+            x.elapsedMs = 5100;
+        },
+        (x) => {
+            x.error = new Error('transport failure');
+            x.elapsedMs = 5100;
+        },
+        (x) => {
+            x.error.matcherResult.name = 'toHaveCount';
+        },
+        (x) => {
+            x.error.matcherResult.timeout = 10000;
+        },
+        (x) => {
+            x.error.message = x.error.message.replace('Living room', 'Other heading');
+        },
+        (x) => {
+            x.publicErrors.events.push({ kind: 'pageerror' });
+        },
+        (x) => {
+            x.publicErrors.complete = false;
+        },
+        (x) => {
+            x.publicErrors.unlinkedEvents = 1;
+        },
+        (x) => {
+            x.finalLoading = false;
+        },
+        (x) => {
+            x.finalHeading = true;
+        },
+        (x) => {
+            x.pageClosed = true;
+        },
+    ]) {
+        const x = expectedTimeout();
+        mutate(x);
+        assert.throws(() => verifyControlledTimeout(x), /Invalid controlled evidence/);
+    }
+});
+
+test('baseline oracle accepts installed Playwright matcher result and rendered message without browser execution', () => {
+    const { formatMatcherMessage } = require('../node_modules/playwright/lib/matchers/matcherHint.js');
+    const x = expectedTimeout();
+    x.error.message = formatMatcherMessage(
+        { isNot: false },
+        {
+            matcherName: 'toBeVisible',
+            locator: { toString: () => x.headingLocator },
+            timeout: 5000,
+            timedOut: true,
+            printedExpected: 'Expected: visible',
+            printedReceived: 'Received: <element(s) not found>',
+            log: ['waiting for ' + x.headingLocator],
+        }
+    );
+    verifyControlledTimeout(x);
+});

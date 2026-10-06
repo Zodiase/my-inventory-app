@@ -1,8 +1,9 @@
 /** Review-gated four-document controlled actual-App fixture; not natural DDP reproduction. */
 import { expect, test as base } from '@playwright/test';
-import { writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { callMeteorMethod, resetDatabase, waitForMeteorReady } from '../helpers/database';
 import { observeMeteorLoading } from '../helpers/meteor-loading-diagnostics.mjs';
+import { verifyControlledChain, verifyControlledTimeout } from '../helpers/controlled-readiness-oracle.mjs';
 type Variant = 'equal-pending' | 'changed-state' | 'flush-first' | 'retained-pending';
 interface Snapshot {
     epoch: string;
@@ -23,7 +24,7 @@ interface Api {
     read: () => Snapshot;
     stop: () => void;
 }
-const test = base.extend<{ variant: Variant; evidence: void }>({
+const test = base.extend<{ variant: Variant; evidence: ReturnType<typeof observeMeteorLoading> }>({
     variant: ['equal-pending', { option: true }],
     evidence: [
         async ({ page, variant }, use, info) => {
@@ -39,7 +40,7 @@ const test = base.extend<{ variant: Variant; evidence: void }>({
                     ...(variant === 'retained-pending'
                         ? [['inventoryE2eRetainedCapability', { schema: 1, epoch }]]
                         : []),
-                ] as const)
+                ] as readonly (readonly [string, unknown])[])
                     Object.defineProperty(globalThis, name, {
                         value: Object.freeze(value),
                         writable: false,
@@ -48,7 +49,7 @@ const test = base.extend<{ variant: Variant; evidence: void }>({
             }, variant);
             const observer = observeMeteorLoading(page);
             try {
-                await use();
+                await use(observer);
             } finally {
                 try {
                     const evidence = await Promise.race([
@@ -105,72 +106,12 @@ async function api(page, command: 'read' | 'prime' | 'trigger' | 'drain') {
         return api[command]();
     }, command);
 }
-function verifyChain(snapshot: Snapshot, variant: Variant) {
-    expect(snapshot.complete).toBe(true);
-    expect(snapshot.dropped).toBe(0);
-    expect(snapshot.variant).toBe(variant);
-    const es = snapshot.events;
-    const release = es.find((e) => e.phase === 'gate-release');
-    expect(release).toBeDefined();
-    const before = es
-        .filter(
-            (e) =>
-                e.phase === 'subscription-read' &&
-                e.name === 'inventory.identities' &&
-                Number(e.sequence) < Number(release!.sequence)
-        )
-        .at(-1);
-    expect(before?.underlyingReady).toBe(true);
-    expect(before?.observedReady).toBe(false);
-    const comp = before?.computation;
-    const invalidation = es.find(
-        (e) => e.phase === 'invalidate' && e.computation === comp && Number(e.sequence) > Number(release!.sequence)
-    );
-    expect(invalidation?.stopped).toBe(false);
-    expect(invalidation?.invalidated).toBe(true);
-    const setter = es.find((e) => e.phase === 'trigger-setter');
-    expect(setter?.renderedValue).toBe(true);
-    expect(setter?.intendedValue).toBe(variant !== 'changed-state');
-    const stop = es.find(
-        (e) => e.phase === 'stop' && e.computation === comp && Number(e.sequence) > Number(release!.sequence)
-    );
-    const drain = es.find((e) => e.phase === 'drain-start' && Number(e.sequence) > Number(release!.sequence));
-    if (variant === 'retained-pending') {
-        expect(stop).toBeUndefined();
-        expect(
-            es.some(
-                (e) =>
-                    e.phase === 'subscription-read' &&
-                    e.computation === comp &&
-                    e.observedReady === true &&
-                    e.firstRun === false &&
-                    Number(e.sequence) > Number(drain!.sequence)
-            )
-        ).toBe(true);
-    } else {
-        expect(stop?.invalidated).toBe(true);
-        expect(stop?.stopped).toBe(true);
-        expect(
-            es.some(
-                (e) =>
-                    e.phase === 'subscription-read' &&
-                    e.name === 'inventory.identities' &&
-                    e.computation !== comp &&
-                    e.underlyingReady === true &&
-                    e.observedReady === true &&
-                    e.firstRun === true &&
-                    Number(e.sequence) > Number(stop!.sequence)
-            )
-        ).toBe(true);
-        expect(Number(stop!.sequence) < Number(drain!.sequence)).toBe(variant !== 'flush-first');
-    }
-    expect(Number(drain!.sequence) < Number(setter!.sequence)).toBe(variant === 'flush-first');
-}
 for (const variant of ['equal-pending', 'changed-state', 'flush-first', 'retained-pending'] as const)
     test.describe(variant, () => {
         test.use({ variant });
         test('requires Loading before trigger and discriminates recovery at original deadline', async ({
             page,
+            evidence,
         }, info) => {
             await page.goto('/');
             await waitForMeteorReady(page);
@@ -230,21 +171,43 @@ for (const variant of ['equal-pending', 'changed-state', 'flush-first', 'retaine
             await page.screenshot({ path: info.outputPath('before-trigger.png') });
             await api(page, 'trigger');
             const afterDrain = (await api(page, 'read')) as Snapshot;
-            verifyChain(afterDrain, variant);
+            verifyControlledChain(afterDrain, variant);
             await writeFile(info.outputPath('after-drain.json'), JSON.stringify(afterDrain), { mode: 0o600 });
             await page.screenshot({ path: info.outputPath('after-drain.png') });
             const started = Date.now();
             let recovered = false;
+            let visibilityError: unknown;
             try {
                 await expect(heading).toBeVisible({ timeout: 5000 });
                 recovered = true;
             } catch (error) {
                 if (variant !== 'equal-pending') throw error;
-                expect(Date.now() - started).toBeGreaterThanOrEqual(4900);
+                visibilityError = error;
             }
+            const visibilityElapsedMs = Date.now() - started;
             expect(recovered).toBe(variant !== 'equal-pending');
-            if (variant === 'equal-pending') await expect(loading).toBeVisible();
-            else await expect(loading).toHaveCount(0);
+            if (variant === 'equal-pending') {
+                const finalLoading = await loading.isVisible();
+                const finalHeading = await heading.isVisible();
+                const pageClosed = page.isClosed();
+                await evidence.finish({
+                    status: 'failed',
+                    outputPath: info.outputPath.bind(info),
+                    attach: info.attach.bind(info),
+                });
+                const diagnostics = JSON.parse(
+                    await readFile(info.outputPath('meteor-loading-diagnostics.json'), 'utf8')
+                );
+                verifyControlledTimeout({
+                    error: visibilityError,
+                    elapsedMs: visibilityElapsedMs,
+                    headingLocator: heading.toString(),
+                    finalLoading,
+                    finalHeading,
+                    pageClosed,
+                    publicErrors: diagnostics.publicErrors,
+                });
+            } else await expect(loading).toHaveCount(0);
             await writeFile(
                 info.outputPath('outcome.json'),
                 JSON.stringify({
