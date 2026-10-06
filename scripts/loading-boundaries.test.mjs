@@ -156,7 +156,20 @@ test('original hooks, reactive callbacks and getter evaluation order are unchang
     const current = await readFile(new URL('../meteor-app/imports/ui/App.tsx', import.meta.url), 'utf8');
     const printer = ts.createPrinter({ removeComments: true });
     function calls(text) {
-        const file = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX),
+        const parsed = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+        // Ignore only standalone scalar recorder statements; preserve original hook bodies/dependencies.
+        const transformed = ts.transform(parsed, [
+            (context) => (root) => {
+                const visit = (n) =>
+                    ts.isExpressionStatement(n) &&
+                    ts.isCallExpression(n.expression) &&
+                    n.expression.expression.getText(parsed) === 'scalarRecord'
+                        ? undefined
+                        : ts.visitEachChild(n, visit, context);
+                return ts.visitNode(root, visit);
+            },
+        ]);
+        const file = transformed.transformed[0],
             out = [];
         function visit(n) {
             if (ts.isCallExpression(n) && /^(use[A-Z]|isLoading)/.test(n.expression.getText(file)))
@@ -164,6 +177,7 @@ test('original hooks, reactive callbacks and getter evaluation order are unchang
             ts.forEachChild(n, visit);
         }
         visit(file);
+        transformed.dispose();
         return out;
     }
     assert.deepEqual(calls(current), baseline.calls);

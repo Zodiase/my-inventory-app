@@ -23,6 +23,7 @@ import {
     captureShell,
     captureDescendant,
 } from '/imports/utility/e2eLoadingCapture';
+import { scalarRoot, scalarRecord } from '/imports/utility/e2eScalarCapture';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
 
@@ -136,6 +137,7 @@ export const App = (): ReactElement => {
     const tagsLoading = isLoadingTags();
     const allItemsLoading = isLoadingAllItems();
     const identitiesLoading = isLoadingIdentities();
+    const scalarFrame = scalarRoot({ tagsLoading, allItemsLoading, identitiesLoading });
     const loadingCaptureRoot = captureRoot(contentsRegion, { tagsLoading, allItemsLoading, identitiesLoading });
     captureBoundary(loadingCaptureRoot, 'tracker-before', 'tags');
     const allTags = useTracker(() => {
@@ -179,9 +181,17 @@ export const App = (): ReactElement => {
         }
 
         if (isContainerRoute) {
+            scalarRecord(scalarFrame, 'setter-call', {
+                site: 'route-sync',
+                sameAsRendered: currentItemsContainerId === routeContainerId,
+            });
             setCurrentItemsContainerId(routeContainerId);
             setLastSearchContainerId(routeContainerId);
         } else if (location === '/' || location === '/items') {
+            scalarRecord(scalarFrame, 'setter-call', {
+                site: 'root-clear',
+                sameAsRendered: currentItemsContainerId === undefined,
+            });
             setCurrentItemsContainerId(undefined);
         } else if (itemDetailRouteMatch !== null) {
             if (!isSearchResultItemDetail && !ownDetailsDetour) {
@@ -190,16 +200,28 @@ export const App = (): ReactElement => {
         } else if (location !== '/search') {
             setCurrentItemsContainerId(undefined);
         }
+        // Diagnostic closure retains the original render frame; original effect dependencies are unchanged.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isContainerRoute, isSearchResultItemDetail, location, routeContainerId]);
 
     useEffect(() => {
         if (!isContainerRoute || routeContainerId === undefined || allItemsLoading) return;
 
         if (routeContainer?.isContainer === true) {
+            scalarRecord(scalarFrame, 'setter-call', {
+                site: 'container-valid',
+                sameAsRendered: currentItemsContainerId === routeContainerId,
+            });
             setCurrentItemsContainerId(routeContainerId);
         } else {
+            scalarRecord(scalarFrame, 'setter-call', {
+                site: 'container-invalid',
+                sameAsRendered: currentItemsContainerId === undefined,
+            });
             setCurrentItemsContainerId(undefined);
         }
+        // Diagnostic closure retains the original render frame; original effect dependencies are unchanged.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [allItemsLoading, isContainerRoute, routeContainer?._id, routeContainer?.isContainer, routeContainerId]);
 
     const handleCreateItem = async (itemData: RecordInput<InventoryItem>): Promise<void> => {
@@ -455,20 +477,25 @@ export const App = (): ReactElement => {
     };
 
     const renderContainerRoute = (rawRouteContainerId: string): ReactElement => {
+        scalarRecord(scalarFrame, 'route-entry');
         const containerId = decodeRouteParam(rawRouteContainerId);
         if (containerId === undefined) {
+            scalarRecord(scalarFrame, 'route-decision', { decision: 'invalid' });
             return captureTree(captureRoute(loadingCaptureRoot, 'invalid'), renderInvalidContainerView());
         }
 
         if (allItemsLoading || identitiesLoading) {
+            scalarRecord(scalarFrame, 'route-decision', { decision: 'root-loading' });
             return captureTree(captureRoute(loadingCaptureRoot, 'root-loading'), <LoadingState />);
         }
 
         const container = containerId === routeContainerId ? routeContainer : findInventoryItemById(containerId);
         if (container?.isContainer !== true) {
+            scalarRecord(scalarFrame, 'route-decision', { decision: 'invalid' });
             return captureTree(captureRoute(loadingCaptureRoot, 'invalid'), renderInvalidContainerView());
         }
 
+        scalarRecord(scalarFrame, 'route-decision', { decision: 'contents' });
         return captureTree(captureRoute(loadingCaptureRoot, 'contents'), renderItemsView(containerId));
     };
 
@@ -508,7 +535,7 @@ export const App = (): ReactElement => {
                                       fragments: [],
                                       submitted: false,
                                   })
-                                : searchReturnPath ?? '/search'
+                                : (searchReturnPath ?? '/search')
                         }
                         headerContent={
                             location === '/search' ? (
@@ -733,5 +760,6 @@ export const App = (): ReactElement => {
         </Grommet>
     );
     captureBoundary(loadingCaptureRoot, 'tree-end');
+    scalarRecord(scalarFrame, 'return');
     return appTree;
 };
