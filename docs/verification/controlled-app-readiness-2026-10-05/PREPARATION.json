@@ -1,0 +1,12 @@
+{
+  "startUtc": "2026-10-06T06:45:41.455307+00:00",
+  "recordedUtc": "2026-10-06T07:00:06.036259+00:00",
+  "elapsedMinutes": 14.4,
+  "budgetMinutes": 120,
+  "base": "d3b707006692c35dee8a3ec401a3f31e22736303",
+  "browserRuns": 0,
+  "appStarts": 0,
+  "plannedDocuments": 4,
+  "nodeChecks": 108,
+  "installedFixtureProvenance": "tests/e2e/mechanisms/installed/provenance.json"
+}

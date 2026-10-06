@@ -15,6 +15,7 @@ import type InventorySearchResult from '/imports/model/InventorySearchResult';
 import type { SearchFragment } from '/imports/model/SearchFragment';
 import type { TracedInventorySearch } from '/imports/model/TracedInventorySearch';
 import { LoadingState } from '/imports/ui/common/LoadingState';
+import { bindControlledApp } from '/imports/utility/e2eControlledApp';
 import {
     captureRoot,
     captureRoute,
@@ -118,6 +119,7 @@ export const App = (): ReactElement => {
     // Filter state for items view
     const [itemsViewFilters, setItemsViewFilters] = useState<SearchFragment[]>([]);
     const [showFilterBuilder, setShowFilterBuilder] = useState(false);
+    bindControlledApp({ showFilterBuilder, setShowFilterBuilder, routeContainerId });
     // The App stays mounted across the own-details detour. Keep list state and
     // scroll only for that exact pair of routes; other navigation resets it.
     const contentsDetailsContext = useRef<{ contentsPath: string; detailPath: string; scrollTop: number }>();

@@ -5,6 +5,8 @@
  */
 import { Meteor } from 'meteor/meteor';
 
+import { useControlledOriginalRootReadiness, useControlledRetainedRootReadiness } from './controlledRootSubscribe';
+import { controlledAppEnabled } from './e2eControlledApp';
 import { validScalarCapability } from './e2eScalarEvidence';
 import { useSubscribe, useTracker } from './reactMeteorData';
 export type RootSubscription = 'tags.all' | 'items.all' | 'inventory.identities';
@@ -34,4 +36,10 @@ function useRetainedRootReadiness(name: RootSubscription): () => boolean {
     return () => loading;
 }
 // Initial selection is preserved across module re-evaluation. Never flip hooks on a mounted root.
-export const useRootReadiness = retainedRootReadinessEnabled ? useRetainedRootReadiness : useOriginalRootReadiness;
+export const useRootReadiness = controlledAppEnabled
+    ? retainedRootReadinessEnabled
+        ? useControlledRetainedRootReadiness
+        : useControlledOriginalRootReadiness
+    : retainedRootReadinessEnabled
+    ? useRetainedRootReadiness
+    : useOriginalRootReadiness;
