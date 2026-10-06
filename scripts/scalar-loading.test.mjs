@@ -1,3 +1,4 @@
+import { normalizeRetainedRoots } from './retained-root-app-normalization.mjs';
 /** Validates opt-in, redaction, bounds and exact source invariance before causal measurement. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -90,14 +91,14 @@ test('events keep only allowed scalars and report every lost event', () => {
     c.record('return', { frame: 2 });
     assert.equal(c.read().dropped, 6);
 });
-test('App AST is identical after removing scalar import/declaration/call statements', () => {
+test('App AST matches after explicit three-root delta reversal and scalar removal', () => {
     const path = 'meteor-app/imports/ui/App.tsx';
     const before = execFileSync('git', ['show', 'ba7e3a35c40e80d9301620f6e0bda44ef1b0016b:' + path], {
         encoding: 'utf8',
     });
     const after = readFileSync(new URL('../' + path, import.meta.url), 'utf8');
     const parse = (s) => ts.createSourceFile(path, s, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-    const transformed = ts.transform(parse(after), [
+    const transformed = ts.transform(parse(normalizeRetainedRoots(after)), [
         (context) => (node) => {
             const visit = (n) => {
                 if (ts.isParenthesizedExpression(n)) return ts.visitNode(n.expression, visit);
@@ -192,4 +193,9 @@ test('measurement retains exact original nested test and beforeEach AST', () => 
         return result;
     }
     assert.deepEqual(bodies(after), bodies(before));
+    const comparison = readFileSync(
+        new URL('../tests/e2e/app/retained-navigation.comparison.spec.proposal.ts', import.meta.url),
+        'utf8'
+    );
+    assert.deepEqual(bodies(comparison), bodies(before));
 });

@@ -1,0 +1,20 @@
+{
+  "tracker": {
+    "source": "/private/tmp/pr184-nine-meteor/build/programs/web.browser/packages/tracker.js",
+    "sourceSha256": "bdfc21f8efb4705e7ee02eca3e55e6934a8a7edd7217f7c67ef5ec7afa90805e",
+    "extraction": "Tracker = {} through end of Tracker.afterFlush, unchanged body",
+    "extractedSha256": "d1fb65a5c6e7565d136d8757d2fd93d4ce0a58e018459ddf16a6c5e2f0c278a9"
+  },
+  "hooks": {
+    "source": "/private/tmp/pr184-nine-meteor/build/programs/web.browser/packages/react-meteor-data.js",
+    "sourceSha256": "e479b4db3817ddec3c0136259a0749916525fe5aba56bdb1c6329bf5e6cc4cc5",
+    "extraction": "checkCursor through useTrackerClient plus exact useSubscribeClient, only bindings/export prefix/suffix added",
+    "extractedSha256": "f01e5617f700f853b8921d2c6f18b9a673c28baf218cab80d3d7a3c60aee7381"
+  },
+  "subscribe": {
+    "source": "/private/tmp/pr184-nine-meteor/build/programs/web.browser/packages/ddp-client.js",
+    "sourceSha256": "6c98feeec45152a9d7d91e8da84f4bfbe49362aa02cede4a6e7a25ff3a42f039",
+    "extraction": "exact Connection.subscribe method, placed in method-bearing object; unchanged body",
+    "extractedSha256": "2e10c533fd0f641dcc5588e374d89c5f38286bad3c6dc0c9f063bdc9656f2824"
+  }
+}

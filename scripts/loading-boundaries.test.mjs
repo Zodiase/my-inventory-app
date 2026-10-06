@@ -1,3 +1,4 @@
+import { normalizeRetainedRoots } from './retained-root-app-normalization.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -142,7 +143,7 @@ test('public errors never store private fields and early errors remain unlinked 
     assert.equal(overflow.snapshot(true).dropped, 8);
     assert.equal(e.snapshot(false).complete, false);
 });
-test('original hooks, reactive callbacks and getter evaluation order are unchanged from merged baseline', async () => {
+test('inherited hooks match baseline after reversing explicit three-root comparison delta', async () => {
     // Frozen merged-baseline AST data keeps this guard independent of checkout depth.
     const baseline = JSON.parse(
         await readFile(new URL('./fixtures/loading-app-baseline-calls.json', import.meta.url), 'utf8')
@@ -180,7 +181,7 @@ test('original hooks, reactive callbacks and getter evaluation order are unchang
         transformed.dispose();
         return out;
     }
-    assert.deepEqual(calls(current), baseline.calls);
+    assert.deepEqual(calls(normalizeRetainedRoots(current)), baseline.calls);
     assert.match(current, /const appTree =/);
     assert.match(current, /return appTree/);
 });

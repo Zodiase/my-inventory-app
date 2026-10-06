@@ -24,8 +24,9 @@ import {
     captureDescendant,
 } from '/imports/utility/e2eLoadingCapture';
 import { scalarRoot, scalarRecord } from '/imports/utility/e2eScalarCapture';
-import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
+import { useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
+import { useRootReadiness } from '/imports/utility/useRootReadiness';
 
 import { AllItemsView } from './AllItemsView';
 import { AllTagsView } from './AllTagsView';
@@ -131,9 +132,9 @@ export const App = (): ReactElement => {
     const contentsRegion = useRef<HTMLDivElement>(null);
 
     // Fetch all tags for search components
-    const isLoadingTags = useSubscribe('tags.all');
-    const isLoadingAllItems = useSubscribe('items.all');
-    const isLoadingIdentities = useSubscribe('inventory.identities');
+    const isLoadingTags = useRootReadiness('tags.all');
+    const isLoadingAllItems = useRootReadiness('items.all');
+    const isLoadingIdentities = useRootReadiness('inventory.identities');
     const tagsLoading = isLoadingTags();
     const allItemsLoading = isLoadingAllItems();
     const identitiesLoading = isLoadingIdentities();
@@ -535,7 +536,7 @@ export const App = (): ReactElement => {
                                       fragments: [],
                                       submitted: false,
                                   })
-                                : (searchReturnPath ?? '/search')
+                                : searchReturnPath ?? '/search'
                         }
                         headerContent={
                             location === '/search' ? (
