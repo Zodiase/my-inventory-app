@@ -131,3 +131,24 @@ type-only tuple annotation; runtime bootstrap values are unchanged. The installe
 exercised with a synthetic matcher result without a browser. No App/browser/build
 execution occurred. These are guard checks, not observed actual React lifecycle
 or proof of the natural DDP failure. Focused independent rereview is next.
+
+## 2026-10-06 numeric producer contract correction
+
+Focused independent review of1bcd2ba found a real producer/consumer mismatch:
+the controller emits numeric computation aliases, while the guard and handcrafted
+controls expected strings. The oracle now requires positive safe-integer aliases
+on every subscription-read/invalidation/stop event. All handcrafted lifecycle
+controls now use numeric IDs; strings, zero, negatives, fractions, nonfinite,
+unsafe integers, null and missing aliases reject across all three event types.
+
+Four additional producer-to-oracle tests execute the actual compiled unchanged
+e2eControlledApp controller's observe/prime/trigger/read and public lifecycle
+callbacks. A synthetic scheduler supplies computation lifecycle and render
+responses; records are emitted by the producer and passed directly to the oracle,
+without rewriting aliases or constructing snapshots. These controls close the
+shape-contract gap, not actual React/Tracker scheduling or natural DDP proof.
+
+Fresh21 focused/120 total script tests pass, app and targeted proposal types pass,
+scoped formatting passes. Controller/App/order/deadline/four-case/config unchanged.
+No App/browser/build runs. Original held evidence retained; exact-head focused
+independent rereview is next.

@@ -196,12 +196,12 @@ function lifecycle(variant) {
     const event = (phase, extra = {}) => ({ phase, ...extra });
     const ready = event('subscription-read', {
         name: 'inventory.identities',
-        computation: variant === 'retained-pending' ? 'old' : 'new',
+        computation: variant === 'retained-pending' ? 1 : 2,
         underlyingReady: true,
         observedReady: true,
         firstRun: variant !== 'retained-pending',
     });
-    const stop = event('stop', { computation: 'old', stopped: true, invalidated: true });
+    const stop = event('stop', { computation: 1, stopped: true, invalidated: true });
     const setter = event('trigger-setter', { renderedValue: true, intendedValue: variant !== 'changed-state' });
     const phases =
         variant === 'flush-first'
@@ -230,12 +230,12 @@ function lifecycle(variant) {
         events: [
             event('subscription-read', {
                 name: 'inventory.identities',
-                computation: 'old',
+                computation: 1,
                 underlyingReady: true,
                 observedReady: false,
             }),
             event('gate-release'),
-            event('invalidate', { computation: 'old', stopped: false, invalidated: true }),
+            event('invalidate', { computation: 1, stopped: false, invalidated: true }),
             ...phases,
             event('trigger-end'),
         ].map((e, i) => ({ ...e, sequence: i + 1 })),
@@ -371,4 +371,81 @@ test('baseline oracle accepts installed Playwright matcher result and rendered m
         }
     );
     verifyControlledTimeout(x);
+});
+
+for (const variant of ['equal-pending', 'changed-state', 'flush-first', 'retained-pending'])
+    test(`actual controller producer feeds lifecycle oracle ${variant} (synthetic scheduler only)`, () => {
+        const x = load(variant);
+        const computation = () => {
+            const invalidations = [],
+                stops = [];
+            const comp = {
+                firstRun: true,
+                invalidated: false,
+                stopped: false,
+                onInvalidate: (fn) => invalidations.push(fn),
+                onStop: (fn) => stops.push(fn),
+                invalidate: () => {
+                    comp.invalidated = true;
+                    for (const fn of invalidations.splice(0)) fn();
+                },
+                stop: () => {
+                    comp.stopped = true;
+                    for (const fn of stops.splice(0)) fn();
+                },
+            };
+            return comp;
+        };
+        const old = computation();
+        const observe = (comp, name = 'inventory.identities') => {
+            x.tracker.currentComputation = comp;
+            x.api.observe(name, true, { ready: () => true });
+        };
+        observe(computation(), 'tags.all');
+        observe(computation(), 'items.all');
+        observe(old);
+        // Commands and event emission execute the actual compiled producer. Only scheduling is synthetic.
+        x.tracker.Dependency.prototype.changed = () => old.invalidate();
+        const replace = () => {
+            if (!old.stopped) {
+                old.stop();
+                observe(computation());
+            }
+        };
+        x.tracker.flush = () => {
+            if (!x.api.read().gateOpen) return;
+            if (variant === 'retained-pending') {
+                old.firstRun = false;
+                old.invalidated = false;
+                observe(old);
+            } else replace();
+        };
+        let value = false;
+        const bind = () =>
+            x.api.bind({
+                showFilterBuilder: value,
+                routeContainerId: 'container',
+                setShowFilterBuilder: (next) => {
+                    value = next;
+                    if (x.api.read().gateOpen && variant !== 'retained-pending') replace();
+                    bind();
+                },
+            });
+        bind();
+        x.api.prime();
+        x.api.trigger();
+        const snapshot = x.api.read();
+        assert.ok(snapshot.events.some((e) => e.phase === 'subscription-read' && e.computation === 3));
+        verifyControlledChain(snapshot, variant);
+    });
+test('lifecycle oracle rejects invalid producer aliases in reads, invalidations and stops', () => {
+    for (const phase of ['subscription-read', 'invalidate', 'stop'])
+        for (const alias of ['old', '1', 0, -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1, null, undefined]) {
+            const snapshot = lifecycle('equal-pending');
+            snapshot.events.find((e) => e.phase === phase).computation = alias;
+            assert.throws(
+                () => verifyControlledChain(snapshot, snapshot.variant),
+                /positive safe-integer computation alias/
+            );
+        }
 });

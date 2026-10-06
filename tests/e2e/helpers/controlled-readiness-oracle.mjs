@@ -11,6 +11,14 @@ export function verifyControlledChain(snapshot, variant) {
             es.every((e, i) => Number.isSafeInteger(e.sequence) && (i === 0 || e.sequence > es[i - 1].sequence)),
         'event sequence'
     );
+    requireEvidence(
+        es.every(
+            (e) =>
+                !['subscription-read', 'invalidate', 'stop'].includes(e.phase) ||
+                (Number.isSafeInteger(e.computation) && e.computation > 0)
+        ),
+        'positive safe-integer computation alias'
+    );
     const one = (phase, after = -1) => {
         const found = es.filter((e) => e.phase === phase && e.sequence > after);
         requireEvidence(found.length === 1, phase);
@@ -24,7 +32,10 @@ export function verifyControlledChain(snapshot, variant) {
         )
         .at(-1);
     requireEvidence(
-        before?.underlyingReady === true && before?.observedReady === false && typeof before.computation === 'string',
+        before?.underlyingReady === true &&
+            before?.observedReady === false &&
+            Number.isSafeInteger(before.computation) &&
+            before.computation > 0,
         'pending identities'
     );
     const comp = before.computation;
