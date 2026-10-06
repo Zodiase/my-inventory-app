@@ -28,7 +28,7 @@ const safeName = (name) => (publicationNames.has(name) ? name : 'other');
 const boundedCount = (count) => (Number.isSafeInteger(count) && count >= 0 ? Math.min(count, 999) : 0);
 
 export function sanitizeRenderCapture(raw) {
-    if (raw?.schema === 'root-route-loading/v2') return sanitizeBoundaryCapture(raw);
+    if (['root-route-loading/v2', 'root-route-loading/v3'].includes(raw?.schema)) return sanitizeBoundaryCapture(raw);
     const unavailable = {
         schema: 'root-route-loading/v1',
         available: false,

@@ -1,0 +1,1636 @@
+{
+  "schema": "root-route-loading/v3",
+  "documentEpoch": "document-0123456789abcdef",
+  "available": true,
+  "complete": true,
+  "stopped": false,
+  "dropped": 0,
+  "aliasOverflow": 0,
+  "byteOverflow": 0,
+  "lastCommit": {
+    "instance": "instance-2",
+    "rootFrame": 5,
+    "routeAttempt": 5,
+    "commitBatch": 11,
+    "decision": "contents",
+    "tagsLoading": false,
+    "allItemsLoading": false,
+    "identitiesLoading": false,
+    "phase": "commit",
+    "at": 485,
+    "commitSequence": 30
+  },
+  "lastShellCommit": {
+    "instance": "instance-2",
+    "rootFrame": 5,
+    "commitBatch": 11,
+    "tagsLoading": false,
+    "allItemsLoading": false,
+    "identitiesLoading": false,
+    "phase": "shell-commit",
+    "at": 486,
+    "commitSequence": 31
+  },
+  "events": [
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "phase": "root-created",
+      "at": 330
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "phase": "descendant-entry",
+      "at": 330
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "root-render",
+      "at": 331
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 331
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 331
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 331
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 331
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 331
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 331
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 331
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 331
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tree-start",
+      "at": 331
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tree-end",
+      "at": 332
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 332
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 332
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 334
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "route-entry",
+      "at": 335
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "routeAttempt": 1,
+      "decision": "root-loading",
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "route-attempt",
+      "at": 335
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "routeAttempt": 1,
+      "commitBatch": 1,
+      "decision": "root-loading",
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "commit",
+      "at": 336,
+      "commitSequence": 1
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 336
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-mount",
+      "at": 336
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 336
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-mount",
+      "at": 336
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "commitBatch": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "shell-commit",
+      "at": 336,
+      "commitSequence": 2
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 336
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 1,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-mount",
+      "at": 336
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "phase": "descendant-layout",
+      "at": 336
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "phase": "descendant-mount",
+      "at": 336
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 1,
+      "phase": "root-profiler-commit",
+      "at": 336
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "root-render",
+      "at": 338
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 338
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 338
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 338
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 338
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 338
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 338
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 338
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 338
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tree-start",
+      "at": 338
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tree-end",
+      "at": 338
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 338
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 338
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 340
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "route-entry",
+      "at": 340
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "routeAttempt": 2,
+      "decision": "root-loading",
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "route-attempt",
+      "at": 340
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "routeAttempt": 2,
+      "commitBatch": 2,
+      "decision": "root-loading",
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "commit",
+      "at": 340,
+      "commitSequence": 3
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 340
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 340
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "commitBatch": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "shell-commit",
+      "at": 340,
+      "commitSequence": 4
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 340
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 2,
+      "phase": "root-profiler-commit",
+      "at": 340
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "routeAttempt": 2,
+      "commitBatch": 3,
+      "decision": "root-loading",
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "commit",
+      "at": 340,
+      "commitSequence": 5
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 2,
+      "commitBatch": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "shell-commit",
+      "at": 340,
+      "commitSequence": 6
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 3,
+      "phase": "root-profiler-commit",
+      "at": 340
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "root-render",
+      "at": 340
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 340
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 340
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 340
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 340
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 340
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 340
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 340
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 340
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tree-start",
+      "at": 341
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tree-end",
+      "at": 341
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 341
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 341
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 341
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "route-entry",
+      "at": 341
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "routeAttempt": 3,
+      "decision": "root-loading",
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "route-attempt",
+      "at": 341
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "routeAttempt": 3,
+      "commitBatch": 4,
+      "decision": "root-loading",
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "commit",
+      "at": 341,
+      "commitSequence": 7
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 341
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 341
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "commitBatch": 4,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "shell-commit",
+      "at": 341,
+      "commitSequence": 8
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 3,
+      "tagsLoading": true,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 342
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 4,
+      "phase": "root-profiler-commit",
+      "at": 342
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "root-render",
+      "at": 349
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 349
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 349
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 349
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 349
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 349
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 349
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-before",
+      "at": 349
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tracker-after",
+      "at": 349
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tree-start",
+      "at": 349
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "tree-end",
+      "at": 349
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 349
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 349
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-entry",
+      "at": 350
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "route-entry",
+      "at": 350
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "routeAttempt": 4,
+      "decision": "root-loading",
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "route-attempt",
+      "at": 350
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "routeAttempt": 4,
+      "commitBatch": 5,
+      "decision": "root-loading",
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "commit",
+      "at": 350,
+      "commitSequence": 9
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 350
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 350
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "commitBatch": 5,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "shell-commit",
+      "at": 350,
+      "commitSequence": 10
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 4,
+      "tagsLoading": false,
+      "allItemsLoading": true,
+      "identitiesLoading": true,
+      "phase": "descendant-layout",
+      "at": 350
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 5,
+      "phase": "root-profiler-commit",
+      "at": 350
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "root-render",
+      "at": 353
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-before",
+      "at": 353
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-after",
+      "at": 353
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-before",
+      "at": 353
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-after",
+      "at": 353
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-before",
+      "at": 353
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-after",
+      "at": 353
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-before",
+      "at": 353
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-after",
+      "at": 353
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tree-start",
+      "at": 353
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tree-end",
+      "at": 353
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "descendant-entry",
+      "at": 353
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "descendant-entry",
+      "at": 354
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "descendant-entry",
+      "at": 354
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "route-entry",
+      "at": 354
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "routeAttempt": 5,
+      "decision": "contents",
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "route-attempt",
+      "at": 354
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 1,
+      "decision": "child-loading",
+      "items": true,
+      "phase": "child-render",
+      "at": 359
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 1,
+      "commitBatch": 6,
+      "decision": "child-loading",
+      "items": true,
+      "phase": "commit",
+      "at": 360,
+      "commitSequence": 11
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "routeAttempt": 5,
+      "commitBatch": 6,
+      "decision": "contents",
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "commit",
+      "at": 360,
+      "commitSequence": 12
+    },
+    {
+      "boundary": "switch",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "descendant-layout",
+      "at": 360
+    },
+    {
+      "boundary": "app-shell",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "descendant-layout",
+      "at": 360
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "commitBatch": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "shell-commit",
+      "at": 360,
+      "commitSequence": 13
+    },
+    {
+      "boundary": "grommet",
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "descendant-layout",
+      "at": 360
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 6,
+      "phase": "root-profiler-commit",
+      "at": 360
+    },
+    {
+      "instance": "instance-3",
+      "phase": "passive-mount",
+      "at": 360
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "root-render",
+      "at": 360
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-before",
+      "at": 360
+    },
+    {
+      "boundary": "tags",
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-after",
+      "at": 360
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-before",
+      "at": 360
+    },
+    {
+      "boundary": "route-container",
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-after",
+      "at": 360
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-before",
+      "at": 360
+    },
+    {
+      "boundary": "search-scope",
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-after",
+      "at": 360
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-before",
+      "at": 360
+    },
+    {
+      "boundary": "contents-identity",
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tracker-after",
+      "at": 360
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tree-start",
+      "at": 360
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 6,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "tree-end",
+      "at": 360
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 2,
+      "decision": "child-loading",
+      "items": true,
+      "phase": "child-render",
+      "at": 360
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 2,
+      "commitBatch": 7,
+      "decision": "child-loading",
+      "items": true,
+      "phase": "commit",
+      "at": 361,
+      "commitSequence": 14
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "routeAttempt": 5,
+      "commitBatch": 7,
+      "decision": "contents",
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "commit",
+      "at": 361,
+      "commitSequence": 15
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "commitBatch": 7,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "shell-commit",
+      "at": 361,
+      "commitSequence": 16
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 7,
+      "phase": "root-profiler-commit",
+      "at": 361
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 2,
+      "commitBatch": 7,
+      "decision": "child-loading",
+      "items": true,
+      "phase": "commit",
+      "at": 361,
+      "commitSequence": 17
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "routeAttempt": 5,
+      "commitBatch": 7,
+      "decision": "contents",
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "commit",
+      "at": 361,
+      "commitSequence": 18
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "commitBatch": 7,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "shell-commit",
+      "at": 361,
+      "commitSequence": 19
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 7,
+      "phase": "root-profiler-commit",
+      "at": 361
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 3,
+      "decision": "child-loading",
+      "items": false,
+      "hoisted": true,
+      "phase": "child-render",
+      "at": 362
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 3,
+      "commitBatch": 8,
+      "decision": "child-loading",
+      "items": false,
+      "hoisted": true,
+      "phase": "commit",
+      "at": 362,
+      "commitSequence": 20
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "routeAttempt": 5,
+      "commitBatch": 8,
+      "decision": "contents",
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "commit",
+      "at": 362,
+      "commitSequence": 21
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "commitBatch": 8,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "shell-commit",
+      "at": 362,
+      "commitSequence": 22
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 8,
+      "phase": "root-profiler-commit",
+      "at": 362
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 4,
+      "decision": "contents",
+      "items": false,
+      "hoisted": false,
+      "tags": false,
+      "identities": false,
+      "phase": "child-render",
+      "at": 363
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 4,
+      "commitBatch": 9,
+      "decision": "contents",
+      "items": false,
+      "hoisted": false,
+      "tags": false,
+      "identities": false,
+      "phase": "commit",
+      "at": 364,
+      "commitSequence": 23
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "routeAttempt": 5,
+      "commitBatch": 9,
+      "decision": "contents",
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "commit",
+      "at": 364,
+      "commitSequence": 24
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "commitBatch": 9,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "shell-commit",
+      "at": 364,
+      "commitSequence": 25
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 9,
+      "phase": "root-profiler-commit",
+      "at": 364
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 5,
+      "decision": "contents",
+      "items": false,
+      "hoisted": false,
+      "tags": false,
+      "identities": false,
+      "phase": "child-render",
+      "at": 481
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 5,
+      "commitBatch": 10,
+      "decision": "contents",
+      "items": false,
+      "hoisted": false,
+      "tags": false,
+      "identities": false,
+      "phase": "commit",
+      "at": 485,
+      "commitSequence": 26
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "routeAttempt": 5,
+      "commitBatch": 10,
+      "decision": "contents",
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "commit",
+      "at": 485,
+      "commitSequence": 27
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "commitBatch": 10,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "shell-commit",
+      "at": 485,
+      "commitSequence": 28
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 10,
+      "phase": "root-profiler-commit",
+      "at": 485
+    },
+    {
+      "instance": "instance-3",
+      "childFrame": 5,
+      "commitBatch": 11,
+      "decision": "contents",
+      "items": false,
+      "hoisted": false,
+      "tags": false,
+      "identities": false,
+      "phase": "commit",
+      "at": 485,
+      "commitSequence": 29
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "routeAttempt": 5,
+      "commitBatch": 11,
+      "decision": "contents",
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "commit",
+      "at": 485,
+      "commitSequence": 30
+    },
+    {
+      "instance": "instance-2",
+      "rootFrame": 5,
+      "commitBatch": 11,
+      "tagsLoading": false,
+      "allItemsLoading": false,
+      "identitiesLoading": false,
+      "phase": "shell-commit",
+      "at": 486,
+      "commitSequence": 31
+    },
+    {
+      "boundary": "document-root",
+      "instance": "instance-1",
+      "commitBatch": 11,
+      "phase": "root-profiler-commit",
+      "at": 486
+    }
+  ]
+}

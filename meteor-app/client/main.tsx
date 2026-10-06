@@ -4,6 +4,11 @@ import { createRoot } from 'react-dom/client';
 
 import { ScannerAppRoot } from '/imports/ui/ScannerFoundation/ScannerAppRoot';
 import { setupDiagnostics } from '/imports/utility/diagnostics';
+import {
+    captureDocumentRoot,
+    captureRecoverableError,
+    loadingCaptureEnabled,
+} from '/imports/utility/e2eLoadingCapture';
 
 setupDiagnostics();
 
@@ -14,5 +19,8 @@ Meteor.startup(() => {
         throw new Error('React root not found.');
     }
 
-    createRoot(reactRenderRootElement).render(<ScannerAppRoot />);
+    createRoot(
+        reactRenderRootElement,
+        loadingCaptureEnabled ? { onRecoverableError: captureRecoverableError } : undefined
+    ).render(captureDocumentRoot(reactRenderRootElement, <ScannerAppRoot />));
 });

@@ -1,9 +1,17 @@
 /**
- * Validates v2 render boundaries and records public browser error metadata.
+ * Validates v2/v3 render boundaries and records public browser error metadata.
  * Kept outside the app to reject private payloads at the test artifact boundary;
  * neither collector may execute application getters or serialize console handles.
  */
 const phases = new Set([
+    'descendant-entry',
+    'descendant-layout',
+    'descendant-mount',
+    'descendant-unmount',
+    'root-created',
+    'root-removed',
+    'root-profiler-commit',
+    'root-recoverable-error',
     'root-render',
     'route-attempt',
     'child-render',
@@ -18,6 +26,8 @@ const phases = new Set([
     'shell-commit',
 ]);
 const boundaries = new Set(['tags', 'route-container', 'search-scope', 'contents-identity']);
+const descendantBoundaries = new Set(['grommet', 'app-shell', 'switch', 'document-root']);
+const errorNames = new Set(['Error', 'TypeError', 'ReferenceError', 'RangeError', 'SyntaxError', 'other']);
 const decisions = new Set(['root-loading', 'contents', 'invalid', 'child-loading']);
 const booleans = ['tagsLoading', 'allItemsLoading', 'identitiesLoading', 'items', 'hoisted', 'tags', 'identities'];
 const counts = ['rootFrame', 'routeAttempt', 'childFrame', 'commitBatch', 'commitSequence', 'at'];
@@ -33,6 +43,8 @@ const integer = (v, max = 999999) => Number.isSafeInteger(v) && v >= 0 && v <= m
 const positive = (v) => integer(v) && v > 0;
 const instance = (v) => /^instance-([1-9]|1[0-6])$/u.test(v ?? '');
 export function sanitizeBoundaryCapture(raw) {
+    const descendants = raw?.schema === 'root-route-loading/v3';
+    const allowedBoundaries = new Set([...boundaries, ...(descendants ? descendantBoundaries : [])]);
     let damaged = !/^document-[a-f0-9]{16}$/u.test(raw?.documentEpoch ?? '');
     const clean = (e) => {
         if (!phases.has(e?.phase)) {
@@ -46,9 +58,28 @@ export function sanitizeBoundaryCapture(raw) {
             counts.some((k) => e[k] !== undefined && !integer(e[k], k === 'at' ? 86400000 : 999999)) ||
             booleans.some((k) => e[k] !== undefined && typeof e[k] !== 'boolean') ||
             (e.decision !== undefined && !decisions.has(e.decision)) ||
-            (e.boundary !== undefined && !boundaries.has(e.boundary))
+            (e.boundary !== undefined && !allowedBoundaries.has(e.boundary))
         )
             damaged = true;
+        if (
+            e.phase.startsWith('descendant-') &&
+            (!descendants ||
+                !descendantBoundaries.has(e.boundary) ||
+                !instance(e.instance) ||
+                (e.boundary !== 'document-root' && !positive(e.rootFrame)))
+        )
+            damaged = true;
+        if (
+            e.phase.startsWith('root-') &&
+            ['root-created', 'root-removed', 'root-profiler-commit', 'root-recoverable-error'].includes(e.phase) &&
+            (!descendants || e.boundary !== 'document-root')
+        )
+            damaged = true;
+        if (['root-created', 'root-removed', 'root-profiler-commit'].includes(e.phase) && !instance(e.instance))
+            damaged = true;
+        if (e.phase === 'root-profiler-commit' && !positive(e.commitBatch)) damaged = true;
+        if (e.phase === 'root-recoverable-error' && !errorNames.has(e.errorName)) damaged = true;
+        if (e.errorName !== undefined && (!descendants || !errorNames.has(e.errorName))) damaged = true;
         const root = instance(e.instance) && positive(e.rootFrame);
         const child = instance(e.instance) && positive(e.childFrame);
         if (
@@ -86,7 +117,8 @@ export function sanitizeBoundaryCapture(raw) {
         for (const k of counts) if (integer(e[k], k === 'at' ? 86400000 : 999999)) out[k] = e[k];
         for (const k of booleans) if (typeof e[k] === 'boolean') out[k] = e[k];
         if (decisions.has(e.decision)) out.decision = e.decision;
-        if (boundaries.has(e.boundary)) out.boundary = e.boundary;
+        if (allowedBoundaries.has(e.boundary)) out.boundary = e.boundary;
+        if (descendants && errorNames.has(e.errorName)) out.errorName = e.errorName;
         return out;
     };
     const input = Array.isArray(raw?.events) ? raw.events : [];
@@ -110,7 +142,7 @@ export function sanitizeBoundaryCapture(raw) {
         ? 'invalid-capture'
         : (raw.reason ?? (overflow ? 'overflow' : lastCommit === undefined ? 'no-completed-commit' : undefined));
     return {
-        schema: 'root-route-loading/v2',
+        schema: descendants ? 'root-route-loading/v3' : 'root-route-loading/v2',
         documentEpoch: /^document-[a-f0-9]{16}$/u.test(raw?.documentEpoch ?? '')
             ? raw.documentEpoch
             : 'document-unavailable',
