@@ -1,5 +1,10 @@
 # Agent Working Agreement
 
+For candidate previews, user acceptance, merge, and primary deployment, follow
+[the release verification workflow](docs/RELEASE_VERIFICATION.md). Port 48372
+shares production MongoDB: no mutating tests or browser writes there. Run
+write-path tests only against disposable isolated services.
+
 ## User-facing UI verification
 
 Do not claim that a UI change was visually checked from unit tests, a build, an isolated
