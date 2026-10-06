@@ -16,3 +16,6 @@ playwright-report/
 
 # Generated files
 package-lock.json
+
+# Exact installed-source mechanism fixtures; hashes must remain unchanged
+tests/e2e/mechanisms/installed/
