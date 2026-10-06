@@ -93,9 +93,9 @@ const Workspace = styled.div`
     padding: 24px;
     @media (max-width: 480px) { padding: 12px; }
 `;
-const Primary = styled.div`
+const Primary = styled.div<{ $compact?: boolean }>`
     display: grid;
-    grid-template-columns: 260px minmax(0, 1fr);
+    grid-template-columns: ${({ $compact }) => ($compact === true ? 'minmax(0, 1fr)' : '260px minmax(0, 1fr)')};
     gap: 20px;
     align-items: start;
     @media (max-width: 800px) {
@@ -137,6 +137,7 @@ const Card = styled.article`
         aspect-ratio: 1;
         object-fit: contain;
         background: white;
+        scroll-margin-block: 4px;
     }
     button {
         margin-top: auto;
@@ -161,14 +162,33 @@ export function ScannerActionWorkspace({
     onAction,
     captureInput,
     diagnostics,
+    workflow,
+    sessionContent,
+    modeSelector,
+    compactActions = false,
+    heading = 'Scanner workspace',
+    subtitle = 'Read-only demo · nothing is saved to inventory',
+    navigation,
+    cards = actionCards,
+    testCards = fixtureCards,
 }: {
     state: State;
     onAction: (action: Action) => void;
     captureInput: ReactNode;
     diagnostics: ReactNode;
+    workflow?: ReactNode;
+    sessionContent?: ReactNode;
+    modeSelector?: ReactNode;
+    compactActions?: boolean;
+    heading?: string;
+    subtitle?: string;
+    navigation?: ReactNode;
+    cards?: ReadonlyArray<{ action: Action; label: string; payload: string; description: string }>;
+    testCards?: ReadonlyArray<{ label: string; payload: string; description: string }>;
 }): ReactElement {
     const last = state.reads.at(-1);
-    const modeName = state.mode === 'inspect-demo' ? 'Inspect' : 'Show actions';
+    const modeName =
+        state.mode === 'inspect-demo' ? 'Inspect' : state.mode === 'move-demo' ? 'Move simulation' : 'Show actions';
     const next =
         state.capture === 'off'
             ? 'Tap Start to enable capture, then scan an action or a demo code.'
@@ -178,7 +198,12 @@ export function ScannerActionWorkspace({
             ? 'The next read clears an interrupted boundary and will be discarded. Then scan again.'
             : 'Scan an action card to change mode, or scan a demo code below.';
     const outcome =
-        last === undefined
+        compactActions &&
+        last !== undefined &&
+        last.kind !== 'command' &&
+        ['resolved', 'error', 'unknown'].includes(last.outcome)
+            ? last.detail
+            : last === undefined
             ? 'No demo codes read yet.'
             : last.kind === 'command'
             ? `Action selected: ${modeName}.`
@@ -198,14 +223,17 @@ export function ScannerActionWorkspace({
     return (
         <Frame>
             <Workspace data-testid="workspace-scroll">
-                <h1>Scanner workspace</h1>
-                <p>Read-only demo · nothing is saved to inventory</p>
-                <Primary>
+                <h1>{heading}</h1>
+                <p>{subtitle}</p>
+                {navigation}
+                <Primary $compact={compactActions}>
                     <Session aria-label="Capture session">
                         <h2>
                             Capture: <span data-testid="capture-state">{names[state.capture]}</span>
                         </h2>
                         <p data-testid="mode">Mode: {modeName}</p>
+                        {modeSelector}
+                        {sessionContent}
                         <Buttons>
                             <TouchButton
                                 disabled={state.capture !== 'off'}
@@ -247,40 +275,76 @@ export function ScannerActionWorkspace({
                             {outcome}
                         </p>
                     </Session>
-                    <section aria-label="Action codes">
-                        <h2>Choose an action</h2>
-                        <p>Scan the QR code, or tap its matching button. A tap that moves focus requires Resume.</p>
-                        <Grid>
-                            {actionCards.map((card) => (
-                                <Card key={card.action} data-testid="action-card">
-                                    <h3>{card.label}</h3>
-                                    <img
-                                        alt={`${card.label} action QR code`}
-                                        src={qrImage(card.payload)}
-                                        data-payload={card.payload}
-                                    />
-                                    <p>{card.description}</p>
-                                    <TouchButton
-                                        disabled={state.capture === 'off'}
-                                        variant="secondary"
-                                        onClick={() => {
-                                            onAction(card.action);
-                                        }}
-                                    >
-                                        {card.label}
-                                    </TouchButton>
-                                </Card>
-                            ))}
-                        </Grid>
-                    </section>
+                    {compactActions ? (
+                        <details open={state.mode === 'show-actions' || undefined}>
+                            <summary>Show action QR codes</summary>{' '}
+                            <section aria-label="Action codes">
+                                <h2>Choose an action</h2>
+                                <p>
+                                    Scan the QR code, or tap its matching button. A tap that moves focus requires
+                                    Resume.
+                                </p>
+                                <Grid>
+                                    {cards.map((card) => (
+                                        <Card key={card.action} data-testid="action-card">
+                                            <h3>{card.label}</h3>
+                                            <img
+                                                alt={`${card.label} action QR code`}
+                                                src={qrImage(card.payload)}
+                                                data-payload={card.payload}
+                                            />
+                                            <p>{card.description}</p>
+                                            <TouchButton
+                                                disabled={state.capture === 'off'}
+                                                variant="secondary"
+                                                onClick={() => {
+                                                    onAction(card.action);
+                                                }}
+                                            >
+                                                {card.label}
+                                            </TouchButton>
+                                        </Card>
+                                    ))}
+                                </Grid>
+                            </section>
+                        </details>
+                    ) : (
+                        <section aria-label="Action codes">
+                            <h2>Choose an action</h2>
+                            <p>Scan the QR code, or tap its matching button. A tap that moves focus requires Resume.</p>
+                            <Grid>
+                                {cards.map((card) => (
+                                    <Card key={card.action} data-testid="action-card">
+                                        <h3>{card.label}</h3>
+                                        <img
+                                            alt={`${card.label} action QR code`}
+                                            src={qrImage(card.payload)}
+                                            data-payload={card.payload}
+                                        />
+                                        <p>{card.description}</p>
+                                        <TouchButton
+                                            disabled={state.capture === 'off'}
+                                            variant="secondary"
+                                            onClick={() => {
+                                                onAction(card.action);
+                                            }}
+                                        >
+                                            {card.label}
+                                        </TouchButton>
+                                    </Card>
+                                ))}
+                            </Grid>
+                        </section>
+                    )}
                 </Primary>
+                {workflow}
                 <section aria-label="Synthetic test codes">
                     <h2>Synthetic test codes</h2>
                     <p>
                         These are demo identities, not your belongings. Product codes do not identify an owned instance.
                     </p>
                     <Grid>
-                        {fixtureCards.map((card) => (
+                        {testCards.map((card) => (
                             <Card key={card.payload} data-testid="fixture-card">
                                 <h3>{card.label}</h3>
                                 <img

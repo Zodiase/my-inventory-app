@@ -6,7 +6,7 @@
  */
 export type Capture = 'off' | 'paused' | 'draining' | 'ready' | 'collecting';
 export type Kind = 'item' | 'container' | 'product' | 'command' | 'invalid';
-export type Action = 'inspect-demo' | 'show-actions' | 'pause' | 'exit' | 'start' | 'resume';
+export type Action = 'inspect-demo' | 'show-actions' | 'move-demo' | 'pause' | 'exit' | 'start' | 'resume';
 export type Outcome = 'pending' | 'resolved' | 'unknown' | 'error' | 'cancelled' | 'rejected' | 'discarded';
 export interface Read {
     id: string;
@@ -28,7 +28,7 @@ export interface State {
     buffer: string;
     uncertain: boolean;
     reason: string;
-    mode: 'inspect-demo' | 'show-actions';
+    mode: 'inspect-demo' | 'show-actions' | 'move-demo';
     reads: Read[];
     actions: Array<{ action: Action; origin: 'tap' | 'scan'; epoch: number }>;
     provenance: 'input' | 'paste';
@@ -48,7 +48,7 @@ export const initialState = (): State => ({
 });
 const uuid = '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}';
 const identity = new RegExp(`^(item|container): (${uuid})$`, 'u');
-export const commands: readonly Action[] = ['inspect-demo', 'show-actions', 'pause', 'exit'];
+export const commands: readonly Action[] = ['inspect-demo', 'show-actions', 'move-demo', 'pause', 'exit'];
 const firstPrintable = 32;
 const deleteCode = 127;
 function hasControls(value: string): boolean {
@@ -164,12 +164,12 @@ export function reduce(state: State, event: Event): State {
         if (action === 'start' && state.capture !== 'off') return state;
         if (action === 'resume' && state.capture !== 'paused') return state;
         if (state.capture === 'off' && action !== 'start') return state;
-        // Only the two read-only proof modes retain the same capture sink. A scoped
+        // Synthetic modes retain the same capture sink. A scoped
         // adapter must verify live focus/visibility at a completed frame boundary.
         const continueCapture =
             origin === 'scan' &&
             event.continuationAllowed === true &&
-            (action === 'inspect-demo' || action === 'show-actions') &&
+            (action === 'inspect-demo' || action === 'show-actions' || action === 'move-demo') &&
             state.capture === 'ready' &&
             state.buffer === '' &&
             !state.uncertain;

@@ -8,20 +8,9 @@ import styled from 'styled-components';
 
 import { TouchButton } from '../TouchButton';
 
-import { attachCapture } from './adapter';
-import {
-    commands,
-    fixtures,
-    dispatchAction,
-    initialState,
-    reduce,
-    retryBlockReason,
-    type Event,
-    type Action,
-    type State,
-    type Read,
-} from './model';
+import { commands, fixtures, initialState, reduce, retryBlockReason, type State, type Read } from './model';
 import { ScannerActionWorkspace } from './ScannerActionWorkspace';
+import { useCaptureSession } from './useCaptureSession';
 /** Live guidance follows current action guards; resolver evidence stays factual. */
 function recoveryGuidance(state: State, read: Read): string | undefined {
     if (read.outcome === 'pending' && read.epoch === state.epoch)
@@ -115,9 +104,7 @@ const Controls = styled.div`
     align-items: center;
 `;
 export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: boolean }): ReactElement => {
-    const [state, setState] = useState<State>(initialState);
-    const current = useRef(state);
-    const sink = useRef<HTMLInputElement>(null);
+    const { state, sink, send, action } = useCaptureSession(initialState, reduce);
     const dialog = useRef<HTMLDialogElement>(null);
     const [fault, setFault] = useState('normal');
     const [expected, setExpected] = useState('any');
@@ -128,16 +115,6 @@ export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: 
     const scheduled = useRef(new Set<string>());
     const timers = useRef<Array<ReturnType<typeof setTimeout>>>([]);
     const [calls, setCalls] = useState<string[]>([]);
-    const send = (event: Event): void => {
-        const next = reduce(current.current, event);
-        current.current = next;
-        setState(next);
-    };
-    useEffect(() => {
-        const input = sink.current;
-        if (input === null) return;
-        return attachCapture(input, () => current.current, send);
-    }, []);
     useEffect(() => {
         for (const read of state.reads) {
             const token = `${read.id}:${read.attempt}`;
@@ -185,19 +162,6 @@ export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: 
         },
         []
     );
-    const action = (value: Action): void => {
-        const next = dispatchAction(current.current, value, { origin: 'tap', localGesture: true });
-        current.current = next;
-        setState(next);
-        if (value === 'start' || value === 'resume') {
-            sink.current?.focus({ preventScroll: true });
-            if (document.hidden || document.activeElement !== sink.current || dialog.current?.open === true)
-                send({
-                    type: 'pause',
-                    reason: 'Capture focus unavailable. Resume when the page is visible and dialog is closed.',
-                });
-        }
-    };
     const last = state.reads.at(-1);
     const captured = state.reads.filter((read) => read.kind !== 'invalid' && read.kind !== 'command');
     const readResults = (
