@@ -1,0 +1,18 @@
+# Scanner/Foundation — Action Codes: development visual review
+
+Reviewer: implementing agent, personally opened rendered pixels. This is self-review, not independent or designer acceptance. Expectation notes are outside the render tree: CONTRACT.md and the story review parameters.
+
+Expected: Preserve the read-only foundation, exact two mode QR payloads, fixed capture input and recoverable scrolling; no automatic refocus. Diagnostics collapsed.
+
+| Viewport | Text | Artifact                                                                                                 | Observed assessment                                                                                                                                          |
+| -------- | ---- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1280x720 | 100% | [scanner-foundation--action-codes-1280x720-1.png](scanner-foundation--action-codes-1280x720-1.png)       | Desktop two-column arrangement maintained; session and action cards readable.                                                                                |
+| 1280x720 | 125% | [scanner-foundation--action-codes-1280x720-1.25.png](scanner-foundation--action-codes-1280x720-1.25.png) | Desktop two-column arrangement maintained; session and action cards readable.                                                                                |
+| 820x900  | 100% | [scanner-foundation--action-codes-820x900-1.png](scanner-foundation--action-codes-820x900-1.png)         | Cards and session stack within manager canvas; codes reachable by workspace scroll.                                                                          |
+| 820x900  | 125% | [scanner-foundation--action-codes-820x900-1.25.png](scanner-foundation--action-codes-820x900-1.25.png)   | Cards and session stack within manager canvas; codes reachable by workspace scroll.                                                                          |
+| 390x844  | 100% | [scanner-foundation--action-codes-390x844-1.png](scanner-foundation--action-codes-390x844-1.png)         | Single column; controls wrap without horizontal overflow; QR remains complete above dock after scrolling.                                                    |
+| 390x844  | 125% | [scanner-foundation--action-codes-390x844-1.25.png](scanner-foundation--action-codes-390x844-1.25.png)   | Single column; controls wrap without horizontal overflow; QR remains complete above dock after scrolling.                                                    |
+| 390x480  | 100% | [scanner-foundation--action-codes-390x480-1.png](scanner-foundation--action-codes-390x480-1.png)         | Above-dock region is restricted; use workspace scroll to bring each QR into view. Capture input remains reserved; recovery text scrolls in bounded feedback. |
+| 390x480  | 125% | [scanner-foundation--action-codes-390x480-1.25.png](scanner-foundation--action-codes-390x480-1.25.png)   | Above-dock region is restricted; use workspace scroll to bring each QR into view. Capture input remains reserved; recovery text scrolls in bounded feedback. |
+
+Assessment: no unreadable text or horizontal overflow observed in these captured states. Short-view scrolling limits are explicit; require independent and design acceptance. Geometry and QR decoding tests supplement, not replace, this pixel inspection. Native iPhone/keyboard and physical scanner remain unverified.

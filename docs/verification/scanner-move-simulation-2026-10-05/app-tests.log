@@ -1,0 +1,31 @@
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:81470) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:81470) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] [chromium] › tests/e2e/app/ScannerSimulation.spec.ts:4:5 › actual app navigation enters isolated scanner demo, moves once, leaves, and reload starts Off
+[1A[2K(node:81481) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:81481) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[2/3] [iPad] › tests/e2e/app/ScannerSimulation.spec.ts:4:5 › actual app navigation enters isolated scanner demo, moves once, leaves, and reload starts Off
+[1A[2K(node:81584) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:81584) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[3/3] [iPhone] › tests/e2e/app/ScannerSimulation.spec.ts:4:5 › actual app navigation enters isolated scanner demo, moves once, leaves, and reload starts Off
+[1A[2K  3 passed (12.8s)

@@ -1,0 +1,11 @@
+# Scanner simulated move candidate: implementation report
+
+Implemented a runnable app route /scanner/demo with shared Storybook view, scoped capture lifecycle and pure destination-first in-memory moves. Scan a recognized destination, then successive items. Destination persists after successful/unknown/rejected reads and Pause. Pause and destination reselection cancel pending intents; Exit/new session/mode change clear destination. Late responses need exact read/session/attempt/generation. Repeats are explicit no-ops. Product codes never identify owned items.
+
+Validation:84/84 root script tests (13 new move cases including a failing negative control);47/47 Chromium Storybook cases (37 adjacent,10 new);3/3 actual app navigation/isolation journeys;2/2 existing WebKit desktop regressions. TypeScript and scoped source lint passed. No retries. Full manager/app matrix40 PNGs personally inspected across normal/125% and1280x720,820x900,390x844,390x480. Story-specific reports and geometry.json retained. Failed wrapper baseline and one-pixel QR overlap logs retained, fixes passed reruns without weakening tests.
+
+Isolation: no inventory API, Meteor subscriptions, fetch or durable storage in simulation; app partition unmounts inventory route hooks on entry. Synthetic lookup delay/failure controls available under collapsed diagnostics. Separate disposable preview database/search service. No household records changed.
+
+Limitations/gates: self-review only; independent and design acceptance pending. Short phone view requires workspace scrolling for full session/control/card information; bounded dock feedback also scrolls. Physical scanner/native iPhone/keyboard behavior unverified. No dependency manifests changed. This candidate includes frozen PR179/181 ancestry; their unresolved authenticated advisory/security evidence remains a merge gate. No merge, production deployment or security waiver.
+
+Previews retained: http://mini-m4.local:48440/scanner/demo and http://mini-m4.local:48438/?path=/story/scanner-move-simulation--interactive. App process session9609, Storybook84807; own ephemeral search container inventory-scanner-simulation-search on loopback48442. No other previews stopped. URLs verified on wildcard listeners and LAN HTTP200.

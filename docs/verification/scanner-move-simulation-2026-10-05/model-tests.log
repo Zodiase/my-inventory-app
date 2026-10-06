@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: destination-first moves only exact existing identity and retains destination for successive items
+ok 1 - destination-first moves only exact existing identity and retains destination for successive items
+  ---
+  duration_ms: 1.564333
+  type: 'test'
+  ...
+# Subtest: identical identity and doubled delimiter cannot duplicate move or quantity
+ok 2 - identical identity and doubled delimiter cannot duplicate move or quantity
+  ---
+  duration_ms: 0.277959
+  type: 'test'
+  ...
+# Subtest: missing destination is visible error without a mutation
+ok 3 - missing destination is visible error without a mutation
+  ---
+  duration_ms: 0.066667
+  type: 'test'
+  ...
+# Subtest: unknown, wrong-prefix, product zeros, malformed commands preserve valid destination
+ok 4 - unknown, wrong-prefix, product zeros, malformed commands preserve valid destination
+  ---
+  duration_ms: 0.201958
+  type: 'test'
+  ...
+# Subtest: changing destination cancels pending intent; late result cannot retarget
+ok 5 - changing destination cancels pending intent; late result cannot retarget
+  ---
+  duration_ms: 0.114958
+  type: 'test'
+  ...
+# Subtest: reselecting identical destination cancels prior item intent deliberately
+ok 6 - reselecting identical destination cancels prior item intent deliberately
+  ---
+  duration_ms: 0.054625
+  type: 'test'
+  ...
+# Subtest: Pause cancels pending moves but retains destination; Resume cannot replay
+ok 7 - Pause cancels pending moves but retains destination; Resume cannot replay
+  ---
+  duration_ms: 0.114458
+  type: 'test'
+  ...
+# Subtest: partial timeout cancels pending move; one boundary discarded before rescan
+ok 8 - partial timeout cancels pending move; one boundary discarded before rescan
+  ---
+  duration_ms: 0.062375
+  type: 'test'
+  ...
+# Subtest: mode change/Exit/new session clear destination and ignore old completions
+ok 9 - mode change/Exit/new session clear destination and ignore old completions
+  ---
+  duration_ms: 0.260875
+  type: 'test'
+  ...
+# Subtest: failed resolver retains evidence, rescan only; external result/retry cannot commit
+ok 10 - failed resolver retains evidence, rescan only; external result/retry cannot commit
+  ---
+  duration_ms: 0.377292
+  type: 'test'
+  ...
+# Subtest: out-of-order completions bind each intent and ignore mismatched epoch/generation
+ok 11 - out-of-order completions bind each intent and ignore mismatched epoch/generation
+  ---
+  duration_ms: 0.148916
+  type: 'test'
+  ...
+# Subtest: new fixture state is independent and simulation modules import no persistence/network API
+ok 12 - new fixture state is independent and simulation modules import no persistence/network API
+  ---
+  duration_ms: 4.599708
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 229.281458
