@@ -109,3 +109,19 @@ assert historical/current wording, retained record and explicit recovery.
 Synthetic blur is not a physical browser/OS focus qualification. Actual-app
 revised-head runtime/copy captures and acceptance are reported separately in
 Home Automation verification records; no product release is implied here.
+
+## Fixed QR cache optimization — 2026-10-06
+
+Only the eight literal demo payloads retain their generated image strings.
+Arbitrary values still encode without retention. Fixed images reuse encoding
+across per-character workspace renders; matrix parameters/SVG/quiet zones are
+unchanged. Capture/input/reducer/history/drain/focus code is unchanged.
+
+34 focused Node and43 affected Storybook Chromium checks passed, including
+byte-for-byte uncached parity for all8images, encoding-call reuse/dynamic-input
+nonretention, and independent literal rendered pixel semantics. The deliberate
+wrong Move image+attribute still fails at the expected semantic assertion.
+App types/scoped lint/format passed. Exact signed runtime before/after timing
+comparison is archived separately in Home Automation verification records.
+Avoidable QR generation is addressed; the physical phone slowdown is not proven
+fixed without same-device comparison. No merge or production deployment.

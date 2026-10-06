@@ -47,3 +47,43 @@ test('real action and synthetic fixture images independently decode to the exact
         );
     }
 });
+
+test('only the eight fixed demo images reuse encoding, with exact uncached image parity', () => {
+    const qrcode = require('qrcode-generator');
+    let encodes = 0;
+    const isolated = { exports: {} };
+    new Function('require', 'module', 'exports', compiled)(
+        (name) =>
+            name === 'qrcode-generator'
+                ? (...args) => {
+                      encodes++;
+                      return qrcode(...args);
+                  }
+                : require(name),
+        isolated,
+        isolated.exports
+    );
+    const fixed = [
+        ...expected,
+        'inventory-action:v1:move-demo',
+        'item: 22222222-2222-4222-8222-222222222222',
+        'container: 44444444-4444-4444-8444-444444444444',
+    ];
+    for (const payload of fixed) {
+        const qr = qrcode(0, 'M');
+        qr.addData(payload, 'Byte');
+        qr.make();
+        const original = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(qr.createSvgTag({ cellSize: 8, margin: 32, scalable: true }))}`;
+        assert.equal(isolated.exports.qrImage(payload), original);
+        for (let i = 0; i < 20; i++) assert.equal(isolated.exports.qrImage(payload), original);
+    }
+    assert.equal(encodes, 8);
+    // Dynamic inputs must never be retained, even while fixed images remain hot.
+    for (let i = 0; i < 20; i++) {
+        isolated.exports.qrImage(`uncached:${i}`);
+        isolated.exports.qrImage(`uncached:${i}`);
+    }
+    assert.equal(encodes, 48);
+    for (const payload of fixed) isolated.exports.qrImage(payload);
+    assert.equal(encodes, 48);
+});
