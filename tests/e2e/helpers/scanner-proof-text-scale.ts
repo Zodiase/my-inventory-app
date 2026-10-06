@@ -4,7 +4,7 @@
  * leaves product styles and browser zoom unchanged and records computed evidence.
  */
 import type { FrameLocator } from '@playwright/test';
-export async function scaleScannerProof(frame: FrameLocator, scale: number) {
+export async function scaleScannerProof(frame: Pick<FrameLocator, 'locator'>, scale: number) {
     return frame.locator('main').evaluate((main, factor) => {
         const nodes = [main, ...main.querySelectorAll<HTMLElement>('*')];
         const baseline = nodes.map((node) => ({ node, before: parseFloat(getComputedStyle(node).fontSize) }));

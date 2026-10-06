@@ -38,6 +38,7 @@
     "devDependencies": {
         "@playwright/test": "^1.56.1",
         "@types/ws": "^8.18.2",
+        "jsqr": "1.4.0",
         "prettier": "^3.6.2",
         "ws": "^8.22.0"
     },

@@ -1,0 +1,54 @@
+
+Running 35 tests using 1 worker
+
+[1A[2K(node:38264) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:38264) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:30:5 › action QR payloads and taps share semantics; command then fixture continues without Resume
+[1A[2K[2/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:50:5 › partial interruption and dialogs still need explicit Resume and discarded recovery boundary
+[1A[2K[3/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1
+[1A[2K[4/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1.25
+[1A[2K[5/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1
+[1A[2K[6/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1.25
+[1A[2K[7/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1
+[1A[2K[8/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1.25
+[1A[2K[9/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1
+[1A[2K[10/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1.25
+[1A[2K[11/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:146:5 › mobile capture opts out of text transformation and explains uppercase rejection without normalization
+[1A[2K[12/35] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:169:5 › fixed capture field keeps code browsing stable during keystrokes and never steals editing focus
+[1A[2K  1) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:169:5 › fixed capture field keeps code browsing stable during keystrokes and never steals editing focus 
+
+    Test was interrupted.
+
+    Error: locator.fill: Test ended.
+    Call log:
+    [2m  - waiting for locator('#storybook-preview-iframe').contentFrame().getByRole('textbox', { name: 'Ordinary editing field', exact: true })[22m
+
+
+      194 |     await f.getByText('Developer diagnostics', { exact: true }).click();
+      195 |     const editor = f.getByRole('textbox', { name: 'Ordinary editing field', exact: true });
+    > 196 |     await editor.fill('ordinary edit');
+          |                  ^
+      197 |     await expect(editor).toBeFocused();
+      198 |     await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+      199 |     await expect(input).not.toBeFocused();
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:196:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-0e754--never-steals-editing-focus-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-0e754--never-steals-editing-focus-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  1 interrupted
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:169:5 › fixed capture field keeps code browsing stable during keystrokes and never steals editing focus 
+  23 did not run
+  11 passed (27.7s)

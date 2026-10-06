@@ -1,0 +1,542 @@
+
+Running 15 tests using 1 worker
+
+[1A[2K(node:39833) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39833) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:30:5 › action QR payloads and taps share semantics; command then fixture continues without Resume
+[1A[2K  1) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:30:5 › action QR payloads and taps share semantics; command then fixture continues without Resume 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:31:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-bb577-re-continues-without-Resume-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-bb577-re-continues-without-Resume-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[2/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:50:5 › partial interruption and dialogs still need explicit Resume and discarded recovery boundary
+[1A[2K  2) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:50:5 › partial interruption and dialogs still need explicit Resume and discarded recovery boundary 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:53:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-2f8ff-discarded-recovery-boundary-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-2f8ff-discarded-recovery-boundary-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[3/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1
+[1A[2K  3) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:81:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-bcfd7-ble-controls-1280x720-text1-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-bcfd7-ble-controls-1280x720-text1-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39855) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39855) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[4/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1.25
+[1A[2K  4) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1.25 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:81:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-bb9b4--controls-1280x720-text1-25-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-bb9b4--controls-1280x720-text1-25-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39862) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39862) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[5/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1
+[1A[2K  5) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:81:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-db564-able-controls-820x900-text1-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-db564-able-controls-820x900-text1-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39870) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39870) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[6/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1.25
+[1A[2K  6) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1.25 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:81:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-99b3d-e-controls-820x900-text1-25-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-99b3d-e-controls-820x900-text1-25-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[7/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1
+[1A[2K  7) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:81:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-ac201-able-controls-390x844-text1-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-ac201-able-controls-390x844-text1-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39884) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39884) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[8/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1.25
+[1A[2K  8) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1.25 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:81:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-34ed5-e-controls-390x844-text1-25-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-34ed5-e-controls-390x844-text1-25-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39891) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39891) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[9/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1
+[1A[2K  9) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:81:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-febfe-able-controls-390x480-text1-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-febfe-able-controls-390x480-text1-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39898) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39898) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[10/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1.25
+[1A[2K  10) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1.25 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:81:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-84974-e-controls-390x480-text1-25-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-84974-e-controls-390x480-text1-25-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39905) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39905) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[11/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:146:5 › mobile capture opts out of text transformation and explains uppercase rejection without normalization
+[1A[2K  11) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:146:5 › mobile capture opts out of text transformation and explains uppercase rejection without normalization 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:150:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-35da8-ction-without-normalization-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-35da8-ction-without-normalization-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39912) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39912) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[12/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:169:5 › fixed capture field keeps code browsing stable during keystrokes and never steals editing focus
+[1A[2K  12) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:169:5 › fixed capture field keeps code browsing stable during keystrokes and never steals editing focus 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:173:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-0e754--never-steals-editing-focus-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-0e754--never-steals-editing-focus-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39919) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39919) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[13/15] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:202:5 › raw rejected text is escaped and timeout recovery reason stays visible
+[1A[2K  13) [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:202:5 › raw rejected text is escaped and timeout recovery reason stays visible 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      15 | ];
+      16 | async function open(page: import('@playwright/test').Page) {
+    > 17 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      18 |     const frame = page.frameLocator('#storybook-preview-iframe');
+      19 |     await expect(frame.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      20 |     const hide = page.getByRole('button', { name: 'Hide addon panel', exact: true });
+        at open (/Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:17:16)
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerActionCodes.spec.ts:203:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-945e3-covery-reason-stays-visible-storybook-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerActionCod-945e3-covery-reason-stays-visible-storybook-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39926) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39926) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[14/15] [storybook-webkit] › tests/e2e/storybook/ScannerMobileCapture.webkit.spec.ts:4:5 › Safari simulation retains exact-case rejection and opts out of browser text transformations
+[1A[2K  14) [storybook-webkit] › tests/e2e/storybook/ScannerMobileCapture.webkit.spec.ts:4:5 › Safari simulation retains exact-case rejection and opts out of browser text transformations 
+
+    Error: page.goto: Could not connect to the server.
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+       6 | }) => {
+       7 |     await page.setViewportSize({ width: 390, height: 844 });
+    >  8 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+       9 |     const f = page.frameLocator('#storybook-preview-iframe');
+      10 |     await expect(f.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      11 |     const input = f.getByRole('textbox', { name: 'Scanner input', exact: true });
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerMobileCapture.webkit.spec.ts:8:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerMobileCap-a8f49-rowser-text-transformations-storybook-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerMobileCap-a8f49-rowser-text-transformations-storybook-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:39937) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:39937) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[15/15] [storybook-webkit] › tests/e2e/storybook/ScannerMobileCapture.webkit.spec.ts:24:5 › Safari simulation keeps dock visible and scroll steady while browsing codes and typing
+[1A[2K  15) [storybook-webkit] › tests/e2e/storybook/ScannerMobileCapture.webkit.spec.ts:24:5 › Safari simulation keeps dock visible and scroll steady while browsing codes and typing 
+
+    Error: page.goto: Could not connect to the server.
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:6006/?path=/story/scanner-foundation--action-codes", waiting until "load"[22m
+
+
+      24 | test('Safari simulation keeps dock visible and scroll steady while browsing codes and typing', async ({ page }) => {
+      25 |     await page.setViewportSize({ width: 390, height: 480 });
+    > 26 |     await page.goto(`${manager}/?path=/story/scanner-foundation--action-codes`);
+         |                ^
+      27 |     const f = page.frameLocator('#storybook-preview-iframe');
+      28 |     await expect(f.getByRole('heading', { name: 'Scanner workspace', exact: true })).toBeVisible();
+      29 |     await f.getByRole('button', { name: 'Start', exact: true }).click();
+        at /Volumes/Expansion/workspace/inventory-scanner-iphone-repair/tests/e2e/storybook/ScannerMobileCapture.webkit.spec.ts:26:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/storybook-ScannerMobileCap-7ee49-e-browsing-codes-and-typing-storybook-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/storybook-ScannerMobileCap-7ee49-e-browsing-codes-and-typing-storybook-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  15 failed
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:30:5 › action QR payloads and taps share semantics; command then fixture continues without Resume 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:50:5 › partial interruption and dialogs still need explicit Resume and discarded recovery boundary 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1.25 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1.25 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1.25 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1.25 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:146:5 › mobile capture opts out of text transformation and explains uppercase rejection without normalization 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:169:5 › fixed capture field keeps code browsing stable during keystrokes and never steals editing focus 
+    [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:202:5 › raw rejected text is escaped and timeout recovery reason stays visible 
+    [storybook-webkit] › tests/e2e/storybook/ScannerMobileCapture.webkit.spec.ts:4:5 › Safari simulation retains exact-case rejection and opts out of browser text transformations 
+    [storybook-webkit] › tests/e2e/storybook/ScannerMobileCapture.webkit.spec.ts:24:5 › Safari simulation keeps dock visible and scroll steady while browsing codes and typing 
