@@ -239,3 +239,58 @@ for (const scale of [1, 1.25])
         expect(await page.evaluate(() => window.scrollY)).toBe(0);
         expect((await dock.boundingBox())!.y).toBeCloseTo(dockBefore!.y, 0);
     });
+
+for (const [width, height] of [
+    [1280, 720],
+    [820, 900],
+    [390, 844],
+    [390, 480],
+])
+    for (const scale of [1, 1.25]) {
+        test(`shared action dock paused recovery ${width}x${height} text ${scale}`, async ({ page }, info) => {
+            await page.setViewportSize({ width, height });
+            const f = await open(page);
+            await scaleScannerProof(f, scale);
+            await f.getByRole('button', { name: 'Start', exact: true }).click();
+            await page.keyboard.type('partial');
+            await page.keyboard.press('Tab');
+            await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+            await f.getByTestId('workspace-scroll').evaluate((el) => {
+                el.scrollTop = 0;
+            });
+            const dock = f.getByRole('complementary', { name: 'Scanner capture dock' });
+            const resume = dock.getByRole('button', { name: 'Resume', exact: true });
+            await expect(resume).toBeInViewport();
+            const b = await resume.boundingBox();
+            const input = f.getByRole('textbox', { name: 'Scanner input', exact: true });
+            const i = await input.boundingBox();
+            expect(b!.height).toBeGreaterThanOrEqual(44);
+            expect(i!.height).toBeGreaterThanOrEqual(44);
+            expect(Math.abs(b!.y + b!.height / 2 - i!.y - i!.height / 2)).toBeLessThan(1);
+            await info.attach('paused-top', { body: await page.screenshot(), contentType: 'image/png' });
+            for (const image of await f.locator('img[data-payload]').all()) {
+                await image.scrollIntoViewIfNeeded();
+                const qr = await image.boundingBox();
+                const d = await dock.boundingBox();
+                expect(qr!.y + qr!.height).toBeLessThanOrEqual(d!.y + 1);
+                await expect(resume).toBeInViewport();
+            }
+            await info.attach('paused-cards', { body: await page.screenshot(), contentType: 'image/png' });
+            const feedback = f.getByTestId('dock-feedback');
+            await feedback.evaluate((el) => {
+                el.scrollTop = el.scrollHeight;
+            });
+            await info.attach('feedback-scroll-end', { body: await page.screenshot(), contentType: 'image/png' });
+            await resume.focus();
+            await expect(resume).toBeFocused();
+            await info.attach('resume-keyboard-focus', { body: await page.screenshot(), contentType: 'image/png' });
+            await resume.press('Enter');
+            await expect(input).toBeFocused();
+            await expect(f.getByTestId('capture-state')).toHaveText('Recovering');
+            await scan(page, expected[1]);
+            await expect(f.getByTestId('mode')).toHaveText('Mode: Inspect');
+            await scan(page, expected[3]);
+            await expect(f.getByTestId('last-outcome').first()).toContainText('Read-only demo result');
+            expect(await f.locator('html').evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(false);
+        });
+    }

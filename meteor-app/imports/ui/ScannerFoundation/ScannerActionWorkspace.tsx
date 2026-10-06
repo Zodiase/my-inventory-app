@@ -155,6 +155,13 @@ const CaptureDock = styled.aside`
     input { min-height: 44px; font-size: max(16px, 1em); }
     p { margin: 4px 0 0; height: 60px; overflow-y: auto; overflow-wrap: anywhere; }
 `;
+const CaptureControls = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    input { min-width: 0; flex: 1; }
+    button { flex: none; }
+`;
 const diagnosticIndent = 2;
 const names = { off: 'Off', ready: 'Ready', collecting: 'Reading', paused: 'Paused', draining: 'Recovering' };
 export function ScannerActionWorkspace({
@@ -242,14 +249,6 @@ export function ScannerActionWorkspace({
                                 }}
                             >
                                 Start
-                            </TouchButton>
-                            <TouchButton
-                                disabled={state.capture !== 'paused'}
-                                onClick={() => {
-                                    onAction('resume');
-                                }}
-                            >
-                                Resume
                             </TouchButton>
                             <TouchButton
                                 disabled={state.capture === 'off'}
@@ -368,10 +367,19 @@ export function ScannerActionWorkspace({
                 </details>
             </Workspace>
             <CaptureDock aria-label="Scanner capture dock">
-                <label>
-                    Scanner input · {names[state.capture]}
+                <div>Scanner input · {names[state.capture]}</div>
+                <CaptureControls>
                     {captureInput}
-                </label>
+                    {state.capture === 'paused' && (
+                        <TouchButton
+                            onClick={() => {
+                                onAction('resume');
+                            }}
+                        >
+                            Resume
+                        </TouchButton>
+                    )}
+                </CaptureControls>
                 <p role="status" data-testid="dock-feedback">
                     {state.capture === 'paused' || state.capture === 'draining' ? `${state.reason} ${next}` : outcome}
                 </p>

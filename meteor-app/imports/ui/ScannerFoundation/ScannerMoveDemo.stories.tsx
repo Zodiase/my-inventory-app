@@ -17,6 +17,7 @@ const meta = {
             responsive:
                 'Session and action cards stack on phones. Workspace scrolls above reserved viewport capture dock.',
             expectations: [
+                'When paused, an explicit44px Resume button sits beside the44px input in the reserved bottom dock; it stays visible at every content scroll position and125% text without automatic refocus.',
                 'Simulation and no household writes clearly labeled; destination, next scan, outcome and Exit readable.',
                 'Full224px QR including quiet zone reachable above dock; controls44px; no horizontal overflow.',
                 'Populated location/result text wraps. No automatic focus restoration. Diagnostics start collapsed.',

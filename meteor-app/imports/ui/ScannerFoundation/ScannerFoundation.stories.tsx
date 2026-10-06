@@ -45,6 +45,7 @@ export const ActionCodes: Story = {
             ],
             exclusions: ['Physical screen scanning, scanner settings, household writes, application integration.'],
             expectations: [
+                'When paused, an explicit44px Resume button sits beside the44px input in the reserved bottom dock; it stays visible at every content scroll position and125% text without automatic refocus.',
                 'Primary session status, next step and read-only outcome are understandable without opening diagnostics.',
                 'Human labels and matching tap buttons accompany genuine black-on-white square action QR codes with four-module quiet zones.',
                 'Synthetic item/container/product test codes are a distinct group with no owned-inventory claim.',
