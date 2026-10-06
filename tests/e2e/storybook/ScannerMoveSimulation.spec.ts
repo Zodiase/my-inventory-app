@@ -231,3 +231,40 @@ for (const [width, height] of [
             expect(await f.locator('html').evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(false);
         });
     }
+
+for (const scale of [1, 1.25])
+    test(`short-phone history and current focus copy remain distinct text ${scale}`, async ({ page }, info) => {
+        await page.setViewportSize({ width: 390, height: 480 });
+        const f = await open(page);
+        await scaleScannerProof(f, scale);
+        await f.getByRole('button', { name: 'Start', exact: true }).click();
+        await page.keyboard.type('partial');
+        await f.getByText('Developer diagnostics', { exact: true }).click();
+        const note = f.getByRole('textbox', { name: 'Manual note' });
+        await note.fill('ordinary editing');
+        await expect(note).toBeFocused();
+        expect(await f.locator('main').evaluate(() => document.hasFocus())).toBe(true);
+        await expect(f.getByTestId('capture-state')).toHaveText('Paused');
+        await expect(f.getByTestId('dock-feedback')).toContainText('Capture focus left.');
+        await expect(f.getByTestId('last-outcome').first()).toContainText('Last read rejected. Capture focus left.');
+        await info.attach('in-page-focus-copy', { body: await page.screenshot(), contentType: 'image/png' });
+        // Explicit window-blur event isolates the second handler; no OS-window switch is claimed.
+        await f.locator('main').evaluate(() => window.dispatchEvent(new Event('blur')));
+        await expect(f.getByTestId('dock-feedback')).toContainText('Page focus left. Resume explicitly.');
+        await expect(f.getByTestId('last-outcome').first()).toContainText('Last read rejected. Capture focus left.');
+        await f.getByTestId('workspace-scroll').evaluate((el) => {
+            el.scrollTop = 0;
+        });
+        await info.attach('page-focus-copy', { body: await page.screenshot(), contentType: 'image/png' });
+        await f.getByText('Session results (1)', { exact: true }).click();
+        await expect(f.getByTestId('simulation-read')).toHaveCount(1);
+        await expect(f.getByTestId('simulation-read')).toContainText('Capture focus left.');
+        await expect(f.getByTestId('simulation-read')).not.toContainText('Page focus left.');
+        await f.getByRole('button', { name: 'Resume', exact: true }).click();
+        await expect(f.getByRole('textbox', { name: 'Scanner capture input' })).toBeFocused();
+        await expect(f.getByTestId('capture-state')).toHaveText('Recovering');
+        await scan(page, item);
+        await expect(f.getByTestId('dock-feedback')).toContainText('boundary cleared');
+        await expect(f.getByTestId('move-count')).toHaveText('Simulated moves: 0');
+        await expect(note).toHaveValue('ordinary editing');
+    });

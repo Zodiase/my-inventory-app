@@ -221,7 +221,7 @@ export function ScannerActionWorkspace({
             : last.outcome === 'discarded'
             ? 'Interrupted boundary cleared. Scan the code again.'
             : last.outcome === 'rejected'
-            ? `Read rejected. ${last.detail}`
+            ? `Last read rejected. ${last.detail}`
             : last.outcome === 'cancelled'
             ? 'Previous read cancelled by a session change.'
             : last.outcome === 'unknown'

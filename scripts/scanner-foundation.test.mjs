@@ -332,3 +332,23 @@ test('interrupted and unsafe capture retain bounded raw diagnostic text without 
     assert.match(state.reason, /retained prefix only/);
     assert.equal(state.reads.at(-1).outcome, 'rejected');
 });
+
+test('consecutive interruptions retain first rejected read and latest current reason without rearming', () => {
+    const inputReason = 'Capture focus left. Resume explicitly; scanner input may type into the focused field.';
+    const pageReason = 'Page focus left. Resume explicitly.';
+    let s = reduce(start(), { type: 'input', value: 'partial' });
+    s = reduce(s, { type: 'pause', reason: inputReason });
+    const historical = structuredClone(s.reads[0]);
+    s = reduce(s, { type: 'pause', reason: pageReason });
+    assert.equal(s.reads.length, 1);
+    assert.deepEqual(s.reads[0], historical);
+    assert.equal(s.reads[0].detail, inputReason);
+    assert.equal(s.reason, pageReason);
+    assert.equal(s.capture, 'paused');
+    assert.equal(s.uncertain, true);
+    s = action(s, 'resume');
+    assert.equal(s.capture, 'draining');
+    s = scan(s, codes[0]);
+    assert.equal(s.reads.at(-1).outcome, 'discarded');
+    assert.equal(s.capture, 'ready');
+});

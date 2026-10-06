@@ -64,7 +64,7 @@ export function attachCapture(input: HTMLInputElement, state: () => State, send:
         pause('Page left. Return does not resume capture; retained memory is not durable storage.');
     };
     const onWindowBlur = (): void => {
-        pause('Window lost focus. Resume explicitly.');
+        pause('Page focus left. Resume explicitly.');
     };
     const onVisibility = (): void => {
         if (document.hidden) pause('Page hidden. Resume explicitly.');

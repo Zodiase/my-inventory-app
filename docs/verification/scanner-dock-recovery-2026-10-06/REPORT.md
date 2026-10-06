@@ -90,3 +90,22 @@ lies inside dock y 289–439. The 44 px target becomes reachable without shrinki
 workspace height. Comparison images and structured geometry are archived under
 runtime-final. Storybook's update toast may appear in the manager; it is outside
 the product render and is not a scanner feature.
+
+## Bounded feedback wording revision — 2026-10-06
+
+The session rejected-read prefix is now “Last read rejected.”; the window-blur
+handler now says “Page focus left. Resume explicitly.” Events, historical read
+detail, current-state reason updates, reducer guards and explicit drain remain
+unchanged. Historical and current messages may legitimately differ after two
+interruptions. This copy does not claim an OS-window switch.
+
+Fresh affected Storybook suite43/43 passed with one worker/zero retries;
+33 focused Node tests, normal app types, targeted test types, scoped lint and
+format passed. Added two-pause reducer check preserves one historical rejection
+and latest current reason/uncertain drain. Short-phone normal/125% browser cases
+exercise real in-page focus transfer to ordinary editing (page remains focused),
+then explicit synthetic window-blur dispatch to isolate the second handler;
+assert historical/current wording, retained record and explicit recovery.
+Synthetic blur is not a physical browser/OS focus qualification. Actual-app
+revised-head runtime/copy captures and acceptance are reported separately in
+Home Automation verification records; no product release is implied here.
