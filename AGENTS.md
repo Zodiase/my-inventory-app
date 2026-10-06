@@ -45,3 +45,6 @@ never substitute that test for the hands-on review above.
 - For other data risks, state what could change, how the failure would be detected, what
   evidence survives, and how it would be repaired. Recommend the smallest safeguard or test
   that closes a material gap. Distinguish requirement gaps from optional follow-up work.
+
+For Mac mini deployment or runtime-secret changes, follow the headless recovery
+tradeoff in [the development workflow](docs/MAC_MINI_DEVELOPMENT.md#runtime-secrets-and-headless-recovery).
