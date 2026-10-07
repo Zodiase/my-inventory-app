@@ -14,6 +14,7 @@ export function ScannerAppRoot(): ReactElement {
     if (location === '/scanner/demo')
         return (
             <ScannerMoveDemo
+                compactRecovery
                 onLeave={() => {
                     navigate('/items');
                 }}
