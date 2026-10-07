@@ -147,13 +147,15 @@ const Card = styled.article`
         min-height: 24px;
     }
 `;
-const CaptureDock = styled.aside`
+const CaptureDock = styled.aside<{ $compactRecovery: boolean }>`
     min-width: 0;
     padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
     background: white;
     border-top: 2px solid #64748b;
     input { min-height: 44px; font-size: max(16px, 1em); }
-    p { margin: 4px 0 0; height: 60px; overflow-y: auto; overflow-wrap: anywhere; }
+    p { margin: 4px 0 0; height: ${({ $compactRecovery }) => ($compactRecovery ? 'auto' : '60px')}; overflow-y: ${({
+    $compactRecovery,
+}) => ($compactRecovery ? 'visible' : 'auto')}; overflow-wrap: anywhere; }
 `;
 const CaptureControls = styled.div`
     display: flex;
@@ -161,6 +163,13 @@ const CaptureControls = styled.div`
     gap: 8px;
     input { min-width: 0; flex: 1; }
     button { flex: none; }
+`;
+const RecoveryFooter = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    p { flex: 1; min-width: 0; }
+    button { flex: none; min-width: 44px; min-height: 44px; }
 `;
 const diagnosticIndent = 2;
 const names = { off: 'Off', ready: 'Ready', collecting: 'Reading', paused: 'Paused', draining: 'Recovering' };
@@ -176,6 +185,7 @@ export function ScannerActionWorkspace({
     heading = 'Scanner workspace',
     subtitle = 'Read-only demo · nothing is saved to inventory',
     navigation,
+    compactRecovery = false,
     cards = actionCards,
     testCards = fixtureCards,
 }: {
@@ -190,6 +200,7 @@ export function ScannerActionWorkspace({
     heading?: string;
     subtitle?: string;
     navigation?: ReactNode;
+    compactRecovery?: boolean;
     cards?: ReadonlyArray<{ action: Action; label: string; payload: string; description: string }>;
     testCards?: ReadonlyArray<{ label: string; payload: string; description: string }>;
 }): ReactElement {
@@ -227,12 +238,24 @@ export function ScannerActionWorkspace({
             : last.outcome === 'unknown'
             ? 'No matching demo code. Try one of the synthetic test codes below.'
             : 'Demo lookup failed. Open diagnostics to review this read.';
+    const recoveryFeedback =
+        state.capture === 'paused'
+            ? state.uncertain
+                ? 'Paused. Resume; next read discarded.'
+                : 'Paused. Resume to scan.'
+            : state.capture === 'draining'
+            ? 'Recovering. Next read discarded; then scan again.'
+            : state.capture === 'off'
+            ? 'Off. Start to scan.'
+            : last === undefined
+            ? `${names[state.capture]}. Scan a demo code.`
+            : `${names[state.capture]}. Last read ${last.outcome}; details in session.`;
     return (
         <Frame>
             <Workspace data-testid="workspace-scroll">
                 <h1>{heading}</h1>
                 <p>{subtitle}</p>
-                {navigation}
+                {!compactRecovery && navigation}
                 <Primary $compact={compactActions}>
                     <Session aria-label="Capture session">
                         <h2>
@@ -269,7 +292,7 @@ export function ScannerActionWorkspace({
                                 Exit
                             </TouchButton>
                         </Buttons>
-                        <p role="status">{next}</p>
+                        <p role="status">{compactRecovery && state.capture === 'paused' ? state.reason : next}</p>
                         <p role="status" data-testid="last-outcome">
                             {outcome}
                         </p>
@@ -366,8 +389,8 @@ export function ScannerActionWorkspace({
                     {diagnostics}
                 </details>
             </Workspace>
-            <CaptureDock aria-label="Scanner capture dock">
-                <div>Scanner input · {names[state.capture]}</div>
+            <CaptureDock aria-label="Scanner capture dock" $compactRecovery={compactRecovery}>
+                {!compactRecovery && <div>Scanner input · {names[state.capture]}</div>}
                 <CaptureControls>
                     {captureInput}
                     {state.capture === 'paused' && (
@@ -380,9 +403,20 @@ export function ScannerActionWorkspace({
                         </TouchButton>
                     )}
                 </CaptureControls>
-                <p role="status" data-testid="dock-feedback">
-                    {state.capture === 'paused' || state.capture === 'draining' ? `${state.reason} ${next}` : outcome}
-                </p>
+                {compactRecovery ? (
+                    <RecoveryFooter>
+                        <p role="status" data-testid="dock-feedback">
+                            {recoveryFeedback}
+                        </p>
+                        {navigation}
+                    </RecoveryFooter>
+                ) : (
+                    <p role="status" data-testid="dock-feedback">
+                        {state.capture === 'paused' || state.capture === 'draining'
+                            ? `${state.reason} ${next}`
+                            : outcome}
+                    </p>
+                )}
             </CaptureDock>
         </Frame>
     );

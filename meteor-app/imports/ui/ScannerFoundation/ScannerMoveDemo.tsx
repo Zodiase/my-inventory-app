@@ -29,7 +29,13 @@ const codes = [
     { label: 'Demo shelf B', description: 'Alternative synthetic destination', payload: containerB },
     fixtureCards[2],
 ];
-export function ScannerMoveDemo({ onLeave }: { onLeave?: () => void }): ReactElement {
+export function ScannerMoveDemo({
+    onLeave,
+    compactRecovery = false,
+}: {
+    onLeave?: () => void;
+    compactRecovery?: boolean;
+}): ReactElement {
     const { state, sink, send, action } = useCaptureSession(initialMoveState, reduceMove);
     const scheduled = useRef(new Set<string>());
     const [delay, setDelay] = useState('normal');
@@ -90,6 +96,7 @@ export function ScannerMoveDemo({ onLeave }: { onLeave?: () => void }): ReactEle
             heading="Scanner simulation"
             subtitle="Temporary demo · no household inventory changes"
             compactActions
+            compactRecovery={compactRecovery}
             modeSelector={
                 <label>
                     Choose mode
@@ -128,12 +135,13 @@ export function ScannerMoveDemo({ onLeave }: { onLeave?: () => void }): ReactEle
             navigation={
                 onLeave !== undefined && (
                     <button style={{ minHeight: 44, font: 'inherit' }} onClick={onLeave}>
-                        Leave simulation
+                        {compactRecovery ? 'Leave' : 'Leave simulation'}
                     </button>
                 )
             }
             captureInput={
                 <input
+                    placeholder={compactRecovery ? 'Scanner input' : undefined}
                     aria-label="Scanner capture input"
                     ref={sink}
                     value={state.buffer}

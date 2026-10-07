@@ -3,6 +3,7 @@
  * Story fixtures never connect to household inventory services.
  */
 import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import React, { useState } from 'react';
 
 import { ScannerMoveDemo } from './ScannerMoveDemo';
 const meta = {
@@ -34,3 +35,46 @@ const meta = {
 } satisfies Meta<typeof ScannerMoveDemo>;
 export default meta;
 export const Interactive: StoryObj<typeof meta> = {};
+
+function CompactRecoveryProof() {
+    const [left, setLeft] = useState(false);
+    return left ? (
+        <main>
+            <h1>Simulation left</h1>
+            <p>Synthetic proof only. No household inventory changed.</p>
+        </main>
+    ) : (
+        <ScannerMoveDemo
+            compactRecovery
+            onLeave={() => {
+                setLeft(true);
+            }}
+        />
+    );
+}
+
+export const CompactRecovery: StoryObj<typeof meta> = {
+    render: () => <CompactRecoveryProof />,
+    parameters: {
+        review: {
+            purpose: 'Storybook-only compact recovery and persistent Leave proposal; app/default unchanged.',
+            viewports: ['1280x720', '820x900', '390x844', '390x480'],
+            textScale: [1, 1.25],
+            responsive:
+                'Scrollable workspace reserves the dock; input and Resume remain adjacent, status and Leave share a second row.',
+            expectations: [
+                'Paused and Recovering guidance is fully visible without inner scrolling; only one current Resume instruction in the dock; discard guidance appears only for uncertain interrupted frames.',
+                'Dock at most150px on390x480 normal/125%, including long outcomes retained in the scrollable session; every224px QR remains scroll-reachable.',
+                'Input, Resume and Leave have44px targets and visible focus; no horizontal overflow or auto-refocus.',
+                'Leave remains reachable at QR and diagnostics scroll positions and exits to synthetic landing state.',
+                'Partial-input interruption still requires explicit Resume, discards first completed read and preserves ordinary field editing.',
+            ],
+            interactions: [
+                'Start, partial-input Tab, scroll QR/diagnostics, Resume, first-read discard, second read, keyboard Leave.',
+            ],
+            exclusions: [
+                'Actual app integration, native iOS keyboard, physical qualification, persistence, security/release acceptance.',
+            ],
+        },
+    },
+};
