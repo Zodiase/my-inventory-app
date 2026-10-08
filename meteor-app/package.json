@@ -106,5 +106,10 @@
             "client": "client/main.tsx",
             "server": "server/main.ts"
         }
+    },
+    "overrides": {
+        "@storybook/builder-webpack5@10.6.1": {
+            "webpack-dev-middleware": "8.3.0"
+        }
     }
 }
