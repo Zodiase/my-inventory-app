@@ -1,0 +1,903 @@
+TAP version 13
+# Subtest: nested items, source and visible notes, identity lookup, correction and move history
+ok 1 - nested items, source and visible notes, identity lookup, correction and move history
+  ---
+  duration_ms: 15.281708
+  type: 'test'
+  ...
+# Subtest: exact replay survives service restart and changed payload conflicts
+ok 2 - exact replay survives service restart and changed payload conflicts
+  ---
+  duration_ms: 0.758208
+  type: 'test'
+  ...
+# Subtest: search journal barrier rejects lag, then permits retrieval at the completed point
+ok 3 - search journal barrier rejects lag, then permits retrieval at the completed point
+  ---
+  duration_ms: 0.498583
+  type: 'test'
+  ...
+# Subtest: stale correction and external identity reuse conflict without mutation
+ok 4 - stale correction and external identity reuse conflict without mutation
+  ---
+  duration_ms: 0.559667
+  type: 'test'
+  ...
+# Subtest: crash after inventory mutation before ledger completion stays indeterminate across restart
+ok 5 - crash after inventory mutation before ledger completion stays indeterminate across restart
+  ---
+  duration_ms: 0.2655
+  type: 'test'
+  ...
+# Subtest: invalid parent, cycles and malformed input do not reserve requests
+ok 6 - invalid parent, cycles and malformed input do not reserve requests
+  ---
+  duration_ms: 0.532083
+  type: 'test'
+  ...
+# Subtest: simultaneous duplicate requests cannot create twice
+ok 7 - simultaneous duplicate requests cannot create twice
+  ---
+  duration_ms: 0.196041
+  type: 'test'
+  ...
+# Subtest: HTTP requires opt-in, bearer auth and loopback with no browser/proxy headers
+ok 8 - HTTP requires opt-in, bearer auth and loopback with no browser/proxy headers
+  ---
+  duration_ms: 2.44525
+  type: 'test'
+  ...
+# Subtest: HTTP reports required search dependency failure distinctly
+ok 9 - HTTP reports required search dependency failure distinctly
+  ---
+  duration_ms: 1.022792
+  type: 'test'
+  ...
+# Subtest: HTTP reports search journal lag distinctly from an empty result
+ok 10 - HTTP reports search journal lag distinctly from an empty result
+  ---
+  duration_ms: 0.618291
+  type: 'test'
+  ...
+# Subtest: Meteor dev proxy accepts one verified loopback hop, retaining auth and production isolation
+ok 11 - Meteor dev proxy accepts one verified loopback hop, retaining auth and production isolation
+  ---
+  duration_ms: 0.577958
+  type: 'test'
+  ...
+# Subtest: live hierarchy discovers new descendants and moves without intake receipts; reads do not mutate
+ok 12 - live hierarchy discovers new descendants and moves without intake receipts; reads do not mutate
+  ---
+  duration_ms: 1.04725
+  type: 'test'
+  ...
+# Subtest: children pagination covers large sibling sets and root items without silently dropping rows
+ok 13 - children pagination covers large sibling sets and root items without silently dropping rows
+  ---
+  duration_ms: 5.098916
+  type: 'test'
+  ...
+# Subtest: bounded search finds names, descriptions and aliases with current location context
+ok 14 - bounded search finds names, descriptions and aliases with current location context
+  ---
+  duration_ms: 0.872375
+  type: 'test'
+  ...
+# Subtest: search omits a hit that disappears before its location path resolves
+ok 15 - search omits a hit that disappears before its location path resolves
+  ---
+  duration_ms: 0.17775
+  type: 'test'
+  ...
+# Subtest: hierarchy rejects cycles, invalid selectors and missing or noncontainer roots
+ok 16 - hierarchy rejects cycles, invalid selectors and missing or noncontainer roots
+  ---
+  duration_ms: 0.642708
+  type: 'test'
+  ...
+# Subtest: tag hierarchy, literal discovery, assignment, removal, replay and stale guards
+ok 17 - tag hierarchy, literal discovery, assignment, removal, replay and stale guards
+  ---
+  duration_ms: 2.293833
+  type: 'test'
+  ...
+# Subtest: tag creation crash exposes deterministic candidate and blocks duplicate retry
+ok 18 - tag creation crash exposes deterministic candidate and blocks duplicate retry
+  ---
+  duration_ms: 0.290792
+  type: 'test'
+  ...
+# Subtest: tag pagination and malformed requests are bounded and read only
+ok 19 - tag pagination and malformed requests are bounded and read only
+  ---
+  duration_ms: 10.738167
+  type: 'test'
+  ...
+# Subtest: check-prerequisites accepts a pinned feature directory on master via .specify/feature.json
+ok 20 - check-prerequisites accepts a pinned feature directory on master via .specify/feature.json
+  ---
+  duration_ms: 509.5945
+  type: 'test'
+  ...
+# Subtest: removes generated Meteor local state while preserving the local DB
+ok 21 - removes generated Meteor local state while preserving the local DB
+  ---
+  duration_ms: 22.401417
+  type: 'test'
+  ...
+# Subtest: capability fails closed; recorder and drain exclude private payloads
+ok 22 - capability fails closed; recorder and drain exclude private payloads
+  ---
+  duration_ms: 7.561416
+  type: 'test'
+  ...
+# Subtest: alias overflow and ring truncation cannot pretend to preserve exact identity
+ok 23 - alias overflow and ring truncation cannot pretend to preserve exact identity
+  ---
+  duration_ms: 18.511125
+  type: 'test'
+  ...
+# Subtest: same native commit batch links child and gate without assuming parent means child
+ok 24 - same native commit batch links child and gate without assuming parent means child
+  ---
+  duration_ms: 0.717958
+  type: 'test'
+  ...
+# Subtest: hot reload, unsupported callback and stopped producer remain explicit
+ok 25 - hot reload, unsupported callback and stopped producer remain explicit
+  ---
+  duration_ms: 0.136083
+  type: 'test'
+  ...
+# Subtest: records each original getter once and keeps OR short-circuit skips
+ok 26 - records each original getter once and keeps OR short-circuit skips
+  ---
+  duration_ms: 1.595417
+  type: 'test'
+  ...
+# Subtest: drain cannot promote malformed or truncated evidence to complete
+ok 27 - drain cannot promote malformed or truncated evidence to complete
+  ---
+  duration_ms: 0.46175
+  type: 'test'
+  ...
+# Subtest: malformed supplied metadata and damaged last-commit correlation fail closed
+ok 28 - malformed supplied metadata and damaged last-commit correlation fail closed
+  ---
+  duration_ms: 0.971416
+  type: 'test'
+  ...
+# Subtest: interrupted tracker path is valid; later shell commits cannot complete a missing route
+ok 29 - interrupted tracker path is valid; later shell commits cannot complete a missing route
+  ---
+  duration_ms: 1.188375
+  type: 'test'
+  ...
+# Subtest: synthetic phase-before-exception retains an interrupted path and linked public category
+ok 30 - synthetic phase-before-exception retains an interrupted path and linked public category
+  ---
+  duration_ms: 0.997458
+  type: 'test'
+  ...
+# Subtest: route and shell commits share native batch but preserve their own immutable frames
+ok 31 - route and shell commits share native batch but preserve their own immutable frames
+  ---
+  duration_ms: 0.420875
+  type: 'test'
+  ...
+# Subtest: stage2 expanded markers overflow honestly and v1 output remains identical
+ok 32 - stage2 expanded markers overflow honestly and v1 output remains identical
+  ---
+  duration_ms: 10.346875
+  type: 'test'
+  ...
+# Subtest: public errors never store private fields and early errors remain unlinked across rapid navigation
+ok 33 - public errors never store private fields and early errors remain unlinked across rapid navigation
+  ---
+  duration_ms: 0.414833
+  type: 'test'
+  ...
+# Subtest: original hooks, reactive callbacks and getter evaluation order are unchanged from merged baseline
+not ok 34 - original hooks, reactive callbacks and getter evaluation order are unchanged from merged baseline
+  ---
+  duration_ms: 34.586333
+  type: 'test'
+  location: '/Volumes/Expansion/workspace/inventory-scanner-move-simulation/scripts/loading-boundaries.test.mjs:145:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        'useLocation()',
+        'useSearch()',
+        'useState(false)',
+        'useState<string | undefined>()',
+    ...
+          '}, [location, search, searchSubmitCount])',
+    +   'useLocation()'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'useLocation()'
+    1: 'useSearch()'
+    2: 'useState(false)'
+    3: 'useState<string | undefined>()'
+    4: 'useState<string | undefined>()'
+    5: 'useState<InventorySearchResult[]>([])'
+    6: 'useState<string | undefined>()'
+    7: 'useState<TracedInventorySearch | undefined>()'
+    8: 'useState<string | undefined>()'
+    9: 'useState(false)'
+    10: 'useState(0)'
+    11: 'useRef(0)'
+    12: 'useRef<string | undefined>()'
+    13: 'useRef<HTMLDivElement>(null)'
+    14: 'useRef(new Map<string, number>())'
+    15: 'useState<SearchFragment[]>([])'
+    16: 'useState(false)'
+    17: |-
+      useRef<{
+          contentsPath: string;
+          detailPath: string;
+          scrollTop: number;
+      }>()
+    18: 'useRef<HTMLButtonElement | HTMLAnchorElement | null>(null)'
+    19: |-
+      useEffect(() => {
+          if (location !== contentsDetailsContext.current?.contentsPath)
+              return;
+          const frame = requestAnimationFrame(() => contentsDetailsButton.current?.focus({ preventScroll: true }));
+          return () => {
+              cancelAnimationFrame(frame);
+          };
+      }, [location])
+    20: 'useRef<HTMLDivElement>(null)'
+    21: "useSubscribe('tags.all')"
+    22: "useSubscribe('items.all')"
+    23: "useSubscribe('inventory.identities')"
+    24: 'isLoadingTags()'
+    25: 'isLoadingAllItems()'
+    26: 'isLoadingIdentities()'
+    27: |-
+      useTracker(() => {
+          return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
+      }, [])
+    28: |-
+      useTracker(() => {
+          if (routeContainerId === undefined)
+              return undefined;
+          return findInventoryItemById(routeContainerId);
+      }, [routeContainerId])
+    29: |-
+      useTracker(() => {
+          if (searchContainerId === undefined)
+              return undefined;
+          return findInventoryItemById(searchContainerId);
+      }, [searchContainerId])
+    30: |-
+      useTracker(() => {
+          if (currentItemsContainerId === undefined)
+              return undefined;
+          return InventoryIdentitiesCollection.findOne({ itemId: currentItemsContainerId });
+      }, [currentItemsContainerId])
+    31: |-
+      useEffect(() => {
+          const itemDetailRouteMatch = /^\/items\/[^/]+$/.exec(location);
+          setShowCreateItem(false);
+          const context = contentsDetailsContext.current;
+          const ownDetailsDetour = context !== undefined && (location === context.contentsPath || location === context.detailPath);
+          if (!ownDetailsDetour) {
+              contentsDetailsContext.current = undefined;
+              setItemsViewFilters([]);
+              setShowFilterBuilder(false);
+          }
+          if (isContainerRoute) {
+              setCurrentItemsContainerId(routeContainerId);
+              setLastSearchContainerId(routeContainerId);
+          }
+          else if (location === '/' || location === '/items') {
+              setCurrentItemsContainerId(undefined);
+          }
+          else if (itemDetailRouteMatch !== null) {
+              if (!isSearchResultItemDetail && !ownDetailsDetour) {
+                  setCurrentItemsContainerId(undefined);
+              }
+          }
+          else if (location !== '/search') {
+              setCurrentItemsContainerId(undefined);
+          }
+      }, [isContainerRoute, isSearchResultItemDetail, location, routeContainerId])
+    32: |-
+      useEffect(() => {
+          if (!isContainerRoute || routeContainerId === undefined || allItemsLoading)
+              return;
+          if (routeContainer?.isContainer === true) {
+              setCurrentItemsContainerId(routeContainerId);
+          }
+          else {
+              setCurrentItemsContainerId(undefined);
+          }
+      }, [allItemsLoading, isContainerRoute, routeContainer?._id, routeContainer?.isContainer, routeContainerId])
+    33: |-
+      useEffect(() => {
+          if (location !== '/search' || searchUrlState.submitted)
+              return;
+          if (searchUrlState.query.trim() === '' && !hasRunnableFilter(searchUrlState.fragments))
+              return;
+          const timer = window.setTimeout(() => {
+              setLocation(getSearchUrl({ ...searchUrlState, submitted: true }), { replace: true });
+          }, searchUrlState.query.trim() === '' ? 0 : SEARCH_TYPING_DELAY_MS);
+          return () => {
+              window.clearTimeout(timer);
+          };
+      }, [location, search])
+    34: |-
+      useEffect(() => {
+          searchHistoryCheckpoint.current = undefined;
+          if (location !== '/search')
+              return;
+          const requestId = ++searchRequestId.current;
+          if (!searchUrlState.submitted) {
+              setSearchResults([]);
+              setSearchError(undefined);
+              setSearchRun(undefined);
+              setCompletedSearchKey(undefined);
+              setSearchLoading(false);
+              return;
+          }
+          const fragments: SearchFragment[] = [...searchUrlState.fragments];
+          if (searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined) {
+              fragments.unshift({ type: 'containerScope', containerRootId: searchUrlState.containerId });
+          }
+          if (searchUrlState.query.trim() !== '') {
+              fragments.push({ type: 'text', value: searchUrlState.query.trim() });
+          }
+          setSearchLoading(true);
+          setSearchError(undefined);
+          setSearchRun(undefined);
+          setCompletedSearchKey(undefined);
+          void Meteor.callAsync<TracedInventorySearch>('items.searchTraced', fragments)
+              .then((run) => {
+              if (requestId !== searchRequestId.current)
+                  return;
+              setSearchRun(run);
+              setSearchResults(run.results);
+              setCompletedSearchKey(searchRequestKey);
+              searchHistoryCheckpoint.current = currentRoutePath;
+              if (run.status === 'error') {
+                  setSearchError(run.errorCode === 'search-unavailable'
+                      ? 'Search is temporarily unavailable. Try again after the local search service recovers.'
+                      : 'Search failed. Please try again.');
+              }
+              requestAnimationFrame(() => {
+                  if (searchResultsRegion.current !== null) {
+                      searchResultsRegion.current.scrollTop =
+                          searchScrollPositions.current.get(window.location.href) ?? 0;
+                  }
+              });
+          })
+              .catch((error: unknown) => {
+              if (requestId !== searchRequestId.current)
+                  return;
+              console.error('Search failed:', error);
+              setSearchResults([]);
+              setSearchRun(undefined);
+              setCompletedSearchKey(searchRequestKey);
+              searchHistoryCheckpoint.current = currentRoutePath;
+              const errorCode = typeof error === 'object' && error !== null && 'error' in error
+                  ? Reflect.get(error, 'error')
+                  : undefined;
+              setSearchError(errorCode === 'search-unavailable'
+                  ? 'Search is temporarily unavailable. Try again after the local search service recovers.'
+                  : 'Search failed. Please try again.');
+          })
+              .finally(() => {
+              if (requestId === searchRequestId.current)
+                  setSearchLoading(false);
+          });
+          return () => {
+              searchRequestId.current += 1;
+          };
+      }, [location, search, searchSubmitCount])
+  actual:
+    0: 'useLocation()'
+    1: 'useSearch()'
+    2: 'useState(false)'
+    3: 'useState<string | undefined>()'
+    4: 'useState<string | undefined>()'
+    5: 'useState<InventorySearchResult[]>([])'
+    6: 'useState<string | undefined>()'
+    7: 'useState<TracedInventorySearch | undefined>()'
+    8: 'useState<string | undefined>()'
+    9: 'useState(false)'
+    10: 'useState(0)'
+    11: 'useRef(0)'
+    12: 'useRef<string | undefined>()'
+    13: 'useRef<HTMLDivElement>(null)'
+    14: 'useRef(new Map<string, number>())'
+    15: 'useState<SearchFragment[]>([])'
+    16: 'useState(false)'
+    17: |-
+      useRef<{
+          contentsPath: string;
+          detailPath: string;
+          scrollTop: number;
+      }>()
+    18: 'useRef<HTMLButtonElement | HTMLAnchorElement | null>(null)'
+    19: |-
+      useEffect(() => {
+          if (location !== contentsDetailsContext.current?.contentsPath)
+              return;
+          const frame = requestAnimationFrame(() => contentsDetailsButton.current?.focus({ preventScroll: true }));
+          return () => {
+              cancelAnimationFrame(frame);
+          };
+      }, [location])
+    20: 'useRef<HTMLDivElement>(null)'
+    21: "useSubscribe('tags.all')"
+    22: "useSubscribe('items.all')"
+    23: "useSubscribe('inventory.identities')"
+    24: 'isLoadingTags()'
+    25: 'isLoadingAllItems()'
+    26: 'isLoadingIdentities()'
+    27: |-
+      useTracker(() => {
+          return TagsCollection.find({}, { sort: { name: 1 } }).fetch();
+      }, [])
+    28: |-
+      useTracker(() => {
+          if (routeContainerId === undefined)
+              return undefined;
+          return findInventoryItemById(routeContainerId);
+      }, [routeContainerId])
+    29: |-
+      useTracker(() => {
+          if (searchContainerId === undefined)
+              return undefined;
+          return findInventoryItemById(searchContainerId);
+      }, [searchContainerId])
+    30: |-
+      useTracker(() => {
+          if (currentItemsContainerId === undefined)
+              return undefined;
+          return InventoryIdentitiesCollection.findOne({ itemId: currentItemsContainerId });
+      }, [currentItemsContainerId])
+    31: |-
+      useEffect(() => {
+          const itemDetailRouteMatch = /^\/items\/[^/]+$/.exec(location);
+          setShowCreateItem(false);
+          const context = contentsDetailsContext.current;
+          const ownDetailsDetour = context !== undefined && (location === context.contentsPath || location === context.detailPath);
+          if (!ownDetailsDetour) {
+              contentsDetailsContext.current = undefined;
+              setItemsViewFilters([]);
+              setShowFilterBuilder(false);
+          }
+          if (isContainerRoute) {
+              setCurrentItemsContainerId(routeContainerId);
+              setLastSearchContainerId(routeContainerId);
+          }
+          else if (location === '/' || location === '/items') {
+              setCurrentItemsContainerId(undefined);
+          }
+          else if (itemDetailRouteMatch !== null) {
+              if (!isSearchResultItemDetail && !ownDetailsDetour) {
+                  setCurrentItemsContainerId(undefined);
+              }
+          }
+          else if (location !== '/search') {
+              setCurrentItemsContainerId(undefined);
+          }
+      }, [isContainerRoute, isSearchResultItemDetail, location, routeContainerId])
+    32: |-
+      useEffect(() => {
+          if (!isContainerRoute || routeContainerId === undefined || allItemsLoading)
+              return;
+          if (routeContainer?.isContainer === true) {
+              setCurrentItemsContainerId(routeContainerId);
+          }
+          else {
+              setCurrentItemsContainerId(undefined);
+          }
+      }, [allItemsLoading, isContainerRoute, routeContainer?._id, routeContainer?.isContainer, routeContainerId])
+    33: |-
+      useEffect(() => {
+          if (location !== '/search' || searchUrlState.submitted)
+              return;
+          if (searchUrlState.query.trim() === '' && !hasRunnableFilter(searchUrlState.fragments))
+              return;
+          const timer = window.setTimeout(() => {
+              setLocation(getSearchUrl({ ...searchUrlState, submitted: true }), { replace: true });
+          }, searchUrlState.query.trim() === '' ? 0 : SEARCH_TYPING_DELAY_MS);
+          return () => {
+              window.clearTimeout(timer);
+          };
+      }, [location, search])
+    34: |-
+      useEffect(() => {
+          searchHistoryCheckpoint.current = undefined;
+          if (location !== '/search')
+              return;
+          const requestId = ++searchRequestId.current;
+          if (!searchUrlState.submitted) {
+              setSearchResults([]);
+              setSearchError(undefined);
+              setSearchRun(undefined);
+              setCompletedSearchKey(undefined);
+              setSearchLoading(false);
+              return;
+          }
+          const fragments: SearchFragment[] = [...searchUrlState.fragments];
+          if (searchUrlState.scope === 'scoped' && searchUrlState.containerId !== undefined) {
+              fragments.unshift({ type: 'containerScope', containerRootId: searchUrlState.containerId });
+          }
+          if (searchUrlState.query.trim() !== '') {
+              fragments.push({ type: 'text', value: searchUrlState.query.trim() });
+          }
+          setSearchLoading(true);
+          setSearchError(undefined);
+          setSearchRun(undefined);
+          setCompletedSearchKey(undefined);
+          void Meteor.callAsync<TracedInventorySearch>('items.searchTraced', fragments)
+              .then((run) => {
+              if (requestId !== searchRequestId.current)
+                  return;
+              setSearchRun(run);
+              setSearchResults(run.results);
+              setCompletedSearchKey(searchRequestKey);
+              searchHistoryCheckpoint.current = currentRoutePath;
+              if (run.status === 'error') {
+                  setSearchError(run.errorCode === 'search-unavailable'
+                      ? 'Search is temporarily unavailable. Try again after the local search service recovers.'
+                      : 'Search failed. Please try again.');
+              }
+              requestAnimationFrame(() => {
+                  if (searchResultsRegion.current !== null) {
+                      searchResultsRegion.current.scrollTop =
+                          searchScrollPositions.current.get(window.location.href) ?? 0;
+                  }
+              });
+          })
+              .catch((error: unknown) => {
+              if (requestId !== searchRequestId.current)
+                  return;
+              console.error('Search failed:', error);
+              setSearchResults([]);
+              setSearchRun(undefined);
+              setCompletedSearchKey(searchRequestKey);
+              searchHistoryCheckpoint.current = currentRoutePath;
+              const errorCode = typeof error === 'object' && error !== null && 'error' in error
+                  ? Reflect.get(error, 'error')
+                  : undefined;
+              setSearchError(errorCode === 'search-unavailable'
+                  ? 'Search is temporarily unavailable. Try again after the local search service recovers.'
+                  : 'Search failed. Please try again.');
+          })
+              .finally(() => {
+              if (requestId === searchRequestId.current)
+                  setSearchLoading(false);
+          });
+          return () => {
+              searchRequestId.current += 1;
+          };
+      }, [location, search, searchSubmitCount])
+    35: 'useLocation()'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Volumes/Expansion/workspace/inventory-scanner-move-simulation/scripts/loading-boundaries.test.mjs:169:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: public observer ignores subframes, never serializes errors or console handles, and removes listeners
+ok 35 - public observer ignores subframes, never serializes errors or console handles, and removes listeners
+  ---
+  duration_ms: 6.889958
+  type: 'test'
+  ...
+# Subtest: correlates DDP readiness with samples without retaining private payloads
+ok 36 - correlates DDP readiness with samples without retaining private payloads
+  ---
+  duration_ms: 4.37375
+  type: 'test'
+  ...
+# Subtest: bounds retained history, aliases and frames while keeping the latest failure state
+ok 37 - bounds retained history, aliases and frames while keeping the latest failure state
+  ---
+  duration_ms: 12.432709
+  type: 'test'
+  ...
+# Subtest: a stalled browser cannot hang failure capture, and the artifact reports incomplete sampling
+ok 38 - a stalled browser cannot hang failure capture, and the artifact reports incomplete sampling
+  ---
+  duration_ms: 515.716709
+  type: 'test'
+  ...
+# Subtest: caps socket observers and removes all listeners after capture
+ok 39 - caps socket observers and removes all listeners after capture
+  ---
+  duration_ms: 3.203125
+  type: 'test'
+  ...
+# Subtest: F01/F09 new epoch cancels pending and rejects old results; repeated mode entry is idempotent
+ok 40 - F01/F09 new epoch cancels pending and rejects old results; repeated mode entry is idempotent
+  ---
+  duration_ms: 3.316917
+  type: 'test'
+  ...
+# Subtest: F02 literal UUID case and numeric zeros survive, product is not an owned identity
+ok 41 - F02 literal UUID case and numeric zeros survive, product is not an owned identity
+  ---
+  duration_ms: 0.717625
+  type: 'test'
+  ...
+# Subtest: F03 grammar rejects empty, whitespace, truncated, control, URLs and unknown action versions
+ok 42 - F03 grammar rejects empty, whitespace, truncated, control, URLs and unknown action versions
+  ---
+  duration_ms: 0.137875
+  type: 'test'
+  ...
+# Subtest: F04 clean pause resumes immediately; interrupted partial requires a discarded boundary
+ok 43 - F04 clean pause resumes immediately; interrupted partial requires a discarded boundary
+  ---
+  duration_ms: 0.387208
+  type: 'test'
+  ...
+# Subtest: F05/F07 doubled empty delimiters never duplicate; identical reads remain distinct
+ok 44 - F05/F07 doubled empty delimiters never duplicate; identical reads remain distinct
+  ---
+  duration_ms: 0.232208
+  type: 'test'
+  ...
+# Subtest: F08 capture ABC resolves C/A/B without reordering or replacing latest evidence
+ok 45 - F08 capture ABC resolves C/A/B without reordering or replacing latest evidence
+  ---
+  duration_ms: 0.214875
+  type: 'test'
+  ...
+# Subtest: F12 scan commands are unavailable off/paused, reserved invalid verbs never reach resolution
+ok 46 - F12 scan commands are unavailable off/paused, reserved invalid verbs never reach resolution
+  ---
+  duration_ms: 0.277791
+  type: 'test'
+  ...
+# Subtest: F13 every allowlisted command and tap have matching semantic mode and capture effects
+ok 47 - F13 every allowlisted command and tap have matching semantic mode and capture effects
+  ---
+  duration_ms: 0.280041
+  type: 'test'
+  ...
+# Subtest: F15 retry links original, retains failed outcome, rejects previous attempt and cancellation results
+ok 48 - F15 retry links original, retains failed outcome, rejects previous attempt and cancellation results
+  ---
+  duration_ms: 0.557125
+  type: 'test'
+  ...
+# Subtest: F16 pending backpressure is visible and no unseen queued read survives resume
+ok 49 - F16 pending backpressure is visible and no unseen queued read survives resume
+  ---
+  duration_ms: 0.3505
+  type: 'test'
+  ...
+# Subtest: record bound also applies to repeated interruptions and discarded reads
+ok 50 - record bound also applies to repeated interruptions and discarded reads
+  ---
+  duration_ms: 1.056958
+  type: 'test'
+  ...
+# Subtest: targeted negative controls fail at partial concat, stale epoch, outside command and duplicate delimiter guards
+ok 51 - targeted negative controls fail at partial concat, stale epoch, outside command and duplicate delimiter guards
+  ---
+  duration_ms: 125.452875
+  type: 'test'
+  ...
+# Subtest: F15/F16 existing-record retry retains full history and shares explicit pending/attempt guards
+ok 52 - F15/F16 existing-record retry retains full history and shares explicit pending/attempt guards
+  ---
+  duration_ms: 2.934792
+  type: 'test'
+  ...
+# Subtest: verified same-input scan transitions continue, cancel old epoch and accept the next frame
+ok 53 - verified same-input scan transitions continue, cancel old epoch and accept the next frame
+  ---
+  duration_ms: 0.291542
+  type: 'test'
+  ...
+# Subtest: continuation authorization cannot bypass interruption, partial boundary or tap transitions
+ok 54 - continuation authorization cannot bypass interruption, partial boundary or tap transitions
+  ---
+  duration_ms: 0.276125
+  type: 'test'
+  ...
+# Subtest: negative control detects removal of verified-context gate
+ok 55 - negative control detects removal of verified-context gate
+  ---
+  duration_ms: 33.199667
+  type: 'test'
+  ...
+# Subtest: capitalized action remains rejected with exact raw text and actionable case guidance
+ok 56 - capitalized action remains rejected with exact raw text and actionable case guidance
+  ---
+  duration_ms: 0.258417
+  type: 'test'
+  ...
+# Subtest: interrupted and unsafe capture retain bounded raw diagnostic text without resolution
+ok 57 - interrupted and unsafe capture retain bounded raw diagnostic text without resolution
+  ---
+  duration_ms: 0.291375
+  type: 'test'
+  ...
+# Subtest: destination-first moves only exact existing identity and retains destination for successive items
+ok 58 - destination-first moves only exact existing identity and retains destination for successive items
+  ---
+  duration_ms: 2.838542
+  type: 'test'
+  ...
+# Subtest: identical identity and doubled delimiter cannot duplicate move or quantity
+ok 59 - identical identity and doubled delimiter cannot duplicate move or quantity
+  ---
+  duration_ms: 0.375167
+  type: 'test'
+  ...
+# Subtest: missing destination is visible error without a mutation
+ok 60 - missing destination is visible error without a mutation
+  ---
+  duration_ms: 0.074542
+  type: 'test'
+  ...
+# Subtest: unknown, wrong-prefix, product zeros, malformed commands preserve valid destination
+ok 61 - unknown, wrong-prefix, product zeros, malformed commands preserve valid destination
+  ---
+  duration_ms: 0.635666
+  type: 'test'
+  ...
+# Subtest: changing destination cancels pending intent; late result cannot retarget
+ok 62 - changing destination cancels pending intent; late result cannot retarget
+  ---
+  duration_ms: 0.358042
+  type: 'test'
+  ...
+# Subtest: reselecting identical destination cancels prior item intent deliberately
+ok 63 - reselecting identical destination cancels prior item intent deliberately
+  ---
+  duration_ms: 0.157709
+  type: 'test'
+  ...
+# Subtest: Pause cancels pending moves but retains destination; Resume cannot replay
+ok 64 - Pause cancels pending moves but retains destination; Resume cannot replay
+  ---
+  duration_ms: 0.271542
+  type: 'test'
+  ...
+# Subtest: partial timeout cancels pending move; one boundary discarded before rescan
+ok 65 - partial timeout cancels pending move; one boundary discarded before rescan
+  ---
+  duration_ms: 0.162375
+  type: 'test'
+  ...
+# Subtest: mode change/Exit/new session clear destination and ignore old completions
+ok 66 - mode change/Exit/new session clear destination and ignore old completions
+  ---
+  duration_ms: 0.605083
+  type: 'test'
+  ...
+# Subtest: failed resolver retains evidence, rescan only; external result/retry cannot commit
+ok 67 - failed resolver retains evidence, rescan only; external result/retry cannot commit
+  ---
+  duration_ms: 0.96875
+  type: 'test'
+  ...
+# Subtest: out-of-order completions bind each intent and ignore mismatched epoch/generation
+ok 68 - out-of-order completions bind each intent and ignore mismatched epoch/generation
+  ---
+  duration_ms: 0.325208
+  type: 'test'
+  ...
+# Subtest: new fixture state is independent and simulation modules import no persistence/network API
+ok 69 - new fixture state is independent and simulation modules import no persistence/network API
+  ---
+  duration_ms: 20.303917
+  type: 'test'
+  ...
+# Subtest: negative control catches accidental repeated move when no-op guard is removed
+ok 70 - negative control catches accidental repeated move when no-op guard is removed
+  ---
+  duration_ms: 39.662708
+  type: 'test'
+  ...
+# Subtest: real action and synthetic fixture images independently decode to the exact fixed payloads
+ok 71 - real action and synthetic fixture images independently decode to the exact fixed payloads
+  ---
+  duration_ms: 168.629292
+  type: 'test'
+  ...
+# Subtest: benchmark refuses an index outside the disposable namespace
+ok 72 - benchmark refuses an index outside the disposable namespace
+  ---
+  duration_ms: 124.251916
+  type: 'test'
+  ...
+# Subtest: benchmark requires confirmation for an explicitly named disposable index
+ok 73 - benchmark requires confirmation for an explicitly named disposable index
+  ---
+  duration_ms: 123.128
+  type: 'test'
+  ...
+# Subtest: formats visual delta percentages for PR comments
+ok 74 - formats visual delta percentages for PR comments
+  ---
+  duration_ms: 0.641292
+  type: 'test'
+  ...
+# Subtest: builds changed visual report with diff and composite files
+ok 75 - builds changed visual report with diff and composite files
+  ---
+  duration_ms: 366.783875
+  type: 'test'
+  ...
+# Subtest: focuses changed composites around the padded changed bounds
+ok 76 - focuses changed composites around the padded changed bounds
+  ---
+  duration_ms: 281.573791
+  type: 'test'
+  ...
+# Subtest: renders changed composite as a translucent overlay on the after image
+ok 77 - renders changed composite as a translucent overlay on the after image
+  ---
+  duration_ms: 241.309417
+  type: 'test'
+  ...
+# Subtest: builds unchanged visual report without composite file
+ok 78 - builds unchanged visual report without composite file
+  ---
+  duration_ms: 2.301459
+  type: 'test'
+  ...
+# Subtest: builds scan-first PR comment with changed evidence gallery
+ok 79 - builds scan-first PR comment with changed evidence gallery
+  ---
+  duration_ms: 0.290959
+  type: 'test'
+  ...
+# Subtest: selects core route smoke for ordinary UI changes
+ok 80 - selects core route smoke for ordinary UI changes
+  ---
+  duration_ms: 2.201459
+  type: 'test'
+  ...
+# Subtest: selects core and focused Items screenshots for Items view changes
+ok 81 - selects core and focused Items screenshots for Items view changes
+  ---
+  duration_ms: 0.42325
+  type: 'test'
+  ...
+# Subtest: selects core and focused Tags screenshots for Tags view changes
+ok 82 - selects core and focused Tags screenshots for Tags view changes
+  ---
+  duration_ms: 0.266708
+  type: 'test'
+  ...
+# Subtest: selects all scenarios for shared visual infrastructure changes
+ok 83 - selects all scenarios for shared visual infrastructure changes
+  ---
+  duration_ms: 0.330834
+  type: 'test'
+  ...
+# Subtest: selects no scenarios for docs-only changes
+ok 84 - selects no scenarios for docs-only changes
+  ---
+  duration_ms: 0.116416
+  type: 'test'
+  ...
+1..84
+# tests 84
+# suites 0
+# pass 83
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1467.054125

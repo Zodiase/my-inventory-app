@@ -1,0 +1,6 @@
+
+> check:type
+> tsc --version && tsc --noEmit
+
+Version 5.9.3
+imports/ui/App.tsx(269,31): error TS2558: Expected 0 type arguments, but got 1.

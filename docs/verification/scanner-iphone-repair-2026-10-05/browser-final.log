@@ -1,0 +1,59 @@
+
+Running 39 tests using 1 worker
+
+[1A[2K(node:40722) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:40722) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:30:5 › action QR payloads and taps share semantics; command then fixture continues without Resume
+[1A[2K[2/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:50:5 › partial interruption and dialogs still need explicit Resume and discarded recovery boundary
+[1A[2K[3/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1
+[1A[2K[4/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 1280x720 text1.25
+[1A[2K[5/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1
+[1A[2K[6/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 820x900 text1.25
+[1A[2K[7/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1
+[1A[2K[8/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x844 text1.25
+[1A[2K[9/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1
+[1A[2K[10/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:77:13 › actual rendered QR decode, quiet geometry and usable controls 390x480 text1.25
+[1A[2K[11/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:146:5 › mobile capture opts out of text transformation and explains uppercase rejection without normalization
+[1A[2K[12/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:169:5 › fixed capture field keeps code browsing stable during keystrokes and never steals editing focus
+[1A[2K[13/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:202:5 › raw rejected text is escaped and timeout recovery reason stays visible
+[1A[2K[14/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:215:9 › standalone short-phone viewport keeps dock anchored and complete QR visible text1
+[1A[2K[15/39] [storybook-chromium] › tests/e2e/storybook/ScannerActionCodes.spec.ts:215:9 › standalone short-phone viewport keeps dock anchored and complete QR visible text1.25
+[1A[2K[16/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:25:5 › scoped keyboard frames preserve repeats, paste provenance, invalid payloads and empty delimiters
+[1A[2K[17/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:46:5 › clean-boundary pause resumes ready; partial timeout drains and never resolves the recovery read
+[1A[2K[18/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:70:5 › ordinary input, IME, navigation, dialog, window blur and visibility never auto-rearm
+[1A[2K[19/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:104:5 › out-of-order resolution, retry, cancellation and exit keep capture evidence and session boundaries
+[1A[2K[20/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:137:5 › command and tap share semantic dispatcher, wrong kinds remain classified, capacity is explicit
+[1A[2K[21/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:169:5 › page navigation never replays reads or resumes capture on browser return
+[1A[2K[22/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:181:5 › nonterminating keys, modifiers and key repeat do not complete a frame
+[1A[2K[23/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:203:5 › textarea and contenteditable focus pause capture while retaining ordinary editing
+[1A[2K[24/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:228:5 › unknown identity, offline and timeout faults remain resolution failures without navigation or writes
+[1A[2K[25/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:257:5 › full history retries the existing record; full pending queue visibly blocks until cancellation
+[1A[2K[26/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 1280x720 text 1
+[1A[2K[27/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 1280x720 text 1.25
+[1A[2K[28/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 820x900 text 1
+[1A[2K[29/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 820x900 text 1.25
+[1A[2K[30/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 390x844 text 1
+[1A[2K[31/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 390x844 text 1.25
+[1A[2K[32/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 390x480 text 1
+[1A[2K[33/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:336:13 › manager proof has readable controls, scroll access and no overflow 390x480 text 1.25
+[1A[2K[34/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:377:5 › same-input command cancels pending epoch and immediately captures next scan without a tap
+[1A[2K[35/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:394:9 › live hidden context refuses a command even before lifecycle pause fires
+[1A[2K[36/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:394:9 › live unfocused-document context refuses a command even before lifecycle pause fires
+[1A[2K[37/39] [storybook-chromium] › tests/e2e/storybook/ScannerFoundation.spec.ts:394:9 › live dialog context refuses a command even before lifecycle pause fires
+[1A[2K(node:40933) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:40933) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[38/39] [storybook-webkit] › tests/e2e/storybook/ScannerMobileCapture.webkit.spec.ts:4:5 › Safari simulation retains exact-case rejection and opts out of browser text transformations
+[1A[2K[39/39] [storybook-webkit] › tests/e2e/storybook/ScannerMobileCapture.webkit.spec.ts:24:5 › Safari simulation keeps dock visible and scroll steady while browsing codes and typing
+[1A[2K  39 passed (58.6s)

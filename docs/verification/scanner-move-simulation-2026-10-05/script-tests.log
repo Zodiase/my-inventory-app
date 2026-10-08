@@ -1,0 +1,514 @@
+TAP version 13
+# Subtest: nested items, source and visible notes, identity lookup, correction and move history
+ok 1 - nested items, source and visible notes, identity lookup, correction and move history
+  ---
+  duration_ms: 13.549667
+  type: 'test'
+  ...
+# Subtest: exact replay survives service restart and changed payload conflicts
+ok 2 - exact replay survives service restart and changed payload conflicts
+  ---
+  duration_ms: 0.676375
+  type: 'test'
+  ...
+# Subtest: search journal barrier rejects lag, then permits retrieval at the completed point
+ok 3 - search journal barrier rejects lag, then permits retrieval at the completed point
+  ---
+  duration_ms: 0.495334
+  type: 'test'
+  ...
+# Subtest: stale correction and external identity reuse conflict without mutation
+ok 4 - stale correction and external identity reuse conflict without mutation
+  ---
+  duration_ms: 0.557416
+  type: 'test'
+  ...
+# Subtest: crash after inventory mutation before ledger completion stays indeterminate across restart
+ok 5 - crash after inventory mutation before ledger completion stays indeterminate across restart
+  ---
+  duration_ms: 0.268125
+  type: 'test'
+  ...
+# Subtest: invalid parent, cycles and malformed input do not reserve requests
+ok 6 - invalid parent, cycles and malformed input do not reserve requests
+  ---
+  duration_ms: 0.714667
+  type: 'test'
+  ...
+# Subtest: simultaneous duplicate requests cannot create twice
+ok 7 - simultaneous duplicate requests cannot create twice
+  ---
+  duration_ms: 0.625208
+  type: 'test'
+  ...
+# Subtest: HTTP requires opt-in, bearer auth and loopback with no browser/proxy headers
+ok 8 - HTTP requires opt-in, bearer auth and loopback with no browser/proxy headers
+  ---
+  duration_ms: 2.341875
+  type: 'test'
+  ...
+# Subtest: HTTP reports required search dependency failure distinctly
+ok 9 - HTTP reports required search dependency failure distinctly
+  ---
+  duration_ms: 0.667333
+  type: 'test'
+  ...
+# Subtest: HTTP reports search journal lag distinctly from an empty result
+ok 10 - HTTP reports search journal lag distinctly from an empty result
+  ---
+  duration_ms: 0.585625
+  type: 'test'
+  ...
+# Subtest: Meteor dev proxy accepts one verified loopback hop, retaining auth and production isolation
+ok 11 - Meteor dev proxy accepts one verified loopback hop, retaining auth and production isolation
+  ---
+  duration_ms: 0.571083
+  type: 'test'
+  ...
+# Subtest: live hierarchy discovers new descendants and moves without intake receipts; reads do not mutate
+ok 12 - live hierarchy discovers new descendants and moves without intake receipts; reads do not mutate
+  ---
+  duration_ms: 1.06725
+  type: 'test'
+  ...
+# Subtest: children pagination covers large sibling sets and root items without silently dropping rows
+ok 13 - children pagination covers large sibling sets and root items without silently dropping rows
+  ---
+  duration_ms: 6.895125
+  type: 'test'
+  ...
+# Subtest: bounded search finds names, descriptions and aliases with current location context
+ok 14 - bounded search finds names, descriptions and aliases with current location context
+  ---
+  duration_ms: 0.875
+  type: 'test'
+  ...
+# Subtest: search omits a hit that disappears before its location path resolves
+ok 15 - search omits a hit that disappears before its location path resolves
+  ---
+  duration_ms: 0.199042
+  type: 'test'
+  ...
+# Subtest: hierarchy rejects cycles, invalid selectors and missing or noncontainer roots
+ok 16 - hierarchy rejects cycles, invalid selectors and missing or noncontainer roots
+  ---
+  duration_ms: 1.178375
+  type: 'test'
+  ...
+# Subtest: tag hierarchy, literal discovery, assignment, removal, replay and stale guards
+ok 17 - tag hierarchy, literal discovery, assignment, removal, replay and stale guards
+  ---
+  duration_ms: 1.793042
+  type: 'test'
+  ...
+# Subtest: tag creation crash exposes deterministic candidate and blocks duplicate retry
+ok 18 - tag creation crash exposes deterministic candidate and blocks duplicate retry
+  ---
+  duration_ms: 0.357125
+  type: 'test'
+  ...
+# Subtest: tag pagination and malformed requests are bounded and read only
+ok 19 - tag pagination and malformed requests are bounded and read only
+  ---
+  duration_ms: 5.619292
+  type: 'test'
+  ...
+# Subtest: check-prerequisites accepts a pinned feature directory on master via .specify/feature.json
+ok 20 - check-prerequisites accepts a pinned feature directory on master via .specify/feature.json
+  ---
+  duration_ms: 516.748667
+  type: 'test'
+  ...
+# Subtest: removes generated Meteor local state while preserving the local DB
+ok 21 - removes generated Meteor local state while preserving the local DB
+  ---
+  duration_ms: 31.080375
+  type: 'test'
+  ...
+# Subtest: capability fails closed; recorder and drain exclude private payloads
+ok 22 - capability fails closed; recorder and drain exclude private payloads
+  ---
+  duration_ms: 1.831167
+  type: 'test'
+  ...
+# Subtest: alias overflow and ring truncation cannot pretend to preserve exact identity
+ok 23 - alias overflow and ring truncation cannot pretend to preserve exact identity
+  ---
+  duration_ms: 9.364
+  type: 'test'
+  ...
+# Subtest: same native commit batch links child and gate without assuming parent means child
+ok 24 - same native commit batch links child and gate without assuming parent means child
+  ---
+  duration_ms: 0.49775
+  type: 'test'
+  ...
+# Subtest: hot reload, unsupported callback and stopped producer remain explicit
+ok 25 - hot reload, unsupported callback and stopped producer remain explicit
+  ---
+  duration_ms: 0.184458
+  type: 'test'
+  ...
+# Subtest: records each original getter once and keeps OR short-circuit skips
+ok 26 - records each original getter once and keeps OR short-circuit skips
+  ---
+  duration_ms: 1.47825
+  type: 'test'
+  ...
+# Subtest: drain cannot promote malformed or truncated evidence to complete
+ok 27 - drain cannot promote malformed or truncated evidence to complete
+  ---
+  duration_ms: 1.142041
+  type: 'test'
+  ...
+# Subtest: malformed supplied metadata and damaged last-commit correlation fail closed
+ok 28 - malformed supplied metadata and damaged last-commit correlation fail closed
+  ---
+  duration_ms: 2.963083
+  type: 'test'
+  ...
+# Subtest: interrupted tracker path is valid; later shell commits cannot complete a missing route
+ok 29 - interrupted tracker path is valid; later shell commits cannot complete a missing route
+  ---
+  duration_ms: 2.712042
+  type: 'test'
+  ...
+# Subtest: synthetic phase-before-exception retains an interrupted path and linked public category
+ok 30 - synthetic phase-before-exception retains an interrupted path and linked public category
+  ---
+  duration_ms: 1.010292
+  type: 'test'
+  ...
+# Subtest: route and shell commits share native batch but preserve their own immutable frames
+ok 31 - route and shell commits share native batch but preserve their own immutable frames
+  ---
+  duration_ms: 0.5795
+  type: 'test'
+  ...
+# Subtest: stage2 expanded markers overflow honestly and v1 output remains identical
+ok 32 - stage2 expanded markers overflow honestly and v1 output remains identical
+  ---
+  duration_ms: 8.237
+  type: 'test'
+  ...
+# Subtest: public errors never store private fields and early errors remain unlinked across rapid navigation
+ok 33 - public errors never store private fields and early errors remain unlinked across rapid navigation
+  ---
+  duration_ms: 0.762584
+  type: 'test'
+  ...
+# Subtest: original hooks, reactive callbacks and getter evaluation order are unchanged from merged baseline
+ok 34 - original hooks, reactive callbacks and getter evaluation order are unchanged from merged baseline
+  ---
+  duration_ms: 31.728542
+  type: 'test'
+  ...
+# Subtest: public observer ignores subframes, never serializes errors or console handles, and removes listeners
+ok 35 - public observer ignores subframes, never serializes errors or console handles, and removes listeners
+  ---
+  duration_ms: 12.606167
+  type: 'test'
+  ...
+# Subtest: correlates DDP readiness with samples without retaining private payloads
+ok 36 - correlates DDP readiness with samples without retaining private payloads
+  ---
+  duration_ms: 2.574792
+  type: 'test'
+  ...
+# Subtest: bounds retained history, aliases and frames while keeping the latest failure state
+ok 37 - bounds retained history, aliases and frames while keeping the latest failure state
+  ---
+  duration_ms: 16.201666
+  type: 'test'
+  ...
+# Subtest: a stalled browser cannot hang failure capture, and the artifact reports incomplete sampling
+ok 38 - a stalled browser cannot hang failure capture, and the artifact reports incomplete sampling
+  ---
+  duration_ms: 522.526042
+  type: 'test'
+  ...
+# Subtest: caps socket observers and removes all listeners after capture
+ok 39 - caps socket observers and removes all listeners after capture
+  ---
+  duration_ms: 3.256083
+  type: 'test'
+  ...
+# Subtest: F01/F09 new epoch cancels pending and rejects old results; repeated mode entry is idempotent
+ok 40 - F01/F09 new epoch cancels pending and rejects old results; repeated mode entry is idempotent
+  ---
+  duration_ms: 3.881
+  type: 'test'
+  ...
+# Subtest: F02 literal UUID case and numeric zeros survive, product is not an owned identity
+ok 41 - F02 literal UUID case and numeric zeros survive, product is not an owned identity
+  ---
+  duration_ms: 1.573584
+  type: 'test'
+  ...
+# Subtest: F03 grammar rejects empty, whitespace, truncated, control, URLs and unknown action versions
+ok 42 - F03 grammar rejects empty, whitespace, truncated, control, URLs and unknown action versions
+  ---
+  duration_ms: 0.09125
+  type: 'test'
+  ...
+# Subtest: F04 clean pause resumes immediately; interrupted partial requires a discarded boundary
+ok 43 - F04 clean pause resumes immediately; interrupted partial requires a discarded boundary
+  ---
+  duration_ms: 0.115667
+  type: 'test'
+  ...
+# Subtest: F05/F07 doubled empty delimiters never duplicate; identical reads remain distinct
+ok 44 - F05/F07 doubled empty delimiters never duplicate; identical reads remain distinct
+  ---
+  duration_ms: 0.079917
+  type: 'test'
+  ...
+# Subtest: F08 capture ABC resolves C/A/B without reordering or replacing latest evidence
+ok 45 - F08 capture ABC resolves C/A/B without reordering or replacing latest evidence
+  ---
+  duration_ms: 0.724792
+  type: 'test'
+  ...
+# Subtest: F12 scan commands are unavailable off/paused, reserved invalid verbs never reach resolution
+ok 46 - F12 scan commands are unavailable off/paused, reserved invalid verbs never reach resolution
+  ---
+  duration_ms: 0.2725
+  type: 'test'
+  ...
+# Subtest: F13 every allowlisted command and tap have matching semantic mode and capture effects
+ok 47 - F13 every allowlisted command and tap have matching semantic mode and capture effects
+  ---
+  duration_ms: 0.145125
+  type: 'test'
+  ...
+# Subtest: F15 retry links original, retains failed outcome, rejects previous attempt and cancellation results
+ok 48 - F15 retry links original, retains failed outcome, rejects previous attempt and cancellation results
+  ---
+  duration_ms: 0.295667
+  type: 'test'
+  ...
+# Subtest: F16 pending backpressure is visible and no unseen queued read survives resume
+ok 49 - F16 pending backpressure is visible and no unseen queued read survives resume
+  ---
+  duration_ms: 2.834125
+  type: 'test'
+  ...
+# Subtest: record bound also applies to repeated interruptions and discarded reads
+ok 50 - record bound also applies to repeated interruptions and discarded reads
+  ---
+  duration_ms: 7.111542
+  type: 'test'
+  ...
+# Subtest: targeted negative controls fail at partial concat, stale epoch, outside command and duplicate delimiter guards
+ok 51 - targeted negative controls fail at partial concat, stale epoch, outside command and duplicate delimiter guards
+  ---
+  duration_ms: 99.010542
+  type: 'test'
+  ...
+# Subtest: F15/F16 existing-record retry retains full history and shares explicit pending/attempt guards
+ok 52 - F15/F16 existing-record retry retains full history and shares explicit pending/attempt guards
+  ---
+  duration_ms: 0.665459
+  type: 'test'
+  ...
+# Subtest: verified same-input scan transitions continue, cancel old epoch and accept the next frame
+ok 53 - verified same-input scan transitions continue, cancel old epoch and accept the next frame
+  ---
+  duration_ms: 0.088375
+  type: 'test'
+  ...
+# Subtest: continuation authorization cannot bypass interruption, partial boundary or tap transitions
+ok 54 - continuation authorization cannot bypass interruption, partial boundary or tap transitions
+  ---
+  duration_ms: 0.085791
+  type: 'test'
+  ...
+# Subtest: negative control detects removal of verified-context gate
+ok 55 - negative control detects removal of verified-context gate
+  ---
+  duration_ms: 22.619083
+  type: 'test'
+  ...
+# Subtest: capitalized action remains rejected with exact raw text and actionable case guidance
+ok 56 - capitalized action remains rejected with exact raw text and actionable case guidance
+  ---
+  duration_ms: 0.06825
+  type: 'test'
+  ...
+# Subtest: interrupted and unsafe capture retain bounded raw diagnostic text without resolution
+ok 57 - interrupted and unsafe capture retain bounded raw diagnostic text without resolution
+  ---
+  duration_ms: 0.051833
+  type: 'test'
+  ...
+# Subtest: destination-first moves only exact existing identity and retains destination for successive items
+ok 58 - destination-first moves only exact existing identity and retains destination for successive items
+  ---
+  duration_ms: 1.623917
+  type: 'test'
+  ...
+# Subtest: identical identity and doubled delimiter cannot duplicate move or quantity
+ok 59 - identical identity and doubled delimiter cannot duplicate move or quantity
+  ---
+  duration_ms: 0.307
+  type: 'test'
+  ...
+# Subtest: missing destination is visible error without a mutation
+ok 60 - missing destination is visible error without a mutation
+  ---
+  duration_ms: 0.072875
+  type: 'test'
+  ...
+# Subtest: unknown, wrong-prefix, product zeros, malformed commands preserve valid destination
+ok 61 - unknown, wrong-prefix, product zeros, malformed commands preserve valid destination
+  ---
+  duration_ms: 0.454333
+  type: 'test'
+  ...
+# Subtest: changing destination cancels pending intent; late result cannot retarget
+ok 62 - changing destination cancels pending intent; late result cannot retarget
+  ---
+  duration_ms: 0.329292
+  type: 'test'
+  ...
+# Subtest: reselecting identical destination cancels prior item intent deliberately
+ok 63 - reselecting identical destination cancels prior item intent deliberately
+  ---
+  duration_ms: 0.140416
+  type: 'test'
+  ...
+# Subtest: Pause cancels pending moves but retains destination; Resume cannot replay
+ok 64 - Pause cancels pending moves but retains destination; Resume cannot replay
+  ---
+  duration_ms: 0.272958
+  type: 'test'
+  ...
+# Subtest: partial timeout cancels pending move; one boundary discarded before rescan
+ok 65 - partial timeout cancels pending move; one boundary discarded before rescan
+  ---
+  duration_ms: 0.157416
+  type: 'test'
+  ...
+# Subtest: mode change/Exit/new session clear destination and ignore old completions
+ok 66 - mode change/Exit/new session clear destination and ignore old completions
+  ---
+  duration_ms: 0.601416
+  type: 'test'
+  ...
+# Subtest: failed resolver retains evidence, rescan only; external result/retry cannot commit
+ok 67 - failed resolver retains evidence, rescan only; external result/retry cannot commit
+  ---
+  duration_ms: 0.997958
+  type: 'test'
+  ...
+# Subtest: out-of-order completions bind each intent and ignore mismatched epoch/generation
+ok 68 - out-of-order completions bind each intent and ignore mismatched epoch/generation
+  ---
+  duration_ms: 0.16825
+  type: 'test'
+  ...
+# Subtest: new fixture state is independent and simulation modules import no persistence/network API
+ok 69 - new fixture state is independent and simulation modules import no persistence/network API
+  ---
+  duration_ms: 5.927084
+  type: 'test'
+  ...
+# Subtest: negative control catches accidental repeated move when no-op guard is removed
+ok 70 - negative control catches accidental repeated move when no-op guard is removed
+  ---
+  duration_ms: 14.302333
+  type: 'test'
+  ...
+# Subtest: real action and synthetic fixture images independently decode to the exact fixed payloads
+ok 71 - real action and synthetic fixture images independently decode to the exact fixed payloads
+  ---
+  duration_ms: 191.945708
+  type: 'test'
+  ...
+# Subtest: benchmark refuses an index outside the disposable namespace
+ok 72 - benchmark refuses an index outside the disposable namespace
+  ---
+  duration_ms: 92.142042
+  type: 'test'
+  ...
+# Subtest: benchmark requires confirmation for an explicitly named disposable index
+ok 73 - benchmark requires confirmation for an explicitly named disposable index
+  ---
+  duration_ms: 69.264125
+  type: 'test'
+  ...
+# Subtest: formats visual delta percentages for PR comments
+ok 74 - formats visual delta percentages for PR comments
+  ---
+  duration_ms: 1.224167
+  type: 'test'
+  ...
+# Subtest: builds changed visual report with diff and composite files
+ok 75 - builds changed visual report with diff and composite files
+  ---
+  duration_ms: 402.685334
+  type: 'test'
+  ...
+# Subtest: focuses changed composites around the padded changed bounds
+ok 76 - focuses changed composites around the padded changed bounds
+  ---
+  duration_ms: 223.956125
+  type: 'test'
+  ...
+# Subtest: renders changed composite as a translucent overlay on the after image
+ok 77 - renders changed composite as a translucent overlay on the after image
+  ---
+  duration_ms: 205.08725
+  type: 'test'
+  ...
+# Subtest: builds unchanged visual report without composite file
+ok 78 - builds unchanged visual report without composite file
+  ---
+  duration_ms: 2.803542
+  type: 'test'
+  ...
+# Subtest: builds scan-first PR comment with changed evidence gallery
+ok 79 - builds scan-first PR comment with changed evidence gallery
+  ---
+  duration_ms: 0.311667
+  type: 'test'
+  ...
+# Subtest: selects core route smoke for ordinary UI changes
+ok 80 - selects core route smoke for ordinary UI changes
+  ---
+  duration_ms: 1.255458
+  type: 'test'
+  ...
+# Subtest: selects core and focused Items screenshots for Items view changes
+ok 81 - selects core and focused Items screenshots for Items view changes
+  ---
+  duration_ms: 0.119584
+  type: 'test'
+  ...
+# Subtest: selects core and focused Tags screenshots for Tags view changes
+ok 82 - selects core and focused Tags screenshots for Tags view changes
+  ---
+  duration_ms: 0.066667
+  type: 'test'
+  ...
+# Subtest: selects all scenarios for shared visual infrastructure changes
+ok 83 - selects all scenarios for shared visual infrastructure changes
+  ---
+  duration_ms: 0.1075
+  type: 'test'
+  ...
+# Subtest: selects no scenarios for docs-only changes
+ok 84 - selects no scenarios for docs-only changes
+  ---
+  duration_ms: 0.057458
+  type: 'test'
+  ...
+1..84
+# tests 84
+# suites 0
+# pass 84
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1378.256167

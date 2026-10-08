@@ -30,3 +30,30 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Interactive: Story = {};
+
+export const ActionCodes: Story = {
+    args: { actionCards: true },
+    parameters: {
+        review: {
+            viewports: ['1280x720', '820x900', '390x844', '390x480'],
+            textScale: [1, 1.25],
+            purpose: 'Read-only scanner-operated action and synthetic fixture QR screen.',
+            responsive:
+                'Two action cards side by side when space permits; one column on narrow screens. Code content scrolls above a separate bottom capture row.',
+            interactions: [
+                'Start/Resume focus, native mode command then fixture, tap parity, interruptions, diagnostics disclosure, scroll to every card.',
+            ],
+            exclusions: ['Physical screen scanning, scanner settings, household writes, application integration.'],
+            expectations: [
+                'When paused, an explicit44px Resume button sits beside the44px input in the reserved bottom dock; it stays visible at every content scroll position and125% text without automatic refocus.',
+                'Primary session status, next step and read-only outcome are understandable without opening diagnostics.',
+                'Human labels and matching tap buttons accompany genuine black-on-white square action QR codes with four-module quiet zones.',
+                'Synthetic item/container/product test codes are a distinct group with no owned-inventory claim.',
+                'Codes remain224px square, buttons at least44px high, labels readable at125% text; no horizontal document overflow.',
+                'Each card and capture control remains reachable on narrow/short screens via the content scrollbar; diagnostics are closed initially.',
+                'The capture field stays in a bottom row while code cards scroll within the remaining viewport; Start/Resume do not scroll the content. No automatic refocus after interruption.',
+                'Capitalized commands remain rejected with an actionable visible reason; escaped raw text is local diagnostics only. Native iOS keyboard/visual viewport behavior requires physical retest.',
+            ],
+        },
+    },
+};

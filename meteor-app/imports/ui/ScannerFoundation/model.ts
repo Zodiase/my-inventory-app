@@ -6,7 +6,7 @@
  */
 export type Capture = 'off' | 'paused' | 'draining' | 'ready' | 'collecting';
 export type Kind = 'item' | 'container' | 'product' | 'command' | 'invalid';
-export type Action = 'inspect-demo' | 'show-actions' | 'pause' | 'exit' | 'start' | 'resume';
+export type Action = 'inspect-demo' | 'show-actions' | 'move-demo' | 'pause' | 'exit' | 'start' | 'resume';
 export type Outcome = 'pending' | 'resolved' | 'unknown' | 'error' | 'cancelled' | 'rejected' | 'discarded';
 export interface Read {
     id: string;
@@ -28,7 +28,7 @@ export interface State {
     buffer: string;
     uncertain: boolean;
     reason: string;
-    mode: 'inspect-demo' | 'show-actions';
+    mode: 'inspect-demo' | 'show-actions' | 'move-demo';
     reads: Read[];
     actions: Array<{ action: Action; origin: 'tap' | 'scan'; epoch: number }>;
     provenance: 'input' | 'paste';
@@ -48,7 +48,7 @@ export const initialState = (): State => ({
 });
 const uuid = '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}';
 const identity = new RegExp(`^(item|container): (${uuid})$`, 'u');
-export const commands: readonly Action[] = ['inspect-demo', 'show-actions', 'pause', 'exit'];
+export const commands: readonly Action[] = ['inspect-demo', 'show-actions', 'move-demo', 'pause', 'exit'];
 const firstPrintable = 32;
 const deleteCode = 127;
 function hasControls(value: string): boolean {
@@ -69,6 +69,17 @@ export function classify(value: string): { kind: Kind; action?: Action } {
     if (match !== null) return { kind: match[1] as Kind };
     if (/^[0-9]{8,14}$/u.test(value)) return { kind: 'product' };
     return { kind: 'invalid' };
+}
+/** Explain rejected text without normalizing or dispatching it. */
+export function rejectionReason(value: string): string {
+    const exactCommand = commands
+        .map((verb) => `inventory-action:v1:${verb}`)
+        .find((payload) => payload !== value && payload.toLowerCase() === value.toLowerCase());
+    if (exactCommand !== undefined)
+        return `Action code capitalization differs. Expected ${exactCommand}. Check input capitalization and rescan.`;
+    if (/^inventory-action:/iu.test(value))
+        return 'Unsupported action version or name. Scan a listed action code exactly; no action was run.';
+    return 'Unsupported payload. Scan a listed action or synthetic test code exactly; no action or lookup was run.';
 }
 export type Event =
     | { type: 'action'; action: Action; origin: 'tap' | 'scan'; localGesture?: boolean; continuationAllowed?: boolean }
@@ -115,7 +126,7 @@ function interrupt(state: State, reason: string): State {
     if (state.buffer !== '')
         next = append(state, {
             kind: 'invalid',
-            value: '[partial omitted]',
+            value: state.buffer,
             provenance: state.provenance,
             outcome: 'rejected',
             detail: reason,
@@ -153,12 +164,12 @@ export function reduce(state: State, event: Event): State {
         if (action === 'start' && state.capture !== 'off') return state;
         if (action === 'resume' && state.capture !== 'paused') return state;
         if (state.capture === 'off' && action !== 'start') return state;
-        // Only the two read-only proof modes retain the same capture sink. A scoped
+        // Synthetic modes retain the same capture sink. A scoped
         // adapter must verify live focus/visibility at a completed frame boundary.
         const continueCapture =
             origin === 'scan' &&
             event.continuationAllowed === true &&
-            (action === 'inspect-demo' || action === 'show-actions') &&
+            (action === 'inspect-demo' || action === 'show-actions' || action === 'move-demo') &&
             state.capture === 'ready' &&
             state.buffer === '' &&
             !state.uncertain;
@@ -269,8 +280,10 @@ export function reduce(state: State, event: Event): State {
             return interrupt(state, 'Capacity reached. Resolve pending reads or exit and reload; no read was added.');
         if (event.value.length > limits.frame || hasControls(event.value))
             return interrupt(
-                { ...state, buffer: '[invalid]' },
-                'Unsupported or oversized frame; re-establish the boundary.'
+                { ...state, buffer: event.value.slice(0, limits.frame) },
+                event.value.length > limits.frame
+                    ? 'Frame exceeds 512 characters; retained prefix only. Resume, finish one discarded read, then rescan.'
+                    : 'Control characters are unsupported. Resume, finish one discarded read, then rescan.'
             );
         return {
             ...state,
@@ -302,13 +315,13 @@ export function reduce(state: State, event: Event): State {
         let next: State = { ...state, buffer: '', capture: 'ready', provenance: 'input' };
         next = append(next, {
             kind: classified.kind,
-            value: classified.kind === 'invalid' ? '[invalid omitted]' : value,
+            value,
             provenance: state.provenance,
             outcome:
                 classified.kind === 'invalid' ? 'rejected' : classified.kind === 'command' ? 'resolved' : 'pending',
             detail:
                 classified.kind === 'invalid'
-                    ? 'Unsupported payload; no action or lookup.'
+                    ? rejectionReason(value)
                     : classified.kind === 'command'
                     ? 'Synthetic action dispatched.'
                     : 'Captured; awaiting read-only fixture.',

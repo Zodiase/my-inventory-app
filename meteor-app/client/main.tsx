@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { App } from '/imports/ui/App';
+import { ScannerAppRoot } from '/imports/ui/ScannerFoundation/ScannerAppRoot';
 import { setupDiagnostics } from '/imports/utility/diagnostics';
 
 setupDiagnostics();
@@ -14,5 +14,5 @@ Meteor.startup(() => {
         throw new Error('React root not found.');
     }
 
-    createRoot(reactRenderRootElement).render(<App />);
+    createRoot(reactRenderRootElement).render(<ScannerAppRoot />);
 });

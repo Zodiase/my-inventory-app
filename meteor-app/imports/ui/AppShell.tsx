@@ -41,6 +41,12 @@ const navItems: NavItem[] = [
         isActive: (location) => location.startsWith('/search'),
     },
     {
+        href: '/scanner/demo',
+        label: 'Scanner simulation',
+        icon: <Apps />,
+        isActive: (location) => location === '/scanner/demo',
+    },
+    {
         href: '/settings/data',
         label: 'Data',
         icon: <Configure />,

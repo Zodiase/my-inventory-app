@@ -8,19 +8,9 @@ import styled from 'styled-components';
 
 import { TouchButton } from '../TouchButton';
 
-import { attachCapture } from './adapter';
-import {
-    commands,
-    fixtures,
-    dispatchAction,
-    initialState,
-    reduce,
-    retryBlockReason,
-    type Event,
-    type Action,
-    type State,
-    type Read,
-} from './model';
+import { commands, fixtures, initialState, reduce, retryBlockReason, type State, type Read } from './model';
+import { ScannerActionWorkspace } from './ScannerActionWorkspace';
+import { useCaptureSession } from './useCaptureSession';
 /** Live guidance follows current action guards; resolver evidence stays factual. */
 function recoveryGuidance(state: State, read: Read): string | undefined {
     if (read.outcome === 'pending' && read.epoch === state.epoch)
@@ -42,7 +32,9 @@ const Surface = styled.main`
     padding: 20px;
     color: #17283b;
     background: #f5f7fa;
-    font: 16px/1.5 system-ui, sans-serif;
+    font:
+        16px/1.5 system-ui,
+        sans-serif;
     * {
         box-sizing: border-box;
     }
@@ -111,10 +103,8 @@ const Controls = styled.div`
     gap: 8px;
     align-items: center;
 `;
-export const ScannerFoundationProof = (): ReactElement => {
-    const [state, setState] = useState<State>(initialState);
-    const current = useRef(state);
-    const sink = useRef<HTMLInputElement>(null);
+export const ScannerFoundationProof = ({ actionCards = false }: { actionCards?: boolean }): ReactElement => {
+    const { state, sink, send, action } = useCaptureSession(initialState, reduce);
     const dialog = useRef<HTMLDialogElement>(null);
     const [fault, setFault] = useState('normal');
     const [expected, setExpected] = useState('any');
@@ -125,16 +115,6 @@ export const ScannerFoundationProof = (): ReactElement => {
     const scheduled = useRef(new Set<string>());
     const timers = useRef<Array<ReturnType<typeof setTimeout>>>([]);
     const [calls, setCalls] = useState<string[]>([]);
-    const send = (event: Event): void => {
-        const next = reduce(current.current, event);
-        current.current = next;
-        setState(next);
-    };
-    useEffect(() => {
-        const input = sink.current;
-        if (input === null) return;
-        return attachCapture(input, () => current.current, send);
-    }, []);
     useEffect(() => {
         for (const read of state.reads) {
             const token = `${read.id}:${read.attempt}`;
@@ -182,21 +162,198 @@ export const ScannerFoundationProof = (): ReactElement => {
         },
         []
     );
-    const action = (value: Action): void => {
-        const next = dispatchAction(current.current, value, { origin: 'tap', localGesture: true });
-        current.current = next;
-        setState(next);
-        if (value === 'start' || value === 'resume') {
-            sink.current?.focus();
-            if (document.hidden || document.activeElement !== sink.current || dialog.current?.open === true)
-                send({
-                    type: 'pause',
-                    reason: 'Capture focus unavailable. Resume when the page is visible and dialog is closed.',
-                });
-        }
-    };
     const last = state.reads.at(-1);
     const captured = state.reads.filter((read) => read.kind !== 'invalid' && read.kind !== 'command');
+    const readResults = (
+        <section aria-label="Read results">
+            <h2>Last outcome</h2>
+            <p data-testid="last-outcome">
+                {last === undefined ? 'No captures yet.' : `${last.id} · ${last.outcome} · ${last.detail}`}
+            </p>
+            {last !== undefined && recoveryGuidance(state, last) !== undefined && (
+                <p data-testid="last-recovery-guidance">{recoveryGuidance(state, last)}</p>
+            )}
+            <p data-testid="counters">
+                Captured {captured.length} · Pending {captured.filter((r) => r.outcome === 'pending').length} · Resolved{' '}
+                {captured.filter((r) => r.outcome === 'resolved').length} · Rejected{' '}
+                {state.reads.filter((r) => r.outcome === 'rejected').length} · Discarded{' '}
+                {state.reads.filter((r) => r.outcome === 'discarded').length}
+            </p>
+            <details>
+                <summary>Ordered capture evidence</summary>
+                <ul>
+                    {state.reads.map((read) => (
+                        <li key={read.id} data-testid="read-record">
+                            <strong>
+                                {read.id} · {read.kind} · {read.outcome}
+                            </strong>
+                            <p>
+                                <code>{JSON.stringify(read.value)}</code>
+                            </p>
+                            <p>
+                                {read.detail} · {read.provenance} · attempt {read.attempt} · prior outcomes{' '}
+                                {read.attempts.map((a) => a.outcome).join(', ')}
+                                {read.corrected ? ' · marked for correction' : ''}
+                            </p>
+                            {recoveryGuidance(state, read) !== undefined && (
+                                <p role="status" data-testid="read-recovery-guidance">
+                                    {recoveryGuidance(state, read)}
+                                </p>
+                            )}
+                            <Controls>
+                                <TouchButton
+                                    variant="secondary"
+                                    disabled={retryBlockReason(state, read) !== undefined}
+                                    onClick={() => {
+                                        send({ type: 'retry', id: read.id });
+                                    }}
+                                >
+                                    Retry
+                                </TouchButton>
+                                <TouchButton
+                                    variant="secondary"
+                                    disabled={read.outcome !== 'pending' || read.epoch !== state.epoch}
+                                    onClick={() => {
+                                        send({ type: 'cancel', id: read.id });
+                                    }}
+                                >
+                                    Cancel
+                                </TouchButton>
+                                <TouchButton
+                                    variant="secondary"
+                                    disabled={read.corrected || read.epoch !== state.epoch}
+                                    onClick={() => {
+                                        send({ type: 'correct', id: read.id });
+                                    }}
+                                >
+                                    Mark correction
+                                </TouchButton>
+                            </Controls>
+                        </li>
+                    ))}
+                </ul>
+            </details>
+        </section>
+    );
+    const proofControls = (
+        <section aria-label="Proof controls">
+            <h2>Proof controls</h2>
+            <label>
+                Synthetic expected kind
+                <select
+                    value={expected}
+                    onChange={(e) => {
+                        setExpected(e.target.value);
+                    }}
+                >
+                    {['any', 'item', 'container'].map((kind) => (
+                        <option key={kind} value={kind}>
+                            {kind}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            <label>
+                Resolver fault
+                <select
+                    value={fault}
+                    onChange={(e) => {
+                        setFault(e.target.value);
+                    }}
+                >
+                    <option value="normal">Normal fixture</option>
+                    {['slow', 'reordered', 'error', 'offline', 'timeout'].map((value) => (
+                        <option key={value} value={value}>
+                            {value}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            <label>
+                Ordinary editing field
+                <input
+                    aria-label="Ordinary editing field"
+                    placeholder="Scanner may type here while capture is paused"
+                />
+            </label>
+            <Controls>
+                <TouchButton
+                    variant="secondary"
+                    onClick={() => {
+                        send({ type: 'pause', reason: 'Dialog opened. Resume explicitly after closing.' });
+                        dialog.current?.showModal();
+                    }}
+                >
+                    Open dialog
+                </TouchButton>
+                <TouchButton
+                    variant="secondary"
+                    onClick={() => {
+                        send({
+                            type: 'pause',
+                            reason: 'Synthetic reconnect: transport not qualified. Resume explicitly.',
+                        });
+                    }}
+                >
+                    Simulate reconnect
+                </TouchButton>
+            </Controls>
+            <dialog ref={dialog}>
+                <h2>Capture paused</h2>
+                <p>Closing this dialog does not resume capture.</p>
+                <TouchButton
+                    onClick={() => {
+                        dialog.current?.close();
+                    }}
+                >
+                    Close dialog
+                </TouchButton>
+            </dialog>
+            <details>
+                <summary>Exact synthetic fixtures and limits</summary>
+                <ul>
+                    {Object.keys(fixtures).map((code) => (
+                        <li key={code}>
+                            <code>{code}</code>
+                        </li>
+                    ))}
+                </ul>
+                <p>
+                    512 characters/frame, 2 seconds inactivity cancellation, 8 pending, 100 records per temporary proof.
+                    Refresh clears this temporary proof; nothing is replayed or saved to inventory.
+                </p>
+            </details>
+        </section>
+    );
+    if (actionCards)
+        return (
+            <ScannerActionWorkspace
+                state={state}
+                onAction={action}
+                diagnostics={
+                    <>
+                        {proofControls}
+                        {readResults}
+                        <pre data-testid="action-history">{JSON.stringify(state.actions, null, jsonIndent)}</pre>
+                    </>
+                }
+                captureInput={
+                    <input
+                        ref={sink}
+                        aria-label="Scanner input"
+                        value={state.buffer}
+                        readOnly={state.capture === 'off' || state.capture === 'paused'}
+                        onChange={() => {
+                            /* Native adapter owns framing. */
+                        }}
+                        autoComplete="off"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
+                    />
+                }
+            />
+        );
     return (
         <Surface>
             <h1>Scanner foundation</h1>
@@ -256,6 +413,9 @@ export const ScannerFoundationProof = (): ReactElement => {
                             /* Native adapter owns input framing. */
                         }}
                         autoComplete="off"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
                     />
                 </label>
                 <p>
@@ -269,75 +429,7 @@ export const ScannerFoundationProof = (): ReactElement => {
                         : 'Enter one complete fixture; press Enter. Repeated reads stay separate.'}
                 </p>
             </section>
-            <section aria-label="Read results">
-                <h2>Last outcome</h2>
-                <p data-testid="last-outcome">
-                    {last === undefined ? 'No captures yet.' : `${last.id} · ${last.outcome} · ${last.detail}`}
-                </p>
-                {last !== undefined && recoveryGuidance(state, last) !== undefined && (
-                    <p data-testid="last-recovery-guidance">{recoveryGuidance(state, last)}</p>
-                )}
-                <p data-testid="counters">
-                    Captured {captured.length} · Pending {captured.filter((r) => r.outcome === 'pending').length} ·
-                    Resolved {captured.filter((r) => r.outcome === 'resolved').length} · Rejected{' '}
-                    {state.reads.filter((r) => r.outcome === 'rejected').length} · Discarded{' '}
-                    {state.reads.filter((r) => r.outcome === 'discarded').length}
-                </p>
-                <details>
-                    <summary>Ordered capture evidence</summary>
-                    <ul>
-                        {state.reads.map((read) => (
-                            <li key={read.id} data-testid="read-record">
-                                <strong>
-                                    {read.id} · {read.kind} · {read.outcome}
-                                </strong>
-                                <p>
-                                    <code>{read.value}</code>
-                                </p>
-                                <p>
-                                    {read.detail} · {read.provenance} · attempt {read.attempt} · prior outcomes{' '}
-                                    {read.attempts.map((a) => a.outcome).join(', ')}
-                                    {read.corrected ? ' · marked for correction' : ''}
-                                </p>
-                                {recoveryGuidance(state, read) !== undefined && (
-                                    <p role="status" data-testid="read-recovery-guidance">
-                                        {recoveryGuidance(state, read)}
-                                    </p>
-                                )}
-                                <Controls>
-                                    <TouchButton
-                                        variant="secondary"
-                                        disabled={retryBlockReason(state, read) !== undefined}
-                                        onClick={() => {
-                                            send({ type: 'retry', id: read.id });
-                                        }}
-                                    >
-                                        Retry
-                                    </TouchButton>
-                                    <TouchButton
-                                        variant="secondary"
-                                        disabled={read.outcome !== 'pending' || read.epoch !== state.epoch}
-                                        onClick={() => {
-                                            send({ type: 'cancel', id: read.id });
-                                        }}
-                                    >
-                                        Cancel
-                                    </TouchButton>
-                                    <TouchButton
-                                        variant="secondary"
-                                        disabled={read.corrected || read.epoch !== state.epoch}
-                                        onClick={() => {
-                                            send({ type: 'correct', id: read.id });
-                                        }}
-                                    >
-                                        Mark correction
-                                    </TouchButton>
-                                </Controls>
-                            </li>
-                        ))}
-                    </ul>
-                </details>
-            </section>
+            {readResults}
             <section aria-label="Synthetic actions">
                 <h2>Tap / scan parity</h2>
                 <p>
@@ -368,94 +460,7 @@ export const ScannerFoundationProof = (): ReactElement => {
                     </p>
                 </details>
             </section>
-            <section aria-label="Proof controls">
-                <h2>Proof controls</h2>
-                <label>
-                    Synthetic expected kind
-                    <select
-                        value={expected}
-                        onChange={(e) => {
-                            setExpected(e.target.value);
-                        }}
-                    >
-                        {['any', 'item', 'container'].map((kind) => (
-                            <option key={kind} value={kind}>
-                                {kind}
-                            </option>
-                        ))}
-                    </select>
-                </label>
-                <label>
-                    Resolver fault
-                    <select
-                        value={fault}
-                        onChange={(e) => {
-                            setFault(e.target.value);
-                        }}
-                    >
-                        <option value="normal">Normal fixture</option>
-                        {['slow', 'reordered', 'error', 'offline', 'timeout'].map((value) => (
-                            <option key={value} value={value}>
-                                {value}
-                            </option>
-                        ))}
-                    </select>
-                </label>
-                <label>
-                    Ordinary editing field
-                    <input
-                        aria-label="Ordinary editing field"
-                        placeholder="Scanner may type here while capture is paused"
-                    />
-                </label>
-                <Controls>
-                    <TouchButton
-                        variant="secondary"
-                        onClick={() => {
-                            send({ type: 'pause', reason: 'Dialog opened. Resume explicitly after closing.' });
-                            dialog.current?.showModal();
-                        }}
-                    >
-                        Open dialog
-                    </TouchButton>
-                    <TouchButton
-                        variant="secondary"
-                        onClick={() => {
-                            send({
-                                type: 'pause',
-                                reason: 'Synthetic reconnect: transport not qualified. Resume explicitly.',
-                            });
-                        }}
-                    >
-                        Simulate reconnect
-                    </TouchButton>
-                </Controls>
-                <dialog ref={dialog}>
-                    <h2>Capture paused</h2>
-                    <p>Closing this dialog does not resume capture.</p>
-                    <TouchButton
-                        onClick={() => {
-                            dialog.current?.close();
-                        }}
-                    >
-                        Close dialog
-                    </TouchButton>
-                </dialog>
-                <details>
-                    <summary>Exact synthetic fixtures and limits</summary>
-                    <ul>
-                        {Object.keys(fixtures).map((code) => (
-                            <li key={code}>
-                                <code>{code}</code>
-                            </li>
-                        ))}
-                    </ul>
-                    <p>
-                        512 characters/frame, 2 seconds inactivity cancellation, 8 pending, 100 records per temporary
-                        proof. Refresh clears this temporary proof; nothing is replayed or saved to inventory.
-                    </p>
-                </details>
-            </section>
+            {proofControls}
         </Surface>
     );
 };
