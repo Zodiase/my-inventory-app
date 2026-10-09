@@ -4,8 +4,17 @@
  * capture behavior can be tested without evaluating application getters.
  */
 export type CaptureDecision = 'root-loading' | 'contents' | 'invalid' | 'child-loading';
-export type CaptureBoundary = 'tags' | 'route-container' | 'search-scope' | 'contents-identity';
+export type DescendantBoundary = 'grommet' | 'app-shell' | 'switch' | 'document-root';
+export type CaptureBoundary = 'tags' | 'route-container' | 'search-scope' | 'contents-identity' | DescendantBoundary;
 export type CapturePhase =
+    | 'descendant-entry'
+    | 'descendant-layout'
+    | 'descendant-mount'
+    | 'descendant-unmount'
+    | 'root-created'
+    | 'root-removed'
+    | 'root-profiler-commit'
+    | 'root-recoverable-error'
     | 'tracker-before'
     | 'tracker-after'
     | 'tree-start'
@@ -19,6 +28,7 @@ export type CapturePhase =
     | 'passive-mount'
     | 'passive-unmount';
 export interface CaptureFrame {
+    errorName?: 'Error' | 'TypeError' | 'ReferenceError' | 'RangeError' | 'SyntaxError' | 'other';
     boundary?: CaptureBoundary;
     instance?: string;
     rootFrame?: number;
@@ -43,6 +53,14 @@ export const captureLimits = Object.freeze({
     metadataBytes: 4096,
 });
 const phases: CapturePhase[] = [
+    'descendant-entry',
+    'descendant-layout',
+    'descendant-mount',
+    'descendant-unmount',
+    'root-created',
+    'root-removed',
+    'root-profiler-commit',
+    'root-recoverable-error',
     'tracker-before',
     'tracker-after',
     'tree-start',
@@ -97,7 +115,12 @@ export function recordExistingGetter(
     if (frame !== undefined) frame[slot] = value;
     return value;
 }
-export function createLoadingCapture(epoch: string, clock: () => number, boundaries = false): LoadingCapture {
+export function createLoadingCapture(
+    epoch: string,
+    clock: () => number,
+    boundaries = false,
+    descendants = false
+): LoadingCapture {
     const aliases = new WeakMap<object, string>();
     const sequences = new WeakMap<object, number>();
     let aliasCount = 0;
@@ -133,7 +156,16 @@ export function createLoadingCapture(epoch: string, clock: () => number, boundar
     };
     const clean = (raw: CaptureFrame): CaptureFrame => {
         const out: CaptureFrame = {};
-        if (boundaries && ['tags', 'route-container', 'search-scope', 'contents-identity'].includes(raw.boundary ?? ''))
+        if (
+            boundaries &&
+            [
+                'tags',
+                'route-container',
+                'search-scope',
+                'contents-identity',
+                ...(descendants ? ['grommet', 'app-shell', 'switch', 'document-root'] : []),
+            ].includes(raw.boundary ?? '')
+        )
             out.boundary = raw.boundary;
         if (typeof raw.instance === 'string' && /^instance-([1-9]|1[0-6])$/u.test(raw.instance))
             out.instance = raw.instance;
@@ -150,6 +182,12 @@ export function createLoadingCapture(epoch: string, clock: () => number, boundar
             'identities',
         ] as const)
             if (typeof raw[key] === 'boolean') out[key] = raw[key];
+        if (
+            descendants &&
+            raw.errorName !== undefined &&
+            ['Error', 'TypeError', 'ReferenceError', 'RangeError', 'SyntaxError', 'other'].includes(raw.errorName)
+        )
+            out.errorName = raw.errorName;
         return out;
     };
     return {
@@ -174,6 +212,12 @@ export function createLoadingCapture(epoch: string, clock: () => number, boundar
         },
         record(phase: CapturePhase, raw: CaptureFrame) {
             if (stopped || unavailable !== undefined || !phases.includes(phase)) return;
+            if (
+                !descendants &&
+                (phase.startsWith('descendant-') ||
+                    ['root-created', 'root-removed', 'root-profiler-commit', 'root-recoverable-error'].includes(phase))
+            )
+                return;
             const at = clock();
             const event: Event = {
                 ...clean(raw),
@@ -214,7 +258,11 @@ export function createLoadingCapture(epoch: string, clock: () => number, boundar
                     ? 'no-completed-commit'
                     : undefined);
             return {
-                schema: boundaries ? 'root-route-loading/v2' : 'root-route-loading/v1',
+                schema: descendants
+                    ? 'root-route-loading/v3'
+                    : boundaries
+                    ? 'root-route-loading/v2'
+                    : 'root-route-loading/v1',
                 documentEpoch: validCaptureCapability({ schema: 1, epoch }) ? epoch : 'document-unavailable',
                 available: unavailable === undefined,
                 complete: reason === undefined,

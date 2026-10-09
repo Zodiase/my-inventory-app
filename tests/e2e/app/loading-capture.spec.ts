@@ -1,5 +1,5 @@
 /** Proves opted-in loading capture observes real child commits without remounting it. */
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 
 import { expect, test } from '@playwright/test';
 
@@ -34,12 +34,33 @@ test('links real gate and child commits and retains the child across root update
             ).inventoryE2eLoadingCapture.read()
         );
     await expect.poll(async () => (await read()).events.filter((e) => e.phase === 'passive-mount').length).toBe(1);
+    await expect.poll(async () => (await read()).events.some((e) => e.phase === 'root-profiler-commit')).toBe(true);
     const before = await read();
+    await writeFile(test.info().outputPath('descendant-capture-before.json'), JSON.stringify(before, null, 2));
+    await test.info().attach('descendant-capture-before', {
+        body: Buffer.from(JSON.stringify(before)),
+        contentType: 'application/json',
+    });
     expect(before.complete).toBe(true);
     expect(before.events.some((e) => e.phase === 'tracker-before')).toBe(true);
     expect(before.events.some((e) => e.phase === 'tree-end')).toBe(true);
     expect(before.events.some((e) => e.phase === 'route-entry')).toBe(true);
     expect(before.events.some((e) => e.phase === 'shell-commit')).toBe(true);
+    for (const boundary of ['grommet', 'app-shell', 'switch']) {
+        const entry = before.events.findLast((e) => e.phase === 'descendant-entry' && e.boundary === boundary);
+        expect(entry).toBeDefined();
+        expect(
+            before.events.some(
+                (e) =>
+                    e.phase === 'descendant-layout' &&
+                    e.boundary === boundary &&
+                    e.instance === entry?.instance &&
+                    e.rootFrame === entry?.rootFrame
+            )
+        ).toBe(true);
+    }
+    expect(before.events.some((e) => e.phase === 'root-profiler-commit')).toBe(true);
+    expect(before.events.filter((e) => e.phase === 'root-created')).toHaveLength(1);
     const childCommit = before.events.findLast(
         (e) => e.phase === 'commit' && e.childFrame !== undefined && e.decision === 'contents'
     );
@@ -56,6 +77,7 @@ test('links real gate and child commits and retains the child across root update
     await callMeteorMethod(page, 'createItem', { name: 'Capture added item', containerId });
     await expect(page.getByText('Capture added item', { exact: true })).toBeVisible();
     const after = await read();
+    await writeFile(test.info().outputPath('descendant-capture-after.json'), JSON.stringify(after, null, 2));
     expect(after.complete).toBe(true);
     expect(after.events.filter((e) => e.phase === 'passive-mount')).toHaveLength(1);
     expect(after.events.filter((e) => e.phase === 'passive-unmount')).toHaveLength(0);
@@ -111,7 +133,7 @@ test('a failed real-browser assertion persists the opted-in ring alongside DDP e
         const evidence = JSON.parse(artifact!);
         expect(evidence.finalSampleCompleted).toBe(true);
         expect(evidence.renderCapture).toMatchObject({
-            schema: 'root-route-loading/v2',
+            schema: 'root-route-loading/v3',
             available: true,
             complete: true,
             stopped: true,
@@ -215,4 +237,56 @@ test('malformed and late capabilities cannot enable a retained document', async 
     });
     await page.getByRole('link', { name: 'Search inventory' }).click();
     expect(await page.evaluate(() => 'inventoryE2eLoadingCapture' in globalThis)).toBe(false);
+});
+
+test('scanner detour records inventory unmount without replacing the document root', async ({ page }) => {
+    await page.addInitScript(() => {
+        Object.defineProperty(globalThis, 'inventoryE2eLoadingCapability', {
+            value: Object.freeze({ schema: 1, epoch: 'document-0123456789abcdef' }),
+        });
+    });
+    await page.goto('/items');
+    await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
+    await page.evaluate(() => {
+        history.pushState(null, '', '/scanner/demo');
+        dispatchEvent(new PopStateEvent('popstate'));
+    });
+    await expect(page.getByRole('button', { name: 'Leave simulation', exact: true })).toBeVisible();
+    const evidence = await page.evaluate(() =>
+        (
+            globalThis as unknown as {
+                inventoryE2eLoadingCapture: { read: () => { events: Array<Record<string, unknown>> } };
+            }
+        ).inventoryE2eLoadingCapture.read()
+    );
+    expect(evidence.events.some((e) => e.phase === 'descendant-unmount' && e.boundary === 'grommet')).toBe(true);
+    expect(evidence.events.some((e) => e.phase === 'root-removed')).toBe(false);
+    expect(evidence.events.some((e) => e.phase === 'descendant-unmount' && e.boundary === 'document-root')).toBe(false);
+});
+
+test('root removal is retained separately and drain disconnects its observer', async ({ page }) => {
+    await page.addInitScript(() => {
+        Object.defineProperty(globalThis, 'inventoryE2eLoadingCapability', {
+            value: Object.freeze({ schema: 1, epoch: 'document-0123456789abcdef' }),
+        });
+    });
+    await page.goto('/items');
+    await expect(page.getByRole('heading', { name: 'All Items', exact: true })).toBeVisible();
+    await page.evaluate(() => {
+        document.getElementById('react-target')!.remove();
+    });
+    await expect
+        .poll(async () =>
+            page.evaluate(
+                () =>
+                    (
+                        globalThis as unknown as {
+                            inventoryE2eLoadingCapture: { read: () => { events: Array<Record<string, unknown>> } };
+                        }
+                    ).inventoryE2eLoadingCapture
+                        .read()
+                        .events.filter((e) => e.phase === 'root-removed').length
+            )
+        )
+        .toBe(1);
 });

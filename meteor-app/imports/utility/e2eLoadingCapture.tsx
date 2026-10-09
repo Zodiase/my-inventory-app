@@ -1,16 +1,17 @@
 /**
  * Test-opt-in loading capture for the real application, disabled in production.
- * Profiler boundaries and a null lifecycle sibling observe commits without
- * adding hooks to existing components, changing getters, or scheduling updates.
+ * Test-only stable observers distinguish descendant entry, layout commit and
+ * root lifetime without adding hooks to existing components or scheduling updates.
  */
 import { Meteor } from 'meteor/meteor';
-import React, { Profiler, useEffect, type ReactElement, type ProfilerOnRenderCallback } from 'react';
+import React, { Profiler, useEffect, useLayoutEffect, type ReactElement, type ProfilerOnRenderCallback } from 'react';
 
 import {
     createLoadingCapture,
     validCaptureCapability,
     type CaptureFrame,
     type CaptureBoundary,
+    type DescendantBoundary,
 } from './e2eLoadingEvidence';
 
 type Capture = ReturnType<typeof createLoadingCapture>;
@@ -44,9 +45,10 @@ const enabled =
 const epoch = host.inventoryE2eLoadingBootstrap?.epoch;
 // Module re-evaluation invalidates measurement rather than toggling the observer
 // topology for a retained component. Only a new document starts a fresh capture.
+export const loadingCaptureEnabled = enabled;
 const existing = enabled ? host.inventoryE2eLoadingCapture : undefined;
 const collector = enabled
-    ? existing?.collector ?? createLoadingCapture(epoch ?? 'document-unavailable', () => performance.now(), true)
+    ? existing?.collector ?? createLoadingCapture(epoch ?? 'document-unavailable', () => performance.now(), true, true)
     : undefined;
 if (collector !== undefined && enabled) {
     if (existing !== undefined) collector.markUnavailable('hot-reload');
@@ -56,6 +58,7 @@ if (collector !== undefined && enabled) {
             collector,
             read: () => collector.snapshot(),
             stop: () => {
+                stopRootObservation?.();
                 collector.stop();
             },
         };
@@ -131,4 +134,82 @@ export function captureShell(frame: CaptureFrame | undefined, element: ReactElem
             {element}
         </Profiler>
     );
+}
+
+/** Entry means this observer ran before its child, not that the child completed. */
+function DescendantObserver({
+    frame,
+    boundary,
+    children,
+}: {
+    frame: CaptureFrame;
+    boundary: DescendantBoundary;
+    children: ReactElement;
+}): ReactElement {
+    collector?.record('descendant-entry', { ...frame, boundary });
+    useLayoutEffect(() => {
+        collector?.record('descendant-layout', { ...frame, boundary });
+    });
+    useLayoutEffect(() => {
+        collector?.record('descendant-mount', { ...frame, boundary });
+        return () => {
+            collector?.record('descendant-unmount', { ...frame, boundary });
+        };
+        // Lifetime follows stable observer identity; cleanup retains its mount frame.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    return children;
+}
+export function captureDescendant(
+    frame: CaptureFrame | undefined,
+    boundary: DescendantBoundary,
+    element: ReactElement
+): ReactElement {
+    if (collector === undefined || frame === undefined) return element;
+    return (
+        <DescendantObserver frame={Object.freeze({ ...frame })} boundary={boundary}>
+            {element}
+        </DescendantObserver>
+    );
+}
+let stopRootObservation: (() => void) | undefined = undefined;
+/** React18 supports recoverable errors only. Names are whitelisted; messages/stacks never retained. */
+export function captureDocumentRoot(target: HTMLElement, element: ReactElement): ReactElement {
+    if (collector === undefined) return element;
+    const frame = { instance: collector.alias(target), boundary: 'document-root' as const };
+    collector.record('root-created', frame);
+    const observer = new MutationObserver(() => {
+        if (!target.isConnected) {
+            collector.record('root-removed', frame);
+            observer.disconnect();
+        }
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    stopRootObservation = () => {
+        observer.disconnect();
+    };
+    return (
+        <Profiler
+            id="loading-document-root"
+            onRender={(...args: Parameters<ProfilerOnRenderCallback>) => {
+                collector.record('root-profiler-commit', { ...frame, commitBatch: collector.batchFor(args[5]) });
+            }}
+        >
+            <DescendantObserver frame={frame} boundary="document-root">
+                {element}
+            </DescendantObserver>
+        </Profiler>
+    );
+}
+export function captureRecoverableError(error: unknown): void {
+    if (collector === undefined) return;
+    const names = ['Error', 'TypeError', 'ReferenceError', 'RangeError', 'SyntaxError'];
+    const name =
+        error instanceof Error && names.includes(error.name)
+            ? (error.name as NonNullable<CaptureFrame['errorName']>)
+            : 'other';
+    collector.record('root-recoverable-error', { boundary: 'document-root', errorName: name });
+    // Keep React's default public reporting when supplying its callback.
+    if (typeof reportError === 'function') reportError(error);
+    else console.error(error);
 }

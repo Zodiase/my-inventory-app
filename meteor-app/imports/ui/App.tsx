@@ -21,6 +21,7 @@ import {
     captureTree,
     captureBoundary,
     captureShell,
+    captureDescendant,
 } from '/imports/utility/e2eLoadingCapture';
 import { useSubscribe, useTracker } from '/imports/utility/reactMeteorData';
 import type RecordInput from '/imports/utility/RecordInput';
@@ -486,229 +487,248 @@ export const App = (): ReactElement => {
         ? (getCurrentHistoryState() as ItemDetailNavigationState).searchReturnPath
         : undefined;
     captureBoundary(loadingCaptureRoot, 'tree-start');
-    const appTree = (
+    const appTree = captureDescendant(
+        loadingCaptureRoot,
+        'grommet',
         <Grommet theme={theme} full>
             <DesignSystemGlobalStyle />
             {captureShell(
                 loadingCaptureRoot,
-                <AppShell
-                    location={location}
-                    searchHref={
-                        isContainerRoute && routeContainerId !== undefined
-                            ? getSearchUrl({
-                                  query: '',
-                                  scope: 'scoped',
-                                  containerId: routeContainerId,
-                                  fragments: [],
-                                  submitted: false,
-                              })
-                            : searchReturnPath ?? '/search'
-                    }
-                    headerContent={
-                        location === '/search' ? (
-                            <SearchBanner
-                                exitHref={searchExitHref}
-                                exitLabel={searchExitLabel}
-                                query={searchUrlState.query}
-                                onQueryChange={(query) => {
-                                    updateSearchUrl({ query, submitted: false });
-                                }}
-                                onSearch={(query) => {
-                                    if (query.trim() === '' && !hasRunnableFilter(searchUrlState.fragments)) return;
-                                    if (searchUrlState.submitted && query === searchUrlState.query)
-                                        setSearchSubmitCount((count) => count + 1);
-                                    else updateSearchUrl({ query, submitted: true });
-                                }}
-                                scope={searchUrlState.scope}
-                                scopeLabel={searchScopeLabel}
-                                scopeAvailable={searchContainerId !== undefined}
-                                onScopeChange={(scope) => {
-                                    updateSearchUrl({
-                                        scope,
-                                        containerId: searchContainerId,
-                                        submitted:
-                                            searchUrlState.query.trim() !== '' ||
-                                            hasRunnableFilter(searchUrlState.fragments),
-                                    });
-                                }}
-                                fragments={searchUrlState.fragments}
-                                availableTags={allTags}
-                                onSetTagState={(tagId, state) => {
-                                    const fragments = setTagFilterState(searchUrlState.fragments, tagId, state);
-                                    updateSearchUrl({
-                                        fragments,
-                                        submitted: searchUrlState.query.trim() !== '' || hasRunnableFilter(fragments),
-                                    });
-                                }}
-                                onTypeChange={(type) => {
-                                    const fragments = setItemTypeFilter(searchUrlState.fragments, type);
-                                    updateSearchUrl({
-                                        fragments,
-                                        submitted: searchUrlState.query.trim() !== '' || hasRunnableFilter(fragments),
-                                    });
-                                }}
-                                onResetFilters={() => {
-                                    const fragments = resetSearchFilters();
-                                    updateSearchUrl({
-                                        scope: 'global',
-                                        fragments,
-                                        submitted: searchUrlState.query.trim() !== '' || hasRunnableFilter(fragments),
-                                    });
-                                }}
-                            />
-                        ) : !isSearchResultItemDetail && currentItemsContainerId !== undefined ? (
-                            <BreadcrumbTrail
-                                path={headerParentPath}
-                                showHomeIcon
-                                lastCrumbIsCurrent={false}
-                                onNavigateRoot={() => {
-                                    setLocation('/items');
-                                }}
-                                onNavigate={(item) => {
-                                    setLocation(`/container/${item._id}`);
-                                }}
-                                className="app-shell-breadcrumb"
-                            />
-                        ) : undefined
-                    }
-                >
-                    <Switch>
-                        {/* Home route - Items view */}
-                        <Route path="/">{() => renderItemsView()}</Route>
-
-                        {/* Items list route */}
-                        <Route path="/items">{() => renderItemsView()}</Route>
-
-                        {/* Container route */}
-                        <Route path="/container/:containerId">
-                            {({ containerId }) => {
-                                captureBoundary(loadingCaptureRoot, 'route-entry');
-                                return renderContainerRoute(containerId);
-                            }}
-                        </Route>
-
-                        {/* Tags list route */}
-                        <Route path="/tags">{() => <AllTagsView />}</Route>
-
-                        {/* Search route */}
-                        <Route path="/search">
-                            {() => (
-                                <SearchPageLayout
-                                    resultsRef={searchResultsRegion}
-                                    filterEditor={
-                                        searchUrlState.fragments.some(
-                                            (fragment) =>
-                                                fragment.type === 'tagInclude' ||
-                                                fragment.type === 'tagExclude' ||
-                                                (fragment.type === 'containerType' && fragment.value !== 'all')
-                                        ) ? (
-                                            <SearchAppliedFilters
-                                                fragments={searchUrlState.fragments}
-                                                tags={allTags}
-                                                onRemoveTag={(tagId) => {
-                                                    const fragments = setTagFilterState(
-                                                        searchUrlState.fragments,
-                                                        tagId,
-                                                        'neutral'
-                                                    );
-                                                    updateSearchUrl({
-                                                        fragments,
-                                                        submitted:
-                                                            searchUrlState.query.trim() !== '' ||
-                                                            hasRunnableFilter(fragments),
-                                                    });
-                                                }}
-                                                onClearType={() => {
-                                                    const fragments = setItemTypeFilter(
-                                                        searchUrlState.fragments,
-                                                        'all'
-                                                    );
-                                                    updateSearchUrl({
-                                                        fragments,
-                                                        submitted:
-                                                            searchUrlState.query.trim() !== '' ||
-                                                            hasRunnableFilter(fragments),
-                                                    });
-                                                }}
-                                            />
-                                        ) : undefined
-                                    }
-                                    results={
-                                        tagsLoading || allItemsLoading ? (
-                                            <LoadingState />
-                                        ) : (
-                                            <SearchResultsView
-                                                results={completedSearchKey === searchRequestKey ? searchResults : []}
-                                                onItemClick={handleSearchItemClick}
-                                                loading={
-                                                    searchLoading ||
-                                                    (searchUrlState.submitted &&
-                                                        completedSearchKey !== searchRequestKey)
-                                                }
-                                                hasSearched={searchUrlState.submitted}
-                                                errorMessage={
-                                                    completedSearchKey === searchRequestKey ? searchError : undefined
-                                                }
-                                                searchRun={
-                                                    completedSearchKey === searchRequestKey ? searchRun : undefined
-                                                }
-                                                availableTags={allTags}
-                                            />
-                                        )
-                                    }
+                captureDescendant(
+                    loadingCaptureRoot,
+                    'app-shell',
+                    <AppShell
+                        location={location}
+                        searchHref={
+                            isContainerRoute && routeContainerId !== undefined
+                                ? getSearchUrl({
+                                      query: '',
+                                      scope: 'scoped',
+                                      containerId: routeContainerId,
+                                      fragments: [],
+                                      submitted: false,
+                                  })
+                                : searchReturnPath ?? '/search'
+                        }
+                        headerContent={
+                            location === '/search' ? (
+                                <SearchBanner
+                                    exitHref={searchExitHref}
+                                    exitLabel={searchExitLabel}
+                                    query={searchUrlState.query}
+                                    onQueryChange={(query) => {
+                                        updateSearchUrl({ query, submitted: false });
+                                    }}
+                                    onSearch={(query) => {
+                                        if (query.trim() === '' && !hasRunnableFilter(searchUrlState.fragments)) return;
+                                        if (searchUrlState.submitted && query === searchUrlState.query)
+                                            setSearchSubmitCount((count) => count + 1);
+                                        else updateSearchUrl({ query, submitted: true });
+                                    }}
+                                    scope={searchUrlState.scope}
+                                    scopeLabel={searchScopeLabel}
+                                    scopeAvailable={searchContainerId !== undefined}
+                                    onScopeChange={(scope) => {
+                                        updateSearchUrl({
+                                            scope,
+                                            containerId: searchContainerId,
+                                            submitted:
+                                                searchUrlState.query.trim() !== '' ||
+                                                hasRunnableFilter(searchUrlState.fragments),
+                                        });
+                                    }}
+                                    fragments={searchUrlState.fragments}
+                                    availableTags={allTags}
+                                    onSetTagState={(tagId, state) => {
+                                        const fragments = setTagFilterState(searchUrlState.fragments, tagId, state);
+                                        updateSearchUrl({
+                                            fragments,
+                                            submitted:
+                                                searchUrlState.query.trim() !== '' || hasRunnableFilter(fragments),
+                                        });
+                                    }}
+                                    onTypeChange={(type) => {
+                                        const fragments = setItemTypeFilter(searchUrlState.fragments, type);
+                                        updateSearchUrl({
+                                            fragments,
+                                            submitted:
+                                                searchUrlState.query.trim() !== '' || hasRunnableFilter(fragments),
+                                        });
+                                    }}
+                                    onResetFilters={() => {
+                                        const fragments = resetSearchFilters();
+                                        updateSearchUrl({
+                                            scope: 'global',
+                                            fragments,
+                                            submitted:
+                                                searchUrlState.query.trim() !== '' || hasRunnableFilter(fragments),
+                                        });
+                                    }}
                                 />
-                            )}
-                        </Route>
+                            ) : !isSearchResultItemDetail && currentItemsContainerId !== undefined ? (
+                                <BreadcrumbTrail
+                                    path={headerParentPath}
+                                    showHomeIcon
+                                    lastCrumbIsCurrent={false}
+                                    onNavigateRoot={() => {
+                                        setLocation('/items');
+                                    }}
+                                    onNavigate={(item) => {
+                                        setLocation(`/container/${item._id}`);
+                                    }}
+                                    className="app-shell-breadcrumb"
+                                />
+                            ) : undefined
+                        }
+                    >
+                        {captureDescendant(
+                            loadingCaptureRoot,
+                            'switch',
+                            <Switch>
+                                {/* Home route - Items view */}
+                                <Route path="/">{() => renderItemsView()}</Route>
 
-                        {/* Item detail route */}
-                        <Route path="/items/:itemId">
-                            {() => (
-                                <Box fill style={{ minHeight: 0 }}>
-                                    {contentsDetailsContext.current?.detailPath === location && (
-                                        <Box flex={false} align="start" margin={{ bottom: 'small' }}>
-                                            <Button
-                                                as={Link}
-                                                href={contentsDetailsContext.current.contentsPath}
-                                                label="Back to contents"
+                                {/* Items list route */}
+                                <Route path="/items">{() => renderItemsView()}</Route>
+
+                                {/* Container route */}
+                                <Route path="/container/:containerId">
+                                    {({ containerId }) => {
+                                        captureBoundary(loadingCaptureRoot, 'route-entry');
+                                        return renderContainerRoute(containerId);
+                                    }}
+                                </Route>
+
+                                {/* Tags list route */}
+                                <Route path="/tags">{() => <AllTagsView />}</Route>
+
+                                {/* Search route */}
+                                <Route path="/search">
+                                    {() => (
+                                        <SearchPageLayout
+                                            resultsRef={searchResultsRegion}
+                                            filterEditor={
+                                                searchUrlState.fragments.some(
+                                                    (fragment) =>
+                                                        fragment.type === 'tagInclude' ||
+                                                        fragment.type === 'tagExclude' ||
+                                                        (fragment.type === 'containerType' && fragment.value !== 'all')
+                                                ) ? (
+                                                    <SearchAppliedFilters
+                                                        fragments={searchUrlState.fragments}
+                                                        tags={allTags}
+                                                        onRemoveTag={(tagId) => {
+                                                            const fragments = setTagFilterState(
+                                                                searchUrlState.fragments,
+                                                                tagId,
+                                                                'neutral'
+                                                            );
+                                                            updateSearchUrl({
+                                                                fragments,
+                                                                submitted:
+                                                                    searchUrlState.query.trim() !== '' ||
+                                                                    hasRunnableFilter(fragments),
+                                                            });
+                                                        }}
+                                                        onClearType={() => {
+                                                            const fragments = setItemTypeFilter(
+                                                                searchUrlState.fragments,
+                                                                'all'
+                                                            );
+                                                            updateSearchUrl({
+                                                                fragments,
+                                                                submitted:
+                                                                    searchUrlState.query.trim() !== '' ||
+                                                                    hasRunnableFilter(fragments),
+                                                            });
+                                                        }}
+                                                    />
+                                                ) : undefined
+                                            }
+                                            results={
+                                                tagsLoading || allItemsLoading ? (
+                                                    <LoadingState />
+                                                ) : (
+                                                    <SearchResultsView
+                                                        results={
+                                                            completedSearchKey === searchRequestKey ? searchResults : []
+                                                        }
+                                                        onItemClick={handleSearchItemClick}
+                                                        loading={
+                                                            searchLoading ||
+                                                            (searchUrlState.submitted &&
+                                                                completedSearchKey !== searchRequestKey)
+                                                        }
+                                                        hasSearched={searchUrlState.submitted}
+                                                        errorMessage={
+                                                            completedSearchKey === searchRequestKey
+                                                                ? searchError
+                                                                : undefined
+                                                        }
+                                                        searchRun={
+                                                            completedSearchKey === searchRequestKey
+                                                                ? searchRun
+                                                                : undefined
+                                                        }
+                                                        availableTags={allTags}
+                                                    />
+                                                )
+                                            }
+                                        />
+                                    )}
+                                </Route>
+
+                                {/* Item detail route */}
+                                <Route path="/items/:itemId">
+                                    {() => (
+                                        <Box fill style={{ minHeight: 0 }}>
+                                            {contentsDetailsContext.current?.detailPath === location && (
+                                                <Box flex={false} align="start" margin={{ bottom: 'small' }}>
+                                                    <Button
+                                                        as={Link}
+                                                        href={contentsDetailsContext.current.contentsPath}
+                                                        label="Back to contents"
+                                                    />
+                                                </Box>
+                                            )}
+                                            <ItemDetailView
+                                                deleteReturnPath={searchReturnPath}
+                                                searchReturnPath={searchReturnPath}
                                             />
                                         </Box>
                                     )}
-                                    <ItemDetailView
-                                        deleteReturnPath={searchReturnPath}
-                                        searchReturnPath={searchReturnPath}
-                                    />
-                                </Box>
-                            )}
-                        </Route>
+                                </Route>
 
-                        {/* Items by tag route */}
-                        <Route path="/tags/:tagId">{() => <ItemsByTagView />}</Route>
+                                {/* Items by tag route */}
+                                <Route path="/tags/:tagId">{() => <ItemsByTagView />}</Route>
 
-                        {/* Settings route */}
-                        <Route path="/settings/data">{() => <SettingsDataView />}</Route>
+                                {/* Settings route */}
+                                <Route path="/settings/data">{() => <SettingsDataView />}</Route>
 
-                        {/* 404 Not Found */}
-                        <Route>{() => <NotFoundView />}</Route>
-                    </Switch>
+                                {/* 404 Not Found */}
+                                <Route>{() => <NotFoundView />}</Route>
+                            </Switch>
+                        )}
 
-                    {/* Create Item Modal */}
-                    {showCreateItem && (
-                        <ItemDialog
-                            title="Create New Item"
-                            onClose={() => {
-                                setShowCreateItem(false);
-                            }}
-                        >
-                            <ItemForm
-                                availableTags={allTags}
-                                onSubmit={handleCreateItem}
-                                onCancel={() => {
+                        {/* Create Item Modal */}
+                        {showCreateItem && (
+                            <ItemDialog
+                                title="Create New Item"
+                                onClose={() => {
                                     setShowCreateItem(false);
                                 }}
-                            />
-                        </ItemDialog>
-                    )}
-                </AppShell>
+                            >
+                                <ItemForm
+                                    availableTags={allTags}
+                                    onSubmit={handleCreateItem}
+                                    onCancel={() => {
+                                        setShowCreateItem(false);
+                                    }}
+                                />
+                            </ItemDialog>
+                        )}
+                    </AppShell>
+                )
             )}
         </Grommet>
     );
